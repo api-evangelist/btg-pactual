@@ -1,0 +1,1275 @@
+generated: '2026-10-18'
+method: derived
+status: candidate
+source: openapi/ (41 BTG Pactual Empresas OpenAPI 3.0.3 contracts)
+name: BTG Pactual Empresas MCP server (candidate)
+notes: 'No official BTG Pactual MCP server was found: the developer portal (developers.empresas.btgpactual.com) has no MCP docs and serves no llms.txt (404), and a web search for a BTG Pactual MCP server
+  returned nothing relevant (2026-10-18). This is a CANDIDATE tool list derived 1:1 from OpenAPI operations; tools whose operation has no operationId carry derived_operationId, which the overlays add.'
+deployment:
+  mode: none
+  auth: unknown
+  verified: derived
+auth:
+  note: The underlying APIs use BTG Id OAuth 2.0 per the developer portal; a server built from this list would need BTG Id credentials.
+tool_count: 210
+tools:
+- name: acquirers_paymentlink__put_payment_link_by_payment_link_id
+  api: acquirers-paymentlink
+  method: PUT
+  path: /{companyId}/banking/payment-link/{paymentLinkId}
+  derived_operationId: putPaymentLinkByPaymentLinkId
+  summary: API responsável por editar um link de pagamento
+- name: acquirers_paymentlink__delete_payment_link_by_payment_link_id
+  api: acquirers-paymentlink
+  method: DELETE
+  path: /{companyId}/banking/payment-link/{paymentLinkId}
+  derived_operationId: deletePaymentLinkByPaymentLinkId
+  summary: API responsável por cancelar um link de pagamento
+- name: acquirers_paymentlink__post_payment_link_by_company_id
+  api: acquirers-paymentlink
+  method: POST
+  path: /{companyId}/banking/payment-link
+  derived_operationId: postPaymentLinkByCompanyId
+  summary: API responsável por criar um link de pagamento
+- name: acquirers_paymentlink__get_payment_link_by_company_id
+  api: acquirers-paymentlink
+  method: GET
+  path: /{companyId}/banking/payment-link
+  derived_operationId: getPaymentLinkByCompanyId
+  summary: API responsável por listar os links de pagamento de uma empresa
+- name: acquirers_paymentlink__get_payment_link_collection_by_payment_link_id
+  api: acquirers-paymentlink
+  method: GET
+  path: /{companyId}/banking/payment-link/{paymentLinkId}/collection
+  derived_operationId: getPaymentLinkCollectionByPaymentLinkId
+  summary: API responsável por listar as cobranças um link de pagamento
+- name: get_acquirer_receivable_units_by_company_id
+  api: acquirers-salesprovider
+  method: GET
+  path: /{companyId}/acquirer/receivable-units
+  derived_operationId: getAcquirerReceivableUnitsByCompanyId
+  summary: Retorna a lista de unidades recebíveis para um dia específico, incluindo status, valor e data de pagamento, para exibição no dashboard do pa
+- name: get_acquirer_sales_by_company_id
+  api: acquirers-salesprovider
+  method: GET
+  path: /{companyId}/acquirer/sales
+  derived_operationId: getAcquirerSalesByCompanyId
+  summary: Retorna o histórico de vendas para exibição no dashboard do parceiro.
+- name: get_acquirer_sales_by_sale_id
+  api: acquirers-salesprovider
+  method: GET
+  path: /{companyId}/acquirer/sales/{saleId}
+  derived_operationId: getAcquirerSalesBySaleId
+  summary: Retorna os detalhes de uma venda específica para exibição no dashboard do parceiro.
+- name: create_receivables_anticipation
+  api: antecred-subcredenciadores
+  method: POST
+  path: /credenciadoras/antecipacao
+  operationId: createReceivablesAnticipation
+  summary: Realiza a antecipação de recebíveis de subcredenciadoras
+- name: get_credit_card_receivables_cedente
+  api: antecred-subcredenciadores
+  method: GET
+  path: /credenciadoras/recebiveis
+  operationId: getCreditCardReceivablesCedente
+  summary: Retorna a lista de recebíveis de cartão de crédito disponíveis para antecipação do cedente autenticado, filtrados pelo CNPJ do sacado (crede
+- name: get_receivables_quote
+  api: antecred-subcredenciadores
+  method: POST
+  path: /credenciadoras/cotacao
+  operationId: getReceivablesQuote
+  summary: Obtém cotações para uma lista de recebíveis de subcredenciadoras
+- name: get_accounts_by_company_id
+  api: banking-accounts
+  method: GET
+  path: /{companyId}/banking/accounts
+  derived_operationId: getAccountsByCompanyId
+  summary: Consultar dados da conta
+- name: get_accounts_statements_by_account_id
+  api: banking-accounts
+  method: GET
+  path: /{companyId}/banking/accounts/{accountId}/statements
+  derived_operationId: getAccountsStatementsByAccountId
+  summary: Consultar extrato por accountId
+- name: get_accounts_statements_by_company_id
+  api: banking-accounts
+  method: GET
+  path: /{companyId}/banking/accounts/statements
+  derived_operationId: getAccountsStatementsByCompanyId
+  summary: Consultar extratos
+- name: get_accounts_balances_by_account_id
+  api: banking-accounts
+  method: GET
+  path: /{companyId}/banking/accounts/{accountId}/balances
+  derived_operationId: getAccountsBalancesByAccountId
+  summary: Consultar saldo
+- name: get_accounts_statements_pdf_by_account_id
+  api: banking-accounts
+  method: GET
+  path: /{companyId}/banking/accounts/{accountId}/statements/pdf
+  derived_operationId: getAccountsStatementsPdfByAccountId
+  summary: GET pdf base64
+- name: get_cards_by_company_id
+  api: banking-cards
+  method: GET
+  path: /{companyId}/banking/cards
+  derived_operationId: getCardsByCompanyId
+  summary: '## 📘 Ambiente de sandbox'
+- name: get_cards_invoices_by_company_id
+  api: banking-cards
+  method: GET
+  path: /{companyId}/banking/cards/invoices
+  derived_operationId: getCardsInvoicesByCompanyId
+  summary: '## 📘 Ambiente de sandbox'
+- name: get_cards_invoices_by_invoice_id
+  api: banking-cards
+  method: GET
+  path: /{companyId}/banking/cards/invoices/{invoiceId}
+  derived_operationId: getCardsInvoicesByInvoiceId
+  summary: '## 📘 Ambiente de sandbox'
+- name: get_cards_invoices_transactions_by_invoice_id
+  api: banking-cards
+  method: GET
+  path: /{companyId}/banking/cards/invoices/{invoiceId}/transactions
+  derived_operationId: getCardsInvoicesTransactionsByInvoiceId
+  summary: '## 📘 Ambiente de sandbox'
+- name: get_receivables_allowed_actions_by_company_id
+  api: banking-ccreceivables
+  method: GET
+  path: /{companyId}/credit/credit-card-receivables/allowed-actions
+  derived_operationId: getReceivablesAllowedActionsByCompanyId
+  summary: Obtém as ações permitidas para a empresa (por exemplo, antecipar ou ativar a antecipação automática) junto com um resumo das condições de op
+- name: post_card_receivables_operation_by_company_id
+  api: banking-ccreceivables
+  method: POST
+  path: /{companyId}/credit/credit-card-receivables/operation
+  derived_operationId: postCardReceivablesOperationByCompanyId
+  summary: Antecipa os recebíveis escolhidos
+- name: post_credit_card_receivables_by_company_id
+  api: banking-ccreceivables
+  method: POST
+  path: /{companyId}/credit/credit-card-receivables
+  derived_operationId: postCreditCardReceivablesByCompanyId
+  summary: Obtém os recebíveis disponíveis para antecipação de acordo com os parâmetros informados e visualiza informações de taxa média e prazo médio.
+- name: get_credit_card_receivables_by_company_id
+  api: banking-ccreceivables
+  method: GET
+  path: /{companyId}/credit/credit-card-receivables
+  derived_operationId: getCreditCardReceivablesByCompanyId
+  summary: Obtém lista de recebíveis ainda disponíveis para antecipar hoje.
+- name: get_card_receivables_operation_by_id
+  api: banking-ccreceivables
+  method: GET
+  path: /{companyId}/credit/credit-card-receivables/operation/{id}
+  derived_operationId: getCardReceivablesOperationById
+  summary: Obtém os recebíveis antecipados e a conta de desembolso da operação.
+- name: get_receivables_operation_pool_by_company_id
+  api: banking-ccreceivables
+  method: GET
+  path: /{companyId}/credit/credit-card-receivables/operation-pool
+  derived_operationId: getReceivablesOperationPoolByCompanyId
+  summary: Obtém os valores máximo, disponível e mínimo para antecipar recebíveis de cartão de crédito
+- name: get_receivables_balance_summary_by_company_id
+  api: banking-ccreceivables
+  method: GET
+  path: /{companyId}/credit/credit-card-receivables/balance-summary
+  derived_operationId: getReceivablesBalanceSummaryByCompanyId
+  summary: Obtém um resumo dos valores não quitados ou ainda não recebidos pelas credenciadoras dos recebíveis antecipados
+- name: get_receivables_disbursement_accounts_by_company_id
+  api: banking-ccreceivables
+  method: GET
+  path: /{companyId}/credit/credit-card-receivables/disbursement-accounts
+  derived_operationId: getReceivablesDisbursementAccountsByCompanyId
+  summary: Obtém as contas de desembolso do cliente
+- name: put_collections_by_collection_id
+  api: banking-collections
+  method: PUT
+  path: /{companyId}/banking/collections/{collectionId}
+  derived_operationId: putCollectionsByCollectionId
+  summary: '## 📘 Ambiente de sandbox'
+- name: get_collections_by_collection_id
+  api: banking-collections
+  method: GET
+  path: /{companyId}/banking/collections/{collectionId}
+  derived_operationId: getCollectionsByCollectionId
+  summary: '## 📘 Ambiente de sandbox'
+- name: delete_collections_by_collection_id
+  api: banking-collections
+  method: DELETE
+  path: /{companyId}/banking/collections/{collectionId}
+  derived_operationId: deleteCollectionsByCollectionId
+  summary: '## 📘 Ambiente de sandbox'
+- name: post_collections_by_company_id
+  api: banking-collections
+  method: POST
+  path: /{companyId}/banking/collections
+  derived_operationId: postCollectionsByCompanyId
+  summary: '## 📘 Ambiente de sandbox'
+- name: get_collections_by_company_id
+  api: banking-collections
+  method: GET
+  path: /{companyId}/banking/collections
+  derived_operationId: getCollectionsByCompanyId
+  summary: '## 📘 Ambiente de sandbox'
+- name: post_collections_batch_by_company_id
+  api: banking-collections
+  method: POST
+  path: /{companyId}/banking/collections/batch
+  derived_operationId: postCollectionsBatchByCompanyId
+  summary: '## 📘 Ambiente de sandbox'
+- name: delete_bad_credit_batch_by_company_id
+  api: banking-collections
+  method: DELETE
+  path: /{companyId}/banking/collections/bad-credit/batch
+  derived_operationId: deleteBadCreditBatchByCompanyId
+  summary: '## 📘 Ambiente de sandbox'
+- name: post_bad_credit_batch_by_company_id
+  api: banking-collections
+  method: POST
+  path: /{companyId}/banking/collections/bad-credit/batch
+  derived_operationId: postBadCreditBatchByCompanyId
+  summary: '## 📘 Ambiente de sandbox'
+- name: post_direct_debit_by_company_id
+  api: banking-dda
+  method: POST
+  path: /{companyId}/banking/direct-debit
+  derived_operationId: postDirectDebitByCompanyId
+  summary: '## 📘 Ambiente de sandbox'
+- name: delete_direct_debit
+  api: banking-dda
+  method: DELETE
+  path: /{companyId}/banking/direct-debit
+  operationId: deleteDirectDebit
+  summary: '## 📘 Ambiente de sandbox'
+- name: delete_config
+  api: banking-dda
+  method: DELETE
+  path: /{companyId}/banking/direct-debit/configs
+  operationId: deleteConfig
+  summary: '## 📘 Ambiente de sandbox'
+- name: post_config
+  api: banking-dda
+  method: POST
+  path: /{companyId}/banking/direct-debit/configs
+  operationId: postConfig
+  summary: '## 📘 Ambiente de sandbox'
+- name: get_debits
+  api: banking-dda
+  method: GET
+  path: /{companyId}/banking/direct-debit/debits
+  operationId: getDebits
+  summary: '## 📘 Ambiente de sandbox'
+- name: patch_debit
+  api: banking-dda
+  method: PATCH
+  path: /{companyId}/banking/direct-debit/debits
+  operationId: patchDebit
+  summary: '## 📘 Ambiente de sandbox'
+- name: get_debits_summary
+  api: banking-dda
+  method: GET
+  path: /{companyId}/banking/direct-debit/debits/summary
+  operationId: getDebitsSummary
+  summary: '## 📘 Ambiente de sandbox'
+- name: banking_paymentlink__put_payment_link_by_payment_link_id
+  api: banking-paymentlink
+  method: PUT
+  path: /{companyId}/banking/payment-link/{paymentLinkId}
+  derived_operationId: putPaymentLinkByPaymentLinkId
+  summary: API responsável por editar um link de pagamento
+- name: banking_paymentlink__delete_payment_link_by_payment_link_id
+  api: banking-paymentlink
+  method: DELETE
+  path: /{companyId}/banking/payment-link/{paymentLinkId}
+  derived_operationId: deletePaymentLinkByPaymentLinkId
+  summary: API responsável por cancelar um link de pagamento
+- name: banking_paymentlink__post_payment_link_by_company_id
+  api: banking-paymentlink
+  method: POST
+  path: /{companyId}/banking/payment-link
+  derived_operationId: postPaymentLinkByCompanyId
+  summary: API responsável por criar um link de pagamento
+- name: banking_paymentlink__get_payment_link_by_company_id
+  api: banking-paymentlink
+  method: GET
+  path: /{companyId}/banking/payment-link
+  derived_operationId: getPaymentLinkByCompanyId
+  summary: API responsável por listar os links de pagamento de uma empresa
+- name: banking_paymentlink__get_payment_link_collection_by_payment_link_id
+  api: banking-paymentlink
+  method: GET
+  path: /{companyId}/banking/payment-link/{paymentLinkId}/collection
+  derived_operationId: getPaymentLinkCollectionByPaymentLinkId
+  summary: API responsável por listar as cobranças um link de pagamento
+- name: put_payment_link_recurrence_by_id
+  api: banking-paymentlinkrec
+  method: PUT
+  path: /{companyId}/banking/payment-link/recurrence/{id}
+  derived_operationId: putPaymentLinkRecurrenceById
+  summary: API responsável por atualizar as configurações de um link de pagamento recorrente. Permitido apenas nos status `ACTIVE` e `PAUSED`, e as alt
+- name: delete_payment_link_recurrence_by_id
+  api: banking-paymentlinkrec
+  method: DELETE
+  path: /{companyId}/banking/payment-link/recurrence/{id}
+  derived_operationId: deletePaymentLinkRecurrenceById
+  summary: API responsável por cancelar um link de pagamento recorrente (transição `ACTIVE`/`PAUSED` → `CANCELED`). O link de pagamento do ciclo corren
+- name: get_payment_link_recurrence_by_id
+  api: banking-paymentlinkrec
+  method: GET
+  path: /{companyId}/banking/payment-link/recurrence/{id}
+  derived_operationId: getPaymentLinkRecurrenceById
+  summary: API responsável por retornar um link de pagamento recorrente de uma empresa. O recurso é restrito ao beneficiário autenticado.
+- name: post_payment_link_recurrence_by_company_id
+  api: banking-paymentlinkrec
+  method: POST
+  path: /{companyId}/banking/payment-link/recurrence
+  derived_operationId: postPaymentLinkRecurrenceByCompanyId
+  summary: API responsável por criar um link de pagamento recorrente. Gera a URL pública estável e o primeiro ciclo. Quando `startDate` já chegou, o ci
+- name: get_payment_link_recurrence_by_company_id
+  api: banking-paymentlinkrec
+  method: GET
+  path: /{companyId}/banking/payment-link/recurrence
+  derived_operationId: getPaymentLinkRecurrenceByCompanyId
+  summary: API responsável por listar os links de pagamento recorrentes de uma empresa. O recurso é restrito ao beneficiário autenticado. A paginação é
+- name: get_link_recurrence_cycle_by_id
+  api: banking-paymentlinkrec
+  method: GET
+  path: /{companyId}/banking/payment-link/recurrence/{id}/cycle
+  derived_operationId: getLinkRecurrenceCycleById
+  summary: 'API responsável por listar os ciclos de um link de pagamento recorrente. O recurso é restrito ao beneficiário autenticado — recorrências de '
+- name: patch_link_recurrence_pause_by_id
+  api: banking-paymentlinkrec
+  method: PATCH
+  path: /{companyId}/banking/payment-link/recurrence/{id}/pause
+  derived_operationId: patchLinkRecurrencePauseById
+  summary: API responsável por pausar um link de pagamento recorrente (transição `ACTIVE` → `PAUSED`). Nenhum novo ciclo é gerado enquanto pausada, e o
+- name: post_recurrence_cycle_reactivate_by_cycle_id
+  api: banking-paymentlinkrec
+  method: POST
+  path: /{companyId}/banking/payment-link/recurrence/cycle/{cycleId}/reactivate
+  derived_operationId: postRecurrenceCycleReactivateByCycleId
+  summary: 'API responsável por reativar um ciclo de link de pagamento recorrente expirado. O link de pagamento existente é reativado com um novo short '
+- name: patch_link_recurrence_resume_by_id
+  api: banking-paymentlinkrec
+  method: PATCH
+  path: /{companyId}/banking/payment-link/recurrence/{id}/resume
+  derived_operationId: patchLinkRecurrenceResumeById
+  summary: API responsável por retomar um link de pagamento recorrente pausado (transição `PAUSED` → `ACTIVE`). O recurso é restrito ao beneficiário au
+- name: delete_batch_payments_by_batch_id
+  api: banking-payments
+  method: DELETE
+  path: /{companyId}/banking/batch-payments/{batchId}
+  derived_operationId: deleteBatchPaymentsByBatchId
+  summary: Abandonar Lote
+- name: patch_batch_payments_by_batch_id
+  api: banking-payments
+  method: PATCH
+  path: /{companyId}/banking/batch-payments/{batchId}
+  derived_operationId: patchBatchPaymentsByBatchId
+  summary: Processar Lote
+- name: post_batch_payments_by_company_id
+  api: banking-payments
+  method: POST
+  path: /{companyId}/banking/batch-payments
+  derived_operationId: postBatchPaymentsByCompanyId
+  summary: Abrir Lote
+- name: patch_payments_recurrences_by_recurrence_id
+  api: banking-payments
+  method: PATCH
+  path: /{companyId}/banking/payments-recurrences/{recurrenceId}
+  derived_operationId: patchPaymentsRecurrencesByRecurrenceId
+  summary: '## 📘 Ambiente de sandbox'
+- name: delete_payments_recurrences_by_recurrence_id
+  api: banking-payments
+  method: DELETE
+  path: /{companyId}/banking/payments-recurrences/{recurrenceId}
+  derived_operationId: deletePaymentsRecurrencesByRecurrenceId
+  summary: '## 📘 Ambiente de sandbox'
+- name: get_payments_recurrences_by_recurrence_id
+  api: banking-payments
+  method: GET
+  path: /{companyId}/banking/payments-recurrences/{recurrenceId}
+  derived_operationId: getPaymentsRecurrencesByRecurrenceId
+  summary: '## 📘 Ambiente de sandbox'
+- name: delete_payments_approvals_by_payment_id
+  api: banking-payments
+  method: DELETE
+  path: /{companyId}/banking/payments/approvals/{paymentId}
+  derived_operationId: deletePaymentsApprovalsByPaymentId
+  summary: Cancelar pagamento ou transferência pendente de aprovação
+- name: delete_payments_by_payment_id
+  api: banking-payments
+  method: DELETE
+  path: /{companyId}/banking/payments/{paymentId}
+  derived_operationId: deletePaymentsByPaymentId
+  summary: Cancelar um pagamento ou transferência agendado
+- name: get_payments_by_payment_id
+  api: banking-payments
+  method: GET
+  path: /{companyId}/banking/payments/{paymentId}
+  derived_operationId: getPaymentsByPaymentId
+  summary: Listar um pagamento ou transferência específico
+- name: get_payments_barcodes_by_company_id
+  api: banking-payments
+  method: GET
+  path: /{companyId}/banking/payments/barcodes
+  derived_operationId: getPaymentsBarcodesByCompanyId
+  summary: Consulta por código de barras
+- name: post_payments_recurrences_periodicities_by_company_id
+  api: banking-payments
+  method: POST
+  path: /{companyId}/banking/payments-recurrences/periodicities
+  derived_operationId: postPaymentsRecurrencesPeriodicitiesByCompanyId
+  summary: '## 📘 Ambiente de sandbox'
+- name: post_payments_by_company_id
+  api: banking-payments
+  method: POST
+  path: /{companyId}/banking/payments
+  derived_operationId: postPaymentsByCompanyId
+  summary: Criar iniciação de pagamento ou transferência
+- name: get_payments_by_company_id
+  api: banking-payments
+  method: GET
+  path: /{companyId}/banking/payments
+  derived_operationId: getPaymentsByCompanyId
+  summary: Listar iniciação de pagamento ou transferência
+- name: post_payments_recurrences_by_company_id
+  api: banking-payments
+  method: POST
+  path: /{companyId}/banking/payments-recurrences
+  derived_operationId: postPaymentsRecurrencesByCompanyId
+  summary: '## 📘 Ambiente de sandbox'
+- name: get_payments_recurrences_by_company_id
+  api: banking-payments
+  method: GET
+  path: /{companyId}/banking/payments-recurrences
+  derived_operationId: getPaymentsRecurrencesByCompanyId
+  summary: '## 📘 Ambiente de sandbox'
+- name: get_payments_recurrences_payments_by_recurrence_id
+  api: banking-payments
+  method: GET
+  path: /{companyId}/banking/payments-recurrences/{recurrenceId}/payments
+  derived_operationId: getPaymentsRecurrencesPaymentsByRecurrenceId
+  summary: '## 📘 Ambiente de sandbox'
+- name: get_payments_receipt_by_payment_id
+  api: banking-payments
+  method: GET
+  path: /{companyId}/banking/payments/{paymentId}/receipt
+  derived_operationId: getPaymentsReceiptByPaymentId
+  summary: Obter recibo
+- name: get_payments_recurrences_summary_by_company_id
+  api: banking-payments
+  method: GET
+  path: /{companyId}/banking/payments-recurrences/summary
+  derived_operationId: getPaymentsRecurrencesSummaryByCompanyId
+  summary: '## 📘 Ambiente de sandbox'
+- name: cancel_payment_batch
+  api: banking-payroll
+  method: POST
+  path: /{companyId}/banking/payroll/payments/{requestId}/cancel
+  operationId: cancelPaymentBatch
+  summary: Cancela um lote de pagamento identificado pelo `requestId`. Somente lotes nos status `submitted` ou `pending_approval` podem ser cancelados.
+- name: deactivate_employee
+  api: banking-payroll
+  method: POST
+  path: /{companyId}/banking/payroll/employees/{employeeTaxId}/deactivate
+  operationId: deactivateEmployee
+  summary: Desliga (inativa) um colaborador ativo. Somente colaboradores com status `active` podem ser desligados. Após o desligamento o colaborador pa
+- name: get_employee
+  api: banking-payroll
+  method: GET
+  path: /{companyId}/banking/payroll/employees/{employeeTaxId}
+  operationId: getEmployee
+  summary: Retorna o detalhe completo de um colaborador da empresa identificado pelo CPF, incluindo dados cadastrais, status, tipo de contrato e inform
+- name: get_employee_account
+  api: banking-payroll
+  method: GET
+  path: /{companyId}/banking/payroll/employees/{employeeTaxId}/account
+  operationId: getEmployeeAccount
+  summary: Retorna o estado da conta bancária de um colaborador identificado pelo CPF.
+- name: get_payment_batch
+  api: banking-payroll
+  method: GET
+  path: /{companyId}/banking/payroll/payments/{paymentId}
+  operationId: getPaymentBatch
+  summary: Retorna o detalhe completo de um lote de pagamento, incluindo status individual de cada item.
+- name: list_employees
+  api: banking-payroll
+  method: GET
+  path: /{companyId}/banking/payroll/employees
+  operationId: listEmployees
+  summary: 'Retorna lista paginada de colaboradores das empresas informadas com filtros opcionais. Paginação por cursor: use o valor de `_links.next.hre'
+- name: list_issuers
+  api: banking-payroll
+  method: GET
+  path: /{companyId}/banking/payroll/onboarding/issuers
+  operationId: listIssuers
+  summary: Retorna a lista de emissores de documento de identidade disponíveis para onboarding. Use o campo `id` de cada emissor como valor de `issuing
+- name: list_payments
+  api: banking-payroll
+  method: GET
+  path: /{companyId}/banking/payroll/payments
+  operationId: listPayments
+  summary: 'Retorna lista paginada dos lotes de pagamento da empresa com filtros opcionais. Paginação por cursor: use o valor de `_links.next.href` para'
+- name: submit_payment_batch
+  api: banking-payroll
+  method: POST
+  path: /{companyId}/banking/payroll/payments
+  operationId: submitPaymentBatch
+  summary: Submete um lote de pagamentos para processamento assíncrono. Retorna `202 Accepted` com o identificador do lote (`paymentId` e `requestId`).
+- name: reactivate_employee
+  api: banking-payroll
+  method: POST
+  path: /{companyId}/banking/payroll/employees/{employeeTaxId}/reactivate
+  operationId: reactivateEmployee
+  summary: Reativa um colaborador inativo. Somente colaboradores com status `inactive` podem ser reativados. Após a reativação o colaborador retorna ao
+- name: submit_onboarding_employees
+  api: banking-payroll
+  method: POST
+  path: /{companyId}/banking/payroll/onboarding/employees
+  operationId: submitOnboardingEmployees
+  summary: Submete um ou mais colaboradores para abertura de conta BTG. O processamento é assíncrono e retorna `202 Accepted` imediatamente.
+- name: delete_automatic_pix_authorization_by_authorization_id
+  api: banking-pix-automatico
+  method: DELETE
+  path: /{companyId}/banking/collections/automatic-pix/authorization/{authorizationId}
+  derived_operationId: deleteAutomaticPixAuthorizationByAuthorizationId
+  summary: '## 📘 Ambiente de sandbox'
+- name: patch_automatic_pix_authorization_by_authorization_id
+  api: banking-pix-automatico
+  method: PATCH
+  path: /{companyId}/banking/collections/automatic-pix/authorization/{authorizationId}
+  derived_operationId: patchAutomaticPixAuthorizationByAuthorizationId
+  summary: '## 📘 Ambiente de sandbox'
+- name: delete_pix_scheduling_instruction_by_scheduling_instruction_id
+  api: banking-pix-automatico
+  method: DELETE
+  path: /{companyId}/banking/collections/automatic-pix/scheduling-instruction/{schedulingInstructionId}
+  derived_operationId: deletePixSchedulingInstructionBySchedulingInstructionId
+  summary: '## 📘 Ambiente de sandbox'
+- name: post_authorization_scheduling_instruction_by_authorization_id
+  api: banking-pix-automatico
+  method: POST
+  path: /{companyId}/banking/collections/automatic-pix/authorization/{authorizationId}/scheduling-instruction
+  derived_operationId: postAuthorizationSchedulingInstructionByAuthorizationId
+  summary: '## 📘 Ambiente de sandbox'
+- name: get_authorization_scheduling_instruction_by_authorization_id
+  api: banking-pix-automatico
+  method: GET
+  path: /{companyId}/banking/collections/automatic-pix/authorization/{authorizationId}/scheduling-instruction
+  derived_operationId: getAuthorizationSchedulingInstructionByAuthorizationId
+  summary: '## 📘 Ambiente de sandbox'
+- name: post_pix_authorization_flow_by_company_id
+  api: banking-pix-automatico
+  method: POST
+  path: /{companyId}/banking/collections/automatic-pix/authorization/flow
+  derived_operationId: postPixAuthorizationFlowByCompanyId
+  summary: '## 📘 Ambiente de sandbox'
+- name: get_automatic_pix_authorization_by_company_id
+  api: banking-pix-automatico
+  method: GET
+  path: /{companyId}/banking/collections/automatic-pix/authorization
+  derived_operationId: getAutomaticPixAuthorizationByCompanyId
+  summary: '## 📘 Ambiente de sandbox'
+- name: create_instant_collection
+  api: banking-pixcashin
+  method: POST
+  path: /companies/{companyId}/pix-cash-in/instant-collections
+  operationId: CreateInstantCollection
+  summary: Cria uma nova cobrança instantânea
+- name: get_instant_collections
+  api: banking-pixcashin
+  method: GET
+  path: /companies/{companyId}/pix-cash-in/instant-collections
+  operationId: GetInstantCollections
+  summary: Obtém a lista de cobranças instantâneas
+- name: create_location
+  api: banking-pixcashin
+  method: POST
+  path: /companies/{companyId}/pix-cash-in/locations
+  operationId: CreateLocation
+  summary: Cria um novo QR Code (location)
+- name: get_locations
+  api: banking-pixcashin
+  method: GET
+  path: /companies/{companyId}/pix-cash-in/locations
+  operationId: GetLocations
+  summary: Obtém a lista de locations
+- name: unlink_location
+  api: banking-pixcashin
+  method: DELETE
+  path: /companies/{companyId}/pix-cash-in/locations/{locationId}
+  operationId: UnlinkLocation
+  summary: Desvincula um QR Code (location) de uma cobrança
+- name: cancel_protest
+  api: banking-protest
+  method: DELETE
+  path: /{companyId}/banking/protest/{id}
+  operationId: cancelProtest
+  summary: Cancela um protesto individualmente. O protesto deve estar em um estado que permita cancelamento (`SCHEDULED` ou `PROCESSING`).
+- name: find_protest
+  api: banking-protest
+  method: GET
+  path: /{companyId}/banking/protest/{id}
+  operationId: findProtest
+  summary: Retorna os detalhes de um protesto pelo seu UUID.
+- name: cancel_protest_batch
+  api: banking-protest
+  method: DELETE
+  path: /{companyId}/banking/protest/batch
+  operationId: cancelProtestBatch
+  summary: Cancela o protesto de várias cobranças em lote. O processamento é assíncrono — a API retorna `202 Accepted` imediatamente e processa cada ca
+- name: create_protest_schedule_batch
+  api: banking-protest
+  method: POST
+  path: /{companyId}/banking/protest/batch
+  operationId: createProtestScheduleBatch
+  summary: Agenda o protesto de várias cobranças em lote. O processamento é assíncrono — a API retorna `202 Accepted` imediatamente e processa cada cob
+- name: create_protest_schedule
+  api: banking-protest
+  method: POST
+  path: /{companyId}/banking/protest
+  operationId: createProtestSchedule
+  summary: 'Agenda o protesto de uma cobrança. O protesto será iniciado na data de vencimento configurada na cobrança. A cobrança referenciada deve ser '
+- name: get_protest_document
+  api: banking-protest
+  method: GET
+  path: /{companyId}/banking/protest/{id}/document
+  operationId: getProtestDocument
+  summary: Retorna o documento de protesto ou de cancelamento em base64. O documento é gerado pelo cartório e fica disponível após o protesto ser confi
+- name: post_splitter_by_company_id
+  api: banking-split
+  method: POST
+  path: /{companyId}/banking/splitter
+  derived_operationId: postSplitterByCompanyId
+  summary: Cria um splitter para o beneficiário. Se já existir um splitter com o mesmo `taxId` e ele estiver `DELETED`, o registro existente é reativad
+- name: list_splitters
+  api: banking-split
+  method: GET
+  path: /{companyId}/banking/splitter
+  operationId: listSplitters
+  summary: '## 📘 Ambiente de sandbox'
+- name: delete_splitter
+  api: banking-split
+  method: DELETE
+  path: /{companyId}/banking/splitter/{splitterId}
+  operationId: deleteSplitter
+  summary: Realiza um soft-delete do splitter. O registro é marcado como `DELETED` e pode ser reativado em uma criação futura com o mesmo `taxId`.
+- name: find_splitter_by_id
+  api: banking-split
+  method: GET
+  path: /{companyId}/banking/splitter/{splitterId}
+  operationId: findSplitterById
+  summary: '## 📘 Ambiente de sandbox'
+- name: update_splitter
+  api: banking-split
+  method: PATCH
+  path: /{companyId}/banking/splitter/{splitterId}
+  operationId: updateSplitter
+  summary: Atualiza um splitter existente. Pelo menos um campo deve ser informado (`name`, `nickname`, `account` ou `configuration`).
+- name: find_split_by_id
+  api: banking-split
+  method: GET
+  path: /{companyId}/banking/split/{splitId}
+  operationId: findSplitById
+  summary: Retorna a divisão global (`Split`) persistida de uma cobrança pelo seu UUID. Diferente da resposta da criação de cobrança, esta consulta ret
+- name: find_splitter_by_tax_id
+  api: banking-split
+  method: GET
+  path: /{companyId}/banking/splitter/tax-id/{taxId}
+  operationId: findSplitterByTaxId
+  summary: '## 📘 Ambiente de sandbox'
+- name: refresh_open_finance_balance
+  api: bankinghub-open-finance-balance-refresh
+  method: GET
+  path: /{taxId}/banking/accounts/{accountId}/balances/refresh
+  operationId: refreshOpenFinanceBalance
+  summary: Disparar refresh on-demand do saldo Open Finance
+- name: refresh_open_finance_statement
+  api: bankinghub-open-finance-balance-refresh
+  method: GET
+  path: /{taxId}/banking/accounts/{accountId}/statements/refresh
+  operationId: refreshOpenFinanceStatement
+  summary: Disparar refresh on-demand do extrato Open Finance
+- name: put_fidc_assets_id_by_assetid
+  api: crediflow-ativos-e-cessoes
+  method: PUT
+  path: /fidc/v1/assets/{asset_id}
+  derived_operationId: putFidcAssetsIdByAssetid
+  summary: Corrige os dados de um ativo reprovado na admissão e reprocessa a admissão automaticamente. Rejeitado se o ativo possuir uma cessão ativa (e
+- name: get_fidc_cessions
+  api: crediflow-ativos-e-cessoes
+  method: GET
+  path: /fidc/v1/cessions
+  derived_operationId: getFidcCessions
+  summary: Consulta a situação de uma cessão, retornando os identificadores (externo e interno) e o status atual. A busca é feita por query string, inf
+- name: post_fidc_cessions
+  api: crediflow-ativos-e-cessoes
+  method: POST
+  path: /fidc/v1/cessions
+  derived_operationId: postFidcCessions
+  summary: Cria a cessão do ativo para o fundo, iniciando de forma assíncrona a precificação, elegibilidade, reserva de limite, envio do trade e desemb
+- name: get_fidc_disbursement_groups
+  api: crediflow-ativos-e-cessoes
+  method: GET
+  path: /fidc/v1/disbursement-groups
+  derived_operationId: getFidcDisbursementGroups
+  summary: Consulta um grupo de desembolso, incluindo o status do grupo e os ativos (membros) que o compõem. A busca é feita por query string, informan
+- name: post_fidc_disbursement_groups
+  api: crediflow-ativos-e-cessoes
+  method: POST
+  path: /fidc/v1/disbursement-groups
+  derived_operationId: postFidcDisbursementGroups
+  summary: 'Cria um único grupo de desembolso a partir de um identificador externo e de uma lista de ativos. Todos os ativos enviados devem ter o mesmo '
+- name: get_fidc_assets
+  api: crediflow-ativos-e-cessoes
+  method: GET
+  path: /fidc/v1/assets
+  derived_operationId: getFidcAssets
+  summary: Consulta a situação do ativo na fase de admissão. Não é necessário ter realizado a cessão. A busca é feita por query string, informando exat
+- name: post_fidc_assets
+  api: crediflow-ativos-e-cessoes
+  method: POST
+  path: /fidc/v1/assets
+  derived_operationId: postFidcAssets
+  summary: Cria o ativo e inicia a admissão (busca de contrapartes, validação e elegibilidade) de forma assíncrona. A resposta 202 retorna o identifica
+- name: post_fidc_credit_averbation_by_fund_tax_id
+  api: fidc-consignado-privado
+  method: POST
+  path: /v1/fidc/credit/averbation/{FundTaxId}
+  derived_operationId: postFidcCreditAverbationByFundTaxId
+  summary: Envio do Arquivo de Averbação
+- name: post_fidc_credit_offboarding_by_fund_tax_id
+  api: fidc-consignado-privado
+  method: POST
+  path: /v1/fidc/credit/offboarding/{fundTaxId}
+  derived_operationId: postFidcCreditOffboardingByFundTaxId
+  summary: Envio do arquivo de Desligamento dos Funcionários
+- name: post_fidc_credit_bookkeeping_by_fund_tax_id
+  api: fidc-consignado-privado
+  method: POST
+  path: /v1/fidc/credit/bookkeeping/{fundTaxId}
+  derived_operationId: postFidcCreditBookkeepingByFundTaxId
+  summary: Envio do Arquivo de Escrituração
+- name: get_credit_conciliation_by_credit_conciliation_order_id
+  api: fidc-credit-conciliation
+  method: GET
+  path: /v1/credit-conciliation/{agreementId}/{creditConciliationOrderId}
+  derived_operationId: getCreditConciliationByCreditConciliationOrderId
+  summary: O objetivo dessa rota é a consulta do status de pedido de repasse de pagamentos em lote.
+- name: post_credit_conciliation_by_agreement_id
+  api: fidc-credit-conciliation
+  method: POST
+  path: /v1/credit-conciliation/{agreementId}
+  derived_operationId: postCreditConciliationByAgreementId
+  summary: O objetivo dessa rota é a criação de um novo pedido de repasse de pagamentos em lote.
+- name: create_document
+  api: fidc-document
+  method: POST
+  path: /fidc-loan/v1/document
+  operationId: createDocument
+  summary: Envio de documentos auxiliares da operação de crédito.
+- name: create_eligibility
+  api: fidc-eligibility
+  method: POST
+  path: /fidc-loan/v1/eligibility
+  operationId: createEligibility
+  summary: Esta rota serve para realizar a pré elegibilidade de um credito.
+- name: post_creditengine_customer_evaluation_by_fund_tax_id
+  api: fidc-motor-de-credito
+  method: POST
+  path: /v1/fidc/credit/creditengine/{fundTaxId}/customer/evaluation
+  derived_operationId: postCreditengineCustomerEvaluationByFundTaxId
+  summary: Análise detalhada por cliente específico.
+- name: post_creditengine_customers_evaluation_by_fund_tax_id
+  api: fidc-motor-de-credito
+  method: POST
+  path: /v1/fidc/credit/creditengine/{fundTaxId}/customers/evaluation
+  derived_operationId: postCreditengineCustomersEvaluationByFundTaxId
+  summary: Envio da base de clientes para análise de pré-aprovação
+- name: get_creditengine_customers_evaluation_by_correlation_id
+  api: fidc-motor-de-credito
+  method: GET
+  path: /v1/fidc/credit/creditengine/{fundTaxId}/customers/evaluation/{correlationId}
+  derived_operationId: getCreditengineCustomersEvaluationByCorrelationId
+  summary: Obtenção do retorno da análise de pré-aprovação da base de clientes
+- name: fidc_operation__create_operation
+  api: fidc-operation
+  method: POST
+  path: /fidc-loan/v1/operation
+  operationId: createOperation
+  summary: Essa rota serve para realizar a cessão de crédito ou emprestimo.
+- name: get_fidc_loan_settlement_by_settlement_id
+  api: fidc-payment
+  method: GET
+  path: /fidc-loan/v1/settlement/{settlementId}
+  derived_operationId: getFidcLoanSettlementBySettlementId
+  summary: O objetivo dessa rota é pesquisar um pedido de pagamento previamente cadastrado.
+- name: post_fidc_loan_settlement
+  api: fidc-payment
+  method: POST
+  path: /fidc-loan/v1/settlement
+  derived_operationId: postFidcLoanSettlement
+  summary: O objetivo desta rota é cadastrar um pedido de pagamento de crédito.
+- name: cancel_portability
+  api: fidc-portability
+  method: POST
+  path: /fidc-loan/v1/portabilities/{portabilityId}/cancel
+  operationId: cancelPortability
+  summary: Cancelamento de uma portabilidade out a partir de um pedido existente
+- name: confirm_portability
+  api: fidc-portability
+  method: POST
+  path: /fidc-loan/v1/portabilities/{portabilityId}/confirm
+  operationId: confirmPortability
+  summary: Confirmação de uma portabilidade out a partir de um pedido existente
+- name: create_portability
+  api: fidc-portability
+  method: POST
+  path: /fidc-loan/v1/portabilities
+  operationId: createPortability
+  summary: Criação de um pedido de portabilidade out
+- name: post_prepayment_number_confirm_by_contractnumber
+  api: fidc-prepayment
+  method: POST
+  path: /fidc-loan/v1/prepayment/{contract_number}/confirm
+  derived_operationId: postPrepaymentNumberConfirmByContractnumber
+  summary: Essa rota é responsável pela confirmação de uma simulação de pré-pagamento retornando o código de barras do boleto
+- name: get_prepayment_identification_bankslip_by_simulationidentification
+  api: fidc-prepayment
+  method: GET
+  path: /fidc-loan/v1/prepayment/{simulation_identification}/bankslip
+  derived_operationId: getPrepaymentIdentificationBankslipBySimulationidentification
+  summary: O objetivo dessa rota é retornar o boleto de pré pagamento
+- name: get_prepayment_number_balance_by_contractnumber
+  api: fidc-prepayment
+  method: GET
+  path: /fidc-loan/v1/prepayment/{contract_number}/balance
+  derived_operationId: getPrepaymentNumberBalanceByContractnumber
+  summary: O objetivo dessa rota é exibir a posição do contrato.
+- name: post_prepayment_number_simulate_by_contractnumber
+  api: fidc-prepayment
+  method: POST
+  path: /fidc-loan/v1/prepayment/{contract_number}/simulate
+  derived_operationId: postPrepaymentNumberSimulateByContractnumber
+  summary: Essa rota é responsável pela simulação de pré-pagamento, aplicando as regras do fundo para pré-pagamento e retornando o status
+- name: delete_id_agreement_id_by_agreementid
+  api: fidc-renegotiation
+  method: DELETE
+  path: /renegotiation/{customer_tax_id}/agreement/{agreement_id}
+  derived_operationId: deleteIdAgreementIdByAgreementid
+  summary: O objetivo dessa rota é cancelar um acordo de renegociação antes do pagamento da parcela de boa fé
+- name: post_renegotiation_tax_id_by_customertaxid
+  api: fidc-renegotiation
+  method: POST
+  path: /renegotiation/{customer_tax_id}
+  derived_operationId: postRenegotiationTaxIdByCustomertaxid
+  summary: O objetivo dessa rota é confirmar uma renegociação para uma simulação criada
+- name: get_tax_id_campaigns_by_customertaxid
+  api: fidc-renegotiation
+  method: GET
+  path: /renegotiation/{customer_tax_id}/campaigns
+  derived_operationId: getTaxIdCampaignsByCustomertaxid
+  summary: O objetivo dessa rota é consultar as campanhas ativas do(s) contrato(s).
+- name: get_installment_number_bankslip_by_installmentnumber
+  api: fidc-renegotiation
+  method: GET
+  path: /renegotiation/{customer_tax_id}/agreement/{agreement_id}/installment/{installment_number}/bankslip
+  derived_operationId: getInstallmentNumberBankslipByInstallmentnumber
+  summary: O objetivo dessa rota é consultar um boleto por parcela de um acordo de renegociação
+- name: get_tax_id_contracts_by_customertaxid
+  api: fidc-renegotiation
+  method: GET
+  path: /renegotiation/{customer_tax_id}/contracts
+  derived_operationId: getTaxIdContractsByCustomertaxid
+  summary: O objetivo dessa rota é consultar o(s) contrato(s) passivéis de renegociação agrupados por elegibilidade.
+- name: post_tax_id_simulate_by_customertaxid
+  api: fidc-renegotiation
+  method: POST
+  path: /renegotiation/{customer_tax_id}/simulate
+  derived_operationId: postTaxIdSimulateByCustomertaxid
+  summary: O objetivo dessa rota é simular uma renegociação para o(s) contrato(s)
+- name: create_simulation
+  api: fidc-simulation
+  method: POST
+  path: /fidc-loan/v1/simulation
+  operationId: createSimulation
+  summary: Criação de uma simulação usando o simulador com configurações pré estabelecidas via identificador do convênio
+- name: get_wallet
+  api: fidc-wallet
+  method: GET
+  path: /fidc-loan/v1/wallet
+  operationId: getWallet
+  summary: O objetivo dessa rota é pesquisar uma carteira de operações por fundo especifico.
+- name: get_wallet_contract
+  api: fidc-wallet
+  method: GET
+  path: /fidc-loan/v1/contract-wallet
+  operationId: getWalletContract
+  summary: O objetivo dessa rota é pesquisar a carteira de algum contrato ou contraparte especifica.
+- name: post_fidc_loan_warranty
+  api: fidc-warranty
+  method: POST
+  path: /fidc-loan/v1/warranty
+  derived_operationId: postFidcLoanWarranty
+  summary: O objetivo dessa rota é criar uma garantia
+- name: criarlinks3parauploaddearquivo
+  api: files
+  method: POST
+  path: /files
+  operationId: Criar link s3 para upload de arquivo
+  summary: O objetivo dessa rota é fornecer um link pré-assinado temporário do S3 (AWS) para fazer o upload de qualquer arquivo para a plataforma do BT
+- name: post_agent_quote_accept_by_company_tax_id
+  api: hubfx-cambio
+  method: POST
+  path: /{companyTaxId}/cambio/agent/v3/quote/accept
+  derived_operationId: postAgentQuoteAcceptByCompanyTaxId
+  summary: Aceitar cotação.
+- name: apiv3odata_v3_pre_tickets_available_o_data
+  api: hubfx-cambio
+  method: GET
+  path: /{companyTaxId}/cambio/agent/v3/odata/pretickets-available
+  operationId: api/v3/odata/V3PreTicketsAvailableOData
+  summary: Listar pré-tickets disponíveis.
+- name: post_public_institutional_indicative
+  api: hubfx-cambio
+  method: POST
+  path: /cambio/public/institutional/indicative
+  derived_operationId: postPublicInstitutionalIndicative
+  summary: Lista cotações indicativas das principais moedas. É necessário fornecer um token reCAPTCHA válido.
+- name: get_agent_currency_product_by_company_tax_id
+  api: hubfx-cambio
+  method: GET
+  path: /{companyTaxId}/cambio/agent/v3/currency/product
+  derived_operationId: getAgentCurrencyProductByCompanyTaxId
+  summary: Listar as moedas disponíveis por produto.
+- name: get_agent_quote_indicative_by_currency_code
+  api: hubfx-cambio
+  method: GET
+  path: /{companyTaxId}/cambio/agent/v3/quote-indicative/{currencyCode}
+  derived_operationId: getAgentQuoteIndicativeByCurrencyCode
+  summary: Listar cotações indicativas pela moeda.
+- name: get_product_disbursement_days_by_company_tax_id
+  api: hubfx-cambio
+  method: GET
+  path: /{companyTaxId}/cambio/agent/v3/currency/product-disbursement-days
+  derived_operationId: getProductDisbursementDaysByCompanyTaxId
+  summary: Listar os dias disponíveis para desembolso por produto.
+- name: get_cambio_agent_preticket_by_company_tax_id
+  api: hubfx-cambio
+  method: GET
+  path: /{companyTaxId}/cambio/agent/v3/preticket
+  derived_operationId: getCambioAgentPreticketByCompanyTaxId
+  summary: Obter detalhes do pré-ticket.
+- name: post_agent_quote_simulate_by_company_tax_id
+  api: hubfx-cambio
+  method: POST
+  path: /{companyTaxId}/cambio/agent/v3/quote/simulate
+  derived_operationId: postAgentQuoteSimulateByCompanyTaxId
+  summary: Simular cotação.
+- name: get_counterparty_block_status_by_company_tax_id
+  api: hubfx-cambio
+  method: GET
+  path: /{companyTaxId}/cambio/agent/v3/counterparty/block-status
+  derived_operationId: getCounterpartyBlockStatusByCompanyTaxId
+  summary: Verifica se a contraparte está bloqueada.
+- name: post_form_kgiro_start
+  api: kgiro-leads-de-credito
+  method: POST
+  path: /form/kgiro/start
+  derived_operationId: postFormKgiroStart
+  summary: Envio das informações para solicitação de crédito
+- name: get_onboarding_types_address
+  api: onboarding
+  method: GET
+  path: /onboarding/types/address
+  derived_operationId: getOnboardingTypesAddress
+  summary: Obter a lista de estados e cidades
+- name: get_well_known_customers_by_tax_id
+  api: onboarding
+  method: GET
+  path: /apps/{clientId}/.well-known/customers/{taxId}
+  derived_operationId: getWellKnownCustomersByTaxId
+  summary: Obter informações básicas da empresa cliente no parceiro
+- name: get_onboarding_types_profession
+  api: onboarding
+  method: GET
+  path: /onboarding/types/profession
+  derived_operationId: getOnboardingTypesProfession
+  summary: Obter lista de profissões
+- name: get_known_customers_addresses_by_tax_id
+  api: onboarding
+  method: GET
+  path: /apps/{clientId}/.well-known/customers/{taxId}/addresses
+  derived_operationId: getKnownCustomersAddressesByTaxId
+  summary: Obter o endereço informações da empresa cliente no parceiro
+- name: get_known_customers_documents_by_path_suffix
+  api: onboarding
+  method: GET
+  path: /apps/{clientId}/.well-known/customers/{taxId}/documents/{pathSuffix}
+  derived_operationId: getKnownCustomersDocumentsByPathSuffix
+  summary: Obter os a lista de documentos existentes da empresa cliente para download no parceiro
+- name: get_customers_legal_representatives_by_tax_id
+  api: onboarding
+  method: GET
+  path: /apps/{clientId}/.well-known/customers/{taxId}/legal-representatives
+  derived_operationId: getCustomersLegalRepresentativesByTaxId
+  summary: Obter os representantes legais da empresa cliente no parceiro
+- name: get_known_customers_documents_by_tax_id
+  api: onboarding
+  method: GET
+  path: /apps/{clientId}/.well-known/customers/{taxId}/documents
+  derived_operationId: getKnownCustomersDocumentsByTaxId
+  summary: Obter um documento da empresa cliente no parceiro
+- name: cancel_colombia_bordero_receivables
+  api: scf-colombia
+  method: POST
+  path: /borderos/{trackingId}/receivables/cancel
+  operationId: cancelColombiaBorderoReceivables
+  summary: Cancelar facturas de una operación
+- name: create_colombia_bordero
+  api: scf-colombia
+  method: POST
+  path: /borderos
+  operationId: createColombiaBordero
+  summary: Crea una operación con sus facturas en Colombia.
+- name: get_colombia_bordero_receivables
+  api: scf-colombia
+  method: GET
+  path: /borderos/{trackingId}/receivables
+  operationId: getColombiaBorderoReceivables
+  summary: Consultar las facturas de una operación
+- name: get_colombia_payer_limit
+  api: scf-colombia
+  method: GET
+  path: /companies/limit/{payerTaxId}
+  operationId: getColombiaPayerLimit
+  summary: Devuelve el límite total y el límite disponible del pagador informado.
+- name: post_party_natural_person
+  api: scf-financiers-supplier
+  method: POST
+  path: /simple-party/natural-person
+  derived_operationId: postPartyNaturalPerson
+  summary: Criação de um processo de registro, validação, fraudes e compliance de entidade nos sistemas internos do BTG.
+- name: post_simple_party_company
+  api: scf-financiers-supplier
+  method: POST
+  path: /simple-party/company
+  derived_operationId: postSimplePartyCompany
+  summary: Criação de um processo de registro, validação, fraudes e compliance de entidade nos sistemas internos do BTG.
+- name: post_party_natural_person2
+  api: scf-financiers-supplier
+  method: POST
+  path: /complex-party/natural-person
+  derived_operationId: postPartyNaturalPerson2
+  summary: Criação de um processo de registro, validação, fraudes e compliance de entidade nos sistemas internos do BTG.
+- name: post_complex_party_company
+  api: scf-financiers-supplier
+  method: POST
+  path: /complex-party/company
+  derived_operationId: postComplexPartyCompany
+  summary: Criação de um processo de registro, validação, fraudes e compliance de entidade nos sistemas internos do BTG.
+- name: add_companies_to_commercial_strategy_request
+  api: scf-risco-sacado
+  method: POST
+  path: /companies/commercial-strategies
+  operationId: addCompaniesToCommercialStrategyRequest
+  summary: Associação de lote de empresas a uma estratégia comercial.
+- name: cancel_receivables_from_bordero
+  api: scf-risco-sacado
+  method: POST
+  path: /borderos/{trackingId}/receivables-cancellation
+  operationId: cancelReceivablesFromBordero
+  summary: Esta rota serve para cancelar recebíveis de um bordero.
+- name: get_settlements_by_settlement_id
+  api: scf-risco-sacado
+  method: GET
+  path: /settlements/{settlementId}
+  derived_operationId: getSettlementsBySettlementId
+  summary: O objetivo dessa rota é pesquisar um pedido de liquidação previamente cadastrado.
+- name: create_bordero
+  api: scf-risco-sacado
+  method: POST
+  path: /borderos
+  operationId: createBordero
+  summary: Esta rota tem como objetivo criar um bordero para Antecipação de Recebíveis. Você nos enviará os recebíveis dos cedentes ou sacados, informa
+- name: create_company
+  api: scf-risco-sacado
+  method: POST
+  path: /companies/{payerTaxId}/payees
+  operationId: createCompany
+  summary: Esta rota serve para cadastrar novos fornecedores para o sacado.
+- name: create_financier_payer
+  api: scf-risco-sacado
+  method: POST
+  path: /financiers-payer
+  operationId: createFinancierPayer
+  summary: Cadastro simplificado de pagador
+- name: scf_risco_sacado__create_operation
+  api: scf-risco-sacado
+  method: POST
+  path: /operations
+  operationId: createOperation
+  summary: Esta rota serve para criar operações de antecipação com os recebíveis selecionados.
+- name: post_settlements
+  api: scf-risco-sacado
+  method: POST
+  path: /settlements
+  derived_operationId: postSettlements
+  summary: O objetivo dessa rota é cadastrar um pedido de liquidação de recebiveis.
+- name: get_company_by_id
+  api: scf-risco-sacado
+  method: GET
+  path: /companies/{payerTaxId}/payees/{payeeTaxId}
+  operationId: getCompanyById
+  summary: Consulta dos status de onboardings do fornecedor identificado por 'payeeTaxId'.
+- name: get_operation_by_id
+  api: scf-risco-sacado
+  method: GET
+  path: /operations/{operationId}
+  operationId: getOperationById
+  summary: Esta rota serve para consultar uma operação utilizando o 'operationId' retornado na sua criação.
+- name: get_receivables_from_bordero
+  api: scf-risco-sacado
+  method: GET
+  path: /borderos/{trackingId}/receivables
+  operationId: getReceivablesFromBordero
+  summary: 'Esta rota serve para consultar os recebíveis de um bordero a partir do ''trackingId'' retornado na criação. Na resposta, é possível verificar '
+- name: get_trade_by_id
+  api: scf-risco-sacado
+  method: GET
+  path: /trades/{tradeId}
+  operationId: getTradeById
+  summary: O objetivo dessa rota é pesquisar a posição de uma operação especifica realizada anteriormente.
+- name: get_trades
+  api: scf-risco-sacado
+  method: GET
+  path: /trades
+  operationId: getTrades
+  summary: Esta rota serve para consultar a carteira de operações. É obrigatorio o envio das informações do cursor ou do status ou dos tradeIds.
+- name: receivable_files
+  api: scf-risco-sacado
+  method: PUT
+  path: /receivables/files
+  operationId: receivableFiles
+  summary: Esta rota tem como objetivo anexar novos arquivos aos recebíveis indicados.
+- name: post_credit_analysis
+  api: solar-creditanalysis
+  method: POST
+  path: /credit-analysis
+  derived_operationId: postCreditAnalysis
+  summary: Gerar uma análise de crédito
+- name: get_originators
+  api: solar-creditanalysis
+  method: GET
+  path: /originators
+  derived_operationId: getOriginators
+  summary: Verificar se uma determinada empresa está apta a operar o fluxo solar
+- name: post_solar_proposals_accept
+  api: solar-workflow
+  method: POST
+  path: /form/solar/proposals/accept
+  derived_operationId: postSolarProposalsAccept
+  summary: Aceite da proposta
+- name: get_customers_operators_documents_by_external_identification
+  api: solar-workflow
+  method: GET
+  path: /customers/{customerIdentification}/operators/{operatorIdentification}/documents/{externalIdentification}
+  derived_operationId: getCustomersOperatorsDocumentsByExternalIdentification
+  summary: Api para consultar documentos enviados
+- name: post_income_auth_cards
+  api: solar-workflow
+  method: POST
+  path: /form/solar/income-auth-cards
+  derived_operationId: postIncomeAuthCards
+  summary: Carta autorização de faturamento dos equipamentos
+- name: post_solar_render_proposals
+  api: solar-workflow
+  method: POST
+  path: /form/solar/render-proposals
+  derived_operationId: postSolarRenderProposals
+  summary: Download da proposta indicativa de Solar
+- name: post_solar_disbursement_receipts
+  api: solar-workflow
+  method: POST
+  path: /form/solar/disbursement-receipts
+  derived_operationId: postSolarDisbursementReceipts
+  summary: Comprovante de desembolso.
+- name: post_notify_email_proposals
+  api: solar-workflow
+  method: POST
+  path: /form/solar/notify-email-proposals
+  derived_operationId: postNotifyEmailProposals
+  summary: Envia proposta indicativa por e-mail
+- name: post_form_solar_invoices
+  api: solar-workflow
+  method: POST
+  path: /form/solar/invoices
+  derived_operationId: postFormSolarInvoices
+  summary: Envio das notas fiscais
+- name: post_solar_invoices_pendencies
+  api: solar-workflow
+  method: POST
+  path: /form/solar/invoices/pendencies
+  derived_operationId: postSolarInvoicesPendencies
+  summary: Envio das notas fiscais pendênciadas
+- name: post_solar_receipts_installation
+  api: solar-workflow
+  method: POST
+  path: /form/solar/receipts/installation
+  derived_operationId: postSolarReceiptsInstallation
+  summary: Envio do comprovante de instalação
+- name: post_form_solar_start
+  api: solar-workflow
+  method: POST
+  path: /form/solar/start
+  derived_operationId: postFormSolarStart
+  summary: Envio dos dados iniciais
+- name: post_form_solar_documents
+  api: solar-workflow
+  method: POST
+  path: /form/solar/documents
+  derived_operationId: postFormSolarDocuments
+  summary: Envio dos documentos
+- name: post_solar_documents_pendencies
+  api: solar-workflow
+  method: POST
+  path: /form/solar/documents/pendencies
+  derived_operationId: postSolarDocumentsPendencies
+  summary: Envio dos documentos pendênciados
+- name: post_apps_webhooks_secret_by_webhook_id
+  api: webhooks
+  method: POST
+  path: /{companyId}/apps/{appId}/webhooks/{webhookId}/secret
+  derived_operationId: postAppsWebhooksSecretByWebhookId
+  summary: Alterar a secret de um webhook
+- name: patch_apps_webhooks_by_webhook_id
+  api: webhooks
+  method: PATCH
+  path: /{companyId}/apps/{appId}/webhooks/{webhookId}
+  derived_operationId: patchAppsWebhooksByWebhookId
+  summary: Atualizar parcialmente um webhook
+- name: get_apps_webhooks_by_webhook_id
+  api: webhooks
+  method: GET
+  path: /{companyId}/apps/{appId}/webhooks/{webhookId}
+  derived_operationId: getAppsWebhooksByWebhookId
+  summary: Listar o webhook especificado
+- name: delete_apps_webhooks_by_webhook_id
+  api: webhooks
+  method: DELETE
+  path: /{companyId}/apps/{appId}/webhooks/{webhookId}
+  derived_operationId: deleteAppsWebhooksByWebhookId
+  summary: Remover um webhook
+- name: post_apps_webhooks_by_app_id
+  api: webhooks
+  method: POST
+  path: /{companyId}/apps/{appId}/webhooks
+  derived_operationId: postAppsWebhooksByAppId
+  summary: Criar um webhook
+- name: get_apps_webhooks_by_app_id
+  api: webhooks
+  method: GET
+  path: /{companyId}/apps/{appId}/webhooks
+  derived_operationId: getAppsWebhooksByAppId
+  summary: Listar todos os webhooks de um app

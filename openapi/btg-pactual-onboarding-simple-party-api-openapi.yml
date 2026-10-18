@@ -1,0 +1,726 @@
+openapi: 3.2.0
+info:
+  title: SCF-Financiers-Supplier Onboarding Simple-Party API
+  description: Esta API tem a finalidade de cadastrar e atualizar Onboardings de fornecedores (cedentes), tanto no modelo cedente completo quanto no modelo cedente simples.
+  version: 1.0.0
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com/scf/financiers-supplier
+  description: SANDBOX URL
+- url: https://api.empresas.btgpactual.com/scf/financiers-supplier
+  description: PROD URL
+tags:
+- name: Onboarding Simple-Party
+paths:
+  /simple-party/natural-person:
+    post:
+      tags:
+      - Onboarding Simple-Party
+      description: Criação de um processo de registro, validação, fraudes e compliance de entidade nos sistemas internos do BTG.
+      requestBody:
+        description: Dados do fornecedor (cedente simples) — PF ou PJ
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                workflowConfigurationId:
+                  type: string
+                  example: AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE
+                  description: Identificador da configuração de workflow de cedente para o determinado parceiro externo
+                name:
+                  type: string
+                  example: Old John
+                  description: Nome do cedente
+                identification:
+                  type: string
+                  example: '15996430000182'
+                  description: CPF ou CNPJ
+                birthDate:
+                  type: string
+                  format: date
+                  description: Data de nascimento ou fundação
+                phoneNumber:
+                  type: string
+                  description: Número de telefone
+                  example: +55 (11) 99999-0000
+                phoneNumberType:
+                  type: string
+                  enum:
+                  - PESSOAL
+                  - COMERCIAL
+                  - RESIDENCIAL
+                  - OUTROS
+                  description: Tipo do número de telefone
+                  example: COMERCIAL
+                emailAddress:
+                  type: string
+                  example: oldjohn@btgpactual.com
+                  description: Endereço de e-mail
+                emailAddressType:
+                  type: string
+                  enum:
+                  - PARTICULAR
+                  - COMERCIAL
+                  - OUTROS
+                  example: PARTICULAR
+                  description: Tipo do endereço de e-mail
+                addresses:
+                  type: array
+                  description: Informações de endereço
+                  items:
+                    type: object
+                    properties:
+                      countryCode:
+                        type: string
+                        example: BR
+                      countryName:
+                        type: string
+                        example: Brazil
+                      stateCode:
+                        type: string
+                        example: SP
+                      stateName:
+                        type: string
+                        example: São Paulo
+                      cityName:
+                        type: string
+                        example: São Paulo
+                      zipCode:
+                        type: string
+                        example: 04538133
+                      street:
+                        type: string
+                        example: Av. Brg. Faria Lima
+                      number:
+                        type: string
+                        example: '777'
+                      complement:
+                        type: string
+                        example: 19º andar
+                      type:
+                        type: string
+                        enum:
+                        - INDEFINIDO
+                        - RESIDENCIAL
+                        - COMERCIAL
+                        - OUTROS
+                        - NATURALIDADE
+                        example: RESIDENCIAL
+                      neighborhood:
+                        type: string
+                        example: Itaim Bibi
+                documents:
+                  type: array
+                  description: Informações de documentos
+                  items:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                        - IDENTIFICACAO
+                        - BIOMETRIA
+                        - CONTRATO_SOCIAL
+                        - ATA_ELEICAO
+                      subtype:
+                        type:
+                        - string
+                        - 'null'
+                        enum:
+                        - CNH
+                        - SELFIE
+                        description: O subtipo só é necessário quando o tipo for identidade.
+                      identificationNumber:
+                        type:
+                        - string
+                        - 'null'
+                        example: '15996430000182'
+                        description: Número de identidade, como o número do RG, CPF ou CNH.
+                      files:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              example: cnh.pdf
+                              description: Nome do arquivo
+                            key:
+                              type:
+                              - string
+                              - 'null'
+                              example: 8102368d-672c-4f31-ab51-c17c07fac001
+                              description: Chave do arquivo enviado (opcional)
+                            extension:
+                              type: string
+                              example: pdf
+                              enum:
+                              - pdf
+                              - jpg
+                              - jpeg
+                              - docx
+                              - doc
+                              - png
+                              - jfif
+                              - ai
+                              description: Extensão do arquivo
+                            url:
+                              type: string
+                              example: https://pme-files-uat.s3.sa-east-1.amazonaws.com/8102368d-672c-4f31-ab51-c17c07fac001
+                              description: URL do arquivo enviado
+                            pageType:
+                              type: string
+                              enum:
+                              - MULTI_PAGINAS
+                              - FRENTE
+                              - VERSO
+                              - COMPLETO
+                              description: Orientação do tipo de paginação do arquivo
+                spouse:
+                  type:
+                  - object
+                  - 'null'
+                  properties:
+                    identification:
+                      type: string
+                      example: '00000000000'
+                      description: Identificação do cônjuge, como CPF ou RG (em casos de cedente PF).
+                    name:
+                      type: string
+                      example: Izaura Gouveia
+                      description: Nome do cônjuge
+                    document:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          enum:
+                          - IDENTIFICACAO
+                          - COMPROVANTE_DE_RESIDENCIA
+                          - INDEFINIDO
+                          - BIOMETRIA
+                          - CERTIDAO_DE_CASAMENTO
+                          description: Documento do cônjuge
+                        subType:
+                          type:
+                          - string
+                          - 'null'
+                          enum:
+                          - INDEFINIDO
+                          - CNH
+                          - RG
+                          - RNE
+                          - SELFIE
+                          - PASSAPORTE
+                          - RNM
+                          description: Tipo específico do documento do cônjuge, caso este documento seja de identidade.
+                        identificationNumber:
+                          type: string
+                          example: '00000000000'
+                          description: Número de identificação do cônjuge, como CPF ou RG
+                        files:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                                description: Nome do arquivo do cônjuge
+                                example: cnhConjuge.jpeg
+                              key:
+                                type:
+                                - string
+                                - 'null'
+                                description: Chave do arquivo do cônjuge (opcional)
+                                example: 8102368d-672c-4f31-ab51-c17c07fac001
+                              extension:
+                                type: string
+                                example: pdf
+                                enum:
+                                - pdf
+                                - jpg
+                                - jpeg
+                                - docx
+                                - doc
+                                - png
+                                - jfif
+                                - ai
+                                description: Extensão do arquivo do cônjuge
+                              url:
+                                type: string
+                                example: https://pme-files-uat.s3.sa-east-1.amazonaws.com/8102368d-672c-4f31-ab51-c17c07fac001
+                                description: URL do arquivo enviado do cônjuge
+                              pageType:
+                                type: string
+                                enum:
+                                - MULTI_PAGINAS
+                                - FRENTE
+                                - VERSO
+                                - COMPLETO
+                                description: Orientação do tipo de paginação do arquivo
+                maritalStatus:
+                  type:
+                  - string
+                  - 'null'
+                  enum:
+                  - INDEFINIDO
+                  - CASADO
+                  - DIVORCIADO
+                  - SEPARADO_JUDICIALMENTE
+                  - SOLTEIRO
+                  - UNIAO_ESTAVEL
+                  - VIUVO
+                  example: SOLTEIRO
+                  description: Estado civil do cedente (em casos de cedente pessoa física)
+                propertyRegime:
+                  type:
+                  - string
+                  - 'null'
+                  enum:
+                  - INDEFINIDO
+                  - COMUNHAO_PARCIAL
+                  - COMUNHAO_TOTAL
+                  - PARTICIPACAO_AQUESTOS
+                  - SEPARACAO_TOTAL
+                  example: COMUNHAO_TOTAL
+                  description: Regime de bens do fornecedor (em casos de fornecedor PF)
+                integrationType:
+                  type: string
+                  enum:
+                  - TOMADOR_DE_CREDITO
+                  - CEDENTE_COMPLETO
+                  - CEDENTE_SIMPLES
+                  - SACADO_SIMPLES
+                  - SACADO_SIMPLES_ROLLOUT
+                  - AVALISTA
+                  - CONSIGNADO
+                  - SPOUSE
+                  example: CEDENTE_SIMPLES
+                  description: Tipo de relacionamento (sempre CEDENTE_SIMPLES, nesse caso!).
+                legalPersonality:
+                  type: string
+                  enum:
+                  - PF
+                  - PJ
+                  example: PF
+                  description: Tipo de personalidade legal do fornecedor, seja pessoa física ou pessoa jurídica.
+        required: true
+      responses:
+        '201':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  onboardingId:
+                    description: Mensagem de sucesso
+                    example: 17bad3f8-22db-4ef9-91c1-10d346d9971e
+        '400':
+          description: Erros de validação
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  isInternal:
+                    type: boolean
+                    example: false
+                    description: Indica se foi um erro interno da aplicação
+                  errorType:
+                    type: string
+                    example: ValidationException
+                    description: Tipo do erro recebido
+                  failures:
+                    type: array
+                    description: Os erros que aconteceram na requisição
+                    items:
+                      type: object
+                      properties:
+                        fieldName:
+                          type: string
+                          example: Identification
+                          description: Nome do campo enviado em que o erro de validação foi encontrado
+                        errorCode:
+                          type: string
+                          example: SCFDEV_CEDENTE_COMPLETO_010
+                          description: O Código do erro que ocorreu
+                        errorMessage:
+                          type: string
+                          example: A Descrição do erro que ocorreu
+                          description: Nome do campo enviado em que o erro de validação foi encontrado
+        '401':
+          description: Não autorizado
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/payer-register
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/SCF-Financiers-Supplier/registro-de-entidades-de-cedente-simples-pf
+      summary: Create simple party natural person
+      x-summary-source: derived
+      operationId: postSimplePartyNaturalPerson
+      x-operation-id-source: derived
+  /simple-party/company:
+    post:
+      tags:
+      - Onboarding Simple-Party
+      description: Criação de um processo de registro, validação, fraudes e compliance de entidade nos sistemas internos do BTG.
+      requestBody:
+        description: Dados do fornecedor (cedente simples) — PF ou PJ
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                workflowConfigurationId:
+                  type: string
+                  example: AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE
+                  description: Identificador da configuração de workflow de cedente para o determinado parceiro externo
+                name:
+                  type: string
+                  example: Old John
+                  description: Nome do cedente
+                identification:
+                  type: string
+                  example: '15996430000182'
+                  description: CPF ou CNPJ
+                birthDate:
+                  type: string
+                  format: date
+                  description: Data de nascimento ou fundação
+                phoneNumber:
+                  type: string
+                  description: Número de telefone
+                  example: +55 (11) 99999-0000
+                phoneNumberType:
+                  type: string
+                  enum:
+                  - PESSOAL
+                  - COMERCIAL
+                  - RESIDENCIAL
+                  - OUTROS
+                  description: Tipo do número de telefone
+                  example: COMERCIAL
+                emailAddress:
+                  type: string
+                  example: oldjohn@btgpactual.com
+                  description: Endereço de e-mail
+                emailAddressType:
+                  type: string
+                  enum:
+                  - PARTICULAR
+                  - COMERCIAL
+                  - OUTROS
+                  example: PARTICULAR
+                  description: Tipo do endereço de e-mail
+                addresses:
+                  type: array
+                  description: Informações de endereço
+                  items:
+                    type: object
+                    properties:
+                      countryCode:
+                        type: string
+                        example: BR
+                      countryName:
+                        type: string
+                        example: Brazil
+                      stateCode:
+                        type: string
+                        example: SP
+                      stateName:
+                        type: string
+                        example: São Paulo
+                      cityName:
+                        type: string
+                        example: São Paulo
+                      zipCode:
+                        type: string
+                        example: 04538133
+                      street:
+                        type: string
+                        example: Av. Brg. Faria Lima
+                      number:
+                        type: string
+                        example: '777'
+                      complement:
+                        type: string
+                        example: 19º andar
+                      type:
+                        type: string
+                        enum:
+                        - INDEFINIDO
+                        - RESIDENCIAL
+                        - COMERCIAL
+                        - OUTROS
+                        - NATURALIDADE
+                        example: RESIDENCIAL
+                      neighborhood:
+                        type: string
+                        example: Itaim Bibi
+                documents:
+                  type: array
+                  description: Informações de documentos
+                  items:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                        - IDENTIFICACAO
+                        - BIOMETRIA
+                        - CONTRATO_SOCIAL
+                        - ATA_ELEICAO
+                      subtype:
+                        type:
+                        - string
+                        - 'null'
+                        enum:
+                        - CNH
+                        - SELFIE
+                        description: O subtipo só é necessário quando o tipo for identidade.
+                      identificationNumber:
+                        type:
+                        - string
+                        - 'null'
+                        example: '15996430000182'
+                        description: Número de identidade, como o número do RG, CPF ou CNH.
+                      files:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              example: cnh.pdf
+                              description: Nome do arquivo
+                            key:
+                              type:
+                              - string
+                              - 'null'
+                              example: 8102368d-672c-4f31-ab51-c17c07fac001
+                              description: Chave do arquivo enviado (opcional)
+                            extension:
+                              type: string
+                              example: pdf
+                              enum:
+                              - pdf
+                              - jpg
+                              - jpeg
+                              - docx
+                              - doc
+                              - png
+                              - jfif
+                              - ai
+                              description: Extensão do arquivo
+                            url:
+                              type: string
+                              example: https://pme-files-uat.s3.sa-east-1.amazonaws.com/8102368d-672c-4f31-ab51-c17c07fac001
+                              description: URL do arquivo enviado
+                            pageType:
+                              type: string
+                              enum:
+                              - MULTI_PAGINAS
+                              - FRENTE
+                              - VERSO
+                              - COMPLETO
+                              description: Orientação do tipo de paginação do arquivo
+                spouse:
+                  type:
+                  - object
+                  - 'null'
+                  properties:
+                    identification:
+                      type: string
+                      example: '00000000000'
+                      description: Identificação do cônjuge, como CPF ou RG (em casos de cedente PF).
+                    name:
+                      type: string
+                      example: Izaura Gouveia
+                      description: Nome do cônjuge
+                    document:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          enum:
+                          - IDENTIFICACAO
+                          - COMPROVANTE_DE_RESIDENCIA
+                          - INDEFINIDO
+                          - BIOMETRIA
+                          - CERTIDAO_DE_CASAMENTO
+                          description: Documento do cônjuge
+                        subType:
+                          type:
+                          - string
+                          - 'null'
+                          enum:
+                          - INDEFINIDO
+                          - CNH
+                          - RG
+                          - RNE
+                          - SELFIE
+                          - PASSAPORTE
+                          - RNM
+                          description: Tipo específico do documento do cônjuge, caso este documento seja de identidade.
+                        identificationNumber:
+                          type: string
+                          example: '00000000000'
+                          description: Número de identificação do cônjuge, como CPF ou RG
+                        files:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                                description: Nome do arquivo do cônjuge
+                                example: cnhConjuge.jpeg
+                              key:
+                                type:
+                                - string
+                                - 'null'
+                                description: Chave do arquivo do cônjuge (opcional)
+                                example: 8102368d-672c-4f31-ab51-c17c07fac001
+                              extension:
+                                type: string
+                                example: pdf
+                                enum:
+                                - pdf
+                                - jpg
+                                - jpeg
+                                - docx
+                                - doc
+                                - png
+                                - jfif
+                                - ai
+                                description: Extensão do arquivo do cônjuge
+                              url:
+                                type: string
+                                example: https://pme-files-uat.s3.sa-east-1.amazonaws.com/8102368d-672c-4f31-ab51-c17c07fac001
+                                description: URL do arquivo enviado do cônjuge
+                              pageType:
+                                type: string
+                                enum:
+                                - MULTI_PAGINAS
+                                - FRENTE
+                                - VERSO
+                                - COMPLETO
+                                description: Orientação do tipo de paginação do arquivo
+                maritalStatus:
+                  type:
+                  - string
+                  - 'null'
+                  enum:
+                  - INDEFINIDO
+                  - CASADO
+                  - DIVORCIADO
+                  - SEPARADO_JUDICIALMENTE
+                  - SOLTEIRO
+                  - UNIAO_ESTAVEL
+                  - VIUVO
+                  example: SOLTEIRO
+                  description: Estado civil do cedente (em casos de cedente pessoa física)
+                propertyRegime:
+                  type:
+                  - string
+                  - 'null'
+                  enum:
+                  - INDEFINIDO
+                  - COMUNHAO_PARCIAL
+                  - COMUNHAO_TOTAL
+                  - PARTICIPACAO_AQUESTOS
+                  - SEPARACAO_TOTAL
+                  example: COMUNHAO_TOTAL
+                  description: Regime de bens do fornecedor (em casos de fornecedor PF)
+                integrationType:
+                  type: string
+                  enum:
+                  - TOMADOR_DE_CREDITO
+                  - CEDENTE_COMPLETO
+                  - CEDENTE_SIMPLES
+                  - SACADO_SIMPLES
+                  - SACADO_SIMPLES_ROLLOUT
+                  - AVALISTA
+                  - CONSIGNADO
+                  - SPOUSE
+                  example: CEDENTE_SIMPLES
+                  description: Tipo de relacionamento (sempre CEDENTE_SIMPLES, nesse caso!).
+                legalPersonality:
+                  type: string
+                  enum:
+                  - PF
+                  - PJ
+                  example: PF
+                  description: Tipo de personalidade legal do fornecedor, seja pessoa física ou pessoa jurídica.
+        required: true
+      responses:
+        '201':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  onboardingId:
+                    description: Mensagem de sucesso
+                    example: 17bad3f8-22db-4ef9-91c1-10d346d9971e
+        '400':
+          description: Erros de validação
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  isInternal:
+                    type: boolean
+                    example: false
+                    description: Indica se foi um erro interno da aplicação
+                  errorType:
+                    type: string
+                    example: ValidationException
+                    description: Tipo do erro recebido
+                  failures:
+                    type: array
+                    description: Os erros que aconteceram na requisição
+                    items:
+                      type: object
+                      properties:
+                        fieldName:
+                          type: string
+                          example: Identification
+                          description: Nome do campo enviado em que o erro de validação foi encontrado
+                        errorCode:
+                          type: string
+                          example: SCFDEV_CEDENTE_COMPLETO_010
+                          description: O Código do erro que ocorreu
+                        errorMessage:
+                          type: string
+                          example: A Descrição do erro que ocorreu
+                          description: Nome do campo enviado em que o erro de validação foi encontrado
+        '401':
+          description: Não autorizado
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/payer-register
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/SCF-Financiers-Supplier/registro-de-entidades-de-cedente-simples-pj
+      summary: Create simple party company
+      x-summary-source: derived
+      operationId: postSimplePartyCompany
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+          scopes:
+            empresas.btgpactual.com/payer-register: Scope to register payer entities
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/1139c1e9.6c844b16.js
+  - https://developers.empresas.btgpactual.com/assets/js/776b4dc4.8127649f.js
+  - https://developers.empresas.btgpactual.com/assets/js/57b8cf18.a6e8fafb.js
+  - https://developers.empresas.btgpactual.com/assets/js/df115a22.86f57891.js

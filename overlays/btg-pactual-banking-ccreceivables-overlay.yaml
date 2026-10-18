@@ -1,0 +1,47 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist overlay for Banking - CCReceivables
+  version: 1.0.0
+extends: ../openapi/_original/btg-pactual-banking-ccreceivables-openapi.yml
+x-generated: '2026-10-18'
+x-method: generated
+x-source: openapi/btg-pactual-banking-ccreceivables-openapi.yml
+x-rationale: Adds provenance metadata and, where the BTG Pactual contract omits them, derived operationIds (method + path) so MCP candidate tools can bind to stable names. The original OpenAPI is not mutated.
+actions:
+- target: $.info
+  description: Record API Evangelist provenance for this BTG Pactual Empresas contract.
+  update:
+    x-apievangelist-provider: btg-pactual
+    x-apievangelist-source: openapi/btg-pactual-banking-ccreceivables-openapi.yml
+- target: $.paths['/{companyId}/credit/credit-card-receivables/allowed-actions'].get
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: getReceivablesAllowedActionsByCompanyId
+- target: $.paths['/{companyId}/credit/credit-card-receivables/operation'].post
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: postCardReceivablesOperationByCompanyId
+- target: $.paths['/{companyId}/credit/credit-card-receivables'].post
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: postCreditCardReceivablesByCompanyId
+- target: $.paths['/{companyId}/credit/credit-card-receivables'].get
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: getCreditCardReceivablesByCompanyId
+- target: $.paths['/{companyId}/credit/credit-card-receivables/operation/{id}'].get
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: getCardReceivablesOperationById
+- target: $.paths['/{companyId}/credit/credit-card-receivables/operation-pool'].get
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: getReceivablesOperationPoolByCompanyId
+- target: $.paths['/{companyId}/credit/credit-card-receivables/balance-summary'].get
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: getReceivablesBalanceSummaryByCompanyId
+- target: $.paths['/{companyId}/credit/credit-card-receivables/disbursement-accounts'].get
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: getReceivablesDisbursementAccountsByCompanyId

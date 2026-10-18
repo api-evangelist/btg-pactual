@@ -1,0 +1,103 @@
+openapi: 3.2.0
+info:
+  title: HUBFX - Cambio Cotação API
+  description: Esta API tem a finalidade de operar câmbio
+  version: '1.0'
+  contact:
+    name: Time BTG Empresas Câmbio
+    email: ol-it-btgempresas-tradefinance@btgpactual.com
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com
+  description: Sandbox
+- url: https://api.empresas.btgpactual.com
+  description: Prod
+tags:
+- name: Cotação
+paths:
+  /cambio/public/institutional/indicative:
+    post:
+      tags:
+      - Cotação
+      description: Lista cotações indicativas das principais moedas. É necessário fornecer um token reCAPTCHA válido.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                recaptcha:
+                  type:
+                  - string
+                  - 'null'
+              additionalProperties: false
+              title: PublicQuoteInstitutionalCommand
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    quoteCurrency:
+                      type:
+                      - string
+                      - 'null'
+                      deprecated: true
+                    quoteCurrencyCode:
+                      type:
+                      - string
+                      - 'null'
+                    quoteCurrencyName:
+                      type:
+                      - string
+                      - 'null'
+                    quoteCurrencyURL:
+                      type:
+                      - string
+                      - 'null'
+                    quoteCurrencyLocale:
+                      type:
+                      - string
+                      - 'null'
+                    baseCurrency:
+                      type:
+                      - string
+                      - 'null'
+                    price:
+                      type: number
+                      format: double
+                    flowType:
+                      type:
+                      - string
+                      - 'null'
+                    openingPrice:
+                      type: number
+                      format: double
+                    delta:
+                      type: number
+                      format: double
+                  additionalProperties: false
+                  title: PublicQuoteInstitutionalResponse
+        '401':
+          description: Unauthorized
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/HUBFX%20-%20Cambio/lista-cotacoes-indicativas-das-principais-moedas
+      summary: Create cambio public institutional indicative
+      x-summary-source: derived
+      operationId: postCambioPublicInstitutionalIndicative
+      x-operation-id-source: derived
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/ceec802a.f19752b1.js
+  - https://developers.empresas.btgpactual.com/assets/js/a92826e8.329c0771.js
+  - https://developers.empresas.btgpactual.com/assets/js/ac9f22e5.1792029c.js
+  - https://developers.empresas.btgpactual.com/assets/js/8c27e9a0.cb0a9bd6.js
+  - https://developers.empresas.btgpactual.com/assets/js/f64e50b9.0f45a2c7.js
+  - https://developers.empresas.btgpactual.com/assets/js/12bac839.9e48f580.js
+  - https://developers.empresas.btgpactual.com/assets/js/7c834da7.42e70835.js
+  - https://developers.empresas.btgpactual.com/assets/js/be0c05bf.7fa65ea5.js
+  - https://developers.empresas.btgpactual.com/assets/js/aca62b8a.82cf769d.js

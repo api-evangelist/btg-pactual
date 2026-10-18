@@ -1,0 +1,25 @@
+generated: '2026-10-18'
+method: none
+source:
+- https://zapier.com/apps/btg-pactual/integrations
+- https://n8n.io/integrations/btg-pactual/
+- https://composio.dev/toolkits/btg-pactual
+- https://monid.ai/tools/btg-pactual
+checked:
+- https://composio.dev/toolkits/btg-pactual
+- https://developers.empresas.btgpactual.com
+- https://developers.empresas.btgpactual.com/docs/starting-doc/Iniciando sua integração/Softwares Homologados
+- https://make.com/en/integrations/btg-pactual
+- https://monid.ai/tools/btg-pactual
+- https://n8n.io/integrations/btg-pactual
+- https://n8n.io/integrations/btg-pactual/
+- https://workato.com/integrations/btg-pactual
+- https://zapier.com/apps/btg-pactual
+- https://zapier.com/apps/btg-pactual/integrations
+summary: null
+marketplace_apps: []
+edges: []
+templates: []
+note: No integration marketplace listings found for BTG Pactual. The provider has a "Softwares Homologados" (certified
+  software) page but it lists software that integrates WITH BTG Pactual rather than partnerships BTG Pactual has
+  with other services.

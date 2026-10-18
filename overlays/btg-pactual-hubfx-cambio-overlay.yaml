@@ -1,0 +1,47 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist overlay for HUBFX - Cambio
+  version: 1.0.0
+extends: ../openapi/_original/btg-pactual-hubfx-cambio-openapi.yml
+x-generated: '2026-10-18'
+x-method: generated
+x-source: openapi/btg-pactual-hubfx-cambio-openapi.yml
+x-rationale: Adds provenance metadata and, where the BTG Pactual contract omits them, derived operationIds (method + path) so MCP candidate tools can bind to stable names. The original OpenAPI is not mutated.
+actions:
+- target: $.info
+  description: Record API Evangelist provenance for this BTG Pactual Empresas contract.
+  update:
+    x-apievangelist-provider: btg-pactual
+    x-apievangelist-source: openapi/btg-pactual-hubfx-cambio-openapi.yml
+- target: $.paths['/{companyTaxId}/cambio/agent/v3/quote/accept'].post
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: postAgentQuoteAcceptByCompanyTaxId
+- target: $.paths['/cambio/public/institutional/indicative'].post
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: postPublicInstitutionalIndicative
+- target: $.paths['/{companyTaxId}/cambio/agent/v3/currency/product'].get
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: getAgentCurrencyProductByCompanyTaxId
+- target: $.paths['/{companyTaxId}/cambio/agent/v3/quote-indicative/{currencyCode}'].get
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: getAgentQuoteIndicativeByCurrencyCode
+- target: $.paths['/{companyTaxId}/cambio/agent/v3/currency/product-disbursement-days'].get
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: getProductDisbursementDaysByCompanyTaxId
+- target: $.paths['/{companyTaxId}/cambio/agent/v3/preticket'].get
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: getCambioAgentPreticketByCompanyTaxId
+- target: $.paths['/{companyTaxId}/cambio/agent/v3/quote/simulate'].post
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: postAgentQuoteSimulateByCompanyTaxId
+- target: $.paths['/{companyTaxId}/cambio/agent/v3/counterparty/block-status'].get
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: getCounterpartyBlockStatusByCompanyTaxId

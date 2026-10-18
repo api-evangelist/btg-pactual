@@ -1,0 +1,362 @@
+openapi: 3.2.0
+info:
+  title: FIDC Prepayment API
+  version: '1.0'
+  description: Esta documentação tem a finalidade de instruir parceiros a utilização das APIs de credit as a service. Para autenticação é necessário a utilização do fluxo de client credentials de acordo com o menu `Authentication -> Fluxos de Autenticação -> Client Credentials`
+  termsOfService: https://www.btgpactual.com/empresas/termos-e-politicas/
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com
+  description: Sandbox
+- url: https://api.empresas.btgpactual.com
+  description: Produção
+tags:
+- name: Prepayment
+paths:
+  /fidc-loan/v1/prepayment/{contract_number}/confirm:
+    post:
+      tags:
+      - Prepayment
+      description: Essa rota é responsável pela confirmação de uma simulação de pré-pagamento retornando o código de barras do boleto
+      parameters:
+      - in: path
+        name: contract_number
+        description: Identificação do contrato
+        required: true
+        schema:
+          type: string
+          description: Identificador do contrato
+          example: 6764459321/EP
+          title: ContractIdentificationSchema
+      requestBody:
+        description: Informações de confirmação de renegociação
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                simulation_identification:
+                  type: string
+                  description: Identificador da simulação de pré-pagamento
+                  example: FDA4162DA3999EB0570307A7356110F5-638101491065224458
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  barcode_number:
+                    type: string
+                    description: Código de barras para pagamento
+                    example: 2.0890001091e+46
+                title: PrepaymentConfirmationSchema
+        '400':
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: Código de erro
+                    example: Unexpected error
+                  message:
+                    type: string
+                    description: Descrição do erro
+                    example: Erro no inesperado no processamento
+                title: ContractPositionErrorSchema
+        '401':
+          description: Não autorizado
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/prepayments
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/FIDC%20-%20Prepayment/confirmar-uma-simulacao-de-pre-pagamento
+      summary: Create fidc loan prepayment by contract number confirm
+      x-summary-source: derived
+      operationId: postFidcLoanV1PrepaymentByContractNumberConfirm
+      x-operation-id-source: derived
+  /fidc-loan/v1/prepayment/{simulation_identification}/bankslip:
+    get:
+      tags:
+      - Prepayment
+      description: O objetivo dessa rota é retornar o boleto de pré pagamento
+      parameters:
+      - in: path
+        name: simulation_identification
+        description: Identificador da simulação de pré pagamento
+        required: true
+        schema:
+          type: string
+          example: FDA4162DA3999EB0570307A7356110F5-638101491065224458
+          description: Identificador da simulação do pré pagamento
+          title: SimulationIdentificationSchema
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: string
+                format: base64
+                description: Boleto
+                title: PrepaymentBankslipSchema
+        '400':
+          description: Erro
+          content:
+            text/plain:
+              schema:
+                type: string
+                description: Mensagem de Erro
+                example: Erro ao baixar o boleto
+                title: PrepaymentBankslipErrorSchema
+        '401':
+          description: Não autorizado
+        '404':
+          description: Erro
+          headers:
+            X-Retry-After:
+              description: Indica quanto tempo em segundos é aconselhável que o cliente aguarde para fazer uma nova tentativa
+              schema:
+                type: number
+                example: 180
+          content:
+            text/plain:
+              schema:
+                type: string
+                description: Mensagem de Erro
+                example: Boleto não encontrado
+                title: PrepaymentBankslipNotFoundSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/prepayments
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/FIDC%20-%20Prepayment/consultar-o-boleto-de-pre-pagamento
+      summary: Get fidc loan prepayment by simulation identification bankslip
+      x-summary-source: derived
+      operationId: getFidcLoanV1PrepaymentBySimulationIdentificationBankslip
+      x-operation-id-source: derived
+  /fidc-loan/v1/prepayment/{contract_number}/balance:
+    get:
+      tags:
+      - Prepayment
+      description: O objetivo dessa rota é exibir a posição do contrato.
+      parameters:
+      - in: path
+        name: contract_number
+        description: Identificação do contrato
+        required: true
+        schema:
+          type: string
+          description: Identificador do contrato
+          example: 6764459321/EP
+          title: ContractIdentificationSchema
+      - in: query
+        name: fund_tax_id
+        description: Identificação do fundo
+        required: true
+        schema:
+          type: string
+          example: '15996430000182'
+          description: CNPJ/CPF
+          title: TaxIdSchema
+      - in: query
+        name: position_date
+        description: Data da posição (default dia atual)
+        required: false
+        schema:
+          type: string
+          example: '2023-09-14T00:00:00'
+          description: Data de vencimento
+          title: PositionDateSchema
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    amortization_type:
+                      type: string
+                      description: Tipo de amortização
+                      example: InstallmentFlow
+                    balance_date:
+                      type: string
+                      description: Data da posição
+                      example: '2023-08-02 00:00:00'
+                    contract_number:
+                      type: string
+                      description: Identificação do contrato da operação
+                      example: 1247244/HYD
+                    currency:
+                      type: string
+                      description: Moeda
+                      example: BRL
+                    installments:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          amount_at_maturity:
+                            type: number
+                            description: Valor de vencimento da parcela
+                            example: 136.1
+                          curve_value:
+                            type: number
+                            description: Valor da parcela na curva
+                            example: 140.62
+                          discount:
+                            type: number
+                            description: Valor de desconto da parcela
+                            example: 0
+                          installment_number:
+                            type: number
+                            description: Número da parcela
+                            example: 1
+                          principal:
+                            type: number
+                            description: Valor de principal da parcela
+                            example: 117.28
+                          status_description:
+                            type: string
+                            description: Status da parcela
+                            example: Opened
+                    is_vnp:
+                      type: boolean
+                      description: Indicador se o contrato está inadimplente
+                      example: true
+                    position_date:
+                      type: string
+                      description: Data da posição
+                      example: '2023-08-02 00:00:00'
+                    trade_id:
+                      type: string
+                      description: Identificador do trade
+                      example: 11266246
+                  title: BalanceSchema
+        '400':
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: Código de erro
+                    example: Unexpected error
+                  message:
+                    type: string
+                    description: Descrição do erro
+                    example: Erro no inesperado no processamento
+                title: ContractPositionErrorSchema
+        '401':
+          description: Não autorizado
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/prepayments
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/FIDC%20-%20Prepayment/consultar-posicao-do-credito-por-contrato
+      summary: Get fidc loan prepayment by contract number balance
+      x-summary-source: derived
+      operationId: getFidcLoanV1PrepaymentByContractNumberBalance
+      x-operation-id-source: derived
+  /fidc-loan/v1/prepayment/{contract_number}/simulate:
+    post:
+      tags:
+      - Prepayment
+      description: Essa rota é responsável pela simulação de pré-pagamento, aplicando as regras do fundo para pré-pagamento e retornando o status
+      parameters:
+      - in: path
+        name: contract_number
+        description: Identificação do contrato
+        required: true
+        schema:
+          type: string
+          description: Identificador do contrato
+          example: 6764459321/EP
+          title: ContractIdentificationSchema
+      requestBody:
+        description: Informações da simulação de pré pagamento
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fund_tax_id:
+                  description: Identificador do fundo
+                  type: string
+                  example: 15996430000182
+                installments:
+                  type: array
+                  items:
+                    type: number
+                    description: Número da parcela
+                    example: 1
+                position_date:
+                  description: Data da posição
+                  type: string
+                  example: '2023-08-02 00:00:00'
+        required: true
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  simulation_identification:
+                    type: string
+                    description: Identificador da simulação de pré-pagamento
+                    example: FDA4162DA3999EB0570307A7356110F5-638101491065224458
+                  value_to_pay:
+                    type: number
+                    description: Valor a ser pago
+                    example: 244.18
+                title: PrepaymentSimulateSchema
+        '400':
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: Código de erro
+                    example: Unexpected error
+                  message:
+                    type: string
+                    description: Descrição do erro
+                    example: Erro no inesperado no processamento
+                title: ContractPositionErrorSchema
+        '401':
+          description: Não autorizado
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/prepayments
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/FIDC%20-%20Prepayment/simular-uma-solicitacao-de-pre-pagamento
+      summary: Create fidc loan prepayment by contract number simulate
+      x-summary-source: derived
+      operationId: postFidcLoanV1PrepaymentByContractNumberSimulate
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+          scopes:
+            empresas.btgpactual.com/prepayments: Scope to pre payment
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/1f7f005a.c294a601.js
+  - https://developers.empresas.btgpactual.com/assets/js/3a8ade50.1978c077.js
+  - https://developers.empresas.btgpactual.com/assets/js/71f00634.7e06677e.js
+  - https://developers.empresas.btgpactual.com/assets/js/7315c5a6.8a6a83eb.js

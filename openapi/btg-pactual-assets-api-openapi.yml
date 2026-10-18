@@ -1,0 +1,1220 @@
+openapi: 3.2.0
+info:
+  title: CrediFlow - Ativos e Cessões Assets API
+  description: Esta documentação tem a finalidade de instruir parceiros na utilização das APIs de CrediFlow para criação e acompanhamento de ativos de crédito e suas cessões para um FIDC. Para autenticação é necessária a utilização do fluxo de client credentials de acordo com o menu `Authentication -> Fluxos de Autenticação -> Client Credentials`. O fluxo de negócio (admissão, cessão, grupos de desembolso) está descrito no guia conceitual da API de CrediFlow.
+  version: '1.0'
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com
+  description: Sandbox
+- url: https://api.empresas.btgpactual.com
+  description: Produção
+tags:
+- name: Assets
+paths:
+  /fidc/v1/assets/{asset_id}:
+    put:
+      tags:
+      - Assets
+      description: Corrige os dados de um ativo reprovado na admissão e reprocessa a admissão automaticamente. Rejeitado se o ativo possuir uma cessão ativa (erro CF-38).
+      parameters:
+      - in: path
+        name: asset_id
+        description: Identificador do ativo (retornado na criação)
+        required: true
+        schema:
+          type: string
+          format: uuid
+          example: 0524b1ed-6a78-4f00-8394-543ffcd188f0
+      requestBody:
+        description: Dados corrigidos do ativo. Mesma estrutura da criação, exceto `identification` e `fundTaxId`, que não podem ser alterados.
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+              - type: object
+                description: Dados do ativo (operação de crédito)
+                required:
+                - identification
+                - fundTaxId
+                - draweeIdentification
+                - assignorIdentification
+                - currency
+                - product
+                - operationType
+                - installments
+                properties:
+                  identification:
+                    type: string
+                    description: Identificador externo do ativo, único por fundo. É a chave de idempotência da criação (junto com `fundTaxId`) e o valor usado depois para consultar o motivo de rejeição pela rota `operation-rejection-reason`
+                    example: NOTA-2024-000123
+                  fundTaxId:
+                    type: string
+                    description: CNPJ do fundo que receberá o ativo. Determina qual configuração de fundo será aplicada — ou seja, quais etapas de admissão e cessão serão executadas e com quais regras de validação
+                    example: '15996430000182'
+                  draweeIdentification:
+                    type: string
+                    description: CPF/CNPJ do sacado (devedor da operação). Na etapa de busca de contrapartes da admissão, esse documento é pesquisado no catálogo de participantes; se não for encontrado, o ativo é reprovado
+                    example: '12345678000199'
+                  assignorIdentification:
+                    type: string
+                    description: CPF/CNPJ do cedente (quem vende o ativo ao fundo). Também é validado na busca de contrapartes e usado como favorecido padrão do desembolso da cessão
+                    example: '98765432000188'
+                  currency:
+                    type: string
+                    description: Moeda da operação. Deve corresponder a um valor aceito pela plataforma
+                    example: BRL
+                  product:
+                    type: string
+                    description: Tipo de produto da operação. Define a natureza do ativo — recebível (ex. duplicata) ou empréstimo (ex. CCB) — o que muda os campos exigidos na validação (empréstimos exigem `contract` e `interestRate`). Produtos fora dessas duas categorias são rejeitados (erro CF-33)
+                    example: CCB
+                  operationType:
+                    type: string
+                    description: Tipo da operação de aquisição pretendida para o ativo (ex. cessão). Usado na validação e repassado no registro do trade
+                    example: Cession
+                  warrantiesId:
+                    type:
+                    - string
+                    - 'null'
+                    format: uuid
+                    description: Identificador do pacote de garantias vinculado ao ativo, quando houver. As garantias são geridas em outro fluxo e apenas referenciadas aqui
+                    example: 5f7d1c1e-3b2a-4c8d-9e6f-0a1b2c3d4e5f
+                  fees:
+                    type:
+                    - array
+                    - 'null'
+                    description: Taxas cobradas na originação do ativo (ex. TAC). São consideradas na composição financeira da operação enviada ao registro
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          description: Categoria da taxa, conforme os tipos aceitos pela plataforma (ex. TAC). Valores fora da lista são reprovados na validação
+                          example: Tac
+                        amount:
+                          type: number
+                          description: Valor monetário da taxa. Deve ser maior ou igual a zero
+                          example: 150
+                      title: FeeSchema
+                  genericIdentifiers:
+                    type:
+                    - array
+                    - 'null'
+                    description: Identificadores adicionais do ativo em sistemas do parceiro (ex. número da nota fiscal). Não afetam o processamento — servem para rastreio e conciliação
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          description: Categoria do identificador, conforme os tipos aceitos pela plataforma (ex. número de nota fiscal)
+                          example: InvoiceNumber
+                        value:
+                          type: string
+                          description: Valor do identificador no sistema de origem. Usado apenas para rastreio e conciliação
+                          example: '000123456'
+                      title: GenericIdentifierSchema
+                  installments:
+                    type: array
+                    description: Cronograma de parcelas do ativo. É a base do fluxo de caixa da operação — usado na validação, na precificação da cessão e no cálculo do valor total do ativo
+                    items:
+                      type: object
+                      properties:
+                        number:
+                          type: number
+                          description: Número sequencial da parcela dentro do cronograma (maior que zero)
+                          example: 1
+                        maturityDate:
+                          type: string
+                          format: date-time
+                          description: Data de vencimento da parcela. A maior data do cronograma define o vencimento final do ativo
+                          example: '2024-12-01T00:00:00'
+                        amount:
+                          type: number
+                          description: Valor de vencimento (face) da parcela, maior que zero. A soma das parcelas em aberto compõe o valor total do ativo usado na precificação
+                          example: 1050
+                        amortizationAmount:
+                          type:
+                          - number
+                          - 'null'
+                          description: Porção da parcela que corresponde a principal (amortização). Junto com juros e impostos, detalha a composição do valor de vencimento
+                          example: 1000
+                        interestAmount:
+                          type:
+                          - number
+                          - 'null'
+                          description: Porção da parcela que corresponde a juros
+                          example: 45
+                        taxAmount:
+                          type:
+                          - number
+                          - 'null'
+                          description: Porção da parcela que corresponde a impostos (ex. IOF)
+                          example: 5
+                        isPaid:
+                          type: boolean
+                          description: Indica se a parcela já foi liquidada pelo devedor. Parcelas pagas não entram no valor cedido — controlam também a obrigatoriedade de `paidAmount` e `paymentDate`
+                          example: false
+                        paidAmount:
+                          type:
+                          - number
+                          - 'null'
+                          description: Valor efetivamente pago da parcela. Obrigatório e maior que zero quando `isPaid` é true; deve ser nulo caso contrário
+                          example: null
+                        paymentDate:
+                          type:
+                          - string
+                          - 'null'
+                          format: date-time
+                          description: Data em que o pagamento ocorreu. Obrigatória (e não futura) quando `isPaid` é true; deve ser nula caso contrário
+                          example: null
+                        startAccrual:
+                          type:
+                          - string
+                          - 'null'
+                          format: date-time
+                          description: Início do período de incidência de juros (accrual) da parcela
+                          example: '2024-06-01T00:00:00'
+                        endAccrual:
+                          type:
+                          - string
+                          - 'null'
+                          format: date-time
+                          description: Fim do período de incidência de juros (accrual) da parcela
+                          example: '2024-12-01T00:00:00'
+                        externalSettlement:
+                          type:
+                          - object
+                          - 'null'
+                          description: Instrução de como o devedor liquida esta parcela (Pix, boleto ou conta bancária). Direciona para onde o pagamento da parcela deve ser feito após a cessão
+                          properties:
+                            type:
+                              type: string
+                              description: Meio de liquidação da parcela. Determina qual dos demais campos deve ser preenchido
+                              example: Pix
+                            bankAccount:
+                              type:
+                              - object
+                              - 'null'
+                              description: Dados de conta bancária, usados como destino de pagamentos (liquidação de parcelas, desembolso da cessão ou liquidação da cessão, conforme o contexto)
+                              properties:
+                                number:
+                                  type: string
+                                  description: Número da conta, sem o dígito verificador
+                                  example: '123456'
+                                digit:
+                                  type: string
+                                  description: Dígito verificador da conta
+                                  example: '7'
+                                bankCode:
+                                  type: string
+                                  description: Código COMPE do banco (3 dígitos)
+                                  example: '208'
+                                agency:
+                                  type: string
+                                  description: Número da agência, sem o dígito
+                                  example: '0001'
+                                digitAgency:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: Dígito verificador da agência, quando houver
+                                  example: '9'
+                              title: BankAccountSchema
+                            pixEmv:
+                              type:
+                              - string
+                              - 'null'
+                              description: Código EMV (copia-e-cola) do Pix, quando o meio de liquidação é Pix
+                              example: 00020126580014br.gov.bcb.pix...
+                            bankslipBarCode:
+                              type:
+                              - string
+                              - 'null'
+                              description: Código de barras do boleto, quando o meio de liquidação é boleto
+                              example: '20890001091000000024918026988206892410000024418'
+                      title: InstallmentSchema
+                  relatedOperations:
+                    type:
+                    - array
+                    - 'null'
+                    description: Referências a outras operações vinculadas a este ativo (ex. operação original em uma renegociação)
+                    items:
+                      type: object
+                      properties:
+                        positionDate:
+                          type: string
+                          format: date-time
+                          description: Data da posição da operação relacionada
+                          example: '2024-06-01T00:00:00'
+                        identification:
+                          type: string
+                          description: Identificador externo da operação relacionada
+                          example: NOTA-2024-000100
+                  interestRate:
+                    allOf:
+                    - type: object
+                      description: Estrutura de taxa de juros. Pode ser puramente fixa (`fixedInterestRate`), atrelada a um indexador (`variableInterestRate`) ou híbrida (fixa + indexador)
+                      properties:
+                        fixedInterestRate:
+                          type:
+                          - number
+                          - 'null'
+                          description: Componente fixo da taxa de juros, em percentual no período da base de accrual
+                          example: 1.99
+                        variableInterestRate:
+                          type:
+                          - object
+                          - 'null'
+                          description: Componente pós-fixado da taxa, atrelado a um indexador de mercado
+                          properties:
+                            indexType:
+                              type: string
+                              description: Indexador de mercado que corrige a taxa (ex. CDI)
+                              example: CDI
+                            rateMultiplier:
+                              type: number
+                              description: Percentual aplicado sobre o indexador (ex. 110 = 110% do CDI). Deve ser maior que zero
+                              example: 110
+                        baseDayCount:
+                          type:
+                          - string
+                          - 'null'
+                          description: Convenção de contagem de dias usada no accrual dos juros (ex. BUS252 = dias úteis, base 252)
+                          example: BUS252
+                      title: InterestRateSchema
+                    description: Taxa de juros remuneratórios do ativo. Obrigatória para empréstimos; usada no accrual do contrato e repassada ao registro do trade
+                  latePaymentInterest:
+                    allOf:
+                    - allOf:
+                      - type: object
+                        description: Estrutura de taxa de juros. Pode ser puramente fixa (`fixedInterestRate`), atrelada a um indexador (`variableInterestRate`) ou híbrida (fixa + indexador)
+                        properties:
+                          fixedInterestRate:
+                            type:
+                            - number
+                            - 'null'
+                            description: Componente fixo da taxa de juros, em percentual no período da base de accrual
+                            example: 1.99
+                          variableInterestRate:
+                            type:
+                            - object
+                            - 'null'
+                            description: Componente pós-fixado da taxa, atrelado a um indexador de mercado
+                            properties:
+                              indexType:
+                                type: string
+                                description: Indexador de mercado que corrige a taxa (ex. CDI)
+                                example: CDI
+                              rateMultiplier:
+                                type: number
+                                description: Percentual aplicado sobre o indexador (ex. 110 = 110% do CDI). Deve ser maior que zero
+                                example: 110
+                          baseDayCount:
+                            type:
+                            - string
+                            - 'null'
+                            description: Convenção de contagem de dias usada no accrual dos juros (ex. BUS252 = dias úteis, base 252)
+                            example: BUS252
+                        title: InterestRateSchema
+                      type: object
+                      description: Encargos aplicados quando o devedor atrasa o pagamento — estende a estrutura de taxa de juros (taxa de atraso e indexador) e acrescenta mora e multa
+                      properties:
+                        arrearsAmount:
+                          type:
+                          - number
+                          - 'null'
+                          description: Percentual de juros de mora incidente por atraso, aplicado pro-rata sobre o valor em aberto
+                          example: 1
+                        penaltyAmount:
+                          type:
+                          - number
+                          - 'null'
+                          description: Percentual de multa aplicado uma única vez sobre o valor em aberto quando a parcela atrasa
+                          example: 2
+                      title: LatePaymentInterestSchema
+                    description: Encargos aplicáveis em caso de atraso do devedor (taxa de atraso, mora e multa). Não afetam o preço da cessão — definem como o ativo remunera após o vencimento
+                  contract:
+                    type:
+                    - object
+                    - 'null'
+                    description: Dados do contrato que formaliza a operação. Obrigatório para empréstimos (ex. CCB); não se aplica a recebíveis
+                    properties:
+                      number:
+                        type: string
+                        description: Número do contrato formalizado
+                        example: 6764459321/EP
+                      formalizationDate:
+                        type: string
+                        format: date-time
+                        description: Data em que o contrato foi formalizado/assinado
+                        example: '2024-05-15T00:00:00'
+                      emissionType:
+                        type: string
+                        description: Forma de emissão do contrato (ex. digital ou física), relevante para o registro
+                        example: Digital
+                title: AssetPayloadSchema
+              description: Mesma estrutura do payload de criação. Os campos `identification` e `fundTaxId` são ignorados — a identidade do ativo não pode ser alterada na correção.
+              title: AssetCorrectionPayloadSchema
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Envelope padrão de resposta da API
+                properties:
+                  trackingId:
+                    type: string
+                    format: uuid
+                    description: Identificador de rastreio da requisição (informe ao suporte em caso de problemas)
+                    example: 8bce6cfc-dcd4-473b-9fae-60ef3f60ec11
+                  succeeded:
+                    type: boolean
+                    description: Indica se a requisição foi bem-sucedida
+                    example: true
+                  message:
+                    type: string
+                    description: Mensagem geral da resposta
+                    example: Request succeeded.
+                  statusCode:
+                    type: number
+                    description: Código HTTP da resposta
+                    example: 200
+                  errors:
+                    type: array
+                    description: Lista de erros (vazia em caso de sucesso)
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          description: Código do erro (consulte a tabela de erros no guia da API)
+                          example: CF-67
+                        message:
+                          type: string
+                          description: Descrição do erro
+                          example: The asset must be Eligible before creating a cession.
+                        field:
+                          type:
+                          - string
+                          - 'null'
+                          description: Campo relacionado ao erro, quando aplicável
+                          example: assetIds
+                      title: ErrorSchema
+                  data:
+                    description: Dados da resposta (nulo em caso de erro)
+                title: ResponseEnvelopeSchema
+        '400':
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Envelope padrão de resposta de erro
+                properties:
+                  trackingId:
+                    type: string
+                    format: uuid
+                    description: Identificador de rastreio da requisição
+                    example: 8bce6cfc-dcd4-473b-9fae-60ef3f60ec11
+                  succeeded:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Unsuccessful request, see errors to get more details.
+                  statusCode:
+                    type: number
+                    example: 422
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          description: Código do erro (consulte a tabela de erros no guia da API)
+                          example: CF-67
+                        message:
+                          type: string
+                          description: Descrição do erro
+                          example: The asset must be Eligible before creating a cession.
+                        field:
+                          type:
+                          - string
+                          - 'null'
+                          description: Campo relacionado ao erro, quando aplicável
+                          example: assetIds
+                      title: ErrorSchema
+                  data:
+                    example: null
+                title: ErrorEnvelopeSchema
+        '401':
+          description: Não autorizado
+        '404':
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Envelope padrão de resposta de erro
+                properties:
+                  trackingId:
+                    type: string
+                    format: uuid
+                    description: Identificador de rastreio da requisição
+                    example: 8bce6cfc-dcd4-473b-9fae-60ef3f60ec11
+                  succeeded:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Unsuccessful request, see errors to get more details.
+                  statusCode:
+                    type: number
+                    example: 422
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          description: Código do erro (consulte a tabela de erros no guia da API)
+                          example: CF-67
+                        message:
+                          type: string
+                          description: Descrição do erro
+                          example: The asset must be Eligible before creating a cession.
+                        field:
+                          type:
+                          - string
+                          - 'null'
+                          description: Campo relacionado ao erro, quando aplicável
+                          example: assetIds
+                      title: ErrorSchema
+                  data:
+                    example: null
+                title: ErrorEnvelopeSchema
+        '422':
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Envelope padrão de resposta de erro
+                properties:
+                  trackingId:
+                    type: string
+                    format: uuid
+                    description: Identificador de rastreio da requisição
+                    example: 8bce6cfc-dcd4-473b-9fae-60ef3f60ec11
+                  succeeded:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Unsuccessful request, see errors to get more details.
+                  statusCode:
+                    type: number
+                    example: 422
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          description: Código do erro (consulte a tabela de erros no guia da API)
+                          example: CF-67
+                        message:
+                          type: string
+                          description: Descrição do erro
+                          example: The asset must be Eligible before creating a cession.
+                        field:
+                          type:
+                          - string
+                          - 'null'
+                          description: Campo relacionado ao erro, quando aplicável
+                          example: assetIds
+                      title: ErrorSchema
+                  data:
+                    example: null
+                title: ErrorEnvelopeSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/crediflow
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/CrediFlow%20-%20Ativos%20e%20Cess%5Cxf5es/atualizar-ativo-correcao
+      summary: Replace fidc assets by asset id
+      x-summary-source: derived
+      operationId: putFidcV1AssetsByAssetId
+      x-operation-id-source: derived
+  /fidc/v1/assets:
+    get:
+      tags:
+      - Assets
+      description: Consulta a situação do ativo na fase de admissão. Não é necessário ter realizado a cessão. A busca é feita por query string, informando exatamente um entre `id` (identificador interno, gerado pela plataforma) e `externalId` (identificador externo, informado pelo parceiro). Ao consultar por identificador externo, é obrigatório informar o `fundTaxId` (CNPJ do fundo).
+      parameters:
+      - in: query
+        name: id
+        description: Identificador interno do ativo (retornado na criação). Mutuamente exclusivo com `externalId`; informe exatamente um dos dois.
+        required: false
+        schema:
+          type: string
+          format: uuid
+          example: 0524b1ed-6a78-4f00-8394-543ffcd188f0
+      - in: query
+        name: externalId
+        description: Identificador externo do ativo (campo `identification` informado na criação). Mutuamente exclusivo com `id`; informe exatamente um dos dois. Ao usar o identificador externo, informe também o `fundTaxId`.
+        required: false
+        schema:
+          type: string
+          example: NOTA-2024-000123
+      - in: query
+        name: fundTaxId
+        description: CNPJ do fundo (somente dígitos). Obrigatório quando a consulta é feita pelo identificador externo, pois o identificador externo só é único dentro de um mesmo fundo.
+        required: false
+        schema:
+          type: string
+          example: '15996430000182'
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  description: Envelope padrão de resposta da API
+                  properties:
+                    trackingId:
+                      type: string
+                      format: uuid
+                      description: Identificador de rastreio da requisição (informe ao suporte em caso de problemas)
+                      example: 8bce6cfc-dcd4-473b-9fae-60ef3f60ec11
+                    succeeded:
+                      type: boolean
+                      description: Indica se a requisição foi bem-sucedida
+                      example: true
+                    message:
+                      type: string
+                      description: Mensagem geral da resposta
+                      example: Request succeeded.
+                    statusCode:
+                      type: number
+                      description: Código HTTP da resposta
+                      example: 200
+                    errors:
+                      type: array
+                      description: Lista de erros (vazia em caso de sucesso)
+                      items:
+                        type: object
+                        properties:
+                          code:
+                            type: string
+                            description: Código do erro (consulte a tabela de erros no guia da API)
+                            example: CF-67
+                          message:
+                            type: string
+                            description: Descrição do erro
+                            example: The asset must be Eligible before creating a cession.
+                          field:
+                            type:
+                            - string
+                            - 'null'
+                            description: Campo relacionado ao erro, quando aplicável
+                            example: assetIds
+                        title: ErrorSchema
+                    data:
+                      description: Dados da resposta (nulo em caso de erro)
+                  title: ResponseEnvelopeSchema
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                          description: Identificador interno do ativo
+                          example: 0524b1ed-6a78-4f00-8394-543ffcd188f0
+                        externalId:
+                          type: string
+                          description: Identificador externo do ativo (campo `identification` informado na criação)
+                          example: NOTA-2024-000123
+                        status:
+                          type: string
+                          description: Status da admissão do ativo
+                          enum:
+                          - Pending
+                          - Eligible
+                          - Ineligible
+                          example: Ineligible
+        '401':
+          description: Não autorizado
+        '404':
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Envelope padrão de resposta de erro
+                properties:
+                  trackingId:
+                    type: string
+                    format: uuid
+                    description: Identificador de rastreio da requisição
+                    example: 8bce6cfc-dcd4-473b-9fae-60ef3f60ec11
+                  succeeded:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Unsuccessful request, see errors to get more details.
+                  statusCode:
+                    type: number
+                    example: 422
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          description: Código do erro (consulte a tabela de erros no guia da API)
+                          example: CF-67
+                        message:
+                          type: string
+                          description: Descrição do erro
+                          example: The asset must be Eligible before creating a cession.
+                        field:
+                          type:
+                          - string
+                          - 'null'
+                          description: Campo relacionado ao erro, quando aplicável
+                          example: assetIds
+                      title: ErrorSchema
+                  data:
+                    example: null
+                title: ErrorEnvelopeSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/crediflow
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/CrediFlow%20-%20Ativos%20e%20Cess%5Cxf5es/consultar-status-do-ativo
+      summary: Get fidc assets
+      x-summary-source: derived
+      operationId: getFidcV1Assets
+      x-operation-id-source: derived
+    post:
+      tags:
+      - Assets
+      description: Cria o ativo e inicia a admissão (busca de contrapartes, validação e elegibilidade) de forma assíncrona. A resposta 202 retorna o identificador do ativo; o resultado da admissão deve ser acompanhado pela consulta de status. A criação é idempotente pela combinação de `identification` + `fundTaxId`.
+      requestBody:
+        description: Dados do ativo a ser criado
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Dados do ativo (operação de crédito)
+              required:
+              - identification
+              - fundTaxId
+              - draweeIdentification
+              - assignorIdentification
+              - currency
+              - product
+              - operationType
+              - installments
+              properties:
+                identification:
+                  type: string
+                  description: Identificador externo do ativo, único por fundo. É a chave de idempotência da criação (junto com `fundTaxId`) e o valor usado depois para consultar o motivo de rejeição pela rota `operation-rejection-reason`
+                  example: NOTA-2024-000123
+                fundTaxId:
+                  type: string
+                  description: CNPJ do fundo que receberá o ativo. Determina qual configuração de fundo será aplicada — ou seja, quais etapas de admissão e cessão serão executadas e com quais regras de validação
+                  example: '15996430000182'
+                draweeIdentification:
+                  type: string
+                  description: CPF/CNPJ do sacado (devedor da operação). Na etapa de busca de contrapartes da admissão, esse documento é pesquisado no catálogo de participantes; se não for encontrado, o ativo é reprovado
+                  example: '12345678000199'
+                assignorIdentification:
+                  type: string
+                  description: CPF/CNPJ do cedente (quem vende o ativo ao fundo). Também é validado na busca de contrapartes e usado como favorecido padrão do desembolso da cessão
+                  example: '98765432000188'
+                currency:
+                  type: string
+                  description: Moeda da operação. Deve corresponder a um valor aceito pela plataforma
+                  example: BRL
+                product:
+                  type: string
+                  description: Tipo de produto da operação. Define a natureza do ativo — recebível (ex. duplicata) ou empréstimo (ex. CCB) — o que muda os campos exigidos na validação (empréstimos exigem `contract` e `interestRate`). Produtos fora dessas duas categorias são rejeitados (erro CF-33)
+                  example: CCB
+                operationType:
+                  type: string
+                  description: Tipo da operação de aquisição pretendida para o ativo (ex. cessão). Usado na validação e repassado no registro do trade
+                  example: Cession
+                warrantiesId:
+                  type:
+                  - string
+                  - 'null'
+                  format: uuid
+                  description: Identificador do pacote de garantias vinculado ao ativo, quando houver. As garantias são geridas em outro fluxo e apenas referenciadas aqui
+                  example: 5f7d1c1e-3b2a-4c8d-9e6f-0a1b2c3d4e5f
+                fees:
+                  type:
+                  - array
+                  - 'null'
+                  description: Taxas cobradas na originação do ativo (ex. TAC). São consideradas na composição financeira da operação enviada ao registro
+                  items:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        description: Categoria da taxa, conforme os tipos aceitos pela plataforma (ex. TAC). Valores fora da lista são reprovados na validação
+                        example: Tac
+                      amount:
+                        type: number
+                        description: Valor monetário da taxa. Deve ser maior ou igual a zero
+                        example: 150
+                    title: FeeSchema
+                genericIdentifiers:
+                  type:
+                  - array
+                  - 'null'
+                  description: Identificadores adicionais do ativo em sistemas do parceiro (ex. número da nota fiscal). Não afetam o processamento — servem para rastreio e conciliação
+                  items:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        description: Categoria do identificador, conforme os tipos aceitos pela plataforma (ex. número de nota fiscal)
+                        example: InvoiceNumber
+                      value:
+                        type: string
+                        description: Valor do identificador no sistema de origem. Usado apenas para rastreio e conciliação
+                        example: '000123456'
+                    title: GenericIdentifierSchema
+                installments:
+                  type: array
+                  description: Cronograma de parcelas do ativo. É a base do fluxo de caixa da operação — usado na validação, na precificação da cessão e no cálculo do valor total do ativo
+                  items:
+                    type: object
+                    properties:
+                      number:
+                        type: number
+                        description: Número sequencial da parcela dentro do cronograma (maior que zero)
+                        example: 1
+                      maturityDate:
+                        type: string
+                        format: date-time
+                        description: Data de vencimento da parcela. A maior data do cronograma define o vencimento final do ativo
+                        example: '2024-12-01T00:00:00'
+                      amount:
+                        type: number
+                        description: Valor de vencimento (face) da parcela, maior que zero. A soma das parcelas em aberto compõe o valor total do ativo usado na precificação
+                        example: 1050
+                      amortizationAmount:
+                        type:
+                        - number
+                        - 'null'
+                        description: Porção da parcela que corresponde a principal (amortização). Junto com juros e impostos, detalha a composição do valor de vencimento
+                        example: 1000
+                      interestAmount:
+                        type:
+                        - number
+                        - 'null'
+                        description: Porção da parcela que corresponde a juros
+                        example: 45
+                      taxAmount:
+                        type:
+                        - number
+                        - 'null'
+                        description: Porção da parcela que corresponde a impostos (ex. IOF)
+                        example: 5
+                      isPaid:
+                        type: boolean
+                        description: Indica se a parcela já foi liquidada pelo devedor. Parcelas pagas não entram no valor cedido — controlam também a obrigatoriedade de `paidAmount` e `paymentDate`
+                        example: false
+                      paidAmount:
+                        type:
+                        - number
+                        - 'null'
+                        description: Valor efetivamente pago da parcela. Obrigatório e maior que zero quando `isPaid` é true; deve ser nulo caso contrário
+                        example: null
+                      paymentDate:
+                        type:
+                        - string
+                        - 'null'
+                        format: date-time
+                        description: Data em que o pagamento ocorreu. Obrigatória (e não futura) quando `isPaid` é true; deve ser nula caso contrário
+                        example: null
+                      startAccrual:
+                        type:
+                        - string
+                        - 'null'
+                        format: date-time
+                        description: Início do período de incidência de juros (accrual) da parcela
+                        example: '2024-06-01T00:00:00'
+                      endAccrual:
+                        type:
+                        - string
+                        - 'null'
+                        format: date-time
+                        description: Fim do período de incidência de juros (accrual) da parcela
+                        example: '2024-12-01T00:00:00'
+                      externalSettlement:
+                        type:
+                        - object
+                        - 'null'
+                        description: Instrução de como o devedor liquida esta parcela (Pix, boleto ou conta bancária). Direciona para onde o pagamento da parcela deve ser feito após a cessão
+                        properties:
+                          type:
+                            type: string
+                            description: Meio de liquidação da parcela. Determina qual dos demais campos deve ser preenchido
+                            example: Pix
+                          bankAccount:
+                            type:
+                            - object
+                            - 'null'
+                            description: Dados de conta bancária, usados como destino de pagamentos (liquidação de parcelas, desembolso da cessão ou liquidação da cessão, conforme o contexto)
+                            properties:
+                              number:
+                                type: string
+                                description: Número da conta, sem o dígito verificador
+                                example: '123456'
+                              digit:
+                                type: string
+                                description: Dígito verificador da conta
+                                example: '7'
+                              bankCode:
+                                type: string
+                                description: Código COMPE do banco (3 dígitos)
+                                example: '208'
+                              agency:
+                                type: string
+                                description: Número da agência, sem o dígito
+                                example: '0001'
+                              digitAgency:
+                                type:
+                                - string
+                                - 'null'
+                                description: Dígito verificador da agência, quando houver
+                                example: '9'
+                            title: BankAccountSchema
+                          pixEmv:
+                            type:
+                            - string
+                            - 'null'
+                            description: Código EMV (copia-e-cola) do Pix, quando o meio de liquidação é Pix
+                            example: 00020126580014br.gov.bcb.pix...
+                          bankslipBarCode:
+                            type:
+                            - string
+                            - 'null'
+                            description: Código de barras do boleto, quando o meio de liquidação é boleto
+                            example: '20890001091000000024918026988206892410000024418'
+                    title: InstallmentSchema
+                relatedOperations:
+                  type:
+                  - array
+                  - 'null'
+                  description: Referências a outras operações vinculadas a este ativo (ex. operação original em uma renegociação)
+                  items:
+                    type: object
+                    properties:
+                      positionDate:
+                        type: string
+                        format: date-time
+                        description: Data da posição da operação relacionada
+                        example: '2024-06-01T00:00:00'
+                      identification:
+                        type: string
+                        description: Identificador externo da operação relacionada
+                        example: NOTA-2024-000100
+                interestRate:
+                  allOf:
+                  - type: object
+                    description: Estrutura de taxa de juros. Pode ser puramente fixa (`fixedInterestRate`), atrelada a um indexador (`variableInterestRate`) ou híbrida (fixa + indexador)
+                    properties:
+                      fixedInterestRate:
+                        type:
+                        - number
+                        - 'null'
+                        description: Componente fixo da taxa de juros, em percentual no período da base de accrual
+                        example: 1.99
+                      variableInterestRate:
+                        type:
+                        - object
+                        - 'null'
+                        description: Componente pós-fixado da taxa, atrelado a um indexador de mercado
+                        properties:
+                          indexType:
+                            type: string
+                            description: Indexador de mercado que corrige a taxa (ex. CDI)
+                            example: CDI
+                          rateMultiplier:
+                            type: number
+                            description: Percentual aplicado sobre o indexador (ex. 110 = 110% do CDI). Deve ser maior que zero
+                            example: 110
+                      baseDayCount:
+                        type:
+                        - string
+                        - 'null'
+                        description: Convenção de contagem de dias usada no accrual dos juros (ex. BUS252 = dias úteis, base 252)
+                        example: BUS252
+                    title: InterestRateSchema
+                  description: Taxa de juros remuneratórios do ativo. Obrigatória para empréstimos; usada no accrual do contrato e repassada ao registro do trade
+                latePaymentInterest:
+                  allOf:
+                  - allOf:
+                    - type: object
+                      description: Estrutura de taxa de juros. Pode ser puramente fixa (`fixedInterestRate`), atrelada a um indexador (`variableInterestRate`) ou híbrida (fixa + indexador)
+                      properties:
+                        fixedInterestRate:
+                          type:
+                          - number
+                          - 'null'
+                          description: Componente fixo da taxa de juros, em percentual no período da base de accrual
+                          example: 1.99
+                        variableInterestRate:
+                          type:
+                          - object
+                          - 'null'
+                          description: Componente pós-fixado da taxa, atrelado a um indexador de mercado
+                          properties:
+                            indexType:
+                              type: string
+                              description: Indexador de mercado que corrige a taxa (ex. CDI)
+                              example: CDI
+                            rateMultiplier:
+                              type: number
+                              description: Percentual aplicado sobre o indexador (ex. 110 = 110% do CDI). Deve ser maior que zero
+                              example: 110
+                        baseDayCount:
+                          type:
+                          - string
+                          - 'null'
+                          description: Convenção de contagem de dias usada no accrual dos juros (ex. BUS252 = dias úteis, base 252)
+                          example: BUS252
+                      title: InterestRateSchema
+                    type: object
+                    description: Encargos aplicados quando o devedor atrasa o pagamento — estende a estrutura de taxa de juros (taxa de atraso e indexador) e acrescenta mora e multa
+                    properties:
+                      arrearsAmount:
+                        type:
+                        - number
+                        - 'null'
+                        description: Percentual de juros de mora incidente por atraso, aplicado pro-rata sobre o valor em aberto
+                        example: 1
+                      penaltyAmount:
+                        type:
+                        - number
+                        - 'null'
+                        description: Percentual de multa aplicado uma única vez sobre o valor em aberto quando a parcela atrasa
+                        example: 2
+                    title: LatePaymentInterestSchema
+                  description: Encargos aplicáveis em caso de atraso do devedor (taxa de atraso, mora e multa). Não afetam o preço da cessão — definem como o ativo remunera após o vencimento
+                contract:
+                  type:
+                  - object
+                  - 'null'
+                  description: Dados do contrato que formaliza a operação. Obrigatório para empréstimos (ex. CCB); não se aplica a recebíveis
+                  properties:
+                    number:
+                      type: string
+                      description: Número do contrato formalizado
+                      example: 6764459321/EP
+                    formalizationDate:
+                      type: string
+                      format: date-time
+                      description: Data em que o contrato foi formalizado/assinado
+                      example: '2024-05-15T00:00:00'
+                    emissionType:
+                      type: string
+                      description: Forma de emissão do contrato (ex. digital ou física), relevante para o registro
+                      example: Digital
+              title: AssetPayloadSchema
+      responses:
+        '202':
+          description: Ativo aceito para processamento (admissão em andamento)
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  description: Envelope padrão de resposta da API
+                  properties:
+                    trackingId:
+                      type: string
+                      format: uuid
+                      description: Identificador de rastreio da requisição (informe ao suporte em caso de problemas)
+                      example: 8bce6cfc-dcd4-473b-9fae-60ef3f60ec11
+                    succeeded:
+                      type: boolean
+                      description: Indica se a requisição foi bem-sucedida
+                      example: true
+                    message:
+                      type: string
+                      description: Mensagem geral da resposta
+                      example: Request succeeded.
+                    statusCode:
+                      type: number
+                      description: Código HTTP da resposta
+                      example: 200
+                    errors:
+                      type: array
+                      description: Lista de erros (vazia em caso de sucesso)
+                      items:
+                        type: object
+                        properties:
+                          code:
+                            type: string
+                            description: Código do erro (consulte a tabela de erros no guia da API)
+                            example: CF-67
+                          message:
+                            type: string
+                            description: Descrição do erro
+                            example: The asset must be Eligible before creating a cession.
+                          field:
+                            type:
+                            - string
+                            - 'null'
+                            description: Campo relacionado ao erro, quando aplicável
+                            example: assetIds
+                        title: ErrorSchema
+                    data:
+                      description: Dados da resposta (nulo em caso de erro)
+                  title: ResponseEnvelopeSchema
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        assetId:
+                          type: string
+                          format: uuid
+                          description: Identificador do ativo criado (ou já existente, quando idempotente)
+                          example: 0524b1ed-6a78-4f00-8394-543ffcd188f0
+        '400':
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Envelope padrão de resposta de erro
+                properties:
+                  trackingId:
+                    type: string
+                    format: uuid
+                    description: Identificador de rastreio da requisição
+                    example: 8bce6cfc-dcd4-473b-9fae-60ef3f60ec11
+                  succeeded:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Unsuccessful request, see errors to get more details.
+                  statusCode:
+                    type: number
+                    example: 422
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          description: Código do erro (consulte a tabela de erros no guia da API)
+                          example: CF-67
+                        message:
+                          type: string
+                          description: Descrição do erro
+                          example: The asset must be Eligible before creating a cession.
+                        field:
+                          type:
+                          - string
+                          - 'null'
+                          description: Campo relacionado ao erro, quando aplicável
+                          example: assetIds
+                      title: ErrorSchema
+                  data:
+                    example: null
+                title: ErrorEnvelopeSchema
+        '401':
+          description: Não autorizado
+        '422':
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Envelope padrão de resposta de erro
+                properties:
+                  trackingId:
+                    type: string
+                    format: uuid
+                    description: Identificador de rastreio da requisição
+                    example: 8bce6cfc-dcd4-473b-9fae-60ef3f60ec11
+                  succeeded:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Unsuccessful request, see errors to get more details.
+                  statusCode:
+                    type: number
+                    example: 422
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          description: Código do erro (consulte a tabela de erros no guia da API)
+                          example: CF-67
+                        message:
+                          type: string
+                          description: Descrição do erro
+                          example: The asset must be Eligible before creating a cession.
+                        field:
+                          type:
+                          - string
+                          - 'null'
+                          description: Campo relacionado ao erro, quando aplicável
+                          example: assetIds
+                      title: ErrorSchema
+                  data:
+                    example: null
+                title: ErrorEnvelopeSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/crediflow
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/CrediFlow%20-%20Ativos%20e%20Cess%5Cxf5es/criar-ativo
+      summary: Create fidc assets
+      x-summary-source: derived
+      operationId: postFidcV1Assets
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+          scopes:
+            empresas.btgpactual.com/crediflow: Scope para CrediFlow (ativos e cessões)
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/06a17103.e0abb9f4.js
+  - https://developers.empresas.btgpactual.com/assets/js/cba67386.1ba386c7.js
+  - https://developers.empresas.btgpactual.com/assets/js/934368b3.f25dceed.js
+  - https://developers.empresas.btgpactual.com/assets/js/58bcaea7.84eca701.js
+  - https://developers.empresas.btgpactual.com/assets/js/6290b426.8ef1a78a.js
+  - https://developers.empresas.btgpactual.com/assets/js/1489f51e.05a7c6b2.js
+  - https://developers.empresas.btgpactual.com/assets/js/51faf9da.63852db7.js

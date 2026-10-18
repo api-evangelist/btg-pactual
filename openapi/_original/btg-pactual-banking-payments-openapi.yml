@@ -1,0 +1,2915 @@
+# x-archived-from: btg-pactual-banking-payments-openapi.yml
+# x-archived-on: 2026-10-18
+openapi: 3.0.3
+info:
+  title: Banking - Payments
+  version: '1'
+  description: Endpoints das APIs de banking do BTG PACTUAL Empresas
+  termsOfService: https://www.btgpactual.com/empresas/termos-e-politicas/
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com
+  description: sandbox
+- url: https://api.empresas.btgpactual.com
+  description: produção
+paths:
+  /{companyId}/banking/batch-payments/{batchId}:
+    delete:
+      tags:
+      - Lote de Pagamentos
+      description: Abandonar Lote
+      parameters:
+      - name: companyId
+        schema:
+          description: CNPJ da empresa realizando a requisição.
+          type: string
+          example: '30306294000145'
+          title: CompanyId
+        in: path
+        required: true
+      - name: batchId
+        schema:
+          type: string
+          description: Id do lote
+          example: 829c47f2-3b5c-4103-8d15-a55bd66ae905
+          title: BatchId
+        in: path
+        required: true
+      responses:
+        '200':
+          description: Lote abandonado
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - oauth2:
+        - openid empresas.btgpactual.com/payments
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Payments/abandonar-lote
+    patch:
+      tags:
+      - Lote de Pagamentos
+      description: Processar Lote
+      parameters:
+      - name: companyId
+        schema:
+          description: CNPJ da empresa realizando a requisição.
+          type: string
+          example: '30306294000145'
+          title: CompanyId
+        in: path
+        required: true
+      - name: batchId
+        schema:
+          type: string
+          description: Id do lote
+          example: 829c47f2-3b5c-4103-8d15-a55bd66ae905
+          title: BatchId
+        in: path
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                isFinished:
+                  type: boolean
+                  description: Sinalizados de finalizador da transação
+                  example: true
+              title: BatchPatchBody
+        required: true
+      responses:
+        '202':
+          description: Lote finalizado
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - oauth2:
+        - openid empresas.btgpactual.com/payments
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Payments/processar-lote
+  /{companyId}/banking/batch-payments:
+    post:
+      tags:
+      - Lote de Pagamentos
+      description: Abrir Lote
+      parameters:
+      - name: companyId
+        schema:
+          description: CNPJ da empresa realizando a requisição.
+          type: string
+          example: '30306294000145'
+          title: CompanyId
+        in: path
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+              - taxId
+              type: object
+              properties:
+                taxId:
+                  type: string
+                  description: CNPJ
+                  example: '46786961000174'
+              title: BatchPostBody
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  batchId:
+                    type: string
+                    description: Id do lote
+                    example: 829c47f2-3b5c-4103-8d15-a55bd66ae905
+                    title: BatchId
+                  expiresAt:
+                    type: string
+                    description: Data de expiração do lote
+                    example: '2024-11-22T19:18:18.233Z'
+                  maxSize:
+                    type: integer
+                    description: Tamanho máximo do lote
+                    example: 200
+                  taxId:
+                    type: string
+                    description: CNPJ
+                    example: '46786961000174'
+                title: BatchPostResponse
+          description: Iniciação de Pagamento
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - oauth2:
+        - openid empresas.btgpactual.com/payments
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Payments/abrir-lote
+  /{companyId}/banking/payments-recurrences/{recurrenceId}:
+    patch:
+      tags:
+      - Pagamentos Recorrentes
+      description: ' ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o [Wiremock](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-com-wiremock-v2)
+
+
+        > No sandbox este endpoint requer a utilização de [Sandbox Headers](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-headers)
+
+
+        | Header     | Descrição                            | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      parameters:
+      - name: companyId
+        schema:
+          description: CNPJ da empresa realizando a requisição.
+          type: string
+          example: '30306294000145'
+          title: CompanyId
+        in: path
+        required: true
+      - name: recurrenceId
+        description: Recurrence ID
+        schema:
+          type: string
+        in: path
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - type
+              - allowOverdraftUsage
+              - maxAmount
+              - notifyScheduling
+              properties:
+                type:
+                  type: string
+                  enum:
+                  - PIX_AUTOMATIC
+                detail:
+                  type: object
+                  properties:
+                    allowOverdraftUsage:
+                      type: boolean
+                      example: true
+                    maxAmount:
+                      type: number
+                      example: 1000
+                    notifyScheduling:
+                      type: boolean
+                      example: true
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  localtion:
+                    type: string
+                    example: https://bankinghub.uat.btgpactualbusiness.com/api/v1/Operations/4444444-cc81-417f-8f2d-444444a0e
+      security:
+      - oauth2:
+        - openid empresas.btgpactual.com/payments
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Payments/alterar-recorrencia-de-pagamento
+    delete:
+      tags:
+      - Pagamentos Recorrentes
+      description: ' ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o [Wiremock](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-com-wiremock-v2)
+
+
+        > No sandbox este endpoint requer a utilização de [Sandbox Headers](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-headers)
+
+
+        | Header     | Descrição                            | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      parameters:
+      - name: companyId
+        schema:
+          description: CNPJ da empresa realizando a requisição.
+          type: string
+          example: '30306294000145'
+          title: CompanyId
+        in: path
+        required: true
+      - name: recurrenceId
+        description: Recurrence ID
+        schema:
+          type: string
+        in: path
+        required: true
+      responses:
+        '200':
+          description: successful operation
+      security:
+      - oauth2:
+        - openid empresas.btgpactual.com/payments
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Payments/cancelar-recorrencia-de-pagamento
+    get:
+      tags:
+      - Pagamentos Recorrentes
+      description: ' ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o [Wiremock](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-com-wiremock-v2)
+
+
+        > No sandbox este endpoint requer a utilização de [Sandbox Headers](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-headers)
+
+
+        | Header     | Descrição                            | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      parameters:
+      - name: companyId
+        schema:
+          description: CNPJ da empresa realizando a requisição.
+          type: string
+          example: '30306294000145'
+          title: CompanyId
+        in: path
+        required: true
+      - name: recurrenceId
+        description: Recurrence ID
+        schema:
+          type: string
+          minLength: 1
+        in: path
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: 35455c30-49eb-4143-ac69-1887be87de78
+                  type:
+                    type: string
+                    example: PAYMENT
+                  status:
+                    type: string
+                    example: STARTED
+                  systemOrigin:
+                    type: string
+                    example: '***REMOVED_AUTHORIZATION_SERVER_CLIENT_ID***'
+                  periodicity:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        example: WEEKLY
+                      detail:
+                        type: object
+                        properties:
+                          startDate:
+                            type: string
+                            format: date
+                            example: '2025-06-16'
+                          endDate:
+                            type: string
+                            format: date
+                            example: '2025-07-28'
+                          quantity:
+                            type: integer
+                            example: 7
+                  basePayment:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        example: PIX_KEY
+                      amount:
+                        type: number
+                        format: float
+                        example: 0.55
+                      debitParty:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            example: VECHI CONSULTORIA E PROJETOS LTDA
+                          taxId:
+                            type: string
+                            example: '37297902000141'
+                          account:
+                            type: object
+                            properties:
+                              type:
+                                type: string
+                                example: CC
+                              ispb:
+                                type: string
+                                example: '30306294'
+                              branch:
+                                type: string
+                                example: '50'
+                              number:
+                                type: string
+                                example: 003886850
+                              bankCode:
+                                type: string
+                                example: '208'
+                      detail:
+                        type: object
+                        properties:
+                          creditParty:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                                example: BRUNO VIANA DE SIQUEIRA
+                              taxId:
+                                type: string
+                                example: '***589211**'
+                              account:
+                                type: object
+                                properties:
+                                  bankCode:
+                                    type: string
+                                    example: '208'
+                                  ispb:
+                                    type: string
+                                    example: '30306294'
+                                  type:
+                                    type: string
+                                    example: '**'
+                                  branch:
+                                    type: string
+                                    example: '**'
+                                  number:
+                                    type: string
+                                    example: '*********'
+                          key:
+                            type: object
+                            properties:
+                              value:
+                                type: string
+                                example: 06058921139
+                              type:
+                                type: string
+                                example: TAX_ID
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        detail:
+                          type: string
+                          example: Pendente aprovação de representante legal.
+                        code:
+                          type: string
+                          example: btg:enterprise:banking:payments:error:pending-approval
+                        arguments:
+                          type: object
+                          properties:
+                            contractId:
+                              type: string
+                              example: 13287d0e-23c8-4d31-8cc7-989a3aaa6e16
+                title: RecurrenceIdGetResponse
+      security:
+      - oauth2:
+        - openid empresas.btgpactual.com/payments.readonly
+        - openid empresas.btgpactual.com/payments
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Payments/consultar-recorrencia-de-pagamento
+  /{companyId}/banking/payments/approvals/{paymentId}:
+    delete:
+      tags:
+      - Pagamentos
+      description: Cancelar pagamento ou transferência pendente de aprovação
+      parameters:
+      - name: companyId
+        schema:
+          description: CNPJ da empresa realizando a requisição.
+          type: string
+          example: '30306294000145'
+          title: CompanyId
+        in: path
+        required: true
+      - name: paymentId
+        schema:
+          type: string
+          example: 29d42888-a920-4a85-a163-aa25b4937b3f
+          title: PaymentId
+        in: path
+        required: true
+      - name: x-idempotency-key
+        schema:
+          type: string
+          example: f08jjj6b-00bc-1e3e-ad99-acb353333914
+          title: XIdempotencyKey
+        in: header
+      responses:
+        '200':
+          description: Cancelamento bem sucedido
+      security:
+      - oauth2:
+        - openid
+        - empresas.btgpactual.com/pix-cash-in.readonly
+        - empresas.btgpactual.com/authorized-direct-debits.readonly
+        - empresas.btgpactual.com/bank-slips
+        - empresas.btgpactual.com/bank-slips.readonly
+        - openid empresas.btgpactual.com/payments.readonly
+        - openid empresas.btgpactual.com/payments
+        - empresas.btgpactual.com/accounts.readonly
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Payments/cancelar-pagamento-ou-transferencia-pendente-de-aprovacao
+  /{companyId}/banking/payments/{paymentId}:
+    delete:
+      tags:
+      - Pagamentos
+      description: Cancelar um pagamento ou transferência agendado
+      parameters:
+      - name: companyId
+        schema:
+          description: CNPJ da empresa realizando a requisição.
+          type: string
+          example: '30306294000145'
+          title: CompanyId
+        in: path
+        required: true
+      - name: paymentId
+        schema:
+          type: string
+          example: 29d42888-a920-4a85-a163-aa25b4937b3f
+          title: PaymentId
+        in: path
+        required: true
+      - name: x-idempotency-key
+        schema:
+          type: string
+          example: f08jjj6b-00bc-1e3e-ad99-acb353333914
+          title: XIdempotencyKey
+        in: header
+      responses:
+        '204':
+          description: Exclusão do agendamento
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - oauth2:
+        - openid empresas.btgpactual.com/payments
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Payments/cancelar-um-pagamento-ou-transferencia-agendado
+    get:
+      tags:
+      - Pagamentos
+      description: Listar um pagamento ou transferência específico
+      parameters:
+      - name: companyId
+        schema:
+          description: CNPJ da empresa realizando a requisição.
+          type: string
+          example: '30306294000145'
+          title: CompanyId
+        in: path
+        required: true
+      - name: paymentId
+        schema:
+          type: string
+          example: 29d42888-a920-4a85-a163-aa25b4937b3f
+          title: PaymentId
+        in: path
+        required: true
+      - name: x-idempotency-key
+        schema:
+          type: string
+          example: f08jjj6b-00bc-1e3e-ad99-acb353333914
+          title: XIdempotencyKey
+        in: header
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  paymentId:
+                    type: string
+                    example: 29d42888-a920-4a85-a163-aa25b4937b3f
+                    title: PaymentId
+                  type:
+                    description: Boleto de cobrança
+                    enum:
+                    - BANKSLIP
+                    - PIX_QR_CODE
+                    - UTILITIES
+                    - TED
+                    - PIX
+                    type: string
+                    title: Type
+                  status:
+                    description: Status do pagamento
+                    enum:
+                    - CONFIRMED
+                    - CREATED
+                    - CANCELED
+                    - FAILED
+                    - PROCESSED
+                    - ADJOURNED
+                    - REVERTED
+                    - SCHEDULED
+                    type: string
+                    example: CREATED
+                    title: PaymentStatus
+                  amount:
+                    type: number
+                    example: 0.01
+                    title: Money
+                  debitParty:
+                    type: object
+                    properties:
+                      taxId:
+                        type: string
+                        example: '00000000000141'
+                      name:
+                        type: string
+                        example: NOME DA EMPRESA
+                      number:
+                        type: string
+                        example: '000000050'
+                      branchCode:
+                        type: string
+                        example: '50'
+                      bankCode:
+                        type: string
+                        example: '208'
+                  detail:
+                    type: object
+                    properties:
+                      digitableLine:
+                        description: Linha digitavel
+                        type: string
+                        example: '20890050091195069626700021179601493360000000001'
+                        title: DigitableLine
+                      dueDate:
+                        format: date
+                        type: string
+                        example: '2023-05-03'
+                        title: Date
+                      payee:
+                        type: object
+                        properties:
+                          socialName:
+                            type: string
+                            example: NOME DA EMPRESA
+                          fantasyName:
+                            type: string
+                            example: NOME DA EMPRESA
+                          taxId:
+                            type: string
+                            example: '00000000000145'
+                          bankCode:
+                            type: string
+                            example: '208'
+                        title: Payee
+                  tags:
+                    type: object
+                    properties:
+                      externalId:
+                        type: string
+                        example: 8725b04c-1354-4ad7-91db-4bbb2138e390
+                        title: ExternalId
+                      originTransactionId:
+                        type: string
+                        example: 48b33060-7960-4093-bc93-ed9105c3c657
+                        title: OriginTransactionId
+                  paymentDate:
+                    format: date
+                    type: string
+                    example: '2023-03-20T00:00:00.000Z'
+                title: BankSlipPayment
+          description: Pagamento
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - oauth2:
+        - openid empresas.btgpactual.com/payments.readonly
+        - openid empresas.btgpactual.com/payments
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Payments/listar-um-pagamento-ou-transferencia-especifico
+  /{companyId}/banking/payments/barcodes:
+    get:
+      tags:
+      - Pagamentos
+      description: Consulta por código de barras
+      parameters:
+      - name: companyId
+        schema:
+          description: CNPJ da empresa realizando a requisição.
+          type: string
+          example: '30306294000145'
+          title: CompanyId
+        in: path
+        required: true
+      - examples:
+          barcode example:
+            value: 123464358568312341634-fbs-12343464
+        name: codes
+        description: Código de barras
+        schema:
+          type: string
+        in: query
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        amount:
+                          type: number
+                          example: 0.01
+                          title: Money
+                        interest:
+                          type: number
+                          example: 0.01
+                          title: Money
+                        fine:
+                          type: number
+                          example: 0.01
+                          title: Money
+                        discount:
+                          type: number
+                          example: 0.01
+                          title: Money
+                        barcode:
+                          description: Código de barras
+                          type: string
+                          example: '20894931200004935000050017010554970003849530'
+                          title: Barcode
+                        digitableLine:
+                          description: Linha digitavel
+                          type: string
+                          example: '20890050091195069626700021179601493360000000001'
+                          title: DigitableLine
+                        dueDate:
+                          format: date
+                          type: string
+                          example: '2023-05-03'
+                          title: Date
+                        expirationDate:
+                          format: date
+                          type: string
+                          example: '2023-05-03'
+                          title: Date
+                        payee:
+                          type: object
+                          properties:
+                            socialName:
+                              type: string
+                              example: NOME DA EMPRESA
+                            fantasyName:
+                              type: string
+                              example: NOME DA EMPRESA
+                            taxId:
+                              type: string
+                              example: '00000000000145'
+                            bankCode:
+                              type: string
+                              example: '208'
+                          title: Payee
+                title: BankSlipPaymentResponse
+          description: Consulta bem sucedida
+      security:
+      - oauth2:
+        - openid
+        - empresas.btgpactual.com/pix-cash-in.readonly
+        - empresas.btgpactual.com/authorized-direct-debits.readonly
+        - empresas.btgpactual.com/bank-slips
+        - empresas.btgpactual.com/bank-slips.readonly
+        - openid empresas.btgpactual.com/payments.readonly
+        - openid empresas.btgpactual.com/payments
+        - empresas.btgpactual.com/accounts.readonly
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Payments/consulta-por-codigo-de-barras
+  /{companyId}/banking/payments-recurrences/periodicities:
+    post:
+      tags:
+      - Pagamentos Recorrentes
+      description: ' ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o [Wiremock](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-com-wiremock-v2)
+
+
+        > No sandbox este endpoint requer a utilização de [Sandbox Headers](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-headers)
+
+
+        | Header     | Descrição                            | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      parameters:
+      - name: companyId
+        schema:
+          description: CNPJ da empresa realizando a requisição.
+          type: string
+          example: '30306294000145'
+          title: CompanyId
+        in: path
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - paymentType
+              - periodicity
+              properties:
+                paymentType:
+                  type: string
+                  enum:
+                  - PIX_KEY
+                  - PIX_MANUAL
+                  - PIX_QR_CODE
+                  - TEF
+                periodicity:
+                  required:
+                  - type
+                  - detail
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                      description: Tipo de periodicidade da recorrência
+                      enum:
+                      - DAILY
+                      - WEEKLY
+                      - BIWEEKLY
+                      - MONTHLY
+                      - ANNUALLY
+                      - CUSTOM
+                    detail:
+                      oneOf:
+                      - type: object
+                        required:
+                        - startDate
+                        - quantity
+                        properties:
+                          startDate:
+                            type: string
+                            description: Data de início da recorrência
+                            example: '2024-10-09'
+                          quantity:
+                            description: Quantidade de recorrências
+                            type: integer
+                            example: 10
+                      - type: object
+                        required:
+                        - dates
+                        properties:
+                          dates:
+                            description: Datas específicas para a recorrência
+                            type: array
+                            items:
+                              type: string
+                              example: '2024-09-10'
+                  title: Periodicity
+              title: RecurringPaymentDatesRequest
+        required: true
+      responses:
+        '200':
+          description: Successful
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  required:
+                  - paymentType
+                  - periodicity
+                  properties:
+                    paymentType:
+                      type: string
+                      enum:
+                      - PIX_KEY
+                      - PIX_MANUAL
+                      - PIX_QR_CODE
+                      - TEF
+                    periodicity:
+                      required:
+                      - type
+                      - detail
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          description: Tipo de periodicidade da recorrência
+                          enum:
+                          - DAILY
+                          - WEEKLY
+                          - BIWEEKLY
+                          - MONTHLY
+                          - ANNUALLY
+                          - CUSTOM
+                        detail:
+                          oneOf:
+                          - type: object
+                            required:
+                            - startDate
+                            - quantity
+                            properties:
+                              startDate:
+                                type: string
+                                description: Data de início da recorrência
+                                example: '2024-10-09'
+                              quantity:
+                                description: Quantidade de recorrências
+                                type: integer
+                                example: 10
+                          - type: object
+                            required:
+                            - dates
+                            properties:
+                              dates:
+                                description: Datas específicas para a recorrência
+                                type: array
+                                items:
+                                  type: string
+                                  example: '2024-09-10'
+                      title: Periodicity
+                  title: RecurringPaymentDatesRequest
+                - type: object
+                  properties:
+                    recurringPaymentDates:
+                      type: array
+                      items:
+                        type: string
+                        example: '2024-09-10'
+                title: RecurringPaymentDatesResponse
+      security:
+      - oauth2:
+        - openid empresas.btgpactual.com/payments
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Payments/consultar-periodicidades-de-pagamentos-recorrentes
+  /{companyId}/banking/payments:
+    post:
+      tags:
+      - Pagamentos
+      description: Criar iniciação de pagamento ou transferência
+      parameters:
+      - name: companyId
+        schema:
+          description: CNPJ da empresa realizando a requisição.
+          type: string
+          example: '30306294000145'
+          title: CompanyId
+        in: path
+        required: true
+      - name: x-idempotency-key
+        schema:
+          type: string
+          example: f08jjj6b-00bc-1e3e-ad99-acb353333914
+          title: XIdempotencyKey
+        in: header
+        required: false
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                items:
+                  type: array
+                  items:
+                    oneOf:
+                    - description: Pagamento pix copia e cola
+                      type: object
+                      allOf:
+                      - required:
+                        - type
+                        - detail
+                        type: object
+                        properties:
+                          type:
+                            description: Tipo do pagamento
+                            enum:
+                            - PIX_QR_CODE
+                            type: string
+                          detail:
+                            description: Detalhes da transação referente ao campo type.
+                            type: object
+                            properties:
+                              creditParty:
+                                description: ''
+                                required:
+                                - name
+                                - taxId
+                                type: object
+                                properties:
+                                  name:
+                                    description: Nome do detentor da chave pix
+                                    type: string
+                                    example: Nome
+                                  taxId:
+                                    description: CPF/CNPJ do detentor da chave pix
+                                    type: string
+                                    example: '123412342134'
+                                title: pixKeyCreditParty
+                              emv:
+                                description: Chave copia e cola de pix
+                                type: string
+                                example: 123498128974239789gov-exemplo-de-emv1234123461
+                            title: detail-inside-emv
+                      - required:
+                        - amount
+                        - debitParty
+                        - paymentDate
+                        type: object
+                        properties:
+                          description:
+                            type: string
+                            description: Descrição do pagamento visível ao favorecido. Visível no comprovante.
+                            example: Pagamento de boleto
+                          internalDescription:
+                            type: string
+                            description: Identificação interna do pagamento. Não consta no comprovante, apenas nos eventos internos.
+                            example: Pagamento de boleto
+                          batchId:
+                            type: string
+                            description: Id do lote de pagamentos.
+                            example: 117610ad-dde4-4a55-94e4-24a9c9fc1fc4
+                          amount:
+                            type: number
+                            example: 0.01
+                            title: Money
+                            description: Valor da transação.
+                          debitParty:
+                            description: Dados da parte debitada.
+                            type: object
+                            properties:
+                              branchCode:
+                                description: Agência. Utilizar 50.
+                                type: string
+                                example: '50'
+                              number:
+                                description: Número da conta
+                                type: string
+                                example: '000000050'
+                          tags:
+                            type: object
+                            properties:
+                              externalId:
+                                type: string
+                                example: 8725b04c-1354-4ad7-91db-4bbb2138e390
+                                title: ExternalId
+                          paymentDate:
+                            format: date
+                            description: Data de pagamento
+                            type: string
+                            example: '2025-02-02'
+                        title: BankSlipPaymentIssue
+                      title: Pagamento-PIX-QR-CODE-emv
+                    - description: Pagamento pix copia e cola
+                      type: object
+                      allOf:
+                      - required:
+                        - type
+                        - detail
+                        type: object
+                        properties:
+                          type:
+                            description: Tipo do pagamento
+                            enum:
+                            - PIX_QR_CODE
+                            type: string
+                          detail:
+                            description: Detalhes da transação referente ao campo type.
+                            type: object
+                            properties:
+                              creditParty:
+                                description: ''
+                                required:
+                                - name
+                                - taxId
+                                type: object
+                                properties:
+                                  name:
+                                    description: Nome do detentor da chave pix
+                                    type: string
+                                    example: Nome
+                                  taxId:
+                                    description: CPF/CNPJ do detentor da chave pix
+                                    type: string
+                                    example: '123412342134'
+                                title: pixKeyCreditParty
+                              location:
+                                description: Identificador do QR Code
+                                type: string
+                                example: qrcode.pix.com/qrs1/v2/weqriojwio5UkwwejrJoABe9iwoejiowejrDcWsDlxwzkAuuvbsUPeRAg
+                            title: detail-inside-location
+                      - required:
+                        - amount
+                        - debitParty
+                        - paymentDate
+                        type: object
+                        properties:
+                          description:
+                            type: string
+                            description: Descrição do pagamento visível ao favorecido. Visível no comprovante.
+                            example: Pagamento de boleto
+                          internalDescription:
+                            type: string
+                            description: Identificação interna do pagamento. Não consta no comprovante, apenas nos eventos internos.
+                            example: Pagamento de boleto
+                          batchId:
+                            type: string
+                            description: Id do lote de pagamentos.
+                            example: 117610ad-dde4-4a55-94e4-24a9c9fc1fc4
+                          amount:
+                            type: number
+                            example: 0.01
+                            title: Money
+                            description: Valor da transação.
+                          debitParty:
+                            description: Dados da parte debitada.
+                            type: object
+                            properties:
+                              branchCode:
+                                description: Agência. Utilizar 50.
+                                type: string
+                                example: '50'
+                              number:
+                                description: Número da conta
+                                type: string
+                                example: '000000050'
+                          tags:
+                            type: object
+                            properties:
+                              externalId:
+                                type: string
+                                example: 8725b04c-1354-4ad7-91db-4bbb2138e390
+                                title: ExternalId
+                          paymentDate:
+                            format: date
+                            description: Data de pagamento
+                            type: string
+                            example: '2025-02-02'
+                        title: BankSlipPaymentIssue
+                      title: Pagamento-PIX-QR-CODE-location
+                    - description: Pagamento de boleto, utilities e FGTS(utilizar utilities)
+                      type: object
+                      allOf:
+                      - required:
+                        - type
+                        - detail
+                        type: object
+                        properties:
+                          type:
+                            description: Tipo do pagamento
+                            enum:
+                            - BANKSLIP
+                            - UTILITIES
+                            type: string
+                          detail:
+                            description: Detalhes da transação referente ao campo type.
+                            type: object
+                            properties:
+                              products:
+                                description: Instruções de PagFor. Somente para o type BANKSLIP
+                                required:
+                                - anticipation
+                                properties:
+                                  anticipation:
+                                    type: object
+                                    required:
+                                    - invoiceNumber
+                                    properties:
+                                      invoiceNumber:
+                                        type: string
+                                        description: 'Identificador da transação. Sugestão: Nota físcal'
+                                        example: '123456789'
+                                      paymentExternalId:
+                                        type: string
+                                        description: 'Identificador da transação. Sugestão: Id do pedido'
+                                        example: '123456789'
+                                title: PagforInfo
+                              digitableLine:
+                                description: Linha digitavel do documento a ser pago
+                                type: string
+                                example: '123498162364512309413275312'
+                              barcode:
+                                description: Código de barras do documento a ser pago
+                                type: string
+                                example: '123498162364512309413275312'
+                            title: detail-inside-digitableLine
+                      - required:
+                        - amount
+                        - debitParty
+                        - paymentDate
+                        type: object
+                        properties:
+                          description:
+                            type: string
+                            description: Descrição do pagamento visível ao favorecido. Visível no comprovante.
+                            example: Pagamento de boleto
+                          internalDescription:
+                            type: string
+                            description: Identificação interna do pagamento. Não consta no comprovante, apenas nos eventos internos.
+                            example: Pagamento de boleto
+                          batchId:
+                            type: string
+                            description: Id do lote de pagamentos.
+                            example: 117610ad-dde4-4a55-94e4-24a9c9fc1fc4
+                          amount:
+                            type: number
+                            example: 0.01
+                            title: Money
+                            description: Valor da transação.
+                          debitParty:
+                            description: Dados da parte debitada.
+                            type: object
+                            properties:
+                              branchCode:
+                                description: Agência. Utilizar 50.
+                                type: string
+                                example: '50'
+                              number:
+                                description: Número da conta
+                                type: string
+                                example: '000000050'
+                          tags:
+                            type: object
+                            properties:
+                              externalId:
+                                type: string
+                                example: 8725b04c-1354-4ad7-91db-4bbb2138e390
+                                title: ExternalId
+                          paymentDate:
+                            format: date
+                            description: Data de pagamento
+                            type: string
+                            example: '2025-02-02'
+                        title: BankSlipPaymentIssue
+                      title: Pagamento-Boletos_Utilities_FGTS
+                    - description: PIX manual e TED
+                      type: object
+                      allOf:
+                      - required:
+                        - type
+                        - detail
+                        type: object
+                        properties:
+                          type:
+                            description: Tipo do pagamento
+                            enum:
+                            - TED
+                            - PIX_MANUAL
+                            type: string
+                          detail:
+                            description: Detalhes da transação referente ao campo type.
+                            required:
+                            - creditParty
+                            type: object
+                            properties:
+                              products:
+                                description: Instruções de PagFor
+                                required:
+                                - anticipation
+                                properties:
+                                  anticipation:
+                                    type: object
+                                    required:
+                                    - invoiceNumber
+                                    properties:
+                                      invoiceNumber:
+                                        type: string
+                                        description: 'Identificador da transação. Sugestão: Nota físcal'
+                                        example: '123456789'
+                                      paymentExternalId:
+                                        type: string
+                                        description: 'Identificador da transação. Sugestão: Id do pedido'
+                                        example: '123456789'
+                                title: PagforInfo
+                              creditParty:
+                                description: Detalhes da parte creditada.
+                                required:
+                                - taxId
+                                - name
+                                - account
+                                type: object
+                                properties:
+                                  taxId:
+                                    description: Documento da parte creditada
+                                    type: string
+                                    example: '12345671234'
+                                  name:
+                                    description: Nome da parte creditada
+                                    type: string
+                                    example: NOME
+                                  account:
+                                    description: Dados da conta
+                                    required:
+                                    - type
+                                    - number
+                                    - branch
+                                    - bankCode
+                                    type: object
+                                    properties:
+                                      type:
+                                        description: Tipo da conta
+                                        enum:
+                                        - CC
+                                        - PG
+                                        - PP
+                                        type: string
+                                      number:
+                                        description: Número da conta
+                                        type: string
+                                        example: '001234567'
+                                      branch:
+                                        description: Agência
+                                        type: string
+                                        example: '1'
+                                      bankCode:
+                                        description: Código do banco
+                                        type: string
+                                        example: '208'
+                                    title: accountObj
+                                title: creditPartyObj
+                            title: creditParty
+                      - required:
+                        - amount
+                        - debitParty
+                        - paymentDate
+                        type: object
+                        properties:
+                          description:
+                            type: string
+                            description: Descrição do pagamento visível ao favorecido. Visível no comprovante.
+                            example: Pagamento de boleto
+                          internalDescription:
+                            type: string
+                            description: Identificação interna do pagamento. Não consta no comprovante, apenas nos eventos internos.
+                            example: Pagamento de boleto
+                          batchId:
+                            type: string
+                            description: Id do lote de pagamentos.
+                            example: 117610ad-dde4-4a55-94e4-24a9c9fc1fc4
+                          amount:
+                            type: number
+                            example: 0.01
+                            title: Money
+                            description: Valor da transação.
+                          debitParty:
+                            description: Dados da parte debitada.
+                            type: object
+                            properties:
+                              branchCode:
+                                description: Agência. Utilizar 50.
+                                type: string
+                                example: '50'
+                              number:
+                                description: Número da conta
+                                type: string
+                                example: '000000050'
+                          tags:
+                            type: object
+                            properties:
+                              externalId:
+                                type: string
+                                example: 8725b04c-1354-4ad7-91db-4bbb2138e390
+                                title: ExternalId
+                          paymentDate:
+                            format: date
+                            description: Data de pagamento
+                            type: string
+                            example: '2025-02-02'
+                        title: BankSlipPaymentIssue
+                      title: Pagamento-TED_PIX-MANUAL
+                    - description: Pix por chave pix
+                      type: object
+                      allOf:
+                      - required:
+                        - type
+                        - detail
+                        type: object
+                        properties:
+                          type:
+                            description: Tipo do pagamento
+                            enum:
+                            - PIX_KEY
+                            type: string
+                          detail:
+                            description: Detalhes da transação referente ao campo type.
+                            required:
+                            - key
+                            - creditParty
+                            type: object
+                            properties:
+                              creditParty:
+                                description: ''
+                                required:
+                                - name
+                                - taxId
+                                type: object
+                                properties:
+                                  name:
+                                    description: Nome do detentor da chave pix
+                                    type: string
+                                    example: Nome
+                                  taxId:
+                                    description: CPF/CNPJ do detentor da chave pix
+                                    type: string
+                                    example: '123412342134'
+                                title: pixKeyCreditParty
+                              key:
+                                description: ''
+                                required:
+                                - value
+                                type: object
+                                properties:
+                                  value:
+                                    description: Chave Pix
+                                    type: string
+                                    example: '1132324545'
+                                title: keyObj
+                            title: PixData
+                      - required:
+                        - amount
+                        - debitParty
+                        - paymentDate
+                        type: object
+                        properties:
+                          description:
+                            type: string
+                            description: Descrição do pagamento visível ao favorecido. Visível no comprovante.
+                            example: Pagamento de boleto
+                          internalDescription:
+                            type: string
+                            description: Identificação interna do pagamento. Não consta no comprovante, apenas nos eventos internos.
+                            example: Pagamento de boleto
+                          batchId:
+                            type: string
+                            description: Id do lote de pagamentos.
+                            example: 117610ad-dde4-4a55-94e4-24a9c9fc1fc4
+                          amount:
+                            type: number
+                            example: 0.01
+                            title: Money
+                            description: Valor da transação.
+                          debitParty:
+                            description: Dados da parte debitada.
+                            type: object
+                            properties:
+                              branchCode:
+                                description: Agência. Utilizar 50.
+                                type: string
+                                example: '50'
+                              number:
+                                description: Número da conta
+                                type: string
+                                example: '000000050'
+                          tags:
+                            type: object
+                            properties:
+                              externalId:
+                                type: string
+                                example: 8725b04c-1354-4ad7-91db-4bbb2138e390
+                                title: ExternalId
+                          paymentDate:
+                            format: date
+                            description: Data de pagamento
+                            type: string
+                            example: '2025-02-02'
+                        title: BankSlipPaymentIssue
+                      title: Pagamento-PIX-KEY
+                    - description: DARF
+                      type: object
+                      allOf:
+                      - required:
+                        - type
+                        - detail
+                        type: object
+                        properties:
+                          type:
+                            description: Tipo do pagamento
+                            enum:
+                            - DARF
+                            type: string
+                          detail:
+                            description: Detalhes da transação referente ao campo type.
+                            required:
+                            - taxPayer
+                            - expireDate
+                            - principalAmount
+                            - baselinePeriodDate
+                            - treasuryRevenueCode
+                            type: object
+                            properties:
+                              taxPayer:
+                                description: Informações do pagador
+                                required:
+                                - id
+                                - name
+                                type: object
+                                properties:
+                                  id:
+                                    description: Número do documento do pagador
+                                    type: string
+                                    example: '12345678123'
+                                  name:
+                                    description: Nome do pagador
+                                    type: string
+                                    example: NOME
+                                title: taxPayerObj
+                              feeAmount:
+                                description: Custo de operação
+                                type: number
+                                example: '0.1'
+                              expireDate:
+                                format: date
+                                description: Data de expiração
+                                type: string
+                                example: '2024-10-19'
+                              principalAmount:
+                                description: valor do principal
+                                type: number
+                                example: '10.26'
+                              fineAmount:
+                                description: Valor da multa
+                                type: number
+                                example: '0.1'
+                              baselinePeriodDate:
+                                format: date
+                                description: Período de apuração
+                                type: string
+                                example: '2024-08-02'
+                              treasuryRevenueCode:
+                                description: Código da Receita
+                                type: string
+                                example: '0211'
+                              referenceNumber:
+                                description: Número de referência
+                                type: string
+                                example: 29238372
+                            title: DARFdetail
+                      - required:
+                        - amount
+                        - debitParty
+                        - paymentDate
+                        type: object
+                        properties:
+                          description:
+                            type: string
+                            description: Descrição do pagamento visível ao favorecido. Visível no comprovante.
+                            example: Pagamento de boleto
+                          internalDescription:
+                            type: string
+                            description: Identificação interna do pagamento. Não consta no comprovante, apenas nos eventos internos.
+                            example: Pagamento de boleto
+                          batchId:
+                            type: string
+                            description: Id do lote de pagamentos.
+                            example: 117610ad-dde4-4a55-94e4-24a9c9fc1fc4
+                          amount:
+                            type: number
+                            example: 0.01
+                            title: Money
+                            description: Valor da transação.
+                          debitParty:
+                            description: Dados da parte debitada.
+                            type: object
+                            properties:
+                              branchCode:
+                                description: Agência. Utilizar 50.
+                                type: string
+                                example: '50'
+                              number:
+                                description: Número da conta
+                                type: string
+                                example: '000000050'
+                          tags:
+                            type: object
+                            properties:
+                              externalId:
+                                type: string
+                                example: 8725b04c-1354-4ad7-91db-4bbb2138e390
+                                title: ExternalId
+                          paymentDate:
+                            format: date
+                            description: Data de pagamento
+                            type: string
+                            example: '2025-02-02'
+                        title: BankSlipPaymentIssue
+                      title: Pagamento-DARF
+                    - description: Pagamento pix copia e cola
+                      type: object
+                      allOf:
+                      - required:
+                        - type
+                        - detail
+                        type: object
+                        properties:
+                          type:
+                            description: Tipo do pagamento
+                            enum:
+                            - PIX_REVERSAL
+                            type: string
+                          detail:
+                            description: Detalhes da transação referente ao campo type.
+                            required:
+                            - originalEndToEndId
+                            type: object
+                            properties:
+                              originalEndToEndId:
+                                description: Chave copia e cola de pix
+                                type: string
+                                example: E0312354657879547635464abcde12341
+                            title: detail-inside-E2EID
+                      - required:
+                        - amount
+                        - debitParty
+                        - paymentDate
+                        type: object
+                        properties:
+                          description:
+                            type: string
+                            description: Descrição do pagamento visível ao favorecido. Visível no comprovante.
+                            example: Pagamento de boleto
+                          internalDescription:
+                            type: string
+                            description: Identificação interna do pagamento. Não consta no comprovante, apenas nos eventos internos.
+                            example: Pagamento de boleto
+                          batchId:
+                            type: string
+                            description: Id do lote de pagamentos.
+                            example: 117610ad-dde4-4a55-94e4-24a9c9fc1fc4
+                          amount:
+                            type: number
+                            example: 0.01
+                            title: Money
+                            description: Valor da transação.
+                          debitParty:
+                            description: Dados da parte debitada.
+                            type: object
+                            properties:
+                              branchCode:
+                                description: Agência. Utilizar 50.
+                                type: string
+                                example: '50'
+                              number:
+                                description: Número da conta
+                                type: string
+                                example: '000000050'
+                          tags:
+                            type: object
+                            properties:
+                              externalId:
+                                type: string
+                                example: 8725b04c-1354-4ad7-91db-4bbb2138e390
+                                title: ExternalId
+                          paymentDate:
+                            format: date
+                            description: Data de pagamento
+                            type: string
+                            example: '2025-02-02'
+                        title: BankSlipPaymentIssue
+                      title: Pagamento-PIX-REVERSAL
+                    - description: Pagamento pix copia e cola
+                      type: object
+                      allOf:
+                      - required:
+                        - type
+                        - detail
+                        type: object
+                        properties:
+                          type:
+                            description: Tipo do pagamento
+                            enum:
+                            - PIX_QR_CODE
+                            type: string
+                          detail:
+                            description: Detalhes da transação referente ao campo type.
+                            type: object
+                            properties:
+                              creditParty:
+                                description: ''
+                                required:
+                                - name
+                                - taxId
+                                type: object
+                                properties:
+                                  name:
+                                    description: Nome do detentor da chave pix
+                                    type: string
+                                    example: Nome
+                                  taxId:
+                                    description: CPF/CNPJ do detentor da chave pix
+                                    type: string
+                                    example: '123412342134'
+                                title: pixKeyCreditParty
+                              emv:
+                                description: Chave copia e cola de pix
+                                type: string
+                                example: 123498128974239789gov-exemplo-de-emv1234123461
+                              recurrences:
+                                type: object
+                                required:
+                                - allowOverdraftUsage
+                                - shouldNotifyScheduling
+                                properties:
+                                  allowOverdraftUsage:
+                                    description: Permite o uso de cheque especial
+                                    type: boolean
+                                    example: true
+                                  shouldNotifyScheduling:
+                                    description: Notifica o cliente sobre o agendamento
+                                    type: boolean
+                                    example: true
+                                  maxAmount:
+                                    description: Valor máximo da transação
+                                    type: number
+                                    example: 1000
+                            title: detail-inside-automatic
+                      - required:
+                        - amount
+                        - debitParty
+                        - paymentDate
+                        type: object
+                        properties:
+                          description:
+                            type: string
+                            description: Descrição do pagamento visível ao favorecido. Visível no comprovante.
+                            example: Pagamento de boleto
+                          internalDescription:
+                            type: string
+                            description: Identificação interna do pagamento. Não consta no comprovante, apenas nos eventos internos.
+                            example: Pagamento de boleto
+                          batchId:
+                            type: string
+                            description: Id do lote de pagamentos.
+                            example: 117610ad-dde4-4a55-94e4-24a9c9fc1fc4
+                          amount:
+                            type: number
+                            example: 0.01
+                            title: Money
+                            description: Valor da transação.
+                          debitParty:
+                            description: Dados da parte debitada.
+                            type: object
+                            properties:
+                              branchCode:
+                                description: Agência. Utilizar 50.
+                                type: string
+                                example: '50'
+                              number:
+                                description: Número da conta
+                                type: string
+                                example: '000000050'
+                          tags:
+                            type: object
+                            properties:
+                              externalId:
+                                type: string
+                                example: 8725b04c-1354-4ad7-91db-4bbb2138e390
+                                title: ExternalId
+                          paymentDate:
+                            format: date
+                            description: Data de pagamento
+                            type: string
+                            example: '2025-02-02'
+                        title: BankSlipPaymentIssue
+                      title: Pagamento-PIX-QR-CODE-AUTOMATICO
+                    properties:
+                      tags:
+                        description: Objeto de uso do cliente para identificar a transação.
+                    title: PaymentBody-complete
+              title: BankSlipPaymentBatch
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                required:
+                - operationNeedsApproval
+                type: object
+                properties:
+                  batchId:
+                    description: ''
+                    type: string
+                    example: b9123459b123-123pgsf
+                  contractGuid:
+                    description: ''
+                    type: string
+                    example: 123434545gpa234
+                  operationNeedsApproval:
+                    description: ''
+                    type: boolean
+                    example: 'true'
+                title: BankSlipBatchResponse
+          description: Iniciação de Pagamento
+        '400':
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - type: object
+                  description: Resposta de erro com data como array (ex. operações em lote)
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          tags:
+                            type: object
+                            description: Tags associadas
+                          type:
+                            type: string
+                            example: Bad Request
+                          debitParty:
+                            type: array
+                          errors:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                code:
+                                  type: string
+                                  description: Código do erro retornado pela API. Pode ser utilizado para identificar o erro de forma programática. Tabela de erros disponível na ficha técnica
+                                  example: btg:enterprise:banking:payments:error:pix-key-type-not-supported
+                                arguments:
+                                  type: object
+                                  description: Objeto de argumentos para detalhamento do erro. Objeto polimórfico, podendo conter diferentes chaves dependendo do erro.
+                                  example:
+                                    type: '4501538863'
+                                detail:
+                                  type: string
+                                  example: Tipo de chave pix  não suportado.
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          example: Bad Request
+                        debitParty:
+                          type: array
+                        errors:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              code:
+                                type: string
+                                description: Código do erro retornado pela API. Pode ser utilizado para identificar o erro de forma programática. Tabela de erros disponível na ficha técnica
+                                example: btg:enterprise:banking:payments:error:invalid-json-schema-field
+                              arguments:
+                                type: object
+                                description: Objeto de argumentos para detalhamento do erro. Objeto polimórfico, podendo conter diferentes chaves dependendo do erro.
+                                properties:
+                                  path:
+                                    type: string
+                                    example: items[0].type
+                                  name:
+                                    type: string
+                                    example: type
+                              detail:
+                                type: string
+                                example: Campo type é inválido.
+                        tags:
+                          type: object
+                          description: Tags associadas
+                title: 400ErrorResponse
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - type: object
+                  description: Resposta de erro com data como array (ex. operações em lote)
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          tags:
+                            type: object
+                            description: Tags associadas
+                          type:
+                            type: string
+                            example: Bad Request
+                          debitParty:
+                            type: array
+                          errors:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                code:
+                                  type: string
+                                  description: Código do erro retornado pela API. Pode ser utilizado para identificar o erro de forma programática. Tabela de erros disponível na ficha técnica
+                                  example: btg:enterprise:banking:payments:error:pix-key-type-not-supported
+                                arguments:
+                                  type: object
+                                  description: Objeto de argumentos para detalhamento do erro. Objeto polimórfico, podendo conter diferentes chaves dependendo do erro.
+                                  example:
+                                    type: '4501538863'
+                                detail:
+                                  type: string
+                                  example: Tipo de chave pix  não suportado.
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          example: Bad Request
+                        debitParty:
+                          type: array
+                        errors:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              code:
+                                type: string
+                                description: Código do erro retornado pela API. Pode ser utilizado para identificar o erro de forma programática. Tabela de erros disponível na ficha técnica
+                                example: btg:enterprise:banking:payments:error:invalid-json-schema-field
+                              arguments:
+                                type: object
+                                description: Objeto de argumentos para detalhamento do erro. Objeto polimórfico, podendo conter diferentes chaves dependendo do erro.
+                                properties:
+                                  path:
+                                    type: string
+                                    example: items[0].type
+                                  name:
+                                    type: string
+                                    example: type
+                              detail:
+                                type: string
+                                example: Campo type é inválido.
+                        tags:
+                          type: object
+                          description: Tags associadas
+                title: 400ErrorResponse
+          description: Bad Request
+        '500':
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - type: object
+                  description: Resposta de erro com data como array (ex. operações em lote)
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          tags:
+                            type: object
+                            description: Tags associadas
+                          type:
+                            type: string
+                            example: Bad Request
+                          debitParty:
+                            type: array
+                          errors:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                code:
+                                  type: string
+                                  description: Código do erro retornado pela API. Pode ser utilizado para identificar o erro de forma programática. Tabela de erros disponível na ficha técnica
+                                  example: btg:enterprise:banking:payments:error:integration-error
+                                arguments:
+                                  type: object
+                                  description: Objeto de argumentos para detalhamento do erro. Objeto polimórfico, podendo conter diferentes chaves dependendo do erro.
+                                  example:
+                                    type: '4501538863'
+                                detail:
+                                  type: string
+                                  example: Ocorreu um erro interno. Tente novamente mais tarde.
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          example: Bad Request
+                        debitParty:
+                          type: array
+                        errors:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              code:
+                                type: string
+                                description: Código do erro retornado pela API. Pode ser utilizado para identificar o erro de forma programática. Tabela de erros disponível na ficha técnica
+                                example: btg:enterprise:banking:payments:error:integration-error
+                              arguments:
+                                type: object
+                                description: Objeto de argumentos para detalhamento do erro. Objeto polimórfico, podendo conter diferentes chaves dependendo do erro.
+                                properties:
+                                  path:
+                                    type: string
+                                    example: items[0].type
+                                  name:
+                                    type: string
+                                    example: type
+                              detail:
+                                type: string
+                                example: Ocorreu um erro interno. Tente novamente mais tarde.
+                        tags:
+                          type: object
+                          description: Tags associadas
+                title: 500ErrorResponse
+          description: Internal Server Error
+      security:
+      - oauth2:
+        - openid empresas.btgpactual.com/payments
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Payments/criar-iniciacao-de-pagamento-ou-transferencia
+    get:
+      tags:
+      - Pagamentos
+      description: Listar iniciação de pagamento ou transferência
+      parameters:
+      - name: companyId
+        schema:
+          description: CNPJ da empresa realizando a requisição.
+          type: string
+          example: '30306294000145'
+          title: CompanyId
+        in: path
+        required: true
+      - examples:
+          numberExample:
+            value: '10'
+        name: pageSize
+        description: Número de itens a serem incluidos na página
+        schema:
+          type: number
+        in: query
+        required: true
+      - examples:
+          numberExample:
+            value: '1'
+        name: pageNumber
+        description: Número da página onde começará a query
+        schema:
+          type: number
+        in: query
+        required: true
+      - name: paymentType
+        description: Tipo do pagamento(TED, PIX_MANUAL, etc...)
+        schema:
+          type: string
+        in: query
+        required: false
+      - name: receiver
+        description: CNPJ da parte creditada
+        schema:
+          type: string
+        example: '12341234123422'
+        in: query
+        required: false
+      - name: batchId
+        description: Id do lote de transferências/pagamentos
+        example: 1341bwef-124qwebd-234qsddfq
+        schema:
+          type: string
+        in: query
+        required: false
+      - name: minPaymentDate
+        description: Data minima de pagamento
+        example: '2024-09-10'
+        schema:
+          type: string
+        in: query
+        required: false
+      - name: maxPaymentDate
+        description: Data máxima de pagamento
+        example: '2025-09-09'
+        schema:
+          type: string
+        in: query
+        required: false
+      - name: minAmount
+        description: Valor minimo da transação
+        example: 3
+        schema:
+          type: number
+        in: query
+        required: false
+      - name: maxAmount
+        description: Valor maximo da transação
+        example: 4
+        schema:
+          type: number
+        in: query
+        required: false
+      - name: status
+        description: Status do pagamento ou transferências
+        example: CONFIRMED
+        schema:
+          type: string
+        in: query
+        required: false
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        paymentId:
+                          type: string
+                          example: 29d42888-a920-4a85-a163-aa25b4937b3f
+                          title: PaymentId
+                        type:
+                          description: Boleto de cobrança
+                          enum:
+                          - BANKSLIP
+                          - PIX_QR_CODE
+                          - UTILITIES
+                          - TED
+                          - PIX
+                          type: string
+                          title: Type
+                        status:
+                          description: Status do pagamento
+                          enum:
+                          - CONFIRMED
+                          - CREATED
+                          - CANCELED
+                          - FAILED
+                          - PROCESSED
+                          - ADJOURNED
+                          - REVERTED
+                          - SCHEDULED
+                          type: string
+                          example: CREATED
+                          title: PaymentStatus
+                        amount:
+                          type: number
+                          example: 0.01
+                          title: Money
+                        debitParty:
+                          type: object
+                          properties:
+                            taxId:
+                              type: string
+                              example: '00000000000141'
+                            name:
+                              type: string
+                              example: NOME DA EMPRESA
+                            number:
+                              type: string
+                              example: '000000050'
+                            branchCode:
+                              type: string
+                              example: '50'
+                            bankCode:
+                              type: string
+                              example: '208'
+                        detail:
+                          type: object
+                          properties:
+                            digitableLine:
+                              description: Linha digitavel
+                              type: string
+                              example: '20890050091195069626700021179601493360000000001'
+                              title: DigitableLine
+                            dueDate:
+                              format: date
+                              type: string
+                              example: '2023-05-03'
+                              title: Date
+                            payee:
+                              type: object
+                              properties:
+                                socialName:
+                                  type: string
+                                  example: NOME DA EMPRESA
+                                fantasyName:
+                                  type: string
+                                  example: NOME DA EMPRESA
+                                taxId:
+                                  type: string
+                                  example: '00000000000145'
+                                bankCode:
+                                  type: string
+                                  example: '208'
+                              title: Payee
+                        tags:
+                          type: object
+                          properties:
+                            externalId:
+                              type: string
+                              example: 8725b04c-1354-4ad7-91db-4bbb2138e390
+                              title: ExternalId
+                            originTransactionId:
+                              type: string
+                              example: 48b33060-7960-4093-bc93-ed9105c3c657
+                              title: OriginTransactionId
+                        paymentDate:
+                          format: date
+                          type: string
+                          example: '2023-03-20T00:00:00.000Z'
+                      title: BankSlipPayment
+                  _links:
+                    type: object
+                    properties:
+                      next:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            example: /v1/companies/30306294000145/payments?cursor=cGFnZT0yJml0ZW1zUGVyUGFnZT0xMCZ0eXBlPW51bGwmc3RhdHVzPVNFTlQ=
+                          method:
+                            type: string
+                            example: GET
+                title: BankSlipPaymentCollection
+          description: Lista de Pagamentos
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - oauth2:
+        - openid empresas.btgpactual.com/payments.readonly
+        - openid empresas.btgpactual.com/payments
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Payments/listar-iniciacao-de-pagamento-ou-transferencia
+  /{companyId}/banking/payments-recurrences:
+    post:
+      tags:
+      - Pagamentos Recorrentes
+      description: ' ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o [Wiremock](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-com-wiremock-v2)
+
+
+        > No sandbox este endpoint requer a utilização de [Sandbox Headers](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-headers)
+
+
+        | Header     | Descrição                            | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      parameters:
+      - name: companyId
+        schema:
+          description: CNPJ da empresa realizando a requisição.
+          type: string
+          example: '30306294000145'
+          title: CompanyId
+        in: path
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+              - periodicity
+              - basePayment
+              - type
+              type: object
+              properties:
+                type:
+                  type: string
+                  description: Tipo do pagamento recorrente a ser criado
+                  enum:
+                  - PAYMENT
+                  - PIX_AUTOMATIC
+                periodicity:
+                  required:
+                  - type
+                  - detail
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                      description: Tipo de periodicidade da recorrência
+                      enum:
+                      - DAILY
+                      - WEEKLY
+                      - BIWEEKLY
+                      - MONTHLY
+                      - ANNUALLY
+                      - CUSTOM
+                    detail:
+                      oneOf:
+                      - type: object
+                        required:
+                        - startDate
+                        - quantity
+                        properties:
+                          startDate:
+                            type: string
+                            description: Data de início da recorrência
+                            example: '2024-10-09'
+                          quantity:
+                            description: Quantidade de recorrências
+                            type: integer
+                            example: 10
+                      - type: object
+                        required:
+                        - dates
+                        properties:
+                          dates:
+                            description: Datas específicas para a recorrência
+                            type: array
+                            items:
+                              type: string
+                              example: '2024-09-10'
+                  title: Periodicity
+                basePayment:
+                  type: object
+                  required:
+                  - type
+                  - amount
+                  - debitParty
+                  - detail
+                  properties:
+                    type:
+                      type: string
+                      description: Tipo de pagamento a ser realizado recorrentemente
+                      enum:
+                      - PIX_KEY
+                      - PIX_MANUAL
+                      - PIX_QR_CODE
+                      - TEF
+                    amount:
+                      description: Valor do pagamento
+                      type: number
+                    description:
+                      description: Descrição do pagamento
+                      type: string
+                    internalDescription:
+                      description: Descrição interna do pagamento
+                      type: string
+                    debitParty:
+                      description: Parte debitada no pagamento
+                      type: object
+                      required:
+                      - taxId
+                      - name
+                      - account
+                      properties:
+                        taxId:
+                          type: string
+                          pattern: ^(\d{11}|\d{14})$
+                          description: CNPJ do pagador
+                        name:
+                          type: string
+                          description: Nome do pagador
+                        account:
+                          description: Conta do pagador
+                          type: object
+                          required:
+                          - type
+                          - number
+                          - branch
+                          - bankCode
+                          properties:
+                            type:
+                              type: string
+                              description: Tipo de conta do pagador
+                              enum:
+                              - CC
+                              - PP
+                              - CS
+                              - CD
+                              - CI
+                              - CG
+                              - CP
+                              - PG
+                            number:
+                              description: Número da conta do pagador
+                              type: string
+                            branch:
+                              description: Agência da conta do pagador
+                              type: string
+                            bankCode:
+                              description: Código do banco do pagador
+                              type: string
+                              pattern: ^\d{3}$
+                            ispb:
+                              description: ISPB do banco do pagador
+                              type: string
+                              example: '30306294'
+                      title: RecurrenceParty
+                    detail:
+                      description: Detalhes do pagamento
+                      oneOf:
+                      - type: object
+                        required:
+                        - key
+                        properties:
+                          key:
+                            description: Chave pix do pagamento
+                            type: object
+                            required:
+                            - value
+                            properties:
+                              value:
+                                type: string
+                      - type: object
+                        required:
+                        - emv
+                        properties:
+                          emv:
+                            description: EMV do pix
+                            type: string
+                      - type: object
+                        required:
+                        - key
+                        - transactionId
+                        properties:
+                          key:
+                            description: Chave pix do pagamento
+                            type: object
+                            required:
+                            - value
+                            properties:
+                              value:
+                                type: string
+                          transactionId:
+                            description: ID da transação do pagamento
+                            type: string
+                      - type: object
+                        required:
+                        - creditParty
+                        properties:
+                          creditParty:
+                            description: Parte creditada no pagamento
+                            type: object
+                            required:
+                            - taxId
+                            - name
+                            - account
+                            properties:
+                              taxId:
+                                type: string
+                                pattern: ^(\d{11}|\d{14})$
+                                description: CNPJ do pagador
+                              name:
+                                type: string
+                                description: Nome do pagador
+                              account:
+                                description: Conta do pagador
+                                type: object
+                                required:
+                                - type
+                                - number
+                                - branch
+                                - bankCode
+                                properties:
+                                  type:
+                                    type: string
+                                    description: Tipo de conta do pagador
+                                    enum:
+                                    - CC
+                                    - PP
+                                    - CS
+                                    - CD
+                                    - CI
+                                    - CG
+                                    - CP
+                                    - PG
+                                  number:
+                                    description: Número da conta do pagador
+                                    type: string
+                                  branch:
+                                    description: Agência da conta do pagador
+                                    type: string
+                                  bankCode:
+                                    description: Código do banco do pagador
+                                    type: string
+                                    pattern: ^\d{3}$
+                                  ispb:
+                                    description: ISPB do banco do pagador
+                                    type: string
+                                    example: '30306294'
+                            title: RecurrenceParty
+                  title: RecurrenceBasePayment
+                recurringPaymentDates:
+                  type: array
+                  items:
+                    type: string
+                    example: '2024-09-10'
+              title: RecurrenceRequest
+        required: true
+      responses:
+        '200':
+          description: Successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  operationNeedsApproval:
+                    type: boolean
+                    example: true
+                  contractGuid:
+                    type: string
+                    example: 13287d0e-23c8-4d31-8cc7-989a3aaa6e16
+                  recurrenceId:
+                    type: string
+                    example: 35455c30-49eb-4143-ac69-1887be87de78
+      security:
+      - oauth2:
+        - openid empresas.btgpactual.com/payments
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Payments/criar-recorrencia-de-pagamento
+    get:
+      tags:
+      - Pagamentos Recorrentes
+      description: ' ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o [Wiremock](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-com-wiremock-v2)
+
+
+        > No sandbox este endpoint requer a utilização de [Sandbox Headers](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-headers)
+
+
+        | Header     | Descrição                            | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      parameters:
+      - name: companyId
+        schema:
+          description: CNPJ da empresa realizando a requisição.
+          type: string
+          example: '30306294000145'
+          title: CompanyId
+        in: path
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: 35455c30-49eb-4143-ac69-1887be87de78
+                        type:
+                          type: string
+                          example: PAYMENT
+                        status:
+                          type: string
+                          example: STARTED
+                        systemOrigin:
+                          type: string
+                          example: '***REMOVED_AUTHORIZATION_SERVER_CLIENT_ID***'
+                        periodicity:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                              example: WEEKLY
+                            detail:
+                              type: object
+                              properties:
+                                startDate:
+                                  type: string
+                                  format: date
+                                  example: '2025-06-16'
+                                endDate:
+                                  type: string
+                                  format: date
+                                  example: '2025-07-28'
+                                quantity:
+                                  type: integer
+                                  example: 7
+                        basePayment:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                              example: PIX_KEY
+                            amount:
+                              type: number
+                              format: float
+                              example: 0.55
+                            debitParty:
+                              type: object
+                              properties:
+                                name:
+                                  type: string
+                                  example: VECHI CONSULTORIA E PROJETOS LTDA
+                                taxId:
+                                  type: string
+                                  example: '37297902000141'
+                                account:
+                                  type: object
+                                  properties:
+                                    type:
+                                      type: string
+                                      example: CC
+                                    ispb:
+                                      type: string
+                                      example: '30306294'
+                                    branch:
+                                      type: string
+                                      example: '50'
+                                    number:
+                                      type: string
+                                      example: 003886850
+                                    bankCode:
+                                      type: string
+                                      example: '208'
+                            detail:
+                              type: object
+                              properties:
+                                creditParty:
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                      example: BRUNO VIANA DE SIQUEIRA
+                                    taxId:
+                                      type: string
+                                      example: '***589211**'
+                                    account:
+                                      type: object
+                                      properties:
+                                        bankCode:
+                                          type: string
+                                          example: '208'
+                                        ispb:
+                                          type: string
+                                          example: '30306294'
+                                        type:
+                                          type: string
+                                          example: '**'
+                                        branch:
+                                          type: string
+                                          example: '**'
+                                        number:
+                                          type: string
+                                          example: '*********'
+                                key:
+                                  type: object
+                                  properties:
+                                    value:
+                                      type: string
+                                      example: 06058921139
+                                    type:
+                                      type: string
+                                      example: TAX_ID
+                        errors:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              detail:
+                                type: string
+                                example: Pendente aprovação de representante legal.
+                              code:
+                                type: string
+                                example: btg:enterprise:banking:payments:error:pending-approval
+                              arguments:
+                                type: object
+                                properties:
+                                  contractId:
+                                    type: string
+                                    example: 13287d0e-23c8-4d31-8cc7-989a3aaa6e16
+                      title: RecurrenceIdGetResponse
+      security:
+      - oauth2:
+        - openid empresas.btgpactual.com/payments.readonly
+        - openid empresas.btgpactual.com/payments
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Payments/listar-recorrencias
+  /{companyId}/banking/payments-recurrences/{recurrenceId}/payments:
+    get:
+      tags:
+      - Pagamentos Recorrentes
+      description: ' ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o [Wiremock](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-com-wiremock-v2)
+
+
+        > No sandbox este endpoint requer a utilização de [Sandbox Headers](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-headers)
+
+
+        | Header     | Descrição                            | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      parameters:
+      - name: companyId
+        schema:
+          description: CNPJ da empresa realizando a requisição.
+          type: string
+          example: '30306294000145'
+          title: CompanyId
+        in: path
+        required: true
+      - name: recurrenceId
+        description: Recurrence ID
+        schema:
+          type: string
+        in: path
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        paymentId:
+                          example: 35455c30-49eb-4143-ac69-1887be87de78
+                          type: string
+                        paymentDate:
+                          type: string
+                          example: '2024-09-10'
+                          format: date
+                        scheduleDate:
+                          type: string
+                          example: '2024-09-10'
+                          format: date
+                        status:
+                          type: string
+                          example: STARTED
+                        detail:
+                          type: object
+                          properties:
+                            recurrencePaymentIndex:
+                              example: 1
+                              type: integer
+                            totalPaymentsInRecurrence:
+                              type: integer
+                              example: 10
+                title: RecurrencePaymentsGet
+      security:
+      - oauth2:
+        - openid empresas.btgpactual.com/payments.readonly
+        - openid empresas.btgpactual.com/payments
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Payments/listar-pagamentos-de-recorrencia
+  /{companyId}/banking/payments/{paymentId}/receipt:
+    get:
+      tags:
+      - Pagamentos
+      description: Obter recibo
+      parameters:
+      - name: paymentId
+        description: Identificador do pagamento
+        schema:
+          type: string
+          example: 29d42888-a920-4a85-a163-aa25b4937b3f
+          title: PaymentId
+        in: path
+        required: true
+      - name: Accept
+        schema:
+          type: string
+          example: application/pdf
+        in: header
+        required: true
+      - name: companyId
+        description: ''
+        schema:
+          description: CNPJ da empresa realizando a requisição.
+          type: string
+          example: '30306294000145'
+          title: CompanyId
+        in: path
+        required: true
+      responses:
+        '200':
+          content:
+            application/pdf:
+              examples:
+                PDF:
+                  value: Retorna um binário de PDF
+          description: Retorno de recibo em PDF
+      security:
+      - oauth2:
+        - openid
+        - empresas.btgpactual.com/pix-cash-in.readonly
+        - empresas.btgpactual.com/authorized-direct-debits.readonly
+        - empresas.btgpactual.com/bank-slips
+        - empresas.btgpactual.com/bank-slips.readonly
+        - openid empresas.btgpactual.com/payments.readonly
+        - openid empresas.btgpactual.com/payments
+        - empresas.btgpactual.com/accounts.readonly
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Payments/obter-recibo
+  /{companyId}/banking/payments-recurrences/summary:
+    get:
+      tags:
+      - Pagamentos Recorrentes
+      description: ' ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o [Wiremock](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-com-wiremock-v2)
+
+
+        > No sandbox este endpoint requer a utilização de [Sandbox Headers](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-headers)
+
+
+        | Header     | Descrição                            | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      parameters:
+      - name: companyId
+        schema:
+          description: CNPJ da empresa realizando a requisição.
+          type: string
+          example: '30306294000145'
+          title: CompanyId
+        in: path
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      total:
+                        type: object
+                        properties:
+                          count:
+                            example: 100
+                            type: integer
+                          amount:
+                            example: 1000.5
+                            type: number
+                      totalCreated:
+                        type: object
+                        properties:
+                          count:
+                            example: 50
+                            type: integer
+                          amount:
+                            example: 500.25
+                            type: number
+                      totalStarted:
+                        type: object
+                        properties:
+                          count:
+                            example: 30
+                            type: integer
+                          amount:
+                            example: 300.75
+                            type: number
+                      totalCanceled:
+                        type: object
+                        properties:
+                          count:
+                            example: 20
+                            type: integer
+                          amount:
+                            example: 200
+                            type: number
+                      totalConfirmed:
+                        type: object
+                        properties:
+                          count:
+                            example: 10
+                            type: integer
+                          amount:
+                            example: 100
+                            type: number
+                title: SummaryGetResponse
+      security:
+      - oauth2:
+        - openid empresas.btgpactual.com/payments.readonly
+        - openid empresas.btgpactual.com/payments
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Payments/resumo-de-recorrencias-de-pagamento
+components:
+  securitySchemes:
+    oauth2:
+      flows:
+        authorizationCode:
+          authorizationUrl: https://id.sandbox.btgpactual.com/oauth2/authorize
+          tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+          scopes:
+            openid: Consultar seu perfil BTG Id
+            empresas.btgpactual.com/pix-cash-in: Consultar Pix Cobrança. Emitir Pix Cobrança.
+            empresas.btgpactual.com/pix-cash-in.readonly: Consultar Pix Cobrança.
+      type: oauth2
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/65b6f34c.66130078.js
+  - https://developers.empresas.btgpactual.com/assets/js/9a60eed4.d629410f.js
+  - https://developers.empresas.btgpactual.com/assets/js/8610ad53.9be95faf.js
+  - https://developers.empresas.btgpactual.com/assets/js/c11be869.bab57530.js
+  - https://developers.empresas.btgpactual.com/assets/js/1eb8621f.5920175f.js
+  - https://developers.empresas.btgpactual.com/assets/js/b1c9c74d.c8fb9985.js
+  - https://developers.empresas.btgpactual.com/assets/js/8309e522.1e2d40f1.js
+  - https://developers.empresas.btgpactual.com/assets/js/a3a32e5d.dd9ecb54.js
+  - https://developers.empresas.btgpactual.com/assets/js/28c308b9.229079e5.js
+  - https://developers.empresas.btgpactual.com/assets/js/7a4d41e2.8e85164b.js
+  - https://developers.empresas.btgpactual.com/assets/js/03ae328d.15a258f7.js
+  - https://developers.empresas.btgpactual.com/assets/js/0b5fcdc5.dc669663.js
+  - https://developers.empresas.btgpactual.com/assets/js/54ac4fcc.3e08f8ad.js
+  - https://developers.empresas.btgpactual.com/assets/js/7268bbdb.7215b98e.js
+  - https://developers.empresas.btgpactual.com/assets/js/6aa9cd99.5d7027a8.js
+  - https://developers.empresas.btgpactual.com/assets/js/0cda0e2f.113214e2.js
+  - https://developers.empresas.btgpactual.com/assets/js/8706a611.c750149f.js
+  - https://developers.empresas.btgpactual.com/assets/js/2165ce07.0de26e4c.js

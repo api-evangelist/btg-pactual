@@ -1,0 +1,190 @@
+openapi: 3.2.0
+info:
+  title: SCF - Risco Sacado Receivables API
+  description: Esta API tem a finalidade de contratar Antecipações de Recebíveis. Para autenticação é necessário a utilização do fluxo de client credentials para autenticação na documentação da API. `AUTENTICAÇÃO -> Fluxos de Autenticação -> Client Credentials`
+  version: 1.4.1
+  contact:
+    name: Time BTG Empresas
+    email: ol-it-btgempresas@btgpactual.com
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com/v1/scf
+  description: SANDBOX URL
+- url: https://api.empresas.btgpactual.com/v1/scf
+  description: PROD URL
+tags:
+- name: Receivables
+paths:
+  /receivables/files:
+    put:
+      tags:
+      - Receivables
+      description: Esta rota tem como objetivo anexar novos arquivos aos recebíveis indicados.
+      operationId: receivableFiles
+      requestBody:
+        description: Dados dos recebíveis e arquivos
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                receivables:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - identification
+                    - maturityDate
+                    - payerTaxId
+                    - payeeTaxId
+                    - files
+                    properties:
+                      payerTaxId:
+                        description: Documento do sacado
+                        type: string
+                      payeeTaxId:
+                        description: Documento do fornecedor
+                        type: string
+                      identification:
+                        type: string
+                        description: 'Identificação do recebível (ex: Nº da NF)'
+                        example: '5120070562'
+                        title: ReceivableIdentificationSchema
+                      maturityDate:
+                        description: Data de vencimento
+                        type: string
+                        format: date
+                      files:
+                        type: array
+                        items:
+                          description: Arquivos necessários serão alinhados de acordo com a especificação do negócio
+                          type: object
+                          properties:
+                            url:
+                              description: URL do arquivo
+                              type: string
+                            type:
+                              description: Tipo do arquivo
+                              type: string
+                              enum:
+                              - Nota
+                              - Contrato
+                              - Garantia
+                              - Adesao
+                              - Auxiliar
+                              - Duplicata
+                              - Canhoto
+                              example: Nota
+                            extension:
+                              description: Extensão do arquivo
+                              type: string
+                              example: PDF
+                          title: FileSchema
+                    title: ReceivableFilesSchema
+      responses:
+        '204':
+          description: Sucesso
+        '400':
+          description: Erro de validação
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                  errorDetails:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        target:
+                          type: string
+                        code:
+                          type: string
+                          enum:
+                          - RCQF0001
+                          - RCQF0002
+                          - RCQF0003
+                          - RCQF0004
+                          - RCQF0005
+                          - RCQF0006
+                          - RCQF0007
+                          - RCQF0008
+                          - RCQF0009
+                          - RCQF0010
+                          - RCQF0011
+                          - RCQF0012
+                          - RCQF0013
+                          - RCQF0014
+                          - RCQF0015
+                          - RCQF0016
+                          description: "___\nErrors:\n * RCQF0001 - Recebível não existente\n * RCQF0002 - Data de vencimento inválida\n * RCQF0003 - Identificação do recebível inválida\n * RCQF0004 - Identificação do sacado inválida\n * RCQF0005 - Identificação do fornecedor inválida\n * RCQF0006 - Identificadores inválidos\n * RCQF0007 - Recebível não cancelável\n * RCQF0008 - Arquivos necessários\n * RCQF0009 - URL do arquivo necessária\n * RCQF0010 - URL do arquivo inválida\n * RCQF0011 - Tipo do arquivo necessário\n * RCQF0012 - Tipo do arquivo inválido\n * RCQF0013 - Extensão do arquivo necessária\n * RCQF0014 - Extensão do arquivo inválida\n * RCQF0015 - Tipo do arquivo repetido\n * RCQF0016 - Arquivo com este tipo já existente para este recebível\n"
+                          title: ValidationErrorsReceivableEnumSchema
+                title: ReceivableBadRequestResponseSchema
+        '401':
+          description: Não autorizado
+        '500':
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                title: ErrorResponseSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/scf/receivables
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/SCF%20-%20Risco%20Sacado/receivable-files
+      summary: Receivable files
+      x-summary-source: derived
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+          scopes:
+            empresas.btgpactual.com/scf/borderos: Scope to borderos
+            empresas.btgpactual.com/scf/borderos.readonly: Scope to borderos read
+            empresas.btgpactual.com/scf/companies: Scope to companies
+            empresas.btgpactual.com/scf/companies.readonly: Scope to companies read
+            empresas.btgpactual.com/scf/operations: Scope to operations
+            empresas.btgpactual.com/scf/operations.readonly: Scope to operations read
+            empresas.btgpactual.com/scf/receivables: Scope to receivables
+            empresas.btgpactual.com/scf/receivables.readonly: Scope to receivables read
+            empresas.btgpactual.com/scf/settlements: Scope to settlements
+            empresas.btgpactual.com/scf/settlements.readonly: Scope to settlements read
+            empresas.btgpactual.com/scf/trades: Scope to trades
+            empresas.btgpactual.com/scf/trades.readonly: Scope to trades read
+            empresas.btgpactual.com/payer-onboardings: Scope to financiers-payer
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/58e6a5f6.d603bf94.js
+  - https://developers.empresas.btgpactual.com/assets/js/0e797970.5126fe3c.js
+  - https://developers.empresas.btgpactual.com/assets/js/4ac3e447.07b626b1.js
+  - https://developers.empresas.btgpactual.com/assets/js/17b7cd34.31efc121.js
+  - https://developers.empresas.btgpactual.com/assets/js/69c7c660.61e0039c.js
+  - https://developers.empresas.btgpactual.com/assets/js/d83fedfc.69d77805.js
+  - https://developers.empresas.btgpactual.com/assets/js/091533f9.2c5d3d51.js
+  - https://developers.empresas.btgpactual.com/assets/js/51cd407d.7f26ecb2.js
+  - https://developers.empresas.btgpactual.com/assets/js/522d5b94.745f73fc.js
+  - https://developers.empresas.btgpactual.com/assets/js/a9f41984.1f49d7c9.js
+  - https://developers.empresas.btgpactual.com/assets/js/10287afc.7e9c97f3.js
+  - https://developers.empresas.btgpactual.com/assets/js/6687c7ea.dec258dc.js
+  - https://developers.empresas.btgpactual.com/assets/js/fb9f95a5.4835ae79.js
+  - https://developers.empresas.btgpactual.com/assets/js/0938da15.d9b57531.js

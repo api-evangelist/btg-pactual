@@ -1,0 +1,492 @@
+openapi: 3.2.0
+info:
+  title: CrediFlow - Ativos e Cessões Disbursement Groups API
+  description: Esta documentação tem a finalidade de instruir parceiros na utilização das APIs de CrediFlow para criação e acompanhamento de ativos de crédito e suas cessões para um FIDC. Para autenticação é necessária a utilização do fluxo de client credentials de acordo com o menu `Authentication -> Fluxos de Autenticação -> Client Credentials`. O fluxo de negócio (admissão, cessão, grupos de desembolso) está descrito no guia conceitual da API de CrediFlow.
+  version: '1.0'
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com
+  description: Sandbox
+- url: https://api.empresas.btgpactual.com
+  description: Produção
+tags:
+- name: DisbursementGroups
+paths:
+  /fidc/v1/disbursement-groups:
+    get:
+      tags:
+      - DisbursementGroups
+      description: Consulta um grupo de desembolso, incluindo o status do grupo e os ativos (membros) que o compõem. A busca é feita por query string, informando exatamente um entre `id` (identificador interno, gerado pela plataforma) e `externalId` (identificador externo, informado pelo parceiro na criação). Ao consultar por identificador externo, é obrigatório informar o `fundTaxId` (CNPJ do fundo), pois o identificador externo só é único dentro de um mesmo fundo.
+      parameters:
+      - in: query
+        name: id
+        description: Identificador interno do grupo de desembolso (gerado pela plataforma). Mutuamente exclusivo com `externalId`; informe exatamente um dos dois.
+        required: false
+        schema:
+          type: string
+          format: uuid
+          example: 8bce6cfc-dcd4-473b-9fae-60ef3f60ec11
+      - in: query
+        name: externalId
+        description: Identificador externo do grupo de desembolso (informado pelo parceiro na criação). Mutuamente exclusivo com `id`; informe exatamente um dos dois. Ao usar o identificador externo, informe também o `fundTaxId`.
+        required: false
+        schema:
+          type: string
+          format: uuid
+          example: bb9d844c-8041-464c-b160-471d437231d6
+      - in: query
+        name: fundTaxId
+        description: CNPJ do fundo (somente dígitos). Obrigatório quando a consulta é feita pelo identificador externo, pois o identificador externo só é único dentro de um mesmo fundo.
+        required: false
+        schema:
+          type: string
+          example: '15996430000182'
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  description: Envelope padrão de resposta da API
+                  properties:
+                    trackingId:
+                      type: string
+                      format: uuid
+                      description: Identificador de rastreio da requisição (informe ao suporte em caso de problemas)
+                      example: 8bce6cfc-dcd4-473b-9fae-60ef3f60ec11
+                    succeeded:
+                      type: boolean
+                      description: Indica se a requisição foi bem-sucedida
+                      example: true
+                    message:
+                      type: string
+                      description: Mensagem geral da resposta
+                      example: Request succeeded.
+                    statusCode:
+                      type: number
+                      description: Código HTTP da resposta
+                      example: 200
+                    errors:
+                      type: array
+                      description: Lista de erros (vazia em caso de sucesso)
+                      items:
+                        type: object
+                        properties:
+                          code:
+                            type: string
+                            description: Código do erro (consulte a tabela de erros no guia da API)
+                            example: CF-67
+                          message:
+                            type: string
+                            description: Descrição do erro
+                            example: The asset must be Eligible before creating a cession.
+                          field:
+                            type:
+                            - string
+                            - 'null'
+                            description: Campo relacionado ao erro, quando aplicável
+                            example: assetIds
+                        title: ErrorSchema
+                    data:
+                      description: Dados da resposta (nulo em caso de erro)
+                  title: ResponseEnvelopeSchema
+                - type: object
+                  properties:
+                    data:
+                      allOf:
+                      - type: object
+                        description: Detalhe de um grupo de desembolso e seus membros — reflete a situação atual do agrupamento e de cada ativo que o compõe
+                        properties:
+                          id:
+                            type: string
+                            format: uuid
+                            description: Identificador interno do grupo, gerado pela plataforma. Identifica o grupo de forma única nas consultas e nas ações de liberação/cancelamento
+                            example: 8bce6cfc-dcd4-473b-9fae-60ef3f60ec11
+                          externalId:
+                            type: string
+                            format: uuid
+                            description: Identificador externo do grupo, informado pelo parceiro na criação. Corresponde a exatamente um grupo interno e permite consultá-lo sem depender do identificador interno
+                            example: bb9d844c-8041-464c-b160-471d437231d6
+                          status:
+                            type: string
+                            description: Status atual do grupo de desembolso, que indica em que ponto do fluxo ele está e se o desembolso em lote já foi liberado
+                            example: Created
+                          flowType:
+                            type: string
+                            description: Tipo de fluxo do grupo, que define como os desembolsos dos membros são liberados (ex. Batch, em que todos são pagos juntos em lote quando o grupo é liberado)
+                            example: Batch
+                          disbursementDate:
+                            type:
+                            - string
+                            - 'null'
+                            format: date-time
+                            description: Data agendada para o desembolso em lote. Determina quando o pagamento dos membros ocorre; quando nula, o grupo ainda não tem data agendada
+                            example: '2024-06-03T00:00:00'
+                          cancellationReason:
+                            type:
+                            - string
+                            - 'null'
+                            description: Motivo do cancelamento do grupo, preenchido apenas quando o grupo é cancelado. Ajuda a entender por que o desembolso em lote não será executado
+                            example: null
+                          allOrNothing:
+                            type: boolean
+                            description: Regra de liberação do grupo. Quando true, o desembolso só ocorre se todos os membros estiverem aptos (tudo ou nada); quando false, cada membro apto pode ser liberado independentemente
+                            example: true
+                          members:
+                            type: array
+                            description: Ativos que compõem o grupo e a situação de cada um. Determinam quais desembolsos fazem parte do lote e como o grupo é avaliado para liberação
+                            items:
+                              type: object
+                              description: Ativo membro de um grupo de desembolso e a situação da sua cessão dentro do lote
+                              properties:
+                                assetId:
+                                  type: string
+                                  format: uuid
+                                  description: Identificador do ativo membro. Liga o membro ao ativo cujo desembolso será liberado no lote
+                                  example: 0524b1ed-6a78-4f00-8394-543ffcd188f0
+                                cessionId:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  format: uuid
+                                  description: Identificador da cessão vinculada ao ativo no grupo. Preenchido quando a cessão já existe; é ela que efetivamente gera o desembolso liberado em lote
+                                  example: 8bce6cfc-dcd4-473b-9fae-60ef3f60ec11
+                                cessionStatus:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: Status da cessão vinculada, que indica se o membro está apto ao desembolso. Influencia a liberação do grupo, principalmente quando `allOrNothing` é true
+                                  example: Ceded
+                                isActive:
+                                  type: boolean
+                                  description: Indica se o membro está ativo no grupo. Quando false, o ativo foi removido e não participa mais do desembolso em lote
+                                  example: true
+                                removalReason:
+                                  type:
+                                  - string
+                                  - 'null'
+                                  description: Motivo da remoção do membro do grupo, preenchido apenas quando o membro é removido (isActive false). Explica por que o ativo saiu do lote
+                                  example: null
+                              title: DisbursementGroupMemberSchema
+                        title: DisbursementGroupSchema
+        '401':
+          description: Não autorizado
+        '404':
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Envelope padrão de resposta de erro
+                properties:
+                  trackingId:
+                    type: string
+                    format: uuid
+                    description: Identificador de rastreio da requisição
+                    example: 8bce6cfc-dcd4-473b-9fae-60ef3f60ec11
+                  succeeded:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Unsuccessful request, see errors to get more details.
+                  statusCode:
+                    type: number
+                    example: 422
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          description: Código do erro (consulte a tabela de erros no guia da API)
+                          example: CF-67
+                        message:
+                          type: string
+                          description: Descrição do erro
+                          example: The asset must be Eligible before creating a cession.
+                        field:
+                          type:
+                          - string
+                          - 'null'
+                          description: Campo relacionado ao erro, quando aplicável
+                          example: assetIds
+                      title: ErrorSchema
+                  data:
+                    example: null
+                title: ErrorEnvelopeSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/crediflow
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/CrediFlow%20-%20Ativos%20e%20Cess%5Cxf5es/consultar-grupo-de-desembolso
+      summary: Get fidc disbursement groups
+      x-summary-source: derived
+      operationId: getFidcV1DisbursementGroups
+      x-operation-id-source: derived
+    post:
+      tags:
+      - DisbursementGroups
+      description: Cria um único grupo de desembolso a partir de um identificador externo e de uma lista de ativos. Todos os ativos enviados devem ter o mesmo sacado, o mesmo cedente, o mesmo fundo e a mesma data de desembolso; caso algum ativo divirja, a requisição é recusada com 400 e nenhum grupo é criado. Para criar vários grupos, faça uma chamada por grupo, cada uma com o seu próprio `externalId`. Os ativos agrupados têm seus desembolsos liberados em lote quando o grupo é liberado. A data de desembolso e a conta bancária de destino são opcionais; quando informadas, definem quando o pagamento em lote deve ocorrer e para qual conta.
+      requestBody:
+        description: Dados do grupo de desembolso a ser criado
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - externalId
+              - assetIds
+              properties:
+                externalId:
+                  type: string
+                  format: uuid
+                  description: Identificador externo do grupo, definido pelo parceiro. Usado depois para consultar o grupo gerado. Cada identificador externo corresponde a exatamente um grupo interno
+                  example: bb9d844c-8041-464c-b160-471d437231d6
+                disbursementDate:
+                  type:
+                  - string
+                  - 'null'
+                  format: date-time
+                  description: Data em que o desembolso em lote deve ocorrer. Opcional; quando omitida, o grupo é criado sem data agendada
+                  example: '2024-06-03T00:00:00'
+                bankAccount:
+                  allOf:
+                  - type:
+                    - object
+                    - 'null'
+                    description: Dados de conta bancária, usados como destino de pagamentos (liquidação de parcelas, desembolso da cessão ou liquidação da cessão, conforme o contexto)
+                    properties:
+                      number:
+                        type: string
+                        description: Número da conta, sem o dígito verificador
+                        example: '123456'
+                      digit:
+                        type: string
+                        description: Dígito verificador da conta
+                        example: '7'
+                      bankCode:
+                        type: string
+                        description: Código COMPE do banco (3 dígitos)
+                        example: '208'
+                      agency:
+                        type: string
+                        description: Número da agência, sem o dígito
+                        example: '0001'
+                      digitAgency:
+                        type:
+                        - string
+                        - 'null'
+                        description: Dígito verificador da agência, quando houver
+                        example: '9'
+                    title: BankAccountSchema
+                  description: Conta bancária de destino do desembolso do grupo — mesma estrutura usada nos desembolsos da cessão. Opcional; quando omitida, vale a conta já definida para o desembolso
+                assetIds:
+                  type: array
+                  description: Identificadores dos ativos que compõem o grupo (mínimo 1, cada um deve ser um identificador válido). Todos os ativos devem compartilhar o mesmo sacado, o mesmo cedente, o mesmo fundo e a mesma data de desembolso; ativos divergentes resultam em 400
+                  items:
+                    type: string
+                    format: uuid
+                    example: 0524b1ed-6a78-4f00-8394-543ffcd188f0
+      responses:
+        '200':
+          description: Grupo de desembolso criado
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  description: Envelope padrão de resposta da API
+                  properties:
+                    trackingId:
+                      type: string
+                      format: uuid
+                      description: Identificador de rastreio da requisição (informe ao suporte em caso de problemas)
+                      example: 8bce6cfc-dcd4-473b-9fae-60ef3f60ec11
+                    succeeded:
+                      type: boolean
+                      description: Indica se a requisição foi bem-sucedida
+                      example: true
+                    message:
+                      type: string
+                      description: Mensagem geral da resposta
+                      example: Request succeeded.
+                    statusCode:
+                      type: number
+                      description: Código HTTP da resposta
+                      example: 200
+                    errors:
+                      type: array
+                      description: Lista de erros (vazia em caso de sucesso)
+                      items:
+                        type: object
+                        properties:
+                          code:
+                            type: string
+                            description: Código do erro (consulte a tabela de erros no guia da API)
+                            example: CF-67
+                          message:
+                            type: string
+                            description: Descrição do erro
+                            example: The asset must be Eligible before creating a cession.
+                          field:
+                            type:
+                            - string
+                            - 'null'
+                            description: Campo relacionado ao erro, quando aplicável
+                            example: assetIds
+                        title: ErrorSchema
+                    data:
+                      description: Dados da resposta (nulo em caso de erro)
+                  title: ResponseEnvelopeSchema
+                - type: object
+                  properties:
+                    data:
+                      allOf:
+                      - type: object
+                        description: Resumo do grupo de desembolso gerado na criação — retornado logo após o agrupamento para o parceiro saber qual grupo foi criado e com quais ativos
+                        properties:
+                          externalId:
+                            type: string
+                            format: uuid
+                            description: Identificador externo informado na criação
+                            example: bb9d844c-8041-464c-b160-471d437231d6
+                          id:
+                            type: string
+                            format: uuid
+                            description: Identificador interno do grupo, gerado pela plataforma. Use-o para consultar o grupo e acompanhar a liberação do desembolso em lote
+                            example: 8bce6cfc-dcd4-473b-9fae-60ef3f60ec11
+                          status:
+                            type: string
+                            description: Status atual do grupo de desembolso, que indica em que ponto do fluxo ele está (ex. recém-criado e ainda não liberado)
+                            example: Created
+                          assetIds:
+                            type: array
+                            description: Identificadores dos ativos que compõem o grupo. Definem quais desembolsos serão liberados juntos quando o grupo for liberado
+                            items:
+                              type: string
+                              format: uuid
+                              example: 0524b1ed-6a78-4f00-8394-543ffcd188f0
+                        title: DisbursementGroupSummarySchema
+        '400':
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Envelope padrão de resposta de erro
+                properties:
+                  trackingId:
+                    type: string
+                    format: uuid
+                    description: Identificador de rastreio da requisição
+                    example: 8bce6cfc-dcd4-473b-9fae-60ef3f60ec11
+                  succeeded:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Unsuccessful request, see errors to get more details.
+                  statusCode:
+                    type: number
+                    example: 422
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          description: Código do erro (consulte a tabela de erros no guia da API)
+                          example: CF-67
+                        message:
+                          type: string
+                          description: Descrição do erro
+                          example: The asset must be Eligible before creating a cession.
+                        field:
+                          type:
+                          - string
+                          - 'null'
+                          description: Campo relacionado ao erro, quando aplicável
+                          example: assetIds
+                      title: ErrorSchema
+                  data:
+                    example: null
+                title: ErrorEnvelopeSchema
+        '401':
+          description: Não autorizado
+        '422':
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Envelope padrão de resposta de erro
+                properties:
+                  trackingId:
+                    type: string
+                    format: uuid
+                    description: Identificador de rastreio da requisição
+                    example: 8bce6cfc-dcd4-473b-9fae-60ef3f60ec11
+                  succeeded:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Unsuccessful request, see errors to get more details.
+                  statusCode:
+                    type: number
+                    example: 422
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          description: Código do erro (consulte a tabela de erros no guia da API)
+                          example: CF-67
+                        message:
+                          type: string
+                          description: Descrição do erro
+                          example: The asset must be Eligible before creating a cession.
+                        field:
+                          type:
+                          - string
+                          - 'null'
+                          description: Campo relacionado ao erro, quando aplicável
+                          example: assetIds
+                      title: ErrorSchema
+                  data:
+                    example: null
+                title: ErrorEnvelopeSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/crediflow
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/CrediFlow%20-%20Ativos%20e%20Cess%5Cxf5es/criar-grupo-de-desembolso
+      summary: Create fidc disbursement groups
+      x-summary-source: derived
+      operationId: postFidcV1DisbursementGroups
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+          scopes:
+            empresas.btgpactual.com/crediflow: Scope para CrediFlow (ativos e cessões)
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/06a17103.e0abb9f4.js
+  - https://developers.empresas.btgpactual.com/assets/js/cba67386.1ba386c7.js
+  - https://developers.empresas.btgpactual.com/assets/js/934368b3.f25dceed.js
+  - https://developers.empresas.btgpactual.com/assets/js/58bcaea7.84eca701.js
+  - https://developers.empresas.btgpactual.com/assets/js/6290b426.8ef1a78a.js
+  - https://developers.empresas.btgpactual.com/assets/js/1489f51e.05a7c6b2.js
+  - https://developers.empresas.btgpactual.com/assets/js/51faf9da.63852db7.js

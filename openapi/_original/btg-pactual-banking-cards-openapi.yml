@@ -1,0 +1,978 @@
+# x-archived-from: btg-pactual-banking-cards-openapi.yml
+# x-archived-on: 2026-10-18
+openapi: 3.0.3
+info:
+  title: Banking - Cards
+  description: API de Cartão de Crédito
+  contact: {}
+  version: '1.0'
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com
+  description: Sandbox
+- url: https://api.empresas.btgpactual.com
+  description: Produção
+paths:
+  /{companyId}/banking/cards:
+    get:
+      tags:
+      - Cartões
+      description: ' ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o [Wiremock](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-com-wiremock-v2)
+
+
+        > No sandbox este endpoint requer a utilização de [Sandbox Headers](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-headers)
+
+
+        | Header     | Descrição                            | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      - name: itemsPerPage
+        in: query
+        schema:
+          type: integer
+          format: int32
+          nullable: true
+        description: Número de itens por página
+        example: 50
+      - name: cursor
+        in: query
+        schema:
+          type: string
+          nullable: true
+        description: Cursor para paginação dos resultados
+      - name: page
+        in: query
+        schema:
+          type: integer
+          format: int32
+          nullable: true
+        example: 1
+        description: Número da página
+      - name: ownerDocument
+        in: query
+        schema:
+          type: string
+          nullable: true
+        description: CPF ou CNPJ do dono do cartão
+        example: '11111111111'
+      - name: status
+        in: query
+        schema:
+          type: string
+          nullable: true
+        description: Status do cartão
+        example: REQUESTED
+      - name: last4Digits
+        in: query
+        schema:
+          type: string
+          nullable: true
+        example: '1234'
+        description: Últimos 4 dígitos do cartão
+      - name: isContactlessEnabled
+        in: query
+        schema:
+          type: boolean
+          nullable: true
+        description: Indica se o cartão tem aproximação habilitada
+        example: true
+      - name: isTravelNoticeEnabled
+        in: query
+        schema:
+          type: boolean
+          nullable: true
+        example: false
+        description: Indica se o aviso de viagem está habilitado
+      - name: isOnlineShoppingEnabled
+        in: query
+        schema:
+          type: boolean
+          nullable: true
+        example: true
+        description: Indica se compras online estão habilitadas
+      - name: isWithdrawalEnabled
+        in: query
+        schema:
+          type: boolean
+          nullable: true
+        example: false
+        description: Indica se saques estão habilitados
+      - name: printedName
+        in: query
+        schema:
+          type: string
+          nullable: true
+        example: JOAO DA SILVA
+        description: Nome impresso no cartão
+      - name: order
+        in: query
+        schema:
+          type: string
+          nullable: true
+        description: Ordem de exibição dos resultados
+      - name: sortBy
+        in: query
+        schema:
+          type: string
+          nullable: true
+        description: Campo para ordenação dos resultados
+      - name: limitOperator
+        in: query
+        schema:
+          type: string
+          nullable: true
+        description: Operador para filtro de limite do cartão
+      - name: limitAmount
+        in: query
+        schema:
+          type: string
+          nullable: true
+        description: Valor para filtro de limite do cartão
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        cardId:
+                          type: string
+                          example: f47d235c-17de-4e4b-87eb-a60208acf11f
+                          description: Identificador único do cartão
+                          nullable: true
+                        last4Digits:
+                          type: string
+                          example: '1234'
+                          description: Últimos 4 dígitos do cartão
+                          nullable: true
+                        status:
+                          type: string
+                          enum:
+                          - CREATED
+                          - REQUESTED
+                          example: REQUESTED
+                          description: Status do cartão
+                          nullable: true
+                        printedName:
+                          type: string
+                          example: JOAO DA SILVA
+                          description: Nome impresso no cartão
+                          nullable: true
+                        modality:
+                          type: string
+                          enum:
+                          - CREDIT
+                          - DEBIT
+                          example: DEBIT
+                          description: Modalidade do cartão
+                          nullable: true
+                        variant:
+                          type: string
+                          example: GOLD
+                          description: Variante do cartão
+                          nullable: true
+                        activatedAt:
+                          type: string
+                          example: '2023-01-15'
+                          description: Data de ativação do cartão
+                          nullable: true
+                        type:
+                          type: string
+                          example: PHYSICAL
+                          description: Tipo do cartão
+                          nullable: true
+                        owner:
+                          type: object
+                          properties:
+                            document:
+                              type: string
+                              example: '11111111111'
+                              description: CPF or CNPJ do dono do cartão
+                              nullable: true
+                            name:
+                              type: string
+                              example: JOAO DA SILVA
+                              description: Nome do dono do cartão
+                              nullable: true
+                            birthDate:
+                              type: string
+                              example: '1980-01-01'
+                              description: Data de nascimento do dono do cartão
+                              nullable: true
+                            phone:
+                              type: string
+                              example: '+5511999999999'
+                              description: Telefone do dono do cartão
+                              nullable: true
+                          additionalProperties: false
+                          title: CardOwnerItem
+                        debitAccount:
+                          type: object
+                          properties:
+                            branch:
+                              type: string
+                              example: '50'
+                              description: Agência da conta débito vinculada ao cartão
+                              nullable: true
+                            number:
+                              type: string
+                              example: 12345-6
+                              description: Número da conta débito vinculada ao cartão
+                              nullable: true
+                          additionalProperties: false
+                          title: DebitAccountItem
+                      additionalProperties: false
+                      title: CardItem
+                    nullable: true
+                  _links:
+                    type: object
+                    properties:
+                      next:
+                        type: string
+                        nullable: true
+                      previous:
+                        type: string
+                        nullable: true
+                    additionalProperties: false
+                    title: Links
+                additionalProperties: false
+                title: GetCardsByAccountAndFiltersResponseV2
+      security:
+      - read:
+        - brn:btg:empresas:credit-cards:invoices
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Cards/listar-cartoes
+  /{companyId}/banking/cards/invoices:
+    get:
+      tags:
+      - Faturas
+      description: ' ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o [Wiremock](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-com-wiremock-v2)
+
+
+        > No sandbox este endpoint requer a utilização de [Sandbox Headers](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-headers)
+
+
+        | Header     | Descrição                            | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        creditAccountId:
+                          type: integer
+                          format: int32
+                          example: 98765
+                          description: Identificador da conta de crédito vinculada ao cartão(caso aplicável)
+                        invoiceId:
+                          type: integer
+                          format: int32
+                          example: 12345
+                          description: Identificador único da fatura do cartão de crédito
+                        month:
+                          type: integer
+                          format: int32
+                          example: 5
+                          description: Mês da fatura do cartão de crédito
+                        year:
+                          type: integer
+                          format: int32
+                          example: 2023
+                          description: Ano da fatura do cartão de crédito
+                        totalBalance:
+                          type: number
+                          format: double
+                          example: 1500.75
+                          description: Valor total da fatura do cartão de crédito
+                        remainingBalance:
+                          type: number
+                          format: double
+                          example: 500.25
+                          description: Valor restante a pagar da fatura do cartão de crédito
+                        paidBalance:
+                          type: number
+                          format: double
+                          example: 1000.5
+                          description: Valor já pago da fatura do cartão de crédito
+                        previousBalance:
+                          type: number
+                          format: double
+                          example: 2000
+                          description: Valor da fatura anterior do cartão de crédito
+                        minimumPayment:
+                          type: number
+                          format: double
+                          example: 150
+                          description: Pagamento mínimo da fatura do cartão de crédito
+                        cycleStatus:
+                          type: string
+                          nullable: true
+                          example: OPEN
+                          description: Status do ciclo da fatura do cartão de crédito
+                        realDueDate:
+                          type: string
+                          nullable: true
+                          example: '2023-06-10'
+                          description: Data real de vencimento da fatura do cartão de crédito
+                        cycleClosingDate:
+                          type: string
+                          nullable: true
+                          example: '2023-05-30'
+                          description: Data de fechamento do ciclo da fatura do cartão de crédito
+                        cycleOpeningDate:
+                          type: string
+                          nullable: true
+                          example: '2023-05-01'
+                          description: Data de abertura do ciclo da fatura do cartão de crédito
+                        isCurrent:
+                          type: boolean
+                          example: true
+                          description: Indica se a fatura é a atual
+                        dueDate:
+                          type: string
+                          nullable: true
+                          example: '2023-06-05'
+                          description: Data de vencimento da fatura do cartão de crédito
+                        bestTransactionDay:
+                          type: string
+                          nullable: true
+                          example: '2023-05-15'
+                          description: Melhor dia de compra
+                        canPay:
+                          type: boolean
+                          example: true
+                          description: Indica se a fatura pode ser paga
+                        debits:
+                          type: number
+                          format: double
+                          example: 2000
+                          description: Valor total de débitos da fatura do cartão de crédito
+                        credits:
+                          type: number
+                          format: double
+                          example: 500.25
+                          description: Valor total de créditos da fatura do cartão de crédito
+                      additionalProperties: false
+                      title: Invoice
+                    nullable: true
+                additionalProperties: false
+                title: CardInvoicesResponseV2
+      security:
+      - read:
+        - brn:btg:empresas:credit-cards:invoices
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Cards/listar-faturas-de-cartao-de-credito
+  /{companyId}/banking/cards/invoices/{invoiceId}:
+    get:
+      tags:
+      - Faturas
+      description: ' ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o [Wiremock](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-com-wiremock-v2)
+
+
+        > No sandbox este endpoint requer a utilização de [Sandbox Headers](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-headers)
+
+
+        | Header     | Descrição                            | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      - name: invoiceId
+        in: path
+        required: true
+        schema:
+          type: string
+          nullable: true
+        example: '12345'
+        description: Identificador único da fatura do cartão de crédito
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        creditAccountId:
+                          type: integer
+                          format: int32
+                          example: 98765
+                          description: Identificador da conta de crédito vinculada ao cartão
+                        invoiceId:
+                          type: integer
+                          format: int32
+                          example: 12345
+                          description: Identificador único da fatura do cartão de crédito
+                        cycleStatus:
+                          type: string
+                          nullable: true
+                          example: OPEN
+                          description: Status do ciclo da fatura do cartão de crédito
+                        canPay:
+                          type: boolean
+                          example: true
+                          description: Indica se a fatura pode ser paga
+                        totalBalance:
+                          type: number
+                          format: double
+                          example: 1500.75
+                          description: Valor total da fatura do cartão de crédito
+                        remainingBalance:
+                          type: number
+                          format: double
+                          example: 500.25
+                          description: Valor restante a pagar da fatura do cartão de crédito
+                        paidBalance:
+                          type: number
+                          format: double
+                          example: 1000.5
+                          description: Valor já pago da fatura do cartão de crédito
+                        chargebackBalance:
+                          type: number
+                          format: double
+                          example: 0
+                          description: Valor de chargeback da fatura do cartão de crédito
+                        summary:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              title:
+                                type: string
+                                enum:
+                                - Compras e despesas
+                                - Créditos
+                                - Faturas anteriores e pagamentos
+                                nullable: true
+                                example: Compras e despesas
+                                description: Título do resumo da fatura
+                              amount:
+                                type: number
+                                format: double
+                                example: 1200.5
+                                description: Valor do resumo fatura
+                              categories:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    title:
+                                      type: string
+                                      enum:
+                                      - Compras nacionais
+                                      - Outros valores
+                                      - Saldo da fatura anterior e créditos
+                                      - Total de créditos recebidos
+                                      nullable: true
+                                      example: Compras nacionais
+                                      description: Título da categoria da fatura
+                                    code:
+                                      type: string
+                                      enum:
+                                      - CATEGORY_NATIONAL_TRANSACTIONS
+                                      - CATEGORY_OTHER_VALUES
+                                      - CATEGORY_PREVIOUS_BALANCE_AND_CREDITS
+                                      - CATEGORY_CREDITS_RECEIVED
+                                      nullable: true
+                                      example: CATEGORY_NATIONAL_TRANSACTIONS
+                                      description: Código da categoria da fatura
+                                    amount:
+                                      type: number
+                                      format: double
+                                      example: 1200.5
+                                      description: Valor da categoria da fatura
+                                    items:
+                                      type: array
+                                      items:
+                                        type: object
+                                        properties:
+                                          title:
+                                            type: string
+                                            enum:
+                                            - Compras à vista
+                                            - Compras parceladas
+                                            - Mensalidade do cartão de crédito
+                                            - Transações não mapeadas
+                                            - Total da fatura anterior
+                                            - Total de pagamentos feitos pelo cliente
+                                            - Benefício IOF Especial
+                                            - Benefício LoungeKey
+                                            - Créditos recebidos
+                                            example: Mensalidade do cartão de crédito
+                                            description: Título do item da fatura
+                                            nullable: true
+                                          code:
+                                            type: string
+                                            enum:
+                                            - ITEM_ON_CASH_AMOUNT
+                                            - ITEM_INSTALLMENT_AMOUNT
+                                            - ITEM_MONTHLY
+                                            - ITEM_OTHER
+                                            - ITEM_PREVIOUS_INVOICE
+                                            - ITEM_PAYMENTS
+                                            - ITEM_CREDITS_SPECIAL_IOF
+                                            - ITEM_CREDITS_LOUNGE_KEY
+                                            - ITEM_REVERSAL
+                                            nullable: true
+                                          amount:
+                                            type: number
+                                            format: double
+                                            example: 500
+                                            description: Valor do item da fatura
+                                        additionalProperties: false
+                                        title: InvoiceItem
+                                      nullable: true
+                                  additionalProperties: false
+                                  title: InvoiceCategory
+                                nullable: true
+                            additionalProperties: false
+                            title: Summary
+                          nullable: true
+                        paymentDate:
+                          type: string
+                          nullable: true
+                          example: '2023-06-10'
+                          description: Data de pagamento da fatura do cartão de crédito
+                        dueDate:
+                          type: string
+                          nullable: true
+                          example: '2023-06-05'
+                          description: Data de vencimento da fatura do cartão de crédito
+                        bestTransactionDay:
+                          type: string
+                          nullable: true
+                          example: '2023-05-15'
+                          description: Melhor dia de compra
+                        canDownloadInvoice:
+                          type: boolean
+                          example: true
+                          description: Indica se a fatura pode ser baixada
+                        canDownloadExcelInvoice:
+                          type: boolean
+                          example: false
+                          description: Indica se a fatura em Excel pode ser baixada
+                        minimumPayment:
+                          type: number
+                          format: double
+                          example: 150
+                          description: Pagamento mínimo da fatura do cartão de crédito
+                        partialPayment:
+                          type: number
+                          format: double
+                          example: 300
+                          description: Pagamento parcial da fatura do cartão de crédito
+                        installmentConditions:
+                          type: object
+                          properties:
+                            fixed:
+                              type: boolean
+                            variable:
+                              type: boolean
+                            isInstallmentPendingPaymentEntry:
+                              type: boolean
+                            variableMinimumEntryAmount:
+                              type: number
+                              format: double
+                              nullable: true
+                            variableMaximumEntryAmount:
+                              type: number
+                              format: double
+                              nullable: true
+                          additionalProperties: false
+                          title: InstallmentConditions
+                        availablePaymentMethods:
+                          type: array
+                          items:
+                            type: string
+                            description: Método de pagamento disponível
+                            example: BANKSLIP
+                          nullable: true
+                      additionalProperties: false
+                      title: ListInvoiceDetailsResponseData
+                    nullable: true
+                additionalProperties: false
+                title: ListInvoiceDetailsResponseV2
+      security:
+      - read:
+        - brn:btg:empresas:credit-cards:invoices
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Cards/visualizar-detalhes-da-fatura-do-cartao-de-credito
+  /{companyId}/banking/cards/invoices/{invoiceId}/transactions:
+    get:
+      tags:
+      - Faturas
+      description: ' ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o [Wiremock](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-com-wiremock-v2)
+
+
+        > No sandbox este endpoint requer a utilização de [Sandbox Headers](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-headers)
+
+
+        | Header     | Descrição                            | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      - name: cursor
+        in: query
+        schema:
+          type: string
+          nullable: true
+        description: Cursor para paginação dos resultados
+      - name: invoiceId
+        in: path
+        required: true
+        schema:
+          type: string
+          nullable: true
+        example: '12345'
+        description: Identificador único da fatura do cartão de crédito
+      - name: itemsPerPage
+        in: query
+        schema:
+          type: integer
+          format: int32
+          nullable: true
+        example: 50
+        description: Número de itens por página
+      - name: page
+        in: query
+        schema:
+          type: integer
+          format: int32
+          nullable: true
+        example: 1
+        description: Número da página
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          format: int64
+                          example: 1234567890
+                          description: Identificador único da transação do cartão de crédito
+                        installment:
+                          type: integer
+                          format: int64
+                          example: 1
+                          description: Parcela atual da transação do cartão de crédito
+                        numberOfInstallments:
+                          type: integer
+                          format: int64
+                          example: 3
+                          description: Número total de parcelas da transação do cartão de crédito
+                        softDescriptor:
+                          type: string
+                          nullable: true
+                          example: PARCELADO BOLETO
+                          description: Descrição reduzida da transação do cartão de crédito
+                        processingCode:
+                          type: string
+                          nullable: true
+                          example: '000000'
+                          description: Código de processamento da transação do cartão de crédito
+                        processingDescription:
+                          type: string
+                          nullable: true
+                          example: PARCELADO BOLETO
+                          description: Descrição do processamento da transação do cartão de crédito
+                        customerId:
+                          type: integer
+                          format: int64
+                          example: 56789
+                          description: Identificador do cliente associado à transação do cartão de crédito
+                        userCategory:
+                          type: string
+                          nullable: true
+                          example: ''
+                          description: Categoria do usuário da transação do cartão de crédito
+                        tax:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                - INTEREST
+                                - IOF
+                                example: INTEREST
+                              value:
+                                type: number
+                                format: double
+                                example: 15
+                          nullable: true
+                        eventDate:
+                          type: string
+                          format: date-time
+                          example: '2023-05-20T14:30:00'
+                          description: Data e hora do evento da transação do cartão de crédito
+                        createdAt:
+                          type: string
+                          format: date-time
+                          example: '2023-05-20T14:35:00'
+                          description: Data e hora de criação da transação do cartão de crédito
+                        transactionType:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              format: int64
+                              example: 1234
+                              description: Identificador do tipo de transação do cartão de crédito
+                            description:
+                              type: string
+                              nullable: true
+                              example: Compra à vista
+                              description: Descrição do tipo de transação do cartão de crédito
+                            isCredit:
+                              type: boolean
+                              example: false
+                              description: Indica se a transação é de crédito
+                            postedTransaction:
+                              type: boolean
+                              example: true
+                              description: Indica se a transação foi lançada
+                          additionalProperties: false
+                          title: TransactionType
+                        amount:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                - PRINCIPAL
+                                - SETTLEMENT
+                                - LOCAL
+                                example: PRINCIPAL
+                                description: Tipo do valor da transação do cartão de crédito
+                                nullable: true
+                              currency:
+                                type: string
+                                example: BRL
+                                description: Moeda do valor da transação do cartão de crédito
+                                nullable: true
+                              value:
+                                type: number
+                                format: double
+                                example: 250.75
+                                description: Valor
+                              rate:
+                                type: number
+                                format: double
+                                example: 1
+                                description: Taxa de câmbio aplicada na transação do cartão de crédito
+                                nullable: true
+                            additionalProperties: false
+                            title: TransactionAmount
+                          nullable: true
+                        merchant:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                              description: Tipo do comerciante
+                              example: NETWORK
+                              nullable: true
+                            name:
+                              type: string
+                              description: Nome do comerciante
+                              example: Google
+                              nullable: true
+                            city:
+                              type: string
+                              description: Cidade do comerciante
+                              example: SAO PAULO
+                              nullable: true
+                            state:
+                              type: string
+                              description: Localização da cidade do comerciante
+                              example: BR
+                              nullable: true
+                            imageUrl:
+                              type: string
+                              example: https://example.com/example.png
+                              nullable: true
+                            category:
+                              type: object
+                              properties:
+                                code:
+                                  type: string
+                                  example: 5812
+                                  description: Código da categoria do comerciante(MCC)
+                                  nullable: true
+                                description:
+                                  type: string
+                                  description: Descrição da categoria do comerciante
+                                  example: Eating places and restaurants
+                                  nullable: true
+                                groupName:
+                                  type: string
+                                  description: Nome do grupo da categoria do comerciante
+                                  example: Alimentação
+                                  nullable: true
+                                networkGroup:
+                                  type: string
+                                  description: Grupo de rede da categoria do comerciante
+                                  example: FOOD
+                                  nullable: true
+                                imageURL:
+                                  type: string
+                                  example: https://example.com/example.png
+                                  nullable: true
+                              additionalProperties: false
+                              title: TransactionCategory
+                          additionalProperties: false
+                          title: Merchant
+                        card:
+                          example: null
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              format: int64
+                              example: 1234567890
+                              description: Identificador único do cartão utilizado na transação do cartão de crédito
+                            name:
+                              type: string
+                              nullable: true
+                              example: JOAO DA SILVA
+                              description: Nome impresso no cartão utilizado na transação do cartão de crédito
+                            last4Digits:
+                              type: string
+                              nullable: true
+                              example: '1234'
+                              description: Últimos 4 dígitos do cartão utilizado na transação do cartão de
+                            type:
+                              type: string
+                              nullable: true
+                              example: PHYSICAL
+                              description: Tipo do cartão utilizado na transação do cartão de crédito
+                            ownerName:
+                              type: string
+                              nullable: true
+                              example: JOAO DA SILVA
+                              description: Nome do dono do cartão utilizado na transação do cartão de crédito
+                            modality:
+                              type: string
+                              example: CREDIT
+                              description: Modalidade do cartão utilizado na transação do cartão de crédito
+                              nullable: true
+                          additionalProperties: false
+                          title: TransactionCard
+                        isInternational:
+                          type: boolean
+                          example: false
+                          description: Indica se a transação é internacional
+                        dcc:
+                          type: boolean
+                          example: false
+                          description: Indica se a transação é DCC (Dynamic Currency Conversion)
+                      additionalProperties: false
+                      title: TransactionItem
+                    nullable: true
+                  _links:
+                    type: object
+                    properties:
+                      next:
+                        type: string
+                        nullable: true
+                      previous:
+                        type: string
+                        nullable: true
+                    additionalProperties: false
+                    title: Links
+                additionalProperties: false
+                title: GetInvoiceTransactionsResponseV2
+      security:
+      - read:
+        - brn:btg:empresas:credit-cards:invoices
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Cards/visualizar-transacoes-da-fatura-do-cartao-de-credito
+components:
+  securitySchemes:
+    read:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://id.btgpactual.com/oauth2/token
+          scopes:
+            brn:btg:empresas:credit-cards:invoices: Consultar faturas de cartão de crédito
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/77773214.ad4c8d3a.js
+  - https://developers.empresas.btgpactual.com/assets/js/532021f6.4e301274.js
+  - https://developers.empresas.btgpactual.com/assets/js/c471b1dd.e2583128.js
+  - https://developers.empresas.btgpactual.com/assets/js/ce171c97.3cc3c506.js

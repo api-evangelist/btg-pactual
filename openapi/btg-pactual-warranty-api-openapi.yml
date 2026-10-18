@@ -1,0 +1,1015 @@
+openapi: 3.2.0
+info:
+  title: FIDC Warranty API
+  version: 1.0.0
+  description: Esta API tem a finalidade de contratar e simular empréstimos, realizar cessão de direitos creditórios e consulta de carteira.
+  termsOfService: https://www.btgpactual.com/empresas/termos-e-politicas/
+  contact:
+    name: Time BTG Empresas
+    email: ol-it-btgempresas@btgpactual.com
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com
+  description: Sandbox
+- url: https://api.empresas.btgpactual.com
+  description: Produção
+tags:
+- name: Warranty
+paths:
+  /fidc-loan/v1/warranty:
+    post:
+      tags:
+      - Warranty
+      description: O objetivo dessa rota é criar uma garantia
+      requestBody:
+        description: Informações de garantias
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                files:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: Nome do arquivo com extensão
+                        example: meu_arquivo.pdf
+                      type:
+                        type: string
+                        description: Tipo de arquivo
+                        enum:
+                        - TERMO_ENDOSSO
+                        - COMPLEMENTO_AUXILIAR
+                      downloadUri:
+                        type: string
+                        description: Link para download do arquivo
+                        example: https://arquivolink.com
+                warranties:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        description: Tipo de garantia
+                        enum:
+                        - CesFidConta
+                        - CesFidDirCred
+                        - Vehicle
+                        - AliFidImovel
+                        - HipotecaImovel
+                        - AliFidMercantil
+                        - PenhorMercantil
+                        - AliFidAgricola
+                        - PenhorAgricola
+                      acquisitionDate:
+                        type: string
+                        description: Data de aquisição da garantia
+                        example: '2023-08-03 00:00:00'
+                      value:
+                        type: number
+                        description: Valor total da garantia
+                        example: 500
+                      details:
+                        oneOf:
+                        - type: object
+                          properties:
+                            currency:
+                              type: string
+                              description: Moeda
+                              example: BRL
+                            amount:
+                              type: number
+                              description: Valor da garantia
+                              example: 500
+                            bankCode:
+                              type: string
+                              description: Código do banco
+                              example: 208
+                            agency:
+                              type: string
+                              description: Identificador da Agência
+                              example: 1
+                            account:
+                              type: string
+                              description: Identificador da Conta
+                              example: 4959995
+                            isInternal:
+                              type: boolean
+                              description: Identificador se é uma conta interna
+                              example: true
+                            linkedAccount:
+                              type: boolean
+                              description: Identificador se é uma conta vínculada
+                              example: false
+                          title: AccountFiduciaryAssignmentSchema
+                        - type: object
+                          properties:
+                            description:
+                              type: array
+                              items:
+                                type: string
+                                description: Descrição
+                                enum:
+                                - Contrato de Locação
+                                - Outros
+                            amount:
+                              type: number
+                              description: Valor
+                              example: 200
+                            currency:
+                              type: string
+                              description: Moeda
+                              example: BRL
+                          title: CreditRightFiduciaryAssignmentSchema
+                        - type: object
+                          properties:
+                            Renavam:
+                              type: string
+                              description: Número do renavam
+                              example: 1202137579
+                            Chassi:
+                              type: string
+                              description: Identificador do chassi
+                              example: 9BFZH54SXL8404704
+                            LicensePlate:
+                              type: string
+                              description: Placa
+                              example: QUN2087
+                            Model:
+                              type: string
+                              description: Modelo
+                              example: Ka 1.5 Sedan SE Plus 12V Flex 4p Aut.
+                            ModelYear:
+                              type: number
+                              description: Ano Modelo
+                              example: 2020
+                            ProductionYear:
+                              type: number
+                              description: Ano de produção
+                              example: 2020
+                            StateCode:
+                              type: string
+                              description: Estado de compra do veículo
+                              example: SP
+                            Feeder:
+                              type: string
+                              description: Tabela referência
+                              example: FIPE
+                            CodFeeder:
+                              type: string
+                              description: Código da tabela
+                              example: 003465-7
+                            ValueFeeder:
+                              type: number
+                              description: Valor de tabela
+                              example: 66204
+                            IsChassiRemarked:
+                              type: boolean
+                              description: Identificador de chassi remarcado
+                              example: false
+                            VehicleType:
+                              type: string
+                              description: Tipo de veículo
+                              example: LEVE
+                            FundedMonths:
+                              type: number
+                              description: Parcelas devidas
+                              example: 0
+                            IsZeroKilometer:
+                              type: boolean
+                              description: Identificador se é veículo é zero quilometro
+                              example: false
+                          title: VehicleSchema
+                        - type: object
+                          properties:
+                            propertyRegistration:
+                              type: string
+                              description: Número do registro do imóvel
+                              example: '1234567'
+                            rgi:
+                              type: string
+                              description: Número do RGI
+                              example: '12345'
+                            guaranteedPercentage:
+                              type: number
+                              description: Percentual garantido
+                              example: 1
+                            amount:
+                              type: number
+                              description: Valor da garantia
+                              example: 1000
+                            marketValue:
+                              type: number
+                              description: Valor de mercado
+                              example: 1300
+                            zone:
+                              type: string
+                              description: Tipo de zona do imóvel
+                              example: urban
+                              enum:
+                              - urban
+                              - rural
+                            georeferencing:
+                              type: boolean
+                              description: Identificador se o imóvel está georreferenciado. Se verdadeiro, zona deve ser rural.
+                              example: false
+                            type:
+                              type: string
+                              description: Tipo do imóvel
+                              example: farm
+                              enum:
+                              - house
+                              - apartment
+                              - land
+                              - industrial
+                              - farm
+                              - other
+                            address:
+                              type: object
+                              description: Dados de endereço do imóvel
+                              properties:
+                                zipcode:
+                                  type: string
+                                  description: Código postal
+                                  example: 12345-678
+                                number:
+                                  type: integer
+                                  description: Número do endereço
+                                  example: 10
+                                complement:
+                                  type: string
+                                  description: Complemento do endereço
+                                  example: apto 51, bloco 1
+                                state:
+                                  type: string
+                                  description: Estado
+                                  example: SP
+                                street:
+                                  type: string
+                                  description: Nome da rua
+                                  example: Av. Faria Lima
+                                city:
+                                  type: string
+                                  description: Nome da cidade
+                                  example: São Paulo
+                          title: PropertyFiduciaryAssignmentSchema
+                        - type: object
+                          properties:
+                            grade:
+                              type: integer
+                              description: Classificação ou nota atribuída ao imóvel
+                              example: 1
+                            propertyRegistration:
+                              type: string
+                              description: Número do registro do imóvel
+                              example: '1234567'
+                            rgi:
+                              type: string
+                              description: Número do RGI
+                              example: '12345'
+                            guaranteedPercentage:
+                              type: number
+                              description: Percentual garantido
+                              example: 1
+                            amount:
+                              type: number
+                              description: Valor da garantia
+                              example: 1000
+                            marketValue:
+                              type: number
+                              description: Valor de mercado
+                              example: 1300
+                            zone:
+                              type: string
+                              description: Tipo de zona do imóvel
+                              example: urban
+                              enum:
+                              - urban
+                              - rural
+                            georeferencing:
+                              type: boolean
+                              description: Identificador se o imóvel está georreferenciado. Se verdadeiro, zona deve ser rural.
+                              example: false
+                            type:
+                              type: string
+                              description: Tipo do imóvel
+                              example: farm
+                              enum:
+                              - house
+                              - apartment
+                              - land
+                              - industrial
+                              - farm
+                              - other
+                            address:
+                              type: object
+                              description: Dados de endereço do imóvel
+                              properties:
+                                zipcode:
+                                  type: string
+                                  description: Código postal
+                                  example: 12345-678
+                                number:
+                                  type: integer
+                                  description: Número do endereço
+                                  example: 10
+                                complement:
+                                  type: string
+                                  description: Complemento do endereço
+                                  example: apto 51, bloco 1
+                                state:
+                                  type: string
+                                  description: Estado
+                                  example: SP
+                                street:
+                                  type: string
+                                  description: Nome da rua
+                                  example: Av. Faria Lima
+                                city:
+                                  type: string
+                                  description: Nome da cidade
+                                  example: São Paulo
+                          title: HipotecaImovelSchema
+                        - type: object
+                          properties:
+                            subProductType:
+                              type: string
+                              description: Tipo de subproduto
+                              example: Açúcar VHP
+                              enum:
+                              - Algodão em Pluma
+                              - Açúcar Cristal
+                              - Açúcar VHP
+                              - Biodiesel
+                              - Boi Gordo
+                              - Café Arábica
+                              - Café Robusta
+                              - Etanol Anidro
+                              - Etanol Hidratado
+                              - Farelo de Soja
+                              - Fertilizantes
+                              - Milho Seco
+                              - Soja em Grão
+                              - Óleo de Soja
+                            monitoring:
+                              type: string
+                              description: Frequência de monitoramento
+                              example: daily
+                              enum:
+                              - none
+                              - daily
+                              - weekly
+                              - biweekly
+                              - monthly
+                              - bimonthly
+                              - quarterly
+                              - semiannual
+                              - annual
+                            quantity:
+                              type: number
+                              description: Quantidade do produto
+                              example: 1900
+                            pu:
+                              type: number
+                              description: Preço unitário
+                              example: 26
+                            unit:
+                              type: string
+                              description: Unidade de medida
+                              example: Sacas (50kg)
+                              enum:
+                              - m³
+                              - Litro
+                              - Quilo (Kg)
+                              - Sacas (50kg)
+                              - Sacas (60kg)
+                              - Tonelada
+                              - Cabeça
+                              - Caixa
+                            amount:
+                              type: number
+                              description: Valor total. Deve ser maior que 0.
+                              example: 51300
+                            priceSource:
+                              type: object
+                              description: Fonte de preço do produto
+                              properties:
+                                sourceName:
+                                  type: string
+                                  description: Nome da fonte
+                                  example: AGROLINK
+                                product:
+                                  type: string
+                                  description: Produto referenciado
+                                  example: Milho Seco
+                                  enum:
+                                  - Algodão em Pluma
+                                  - Açúcar Cristal
+                                  - Açúcar VHP
+                                  - Biodiesel
+                                  - Boi Gordo
+                                  - Café Arábica
+                                  - Café Robusta
+                                  - Etanol Anidro
+                                  - Etanol Hidratado
+                                  - Farelo de Soja
+                                  - Fertilizantes
+                                  - Milho Seco
+                                  - Soja em Grão
+                                  - Óleo de Soja
+                                unit:
+                                  type: string
+                                  description: Unidade de medida do preço
+                                  example: m³
+                                  enum:
+                                  - m³
+                                  - Litro
+                                  - Quilo (Kg)
+                                  - Sacas (50kg)
+                                  - Sacas (60kg)
+                                  - Tonelada
+                                  - Cabeça
+                                  - Caixa
+                                location:
+                                  type: object
+                                  description: Local de origem do preço
+                                  properties:
+                                    state:
+                                      type: string
+                                      description: Estado
+                                      example: PR
+                                    city:
+                                      type: string
+                                      description: Cidade
+                                      example: Londrina
+                            storageLocation:
+                              type: array
+                              description: Locais de armazenamento
+                              items:
+                                type: object
+                                properties:
+                                  zipcode:
+                                    type: string
+                                    description: Código postal
+                                    example: '12345678'
+                                  number:
+                                    type: integer
+                                    description: Número do endereço
+                                    example: 10
+                                  complement:
+                                    type: string
+                                    description: Complemento do endereço
+                                    example: apto 51, bloco 1
+                                  state:
+                                    type: string
+                                    description: Estado
+                                    example: SP
+                                  street:
+                                    type: string
+                                    description: Nome da rua
+                                    example: Av. Faria Lima
+                                  city:
+                                    type: string
+                                    description: Nome da cidade
+                                    example: São Paulo
+                            harvestDate:
+                              type: array
+                              description: Datas da safra. Devem ser informadas no formato "ano/proxAno"
+                              items:
+                                type: string
+                                format: date
+                                example: 2026/2027
+                            dueDiligence:
+                              type: string
+                              description: Status de due diligence
+                              example: waived
+                              enum:
+                              - in progress
+                              - concluded
+                              - waived
+                          title: AliFidMercantilSchema
+                        - type: object
+                          properties:
+                            subProductType:
+                              type: string
+                              description: Tipo de subproduto
+                              example: Açúcar VHP
+                              enum:
+                              - Algodão em Pluma
+                              - Açúcar Cristal
+                              - Açúcar VHP
+                              - Biodiesel
+                              - Boi Gordo
+                              - Café Arábica
+                              - Café Robusta
+                              - Etanol Anidro
+                              - Etanol Hidratado
+                              - Farelo de Soja
+                              - Fertilizantes
+                              - Milho Seco
+                              - Soja em Grão
+                              - Óleo de Soja
+                            monitoring:
+                              type: string
+                              description: Frequência de monitoramento
+                              example: daily
+                              enum:
+                              - none
+                              - daily
+                              - weekly
+                              - biweekly
+                              - monthly
+                              - bimonthly
+                              - quarterly
+                              - semiannual
+                              - annual
+                            quantity:
+                              type: number
+                              description: Quantidade do produto
+                              example: 1900
+                            pu:
+                              type: number
+                              description: Preço unitário
+                              example: 26
+                            unit:
+                              type: string
+                              description: Unidade de medida
+                              example: Sacas (50kg)
+                              enum:
+                              - m³
+                              - Litro
+                              - Quilo (Kg)
+                              - Sacas (50kg)
+                              - Sacas (60kg)
+                              - Tonelada
+                              - Cabeça
+                              - Caixa
+                            amount:
+                              type: number
+                              description: Valor total
+                              example: 51300
+                            priceSource:
+                              type: object
+                              description: Fonte de preço do produto
+                              properties:
+                                sourceName:
+                                  type: string
+                                  description: Nome da fonte
+                                  example: AGROLINK
+                                product:
+                                  type: string
+                                  description: Produto referenciado
+                                  example: Milho Seco
+                                  enum:
+                                  - Algodão em Pluma
+                                  - Açúcar Cristal
+                                  - Açúcar VHP
+                                  - Biodiesel
+                                  - Boi Gordo
+                                  - Café Arábica
+                                  - Café Robusta
+                                  - Etanol Anidro
+                                  - Etanol Hidratado
+                                  - Farelo de Soja
+                                  - Fertilizantes
+                                  - Milho Seco
+                                  - Soja em Grão
+                                  - Óleo de Soja
+                                unit:
+                                  type: string
+                                  description: Unidade de medida do preço
+                                  example: m³
+                                  enum:
+                                  - m³
+                                  - Litro
+                                  - Quilo (Kg)
+                                  - Sacas (50kg)
+                                  - Sacas (60kg)
+                                  - Tonelada
+                                  - Cabeça
+                                  - Caixa
+                                location:
+                                  type: object
+                                  description: Local de origem do preço
+                                  properties:
+                                    state:
+                                      type: string
+                                      description: Estado
+                                      example: PR
+                                    city:
+                                      type: string
+                                      description: Cidade
+                                      example: Londrina
+                            storageLocation:
+                              type: array
+                              description: Locais de armazenamento
+                              items:
+                                type: object
+                                properties:
+                                  zipcode:
+                                    type: string
+                                    description: Código postal
+                                    example: '12345678'
+                                  number:
+                                    type: integer
+                                    description: Número do endereço
+                                    example: 10
+                                  complement:
+                                    type: string
+                                    description: Complemento do endereço
+                                    example: apto 51, bloco 1
+                                  state:
+                                    type: string
+                                    description: Estado
+                                    example: SP
+                                  street:
+                                    type: string
+                                    description: Nome da rua
+                                    example: Av. Faria Lima
+                                  city:
+                                    type: string
+                                    description: Nome da cidade
+                                    example: São Paulo
+                            harvestDate:
+                              type: array
+                              description: Datas da safra. Devem ser informadas no formato "ano/proxAno"
+                              items:
+                                type: string
+                                example: 2026/2027
+                            dueDiligence:
+                              type: string
+                              description: Status de due diligence
+                              example: waived
+                              enum:
+                              - in progress
+                              - concluded
+                              - waived
+                          title: PenhorMercantilSchema
+                        - type: object
+                          properties:
+                            productType:
+                              type: string
+                              description: Tipo de produto agrícola
+                              example: Cana de Açúcar
+                              enum:
+                              - Boi
+                              - Café
+                              - Laranja
+                              - Soja
+                              - Milho
+                              - Cana de Açúcar
+                              - Madeira Pinus
+                            monitoring:
+                              type: string
+                              description: Frequência de monitoramento
+                              example: monthly
+                              enum:
+                              - none
+                              - daily
+                              - weekly
+                              - biweekly
+                              - monthly
+                              - bimonthly
+                              - quarterly
+                              - semiannual
+                              - annual
+                            pu:
+                              type: number
+                              description: Preço unitário
+                              example: 21
+                            unit:
+                              type: string
+                              description: Unidade de medida
+                              example: m³
+                              enum:
+                              - m³
+                              - Litro
+                              - Quilo (Kg)
+                              - Sacas (50kg)
+                              - Sacas (60kg)
+                              - Tonelada
+                              - Cabeça
+                              - Caixa
+                            priceSource:
+                              type: object
+                              description: Fonte de preço do produto
+                              properties:
+                                sourceName:
+                                  type: string
+                                  description: Nome da fonte
+                                  example: AGROLINK
+                                product:
+                                  type: string
+                                  description: Produto referenciado
+                                  example: Milho Seco
+                                  enum:
+                                  - Boi
+                                  - Café
+                                  - Laranja
+                                  - Soja
+                                  - Milho
+                                  - Cana de Açúcar
+                                  - Madeira Pinus
+                                unit:
+                                  type: string
+                                  description: Unidade de medida do preço
+                                  example: m³
+                                  enum:
+                                  - m³
+                                  - Litro
+                                  - Quilo (Kg)
+                                  - Sacas (50kg)
+                                  - Sacas (60kg)
+                                  - Tonelada
+                                  - Cabeça
+                                  - Caixa
+                                location:
+                                  type: object
+                                  description: Local de origem do preço
+                                  properties:
+                                    state:
+                                      type: string
+                                      description: Estado
+                                      example: PR
+                                    city:
+                                      type: string
+                                      description: Cidade
+                                      example: Londrina
+                            quantity:
+                              type: number
+                              description: Quantidade do produto
+                              example: 340
+                            priceATR:
+                              type: number
+                              description: Preço ATR. Apenas caso o produto seja "Cana de Açúcar"
+                              example: 1.6
+                            priceATRSource:
+                              type: object
+                              description: Fonte de preço por ATR. Apenas caso o produto seja "Cana de Açúcar"
+                              properties:
+                                sourceName:
+                                  type: string
+                                  description: Nome da fonte
+                                  example: AGROLINK
+                                product:
+                                  type: string
+                                  description: Produto referenciado
+                                  example: Milho Seco
+                                  enum:
+                                  - Boi
+                                  - Café
+                                  - Laranja
+                                  - Soja
+                                  - Milho
+                                  - Cana de Açúcar
+                                  - Madeira Pinus
+                                unit:
+                                  type: string
+                                  description: Unidade de medida do preço
+                                  example: m³
+                                  enum:
+                                  - m³
+                                  - Litro
+                                  - Quilo (Kg)
+                                  - Sacas (50kg)
+                                  - Sacas (60kg)
+                                  - Tonelada
+                                  - Cabeça
+                                  - Caixa
+                                location:
+                                  type: object
+                                  description: Local de origem do preço
+                                  properties:
+                                    state:
+                                      type: string
+                                      description: Estado
+                                      example: PR
+                                    city:
+                                      type: string
+                                      description: Cidade
+                                      example: Londrina
+                            dueDiligence:
+                              type: string
+                              description: Status de due diligence
+                              example: waived
+                              enum:
+                              - in progress
+                              - concluded
+                              - waived
+                            harvestDate:
+                              type: array
+                              description: Datas da safra. Devem ser informadas no formato "ano/proxAno"
+                              items:
+                                type: string
+                                example: 2024/2025
+                          title: AliFidAgricolaSchema
+                        - type: object
+                          properties:
+                            productType:
+                              type: string
+                              description: Tipo de produto agrícola
+                              example: Cana de Açúcar
+                              enum:
+                              - Boi
+                              - Café
+                              - Laranja
+                              - Soja
+                              - Milho
+                              - Cana de Açúcar
+                              - Madeira Pinus
+                            monitoring:
+                              type: string
+                              description: Frequência de monitoramento
+                              example: monthly
+                              enum:
+                              - none
+                              - daily
+                              - weekly
+                              - biweekly
+                              - monthly
+                              - bimonthly
+                              - quarterly
+                              - semiannual
+                              - annual
+                            pu:
+                              type: number
+                              description: Preço unitário
+                              example: 21
+                            unit:
+                              type: string
+                              description: Unidade de medida
+                              example: m³
+                              enum:
+                              - m³
+                              - Litro
+                              - Quilo (Kg)
+                              - Sacas (50kg)
+                              - Sacas (60kg)
+                              - Tonelada
+                              - Cabeça
+                              - Caixa
+                            priceSource:
+                              type: object
+                              description: Fonte de preço do produto
+                              properties:
+                                sourceName:
+                                  type: string
+                                  description: Nome da fonte
+                                  example: AGROLINK
+                                product:
+                                  type: string
+                                  description: Produto referenciado
+                                  example: Milho Seco
+                                  enum:
+                                  - Boi
+                                  - Café
+                                  - Laranja
+                                  - Soja
+                                  - Milho
+                                  - Cana de Açúcar
+                                  - Madeira Pinus
+                                unit:
+                                  type: string
+                                  description: Unidade de medida do preço
+                                  example: m³
+                                  enum:
+                                  - m³
+                                  - Litro
+                                  - Quilo (Kg)
+                                  - Sacas (50kg)
+                                  - Sacas (60kg)
+                                  - Tonelada
+                                  - Cabeça
+                                  - Caixa
+                                location:
+                                  type: object
+                                  description: Local de medida do preço
+                                  properties:
+                                    state:
+                                      type: string
+                                      description: Estado
+                                      example: PR
+                                    city:
+                                      type: string
+                                      description: Cidade
+                                      example: Londrina
+                            quantity:
+                              type: number
+                              description: Quantidade do produto
+                              example: 340
+                            priceATR:
+                              type: number
+                              description: Preço ATR. Apenas caso o produto seja "Cana de Açúcar"
+                              example: 1.6
+                            priceATRSource:
+                              type: object
+                              description: Fonte de preço por ATR. Apenas caso o produto seja "Cana de Açúcar"
+                              properties:
+                                sourceName:
+                                  type: string
+                                  description: Nome da fonte
+                                  example: AGROLINK
+                                product:
+                                  type: string
+                                  description: Produto referenciado
+                                  example: Milho Seco
+                                  enum:
+                                  - Boi
+                                  - Café
+                                  - Laranja
+                                  - Soja
+                                  - Milho
+                                  - Cana de Açúcar
+                                  - Madeira Pinus
+                                unit:
+                                  type: string
+                                  description: Unidade de medida do preço
+                                  example: m³
+                                  enum:
+                                  - m³
+                                  - Litro
+                                  - Quilo (Kg)
+                                  - Sacas (50kg)
+                                  - Sacas (60kg)
+                                  - Tonelada
+                                  - Cabeça
+                                  - Caixa
+                                location:
+                                  type: object
+                                  description: Local de origem do preço
+                                  properties:
+                                    state:
+                                      type: string
+                                      description: Estado
+                                      example: PR
+                                    city:
+                                      type: string
+                                      description: Cidade
+                                      example: Londrina
+                            dueDiligence:
+                              type: string
+                              description: Status de due diligence
+                              example: waived
+                            harvestDate:
+                              type: array
+                              description: Datas da safra. Devem ser informadas no formato "ano/proxAno"
+                              items:
+                                type: string
+                                example: 2024/2025
+                          title: PenhorAgricolaSchema
+      responses:
+        '201':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  identification:
+                    type: string
+                    description: Identificador da garantia
+                    example: 7e4d025d-af1e-4270-97d9-aae8552d392b
+                title: WarrantyCreatedSchema
+        '400':
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: Código de erro
+                    example: Unexpected error
+                  message:
+                    type: string
+                    description: Descrição do erro
+                    example: Erro no inesperado no processamento
+                title: WarrantyErrorSchema
+        '401':
+          description: Não autorizado
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/loans
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/FIDC%20-%20Warranty/criar-uma-garantia
+      summary: Create fidc loan warranty
+      x-summary-source: derived
+      operationId: postFidcLoanV1Warranty
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+          scopes:
+            empresas.btgpactual.com/loans: Scope to loans
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/28371ee5.733dd245.js

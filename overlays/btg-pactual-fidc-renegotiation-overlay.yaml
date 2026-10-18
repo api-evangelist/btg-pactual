@@ -1,0 +1,39 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist overlay for FIDC - Renegotiation
+  version: 1.0.0
+extends: ../openapi/_original/btg-pactual-fidc-renegotiation-openapi.yml
+x-generated: '2026-10-18'
+x-method: generated
+x-source: openapi/btg-pactual-fidc-renegotiation-openapi.yml
+x-rationale: Adds provenance metadata and, where the BTG Pactual contract omits them, derived operationIds (method + path) so MCP candidate tools can bind to stable names. The original OpenAPI is not mutated.
+actions:
+- target: $.info
+  description: Record API Evangelist provenance for this BTG Pactual Empresas contract.
+  update:
+    x-apievangelist-provider: btg-pactual
+    x-apievangelist-source: openapi/btg-pactual-fidc-renegotiation-openapi.yml
+- target: $.paths['/renegotiation/{customer_tax_id}/agreement/{agreement_id}'].delete
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: deleteIdAgreementIdByAgreementid
+- target: $.paths['/renegotiation/{customer_tax_id}'].post
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: postRenegotiationTaxIdByCustomertaxid
+- target: $.paths['/renegotiation/{customer_tax_id}/campaigns'].get
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: getTaxIdCampaignsByCustomertaxid
+- target: $.paths['/renegotiation/{customer_tax_id}/agreement/{agreement_id}/installment/{installment_number}/bankslip'].get
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: getInstallmentNumberBankslipByInstallmentnumber
+- target: $.paths['/renegotiation/{customer_tax_id}/contracts'].get
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: getTaxIdContractsByCustomertaxid
+- target: $.paths['/renegotiation/{customer_tax_id}/simulate'].post
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: postTaxIdSimulateByCustomertaxid

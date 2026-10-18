@@ -1,0 +1,636 @@
+generated: '2026-10-18'
+method: derived
+source: openapi/btg-pactual-acquirers-paymentlink-openapi.yml, openapi/btg-pactual-antecred-subcredenciadores-openapi.yml,
+  openapi/btg-pactual-banking-accounts-openapi.yml, openapi/btg-pactual-banking-cards-openapi.yml,
+  openapi/btg-pactual-banking-ccreceivables-openapi.yml, openapi/btg-pactual-banking-collections-openapi.yml,
+  openapi/btg-pactual-banking-dda-openapi.yml, openapi/btg-pactual-banking-paymentlink-openapi.yml,
+  openapi/btg-pactual-banking-payments-openapi.yml, openapi/btg-pactual-banking-payroll-openapi.yml,
+  openapi/btg-pactual-banking-pix-automatico-openapi.yml, openapi/btg-pactual-banking-pixcashin-openapi.yml,
+  openapi/btg-pactual-banking-protest-openapi.yml, openapi/btg-pactual-banking-split-openapi.yml,
+  openapi/btg-pactual-bankinghub-open-finance-balance-refresh-openapi.yml, openapi/btg-pactual-crediflow-ativos-e-cessoes-openapi.yml,
+  openapi/btg-pactual-fidc-consignado-privado-openapi.yml, openapi/btg-pactual-fidc-credit-conciliation-openapi.yml,
+  openapi/btg-pactual-fidc-document-openapi.yml, openapi/btg-pactual-fidc-eligibility-openapi.yml,
+  openapi/btg-pactual-fidc-motor-de-credito-openapi.yml, openapi/btg-pactual-fidc-operation-openapi.yml,
+  openapi/btg-pactual-fidc-payment-openapi.yml, openapi/btg-pactual-fidc-portability-openapi.yml,
+  openapi/btg-pactual-fidc-prepayment-openapi.yml, openapi/btg-pactual-fidc-renegotiation-openapi.yml,
+  openapi/btg-pactual-fidc-simulation-openapi.yml, openapi/btg-pactual-fidc-wallet-openapi.yml,
+  openapi/btg-pactual-fidc-warranty-openapi.yml, openapi/btg-pactual-files-openapi.yml, openapi/btg-pactual-kgiro-leads-de-credito-openapi.yml,
+  openapi/btg-pactual-scf-colombia-openapi.yml, openapi/btg-pactual-scf-financiers-supplier-openapi.yml,
+  openapi/btg-pactual-scf-risco-sacado-openapi.yml, openapi/btg-pactual-solar-creditanalysis-openapi.yml,
+  openapi/btg-pactual-solar-workflow-openapi.yml
+schemes:
+- name: write
+  source: openapi/btg-pactual-acquirers-paymentlink-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+    tokenUrl: https://id.btgpactual.com/oauth2/token
+- name: read
+  source: openapi/btg-pactual-acquirers-paymentlink-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+    tokenUrl: https://id.btgpactual.com/oauth2/token
+- name: write
+  source: openapi/btg-pactual-antecred-subcredenciadores-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+    tokenUrl: https://id.btgpactual.com/oauth2/token
+- name: read
+  source: openapi/btg-pactual-banking-accounts-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+    tokenUrl: https://id.btgpactual.com/oauth2/token
+- name: read
+  source: openapi/btg-pactual-banking-cards-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://id.btgpactual.com/oauth2/token
+- name: read
+  source: openapi/btg-pactual-banking-ccreceivables-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+    tokenUrl: https://id.btgpactual.com/oauth2/token
+- name: write
+  source: openapi/btg-pactual-banking-ccreceivables-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+    tokenUrl: https://id.btgpactual.com/oauth2/token
+- name: write
+  source: openapi/btg-pactual-banking-collections-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+    tokenUrl: https://id.btgpactual.com/oauth2/token
+- name: read
+  source: openapi/btg-pactual-banking-collections-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+    tokenUrl: https://id.btgpactual.com/oauth2/token
+- name: read
+  source: openapi/btg-pactual-banking-dda-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+    tokenUrl: https://id.btgpactual.com/oauth2/token
+- name: write
+  source: openapi/btg-pactual-banking-dda-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+    tokenUrl: https://id.btgpactual.com/oauth2/token
+- name: write
+  source: openapi/btg-pactual-banking-paymentlink-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+    tokenUrl: https://id.btgpactual.com/oauth2/token
+- name: read
+  source: openapi/btg-pactual-banking-paymentlink-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+    tokenUrl: https://id.btgpactual.com/oauth2/token
+- name: oauth2
+  source: openapi/btg-pactual-banking-payments-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://id.sandbox.btgpactual.com/oauth2/authorize
+    tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+- name: write
+  source: openapi/btg-pactual-banking-payroll-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+    tokenUrl: https://id.btgpactual.com/oauth2/token
+- name: read
+  source: openapi/btg-pactual-banking-payroll-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+    tokenUrl: https://id.btgpactual.com/oauth2/token
+- name: write
+  source: openapi/btg-pactual-banking-pix-automatico-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+    tokenUrl: https://id.btgpactual.com/oauth2/token
+- name: read
+  source: openapi/btg-pactual-banking-pix-automatico-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+    tokenUrl: https://id.btgpactual.com/oauth2/token
+- name: oauth2
+  source: openapi/btg-pactual-banking-pixcashin-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://id.btgpactual.com/auth
+    tokenUrl: https://id.btgpactual.com/token
+- name: write
+  source: openapi/btg-pactual-banking-protest-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+    tokenUrl: https://id.btgpactual.com/oauth2/token
+- name: read
+  source: openapi/btg-pactual-banking-protest-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+    tokenUrl: https://id.btgpactual.com/oauth2/token
+- name: write
+  source: openapi/btg-pactual-banking-split-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+    tokenUrl: https://id.btgpactual.com/oauth2/token
+- name: read
+  source: openapi/btg-pactual-banking-split-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+    tokenUrl: https://id.btgpactual.com/oauth2/token
+- name: oauth2
+  source: openapi/btg-pactual-bankinghub-open-finance-balance-refresh-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+- name: oauth2
+  source: openapi/btg-pactual-crediflow-ativos-e-cessoes-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+- name: readWrite
+  source: openapi/btg-pactual-fidc-consignado-privado-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://id.sandbox.btgpactual.com/oauth2/authorize
+    tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+- name: oauth2
+  source: openapi/btg-pactual-fidc-credit-conciliation-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+- name: oauth2
+  source: openapi/btg-pactual-fidc-document-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+- name: oauth2
+  source: openapi/btg-pactual-fidc-eligibility-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+- name: oauth2
+  source: openapi/btg-pactual-fidc-motor-de-credito-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+- name: oauth2
+  source: openapi/btg-pactual-fidc-operation-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+- name: oauth2
+  source: openapi/btg-pactual-fidc-payment-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+- name: oauth2
+  source: openapi/btg-pactual-fidc-portability-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+- name: oauth2
+  source: openapi/btg-pactual-fidc-prepayment-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+- name: oauth2
+  source: openapi/btg-pactual-fidc-renegotiation-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+- name: oauth2
+  source: openapi/btg-pactual-fidc-simulation-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+- name: oauth2
+  source: openapi/btg-pactual-fidc-wallet-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+- name: oauth2
+  source: openapi/btg-pactual-fidc-warranty-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+- name: oauth2
+  source: openapi/btg-pactual-files-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://id.btgpactual.com/oauth2/token
+- name: oauth2
+  source: openapi/btg-pactual-kgiro-leads-de-credito-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://id.btgpactual.com/oauth2/token
+- name: write
+  source: openapi/btg-pactual-scf-colombia-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://id.btgpactual.com/oauth2/token
+- name: read
+  source: openapi/btg-pactual-scf-colombia-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://id.btgpactual.com/oauth2/token
+- name: oauth2
+  source: openapi/btg-pactual-scf-financiers-supplier-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+- name: oauth2
+  source: openapi/btg-pactual-scf-risco-sacado-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+- name: oauth2
+  source: openapi/btg-pactual-solar-creditanalysis-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://id.uat.btgmaisbusiness.com/oauth2/authorize
+    tokenUrl: https://id.uat.btgmaisbusiness.com/oauth2/token
+- name: oauth2
+  source: openapi/btg-pactual-solar-workflow-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://id.btgpactual.com/oauth2/token
+scopes:
+- scope: bank-slips
+  description: Consentimento para selecionar quais contas de beneficiario
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/btg-pactual-solar-creditanalysis-openapi.yml
+- scope: bank-slips:read
+  description: Consultar boletos
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/btg-pactual-solar-creditanalysis-openapi.yml
+- scope: bank-slips:write
+  description: Criar e atualizar boletos
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/btg-pactual-solar-creditanalysis-openapi.yml
+- scope: brn:btg:empresas:banking:accounts
+  description: Consultar dados de conta, extratos e saldo
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/btg-pactual-banking-accounts-openapi.yml
+- scope: brn:btg:empresas:banking:automatic-pix
+  description: Criar, modificar e cancelar autorizações e agendamentos de Pix Automático
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/btg-pactual-banking-pix-automatico-openapi.yml
+- scope: brn:btg:empresas:banking:collections
+  description: Emitir, consultar e alterar cobranças
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/btg-pactual-banking-collections-openapi.yml
+  - openapi/btg-pactual-banking-protest-openapi.yml
+  - openapi/btg-pactual-banking-split-openapi.yml
+- scope: brn:btg:empresas:banking:collections.read-only
+  description: Consultar cobranças
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/btg-pactual-banking-collections-openapi.yml
+  - openapi/btg-pactual-banking-protest-openapi.yml
+  - openapi/btg-pactual-banking-split-openapi.yml
+- scope: brn:btg:empresas:banking:direct-debit
+  description: Write access
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/btg-pactual-banking-dda-openapi.yml
+- scope: brn:btg:empresas:banking:direct-debit.readonly
+  description: Read access
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/btg-pactual-banking-dda-openapi.yml
+- scope: brn:btg:empresas:banking:payment-link
+  description: Criar, atualizar e cancelar links de pagamento
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/btg-pactual-acquirers-paymentlink-openapi.yml
+  - openapi/btg-pactual-banking-paymentlink-openapi.yml
+- scope: brn:btg:empresas:banking:payroll
+  description: Emitir, consultar e alterar cobranças
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/btg-pactual-banking-payroll-openapi.yml
+- scope: brn:btg:empresas:credit-cards:invoices
+  description: Consultar faturas de cartão de crédito
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/btg-pactual-banking-cards-openapi.yml
+- scope: brn:btg:empresas:credit:receivables-credit-card
+  sources:
+  - openapi/btg-pactual-banking-ccreceivables-openapi.yml
+- scope: brn:btg:empresas:credit:receivables-credit-card.readonly
+  sources:
+  - openapi/btg-pactual-banking-ccreceivables-openapi.yml
+- scope: brn:btg:empresas:kgiro:workflow
+  description: Scope kgiro wf
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/btg-pactual-kgiro-leads-de-credito-openapi.yml
+- scope: brn:btg:empresas:openfinance:accounts:balances.readonly
+  description: Leitura de saldos de contas Open Finance
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/btg-pactual-bankinghub-open-finance-balance-refresh-openapi.yml
+- scope: brn:btg:empresas:openfinance:accounts:info.readonly
+  description: Leitura de informações de contas Open Finance
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/btg-pactual-bankinghub-open-finance-balance-refresh-openapi.yml
+- scope: brn:btg:empresas:receivables:credit-card
+  description: Emitir, consultar e alterar recebíveis de cartão de crédito
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/btg-pactual-banking-ccreceivables-openapi.yml
+- scope: brn:btg:empresas:receivables:credit-card.readonly
+  description: Consultar recebíveis de cartão de crédito
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/btg-pactual-banking-ccreceivables-openapi.yml
+- scope: brn:btg:empresas:scf:sub-acquirers
+  sources:
+  - openapi/btg-pactual-antecred-subcredenciadores-openapi.yml
+- scope: brn:btg:empresas:scf:sub-acquirers:anticipation
+  description: Realizar antecipação de recebíveis de subcredenciadoras
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/btg-pactual-antecred-subcredenciadores-openapi.yml
+- scope: brn:btg:empresas:scf:sub-acquirers:quote
+  description: Obter cotações de recebíveis de subcredenciadoras
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/btg-pactual-antecred-subcredenciadores-openapi.yml
+- scope: brn:btg:empresas:solar:workflow
+  description: Scope solar wf
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/btg-pactual-solar-workflow-openapi.yml
+- scope: empresas.btgpactual.com/accounts
+  description: Acesso a contas
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/btg-pactual-bankinghub-open-finance-balance-refresh-openapi.yml
+- scope: empresas.btgpactual.com/accounts.readonly
+  description: Leitura de contas
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/btg-pactual-banking-payments-openapi.yml
+  - openapi/btg-pactual-bankinghub-open-finance-balance-refresh-openapi.yml
+- scope: empresas.btgpactual.com/authorized-direct-debits.readonly
+  description: Read access
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/btg-pactual-banking-dda-openapi.yml
+  - openapi/btg-pactual-banking-payments-openapi.yml
+- scope: empresas.btgpactual.com/bank-slips
+  sources:
+  - openapi/btg-pactual-banking-payments-openapi.yml
+- scope: empresas.btgpactual.com/bank-slips.readonly
+  sources:
+  - openapi/btg-pactual-banking-payments-openapi.yml
+- scope: empresas.btgpactual.com/crediflow
+  description: Scope para CrediFlow (ativos e cessões)
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/btg-pactual-crediflow-ativos-e-cessoes-openapi.yml
+- scope: empresas.btgpactual.com/credit-conciliations
+  description: Scope to credit conciliation
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/btg-pactual-fidc-credit-conciliation-openapi.yml
+- scope: empresas.btgpactual.com/documents
+  description: Scope to documents
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/btg-pactual-fidc-document-openapi.yml
+- scope: empresas.btgpactual.com/files
+  description: Scope to files API
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/btg-pactual-files-openapi.yml
+- scope: empresas.btgpactual.com/loans
+  description: Criar Empréstimos
+  flows:
+  - authorizationCode
+  - clientCredentials
+  sources:
+  - openapi/btg-pactual-fidc-consignado-privado-openapi.yml
+  - openapi/btg-pactual-fidc-eligibility-openapi.yml
+  - openapi/btg-pactual-fidc-motor-de-credito-openapi.yml
+  - openapi/btg-pactual-fidc-operation-openapi.yml
+  - openapi/btg-pactual-fidc-payment-openapi.yml
+  - openapi/btg-pactual-fidc-simulation-openapi.yml
+  - openapi/btg-pactual-fidc-warranty-openapi.yml
+- scope: empresas.btgpactual.com/payer-onboardings
+  description: Scope to financiers-payer
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/btg-pactual-scf-risco-sacado-openapi.yml
+- scope: empresas.btgpactual.com/payer-register
+  description: Scope to register payer entities
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/btg-pactual-scf-financiers-supplier-openapi.yml
+- scope: empresas.btgpactual.com/payment
+  sources:
+  - openapi/btg-pactual-fidc-credit-conciliation-openapi.yml
+- scope: empresas.btgpactual.com/pix-cash-in
+  description: Consultar Pix Cobrança. Emitir Pix Cobrança.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/btg-pactual-banking-payments-openapi.yml
+- scope: empresas.btgpactual.com/pix-cash-in.readonly
+  description: Consultar Pix Cobrança.
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/btg-pactual-banking-payments-openapi.yml
+- scope: empresas.btgpactual.com/portabilities
+  description: Scope to portability out
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/btg-pactual-fidc-portability-openapi.yml
+- scope: empresas.btgpactual.com/prepayments
+  description: Scope to pre payment
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/btg-pactual-fidc-prepayment-openapi.yml
+- scope: empresas.btgpactual.com/renegotiations
+  description: Scope to renegociation
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/btg-pactual-fidc-renegotiation-openapi.yml
+- scope: empresas.btgpactual.com/scf/borderos
+  description: Crear y cancelar operaciones.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/btg-pactual-scf-colombia-openapi.yml
+  - openapi/btg-pactual-scf-risco-sacado-openapi.yml
+- scope: empresas.btgpactual.com/scf/borderos.readonly
+  description: Consultar operaciones.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/btg-pactual-scf-colombia-openapi.yml
+  - openapi/btg-pactual-scf-risco-sacado-openapi.yml
+- scope: empresas.btgpactual.com/scf/companies
+  description: Scope to companies
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/btg-pactual-scf-risco-sacado-openapi.yml
+- scope: empresas.btgpactual.com/scf/companies.readonly
+  description: Consultar límites de empresas.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/btg-pactual-scf-colombia-openapi.yml
+  - openapi/btg-pactual-scf-risco-sacado-openapi.yml
+- scope: empresas.btgpactual.com/scf/operations
+  description: Scope to operations
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/btg-pactual-scf-risco-sacado-openapi.yml
+- scope: empresas.btgpactual.com/scf/operations.readonly
+  description: Scope to operations read
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/btg-pactual-scf-risco-sacado-openapi.yml
+- scope: empresas.btgpactual.com/scf/receivables
+  description: Scope to receivables
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/btg-pactual-scf-risco-sacado-openapi.yml
+- scope: empresas.btgpactual.com/scf/receivables.readonly
+  description: Scope to receivables read
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/btg-pactual-scf-risco-sacado-openapi.yml
+- scope: empresas.btgpactual.com/scf/settlements
+  description: Scope to settlements
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/btg-pactual-scf-risco-sacado-openapi.yml
+- scope: empresas.btgpactual.com/scf/settlements.readonly
+  description: Scope to settlements read
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/btg-pactual-scf-risco-sacado-openapi.yml
+- scope: empresas.btgpactual.com/scf/trades
+  description: Scope to trades
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/btg-pactual-scf-risco-sacado-openapi.yml
+- scope: empresas.btgpactual.com/scf/trades.readonly
+  description: Scope to trades read
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/btg-pactual-scf-risco-sacado-openapi.yml
+- scope: empresas.btgpactual.com/solar-credit
+  sources:
+  - openapi/btg-pactual-solar-creditanalysis-openapi.yml
+- scope: empresas.btgpactual.com/solar-credit.readonly
+  sources:
+  - openapi/btg-pactual-solar-creditanalysis-openapi.yml
+- scope: empresas.btgpactual.com/wallet.readonly
+  description: Scope to wallet read only
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/btg-pactual-fidc-wallet-openapi.yml
+- scope: openid
+  description: Consultar seu perfil BTG Id
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/btg-pactual-banking-payments-openapi.yml
+  - openapi/btg-pactual-solar-creditanalysis-openapi.yml
+- scope: openid empresas.btgpactual.com/payments
+  sources:
+  - openapi/btg-pactual-banking-payments-openapi.yml
+- scope: openid empresas.btgpactual.com/payments.readonly
+  sources:
+  - openapi/btg-pactual-banking-payments-openapi.yml
+- scope: openid empresas.btgpactual.com/pix-cash-in
+  description: Acesso completo ao Pix Cash-In
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/btg-pactual-banking-pixcashin-openapi.yml
+- scope: openid empresas.btgpactual.com/pix-cash-in.readonly
+  description: Acesso somente leitura ao Pix Cash-In
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/btg-pactual-banking-pixcashin-openapi.yml
+- scope: qf:Receivables.Get
+  description: Consultar recebíveis de cartão de crédito do cedente
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/btg-pactual-antecred-subcredenciadores-openapi.yml

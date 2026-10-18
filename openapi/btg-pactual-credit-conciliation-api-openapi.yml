@@ -1,0 +1,135 @@
+openapi: 3.2.0
+info:
+  title: FIDC Credit Conciliation API
+  version: '1.0'
+  description: Esta documentação tem a finalidade de instruir parceiros a utilização das APIs de credit as a service. Para autenticação é necessário a utilização do fluxo de client credentials de acordo com o menu `Authentication -> Fluxos de Autenticação -> Client Credentials`
+  termsOfService: https://www.btgpactual.com/empresas/termos-e-politicas/
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com
+  description: Sandbox
+- url: https://api.empresas.btgpactual.com
+  description: Produção
+tags:
+- name: Credit Conciliation
+paths:
+  /v1/credit-conciliation/{agreementId}/{creditConciliationOrderId}:
+    get:
+      tags:
+      - Credit Conciliation
+      description: O objetivo dessa rota é a consulta do status de pedido de repasse de pagamentos em lote.
+      parameters:
+      - name: agreementId
+        in: path
+        required: true
+        description: Identificador do convênio
+        schema:
+          type: string
+          format: uuid
+      - name: creditConciliationOrderId
+        in: path
+        required: true
+        description: Identificador do pedido
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Successo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  status:
+                    type:
+                    - string
+                    - 'null'
+                    example: QUEUED
+                  conciliatedFileS3Url:
+                    type:
+                    - string
+                    - 'null'
+                    example: null
+                additionalProperties: false
+                title: FIDCBack.Domain.Dtos.CreditConciliations.CreditConciliationOrderDetailsResponseDto
+        '401':
+          description: Não autorizado
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/payment
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/FIDC%20-%20Credit%20Conciliation/consultar-o-status-de-um-pedido-de-repasse-de-pagamentos-em-lote
+      summary: Get credit conciliation by agreement id by credit conciliation order id
+      x-summary-source: derived
+      operationId: getV1CreditConciliationByAgreementIdByCreditConciliationOrderId
+      x-operation-id-source: derived
+  /v1/credit-conciliation/{agreementId}:
+    post:
+      tags:
+      - Credit Conciliation
+      description: O objetivo dessa rota é a criação de um novo pedido de repasse de pagamentos em lote.
+      parameters:
+      - name: agreementId
+        in: path
+        required: true
+        description: Identificador do convênio
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                s3Url:
+                  type:
+                  - string
+                  - 'null'
+              additionalProperties: false
+              title: FIDCBack.Domain.Dtos.CreditConciliations.CreateCreditConciliationOrderRequestDto
+      responses:
+        '200':
+          description: Successo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  status:
+                    type:
+                    - string
+                    - 'null'
+                    example: QUEUED
+                additionalProperties: false
+                title: FIDCBack.Domain.Dtos.CreditConciliations.CreateCreditConciliationOrderResponseDto
+        '401':
+          description: Não autorizado
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/payment
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/FIDC%20-%20Credit%20Conciliation/criar-um-novo-pedido-de-repasse-de-pagamentos-em-lote
+      summary: Create credit conciliation by agreement id
+      x-summary-source: derived
+      operationId: postV1CreditConciliationByAgreementId
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+          scopes:
+            empresas.btgpactual.com/credit-conciliations: Scope to credit conciliation
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/044ce242.79116004.js
+  - https://developers.empresas.btgpactual.com/assets/js/35eb955e.28849876.js

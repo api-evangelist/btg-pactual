@@ -1,0 +1,199 @@
+openapi: 3.2.0
+info:
+  title: Banking - Payments Lote de Pagamentos API
+  version: '1'
+  description: Endpoints das APIs de banking do BTG PACTUAL Empresas
+  termsOfService: https://www.btgpactual.com/empresas/termos-e-politicas/
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com
+  description: sandbox
+- url: https://api.empresas.btgpactual.com
+  description: produção
+tags:
+- name: Lote de Pagamentos
+paths:
+  /{companyId}/banking/batch-payments/{batchId}:
+    delete:
+      tags:
+      - Lote de Pagamentos
+      description: Abandonar Lote
+      parameters:
+      - name: companyId
+        schema:
+          description: CNPJ da empresa realizando a requisição.
+          type: string
+          example: '30306294000145'
+          title: CompanyId
+        in: path
+        required: true
+      - name: batchId
+        schema:
+          type: string
+          description: Id do lote
+          example: 829c47f2-3b5c-4103-8d15-a55bd66ae905
+          title: BatchId
+        in: path
+        required: true
+      responses:
+        '200':
+          description: Lote abandonado
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - oauth2:
+        - openid empresas.btgpactual.com/payments
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Payments/abandonar-lote
+      summary: Delete by company id banking batch payments by batch id
+      x-summary-source: derived
+      operationId: deleteByCompanyIdBankingBatchPaymentsByBatchId
+      x-operation-id-source: derived
+    patch:
+      tags:
+      - Lote de Pagamentos
+      description: Processar Lote
+      parameters:
+      - name: companyId
+        schema:
+          description: CNPJ da empresa realizando a requisição.
+          type: string
+          example: '30306294000145'
+          title: CompanyId
+        in: path
+        required: true
+      - name: batchId
+        schema:
+          type: string
+          description: Id do lote
+          example: 829c47f2-3b5c-4103-8d15-a55bd66ae905
+          title: BatchId
+        in: path
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                isFinished:
+                  type: boolean
+                  description: Sinalizados de finalizador da transação
+                  example: true
+              title: BatchPatchBody
+        required: true
+      responses:
+        '202':
+          description: Lote finalizado
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - oauth2:
+        - openid empresas.btgpactual.com/payments
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Payments/processar-lote
+      summary: Update by company id banking batch payments by batch id
+      x-summary-source: derived
+      operationId: patchByCompanyIdBankingBatchPaymentsByBatchId
+      x-operation-id-source: derived
+  /{companyId}/banking/batch-payments:
+    post:
+      tags:
+      - Lote de Pagamentos
+      description: Abrir Lote
+      parameters:
+      - name: companyId
+        schema:
+          description: CNPJ da empresa realizando a requisição.
+          type: string
+          example: '30306294000145'
+          title: CompanyId
+        in: path
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+              - taxId
+              type: object
+              properties:
+                taxId:
+                  type: string
+                  description: CNPJ
+                  example: '46786961000174'
+              title: BatchPostBody
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  batchId:
+                    type: string
+                    description: Id do lote
+                    example: 829c47f2-3b5c-4103-8d15-a55bd66ae905
+                    title: BatchId
+                  expiresAt:
+                    type: string
+                    description: Data de expiração do lote
+                    example: '2024-11-22T19:18:18.233Z'
+                  maxSize:
+                    type: integer
+                    description: Tamanho máximo do lote
+                    example: 200
+                  taxId:
+                    type: string
+                    description: CNPJ
+                    example: '46786961000174'
+                title: BatchPostResponse
+          description: Iniciação de Pagamento
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - oauth2:
+        - openid empresas.btgpactual.com/payments
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Payments/abrir-lote
+      summary: Create by company id banking batch payments
+      x-summary-source: derived
+      operationId: postByCompanyIdBankingBatchPayments
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    oauth2:
+      flows:
+        authorizationCode:
+          authorizationUrl: https://id.sandbox.btgpactual.com/oauth2/authorize
+          tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+          scopes:
+            openid: Consultar seu perfil BTG Id
+            empresas.btgpactual.com/pix-cash-in: Consultar Pix Cobrança. Emitir Pix Cobrança.
+            empresas.btgpactual.com/pix-cash-in.readonly: Consultar Pix Cobrança.
+      type: oauth2
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/65b6f34c.66130078.js
+  - https://developers.empresas.btgpactual.com/assets/js/9a60eed4.d629410f.js
+  - https://developers.empresas.btgpactual.com/assets/js/8610ad53.9be95faf.js
+  - https://developers.empresas.btgpactual.com/assets/js/c11be869.bab57530.js
+  - https://developers.empresas.btgpactual.com/assets/js/1eb8621f.5920175f.js
+  - https://developers.empresas.btgpactual.com/assets/js/b1c9c74d.c8fb9985.js
+  - https://developers.empresas.btgpactual.com/assets/js/8309e522.1e2d40f1.js
+  - https://developers.empresas.btgpactual.com/assets/js/a3a32e5d.dd9ecb54.js
+  - https://developers.empresas.btgpactual.com/assets/js/28c308b9.229079e5.js
+  - https://developers.empresas.btgpactual.com/assets/js/7a4d41e2.8e85164b.js
+  - https://developers.empresas.btgpactual.com/assets/js/03ae328d.15a258f7.js
+  - https://developers.empresas.btgpactual.com/assets/js/0b5fcdc5.dc669663.js
+  - https://developers.empresas.btgpactual.com/assets/js/54ac4fcc.3e08f8ad.js
+  - https://developers.empresas.btgpactual.com/assets/js/7268bbdb.7215b98e.js
+  - https://developers.empresas.btgpactual.com/assets/js/6aa9cd99.5d7027a8.js
+  - https://developers.empresas.btgpactual.com/assets/js/0cda0e2f.113214e2.js
+  - https://developers.empresas.btgpactual.com/assets/js/8706a611.c750149f.js
+  - https://developers.empresas.btgpactual.com/assets/js/2165ce07.0de26e4c.js

@@ -1,0 +1,105 @@
+openapi: 3.2.0
+info:
+  title: SCF - Colombia Consultar límite del pagador API
+  description: API para consultar límites y gestionar operaciones de Supply Chain Finance en Colombia.
+  version: '1'
+servers:
+- url: https://api.uat.empresas.btgpactual.com/v1/scf
+  description: UAT
+- url: https://api.empresas.btgpactual.com/v1/scf
+  description: Producción
+tags:
+- name: Consultar límite del pagador
+paths:
+  /companies/limit/{payerTaxId}:
+    get:
+      tags:
+      - Consultar límite del pagador
+      description: Devuelve el límite total y el límite disponible del pagador informado.
+      operationId: getColombiaPayerLimit
+      parameters:
+      - name: payerTaxId
+        in: path
+        required: true
+        description: NIT del pagador, sin caracteres de formato.
+        schema:
+          type: string
+        example: '900000001'
+      responses:
+        '200':
+          description: Límite consultado correctamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - MaxLimit
+                - AvailableLimit
+                properties:
+                  MaxLimit:
+                    type: number
+                    format: double
+                    description: Límite total aprobado para el pagador.
+                  AvailableLimit:
+                    type: number
+                    format: double
+                    description: Límite disponible para nuevas operaciones.
+                title: LimitResponse
+              example:
+                MaxLimit: 1000000000
+                AvailableLimit: 750000000
+        '400':
+          description: Solicitud inválida.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Code:
+                    type: string
+                  Message:
+                    type: string
+                title: ErrorResponse
+        '404':
+          description: Recurso no encontrado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Code:
+                    type: string
+                  Message:
+                    type: string
+                title: ErrorResponse
+      security:
+      - read:
+        - empresas.btgpactual.com/scf/companies.readonly
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/SCF%20-%20Colombia/get-colombia-payer-limit
+      summary: Get colombia payer limit
+      x-summary-source: derived
+components:
+  securitySchemes:
+    write:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://id.btgpactual.com/oauth2/token
+          scopes:
+            empresas.btgpactual.com/scf/borderos: Crear y cancelar operaciones.
+    read:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://id.btgpactual.com/oauth2/token
+          scopes:
+            empresas.btgpactual.com/scf/borderos.readonly: Consultar operaciones.
+            empresas.btgpactual.com/scf/companies.readonly: Consultar límites de empresas.
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/fbd0b353.31d1d2ce.js
+  - https://developers.empresas.btgpactual.com/assets/js/08c77af0.814da34c.js
+  - https://developers.empresas.btgpactual.com/assets/js/67203ac0.4a8ffdda.js
+  - https://developers.empresas.btgpactual.com/assets/js/14f9e484.52c9d025.js

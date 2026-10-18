@@ -1,0 +1,51 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist overlay for Banking - PaymentLinkRec
+  version: 1.0.0
+extends: ../openapi/_original/btg-pactual-banking-paymentlinkrec-openapi.yml
+x-generated: '2026-10-18'
+x-method: generated
+x-source: openapi/btg-pactual-banking-paymentlinkrec-openapi.yml
+x-rationale: Adds provenance metadata and, where the BTG Pactual contract omits them, derived operationIds (method + path) so MCP candidate tools can bind to stable names. The original OpenAPI is not mutated.
+actions:
+- target: $.info
+  description: Record API Evangelist provenance for this BTG Pactual Empresas contract.
+  update:
+    x-apievangelist-provider: btg-pactual
+    x-apievangelist-source: openapi/btg-pactual-banking-paymentlinkrec-openapi.yml
+- target: $.paths['/{companyId}/banking/payment-link/recurrence/{id}'].put
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: putPaymentLinkRecurrenceById
+- target: $.paths['/{companyId}/banking/payment-link/recurrence/{id}'].delete
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: deletePaymentLinkRecurrenceById
+- target: $.paths['/{companyId}/banking/payment-link/recurrence/{id}'].get
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: getPaymentLinkRecurrenceById
+- target: $.paths['/{companyId}/banking/payment-link/recurrence'].post
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: postPaymentLinkRecurrenceByCompanyId
+- target: $.paths['/{companyId}/banking/payment-link/recurrence'].get
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: getPaymentLinkRecurrenceByCompanyId
+- target: $.paths['/{companyId}/banking/payment-link/recurrence/{id}/cycle'].get
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: getLinkRecurrenceCycleById
+- target: $.paths['/{companyId}/banking/payment-link/recurrence/{id}/pause'].patch
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: patchLinkRecurrencePauseById
+- target: $.paths['/{companyId}/banking/payment-link/recurrence/cycle/{cycleId}/reactivate'].post
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: postRecurrenceCycleReactivateByCycleId
+- target: $.paths['/{companyId}/banking/payment-link/recurrence/{id}/resume'].patch
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: patchLinkRecurrenceResumeById

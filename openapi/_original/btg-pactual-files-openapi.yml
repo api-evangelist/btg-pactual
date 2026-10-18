@@ -1,0 +1,59 @@
+# x-archived-from: btg-pactual-files-openapi.yml
+# x-archived-on: 2026-10-18
+openapi: 3.0.3
+info:
+  title: Files
+  description: Utilize a API de Arquivos para enviar arquivos para o BTG Empresas.
+  version: 1.0.0
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com/v1
+  description: Sandbox
+- url: https://api.empresas.btgpactual.com/v1
+  description: Produção
+paths:
+  /files:
+    post:
+      tags:
+      - Arquivos
+      description: 'O objetivo dessa rota é fornecer um link pré-assinado temporário do S3 (AWS) para fazer o upload de qualquer arquivo para a plataforma do BTG Empresas.
+
+        Após o upload do arquivo, o mesmo ficará disponível na nossa plataforma por até 3 dias corridos, até que seja vinculado a uma operação.
+
+        Caso o prazo de expiração do arquivo seja atingido e o vinculo não tenha sido feito, será necessário gerar um novo link de upload e enviar o arquivo novamente.'
+      operationId: Criar link s3 para upload de arquivo
+      responses:
+        '200':
+          description: Link de upload gerado com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  upload_url:
+                    type: string
+                    format: url
+                    example: https://btg-file-uploads.s3.amazonaws.com/user_28771ABC/8bce6cfc-dcd4-473b-9fae-60ef3f60ec11?AWSAccessKeyId=JAIAIR3IFH6UCHKS&SB\u0026Expires=1447353431\u0026Signature=abK2ncbdlAIl2hk2921AKHG%
+                    description: Link para fazer o upload do arquivo utilizando o verbo PUT.
+                  file_url:
+                    type: string
+                    example: https://s3-sa-east-1.amazonaws.com/btg-file-uploads/8bce6cfc-dcd4-473b-9fae-60ef3f60ec11
+                    description: Endereço do arquivo no S3, o mesmo será utilizado em outros serviços para fazer um vínculo com o arquivo enviado nessa API.
+                title: File
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/files
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Files/criar-link-s-3-para-upload-de-arquivo
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://id.btgpactual.com/oauth2/token
+          scopes:
+            empresas.btgpactual.com/files: Scope to files API
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/ea896653.5ec84e5b.js

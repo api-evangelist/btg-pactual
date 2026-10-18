@@ -1,0 +1,3286 @@
+openapi: 3.2.0
+info:
+  description: API responsável por gerenciar links de pagamento recorrentes via Developers. Uma recorrência gera automaticamente um novo link de pagamento a cada ciclo periódico e expõe uma URL pública única e estável para o pagador.
+  version: 1.0.0
+  title: Banking - PaymentLinkRec Link de Pagamento Recorrente API
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com
+  description: Sandbox
+- url: https://api.empresas.btgpactual.com
+  description: Produção
+tags:
+- name: Link de Pagamento Recorrente
+paths:
+  /{companyId}/banking/payment-link/recurrence/{id}:
+    put:
+      tags:
+      - Link de Pagamento Recorrente
+      description: API responsável por atualizar as configurações de um link de pagamento recorrente. Permitido apenas nos status `ACTIVE` e `PAUSED`, e as alterações afetam somente ciclos futuros — o link de pagamento do ciclo corrente permanece inalterado.
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+          example: 019c8c26-ed76-7116-a333-d30ec882493e
+          description: Identificador do link de pagamento recorrente
+          title: PaymentLinkRecurrenceId
+      - name: companyId
+        in: path
+        required: true
+        description: Identificador da empresa, validado pelo portal Developers
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - name
+              - period
+              - paymentMethods
+              - notifications
+              - amount
+              description: Alterações afetam apenas ciclos futuros. Permitido somente nos status `ACTIVE` e `PAUSED`.
+              properties:
+                name:
+                  type: string
+                  maxLength: 100
+                  example: Assinatura Mensal
+                  description: Nome da recorrência. Não pode conter URLs.
+                  title: RecurrenceName
+                period:
+                  type: string
+                  enum:
+                  - WEEKLY
+                  - MONTHLY
+                  - QUARTERLY
+                  - SEMI_ANNUALLY
+                  - ANNUALLY
+                  example: MONTHLY
+                  description: Periodicidade de geração dos ciclos
+                  title: RecurrencePeriod
+                paymentMethods:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: string
+                    enum:
+                    - BANKSLIP
+                    - IMMEDIATE_QRCODE
+                    - CREDIT_CARD
+                  example:
+                  - BANKSLIP
+                  - IMMEDIATE_QRCODE
+                  description: Métodos de pagamento permitidos nos links gerados
+                  title: PaymentMethods
+                notifications:
+                  type: object
+                  properties:
+                    deliveryMediums:
+                      type: array
+                      items:
+                        type: string
+                        enum:
+                        - Sms
+                        - Email
+                        - Push
+                      example:
+                      - Email
+                      description: Meios de notificação
+                      title: DeliveryMediums
+                    email:
+                      type: string
+                      format: email
+                      example: exemplo@btgpactual.com
+                      title: Email
+                    phone:
+                      type: string
+                      example: '11912345678'
+                      title: PhoneNumber
+                  description: Configuração de notificação enviada ao pagador em cada ciclo. `email` é obrigatório quando `deliveryMediums` contém `Email` ou `Push`; `phone` é obrigatório quando contém `Sms`.
+                  title: Notifications
+                amount:
+                  type: number
+                  example: 99.9
+                  description: Valor cobrado em cada ciclo da recorrência. Para `CREDIT_CARD`, mínimo de 5 e máximo de 999999.99.
+                  title: Amount
+                description:
+                  type: string
+                  maxLength: 100
+                  example: Plano mensal de serviços
+                  description: Descrição da recorrência
+                  title: Description
+                numberOfCycles:
+                  allOf:
+                  - type: integer
+                    minimum: 1
+                    example: 12
+                    description: Critério de término por quantidade de ciclos. Opcional — quando omitido junto de `endDate`, a recorrência é indeterminada.
+                    title: NumberOfCycles
+                  description: Critério de término por quantidade de ciclos. Envie `null` para remover o critério.
+                endDate:
+                  allOf:
+                  - type: string
+                    format: date
+                    example: '2026-07-01'
+                    description: Data no formato YYYY-MM-DD
+                    title: Date
+                  description: Critério de término por data. Não pode ser no passado. Envie `null` para remover o critério.
+                maxInstallments:
+                  type: integer
+                  minimum: 1
+                  maximum: 24
+                  example: 3
+                  description: Número máximo de parcelas no cartão de crédito, de 1 a 24. Obrigatório quando `paymentMethods` inclui `CREDIT_CARD`, proibido caso contrário. Cada parcela deve ter no mínimo R$ 5,00.
+                  title: MaxInstallments
+                transferCardFeesToPayer:
+                  type: boolean
+                  example: false
+                  description: Repassa o custo da transação por cartão ao pagador. Obrigatório quando `paymentMethods` inclui `CREDIT_CARD`, proibido caso contrário.
+                  title: TransferCardFeesToPayer
+              title: UpdatePaymentLinkRecurrenceRequest
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  paymentLinkRecurrenceId:
+                    type: string
+                    format: uuid
+                    example: 019c8c26-ed76-7116-a333-d30ec882493e
+                    description: Identificador do link de pagamento recorrente
+                    title: PaymentLinkRecurrenceId
+                  name:
+                    type: string
+                    maxLength: 100
+                    example: Assinatura Mensal
+                    description: Nome da recorrência. Não pode conter URLs.
+                    title: RecurrenceName
+                  status:
+                    type: string
+                    enum:
+                    - ACTIVE
+                    - PAUSED
+                    - CANCELED
+                    - FINISHED
+                    example: ACTIVE
+                    description: Status da recorrência
+                    title: RecurrenceStatus
+                  period:
+                    type: string
+                    enum:
+                    - WEEKLY
+                    - MONTHLY
+                    - QUARTERLY
+                    - SEMI_ANNUALLY
+                    - ANNUALLY
+                    example: MONTHLY
+                    description: Periodicidade de geração dos ciclos
+                    title: RecurrencePeriod
+                  paymentMethods:
+                    type: array
+                    minItems: 1
+                    items:
+                      type: string
+                      enum:
+                      - BANKSLIP
+                      - IMMEDIATE_QRCODE
+                      - CREDIT_CARD
+                    example:
+                    - BANKSLIP
+                    - IMMEDIATE_QRCODE
+                    description: Métodos de pagamento permitidos nos links gerados
+                    title: PaymentMethods
+                  notifications:
+                    type: object
+                    properties:
+                      deliveryMediums:
+                        type: array
+                        items:
+                          type: string
+                          enum:
+                          - Sms
+                          - Email
+                          - Push
+                        example:
+                        - Email
+                        description: Meios de notificação
+                        title: DeliveryMediums
+                      email:
+                        type: string
+                        format: email
+                        example: exemplo@btgpactual.com
+                        title: Email
+                      phone:
+                        type: string
+                        example: '11912345678'
+                        title: PhoneNumber
+                    description: Configuração de notificação enviada ao pagador em cada ciclo. `email` é obrigatório quando `deliveryMediums` contém `Email` ou `Push`; `phone` é obrigatório quando contém `Sms`.
+                    title: Notifications
+                  startDate:
+                    type: string
+                    format: date
+                    example: '2026-07-01'
+                    description: Data no formato YYYY-MM-DD
+                    title: Date
+                  createdAt:
+                    type: string
+                    format: date-time
+                    example: '2026-07-01T00:00:00.000Z'
+                    title: DateTime
+                  updatedAt:
+                    type: string
+                    format: date-time
+                    example: '2026-07-01T00:00:00.000Z'
+                    title: DateTime
+                  payer:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: João Silva
+                      personType:
+                        type: string
+                        enum:
+                        - F
+                        - J
+                        example: J
+                        description: 'Tipo de pessoa: física (F) ou jurídica (J)'
+                        title: PersonType
+                      taxId:
+                        type: string
+                        example: '37297902000141'
+                        description: Documento (CPF ou CNPJ) sem formatação
+                        title: TaxId
+                      email:
+                        type: string
+                        format: email
+                        example: exemplo@btgpactual.com
+                        title: Email
+                      phoneNumber:
+                        type: string
+                        example: '11912345678'
+                        title: PhoneNumber
+                      deliveryMediums:
+                        type: array
+                        items:
+                          type: string
+                          enum:
+                          - Sms
+                          - Email
+                          - Push
+                        example:
+                        - Email
+                        description: Meios de notificação
+                        title: DeliveryMediums
+                      address:
+                        type: object
+                        required:
+                        - city
+                        - state
+                        - street
+                        - zipCode
+                        - number
+                        - neighborhood
+                        properties:
+                          city:
+                            type: string
+                            example: São Paulo
+                          state:
+                            type: string
+                            example: SP
+                          street:
+                            type: string
+                            example: Faria Lima
+                          zipCode:
+                            type: string
+                            example: '06312412'
+                          number:
+                            type: string
+                            example: '123'
+                          neighborhood:
+                            type: string
+                            example: Itaim Bibi
+                          complement:
+                            type: string
+                            example: Sala 12
+                        description: Endereço
+                        title: Address
+                    description: Pagador da recorrência
+                    title: PayerResponse
+                  account:
+                    type: object
+                    required:
+                    - number
+                    - branch
+                    properties:
+                      number:
+                        type: string
+                        example: '12345'
+                        description: Número da conta do beneficiário
+                      branch:
+                        type: string
+                        example: '0001'
+                        description: Agência do beneficiário
+                    description: Conta do beneficiário que receberá os pagamentos
+                    title: Account
+                  hasOverdueCycles:
+                    type: boolean
+                    example: false
+                    description: Indica se a recorrência possui ciclos em atraso
+                  linkUrl:
+                    type: string
+                    example: https://links.btgpactual.com/abc123
+                    description: URL pública única e estável da recorrência. Sempre resolve para o link de pagamento do ciclo corrente.
+                    title: LinkUrl
+                  amount:
+                    type: number
+                    example: 99.9
+                    description: Valor cobrado em cada ciclo da recorrência. Para `CREDIT_CARD`, mínimo de 5 e máximo de 999999.99.
+                    title: Amount
+                  description:
+                    type: string
+                    maxLength: 100
+                    example: Plano mensal de serviços
+                    description: Descrição da recorrência
+                    title: Description
+                  numberOfCycles:
+                    type: integer
+                    minimum: 1
+                    example: 12
+                    description: Critério de término por quantidade de ciclos. Opcional — quando omitido junto de `endDate`, a recorrência é indeterminada.
+                    title: NumberOfCycles
+                  endDate:
+                    type: string
+                    format: date
+                    example: '2026-07-01'
+                    description: Data no formato YYYY-MM-DD
+                    title: Date
+                  missedCyclesCount:
+                    type: integer
+                    example: 0
+                    description: Quantidade de ciclos que deixaram de ser gerados durante a pausa
+                  maxInstallments:
+                    type: integer
+                    minimum: 1
+                    maximum: 24
+                    example: 3
+                    description: Número máximo de parcelas no cartão de crédito, de 1 a 24. Obrigatório quando `paymentMethods` inclui `CREDIT_CARD`, proibido caso contrário. Cada parcela deve ter no mínimo R$ 5,00.
+                    title: MaxInstallments
+                  transferCardFeesToPayer:
+                    type: boolean
+                    example: false
+                    description: Repassa o custo da transação por cartão ao pagador. Obrigatório quando `paymentMethods` inclui `CREDIT_CARD`, proibido caso contrário.
+                    title: TransferCardFeesToPayer
+                required:
+                - paymentLinkRecurrenceId
+                - name
+                - status
+                - period
+                - paymentMethods
+                - notifications
+                - startDate
+                - createdAt
+                - updatedAt
+                - payer
+                - account
+                - hasOverdueCycles
+                title: PaymentLinkRecurrenceResponse
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: BRN referente ao erro.
+                  name:
+                    type: string
+                    example: InvalidInputError
+                    description: Nome do erro.
+                title: BadRequestErrorResponse
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:not-found-error
+                    description: BRN referente ao erro.
+                  name:
+                    type: string
+                    example: NotFoundError
+                    description: Nome do erro.
+                title: NotFoundErrorResponse
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: BRN referente ao erro.
+                  name:
+                    type: string
+                    example: UnprocessableEntityError
+                    description: Nome do erro.
+                title: UnprocessableEntityErrorResponse
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:internal-server-error
+                    description: BRN referente ao erro.
+                  name:
+                    type: string
+                    example: InternalServerError
+                    description: Nome do erro.
+                title: InternalServerErrorResponse
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20PaymentLinkRec/atualizar-link-de-pagamento-recorrente
+      summary: Replace by company id banking payment link recurrence by id
+      x-summary-source: derived
+      operationId: putByCompanyIdBankingPaymentLinkRecurrenceById
+      x-operation-id-source: derived
+    delete:
+      tags:
+      - Link de Pagamento Recorrente
+      description: API responsável por cancelar um link de pagamento recorrente (transição `ACTIVE`/`PAUSED` → `CANCELED`). O link de pagamento do ciclo corrente é cancelado imediatamente. O recurso é restrito ao beneficiário autenticado.
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+          example: 019c8c26-ed76-7116-a333-d30ec882493e
+          description: Identificador do link de pagamento recorrente
+          title: PaymentLinkRecurrenceId
+      - name: companyId
+        in: path
+        required: true
+        description: Identificador da empresa, validado pelo portal Developers
+        schema:
+          type: string
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: BRN referente ao erro.
+                  name:
+                    type: string
+                    example: InvalidInputError
+                    description: Nome do erro.
+                title: BadRequestErrorResponse
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:not-found-error
+                    description: BRN referente ao erro.
+                  name:
+                    type: string
+                    example: NotFoundError
+                    description: Nome do erro.
+                title: NotFoundErrorResponse
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: BRN referente ao erro.
+                  name:
+                    type: string
+                    example: UnprocessableEntityError
+                    description: Nome do erro.
+                title: UnprocessableEntityErrorResponse
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:internal-server-error
+                    description: BRN referente ao erro.
+                  name:
+                    type: string
+                    example: InternalServerError
+                    description: Nome do erro.
+                title: InternalServerErrorResponse
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20PaymentLinkRec/cancelar-link-de-pagamento-recorrente
+      summary: Delete by company id banking payment link recurrence by id
+      x-summary-source: derived
+      operationId: deleteByCompanyIdBankingPaymentLinkRecurrenceById
+      x-operation-id-source: derived
+    get:
+      tags:
+      - Link de Pagamento Recorrente
+      description: API responsável por retornar um link de pagamento recorrente de uma empresa. O recurso é restrito ao beneficiário autenticado.
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+          example: 019c8c26-ed76-7116-a333-d30ec882493e
+          description: Identificador do link de pagamento recorrente
+          title: PaymentLinkRecurrenceId
+      - name: companyId
+        in: path
+        required: true
+        description: Identificador da empresa, validado pelo portal Developers
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  paymentLinkRecurrenceId:
+                    type: string
+                    format: uuid
+                    example: 019c8c26-ed76-7116-a333-d30ec882493e
+                    description: Identificador do link de pagamento recorrente
+                    title: PaymentLinkRecurrenceId
+                  name:
+                    type: string
+                    maxLength: 100
+                    example: Assinatura Mensal
+                    description: Nome da recorrência. Não pode conter URLs.
+                    title: RecurrenceName
+                  status:
+                    type: string
+                    enum:
+                    - ACTIVE
+                    - PAUSED
+                    - CANCELED
+                    - FINISHED
+                    example: ACTIVE
+                    description: Status da recorrência
+                    title: RecurrenceStatus
+                  period:
+                    type: string
+                    enum:
+                    - WEEKLY
+                    - MONTHLY
+                    - QUARTERLY
+                    - SEMI_ANNUALLY
+                    - ANNUALLY
+                    example: MONTHLY
+                    description: Periodicidade de geração dos ciclos
+                    title: RecurrencePeriod
+                  paymentMethods:
+                    type: array
+                    minItems: 1
+                    items:
+                      type: string
+                      enum:
+                      - BANKSLIP
+                      - IMMEDIATE_QRCODE
+                      - CREDIT_CARD
+                    example:
+                    - BANKSLIP
+                    - IMMEDIATE_QRCODE
+                    description: Métodos de pagamento permitidos nos links gerados
+                    title: PaymentMethods
+                  notifications:
+                    type: object
+                    properties:
+                      deliveryMediums:
+                        type: array
+                        items:
+                          type: string
+                          enum:
+                          - Sms
+                          - Email
+                          - Push
+                        example:
+                        - Email
+                        description: Meios de notificação
+                        title: DeliveryMediums
+                      email:
+                        type: string
+                        format: email
+                        example: exemplo@btgpactual.com
+                        title: Email
+                      phone:
+                        type: string
+                        example: '11912345678'
+                        title: PhoneNumber
+                    description: Configuração de notificação enviada ao pagador em cada ciclo. `email` é obrigatório quando `deliveryMediums` contém `Email` ou `Push`; `phone` é obrigatório quando contém `Sms`.
+                    title: Notifications
+                  startDate:
+                    type: string
+                    format: date
+                    example: '2026-07-01'
+                    description: Data no formato YYYY-MM-DD
+                    title: Date
+                  createdAt:
+                    type: string
+                    format: date-time
+                    example: '2026-07-01T00:00:00.000Z'
+                    title: DateTime
+                  updatedAt:
+                    type: string
+                    format: date-time
+                    example: '2026-07-01T00:00:00.000Z'
+                    title: DateTime
+                  payer:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: João Silva
+                      personType:
+                        type: string
+                        enum:
+                        - F
+                        - J
+                        example: J
+                        description: 'Tipo de pessoa: física (F) ou jurídica (J)'
+                        title: PersonType
+                      taxId:
+                        type: string
+                        example: '37297902000141'
+                        description: Documento (CPF ou CNPJ) sem formatação
+                        title: TaxId
+                      email:
+                        type: string
+                        format: email
+                        example: exemplo@btgpactual.com
+                        title: Email
+                      phoneNumber:
+                        type: string
+                        example: '11912345678'
+                        title: PhoneNumber
+                      deliveryMediums:
+                        type: array
+                        items:
+                          type: string
+                          enum:
+                          - Sms
+                          - Email
+                          - Push
+                        example:
+                        - Email
+                        description: Meios de notificação
+                        title: DeliveryMediums
+                      address:
+                        type: object
+                        required:
+                        - city
+                        - state
+                        - street
+                        - zipCode
+                        - number
+                        - neighborhood
+                        properties:
+                          city:
+                            type: string
+                            example: São Paulo
+                          state:
+                            type: string
+                            example: SP
+                          street:
+                            type: string
+                            example: Faria Lima
+                          zipCode:
+                            type: string
+                            example: '06312412'
+                          number:
+                            type: string
+                            example: '123'
+                          neighborhood:
+                            type: string
+                            example: Itaim Bibi
+                          complement:
+                            type: string
+                            example: Sala 12
+                        description: Endereço
+                        title: Address
+                    description: Pagador da recorrência
+                    title: PayerResponse
+                  account:
+                    type: object
+                    required:
+                    - number
+                    - branch
+                    properties:
+                      number:
+                        type: string
+                        example: '12345'
+                        description: Número da conta do beneficiário
+                      branch:
+                        type: string
+                        example: '0001'
+                        description: Agência do beneficiário
+                    description: Conta do beneficiário que receberá os pagamentos
+                    title: Account
+                  hasOverdueCycles:
+                    type: boolean
+                    example: false
+                    description: Indica se a recorrência possui ciclos em atraso
+                  linkUrl:
+                    type: string
+                    example: https://links.btgpactual.com/abc123
+                    description: URL pública única e estável da recorrência. Sempre resolve para o link de pagamento do ciclo corrente.
+                    title: LinkUrl
+                  amount:
+                    type: number
+                    example: 99.9
+                    description: Valor cobrado em cada ciclo da recorrência. Para `CREDIT_CARD`, mínimo de 5 e máximo de 999999.99.
+                    title: Amount
+                  description:
+                    type: string
+                    maxLength: 100
+                    example: Plano mensal de serviços
+                    description: Descrição da recorrência
+                    title: Description
+                  numberOfCycles:
+                    type: integer
+                    minimum: 1
+                    example: 12
+                    description: Critério de término por quantidade de ciclos. Opcional — quando omitido junto de `endDate`, a recorrência é indeterminada.
+                    title: NumberOfCycles
+                  endDate:
+                    type: string
+                    format: date
+                    example: '2026-07-01'
+                    description: Data no formato YYYY-MM-DD
+                    title: Date
+                  missedCyclesCount:
+                    type: integer
+                    example: 0
+                    description: Quantidade de ciclos que deixaram de ser gerados durante a pausa
+                  maxInstallments:
+                    type: integer
+                    minimum: 1
+                    maximum: 24
+                    example: 3
+                    description: Número máximo de parcelas no cartão de crédito, de 1 a 24. Obrigatório quando `paymentMethods` inclui `CREDIT_CARD`, proibido caso contrário. Cada parcela deve ter no mínimo R$ 5,00.
+                    title: MaxInstallments
+                  transferCardFeesToPayer:
+                    type: boolean
+                    example: false
+                    description: Repassa o custo da transação por cartão ao pagador. Obrigatório quando `paymentMethods` inclui `CREDIT_CARD`, proibido caso contrário.
+                    title: TransferCardFeesToPayer
+                required:
+                - paymentLinkRecurrenceId
+                - name
+                - status
+                - period
+                - paymentMethods
+                - notifications
+                - startDate
+                - createdAt
+                - updatedAt
+                - payer
+                - account
+                - hasOverdueCycles
+                title: PaymentLinkRecurrenceResponse
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: BRN referente ao erro.
+                  name:
+                    type: string
+                    example: InvalidInputError
+                    description: Nome do erro.
+                title: BadRequestErrorResponse
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:not-found-error
+                    description: BRN referente ao erro.
+                  name:
+                    type: string
+                    example: NotFoundError
+                    description: Nome do erro.
+                title: NotFoundErrorResponse
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:internal-server-error
+                    description: BRN referente ao erro.
+                  name:
+                    type: string
+                    example: InternalServerError
+                    description: Nome do erro.
+                title: InternalServerErrorResponse
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20PaymentLinkRec/encontrar-link-de-pagamento-recorrente-por-id
+      summary: Get by company id banking payment link recurrence by id
+      x-summary-source: derived
+      operationId: getByCompanyIdBankingPaymentLinkRecurrenceById
+      x-operation-id-source: derived
+  /{companyId}/banking/payment-link/recurrence:
+    post:
+      tags:
+      - Link de Pagamento Recorrente
+      description: API responsável por criar um link de pagamento recorrente. Gera a URL pública estável e o primeiro ciclo. Quando `startDate` já chegou, o ciclo é ativado imediatamente (link de pagamento criado, ciclo `ACTIVE`) e o próximo ciclo é agendado; quando `startDate` é futuro, o ciclo permanece `SCHEDULED` até o job de ativação.
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        description: Identificador da empresa, validado pelo portal Developers
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - name
+              - period
+              - paymentMethods
+              - notifications
+              - amount
+              - startDate
+              - account
+              - payer
+              properties:
+                name:
+                  type: string
+                  maxLength: 100
+                  example: Assinatura Mensal
+                  description: Nome da recorrência. Não pode conter URLs.
+                  title: RecurrenceName
+                period:
+                  type: string
+                  enum:
+                  - WEEKLY
+                  - MONTHLY
+                  - QUARTERLY
+                  - SEMI_ANNUALLY
+                  - ANNUALLY
+                  example: MONTHLY
+                  description: Periodicidade de geração dos ciclos
+                  title: RecurrencePeriod
+                paymentMethods:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: string
+                    enum:
+                    - BANKSLIP
+                    - IMMEDIATE_QRCODE
+                    - CREDIT_CARD
+                  example:
+                  - BANKSLIP
+                  - IMMEDIATE_QRCODE
+                  description: Métodos de pagamento permitidos nos links gerados
+                  title: PaymentMethods
+                notifications:
+                  type: object
+                  properties:
+                    deliveryMediums:
+                      type: array
+                      items:
+                        type: string
+                        enum:
+                        - Sms
+                        - Email
+                        - Push
+                      example:
+                      - Email
+                      description: Meios de notificação
+                      title: DeliveryMediums
+                    email:
+                      type: string
+                      format: email
+                      example: exemplo@btgpactual.com
+                      title: Email
+                    phone:
+                      type: string
+                      example: '11912345678'
+                      title: PhoneNumber
+                  description: Configuração de notificação enviada ao pagador em cada ciclo. `email` é obrigatório quando `deliveryMediums` contém `Email` ou `Push`; `phone` é obrigatório quando contém `Sms`.
+                  title: Notifications
+                amount:
+                  type: number
+                  example: 99.9
+                  description: Valor cobrado em cada ciclo da recorrência. Para `CREDIT_CARD`, mínimo de 5 e máximo de 999999.99.
+                  title: Amount
+                description:
+                  type: string
+                  maxLength: 100
+                  example: Plano mensal de serviços
+                  description: Descrição da recorrência
+                  title: Description
+                startDate:
+                  allOf:
+                  - type: string
+                    format: date
+                    example: '2026-07-01'
+                    description: Data no formato YYYY-MM-DD
+                    title: Date
+                  description: Data de início da recorrência. Não pode ser no passado. Quando já chegou, o primeiro ciclo é ativado na criação.
+                numberOfCycles:
+                  type: integer
+                  minimum: 1
+                  example: 12
+                  description: Critério de término por quantidade de ciclos. Opcional — quando omitido junto de `endDate`, a recorrência é indeterminada.
+                  title: NumberOfCycles
+                endDate:
+                  allOf:
+                  - type: string
+                    format: date
+                    example: '2026-07-01'
+                    description: Data no formato YYYY-MM-DD
+                    title: Date
+                  description: Critério de término por data. Deve ser maior ou igual a `startDate`. Opcional — quando omitido junto de `numberOfCycles`, a recorrência é indeterminada.
+                account:
+                  type: object
+                  required:
+                  - number
+                  - branch
+                  properties:
+                    number:
+                      type: string
+                      example: '12345'
+                      description: Número da conta do beneficiário
+                    branch:
+                      type: string
+                      example: '0001'
+                      description: Agência do beneficiário
+                  description: Conta do beneficiário que receberá os pagamentos
+                  title: Account
+                payer:
+                  type: object
+                  required:
+                  - name
+                  - taxId
+                  properties:
+                    name:
+                      type: string
+                      example: João Silva
+                    taxId:
+                      type: string
+                      example: '37297902000141'
+                      description: Documento (CPF ou CNPJ) sem formatação
+                      title: TaxId
+                    email:
+                      type: string
+                      format: email
+                      example: exemplo@btgpactual.com
+                      title: Email
+                    phoneNumber:
+                      type: string
+                      example: '11912345678'
+                      title: PhoneNumber
+                    birthDate:
+                      allOf:
+                      - type: string
+                        format: date
+                        example: '2026-07-01'
+                        description: Data no formato YYYY-MM-DD
+                        title: Date
+                      description: Data de nascimento do pagador (YYYY-MM-DD). Deve ser no passado.
+                    address:
+                      type: object
+                      required:
+                      - city
+                      - state
+                      - street
+                      - zipCode
+                      - number
+                      - neighborhood
+                      properties:
+                        city:
+                          type: string
+                          example: São Paulo
+                        state:
+                          type: string
+                          example: SP
+                        street:
+                          type: string
+                          example: Faria Lima
+                        zipCode:
+                          type: string
+                          example: '06312412'
+                        number:
+                          type: string
+                          example: '123'
+                        neighborhood:
+                          type: string
+                          example: Itaim Bibi
+                        complement:
+                          type: string
+                          example: Sala 12
+                      description: Endereço
+                      title: Address
+                    deliveryMediums:
+                      type: array
+                      items:
+                        type: string
+                        enum:
+                        - Sms
+                        - Email
+                      example:
+                      - Email
+                  description: Pagador da recorrência. Obrigatório e propagado para cada link de pagamento gerado.
+                  title: PayerRequest
+                maxInstallments:
+                  type: integer
+                  minimum: 1
+                  maximum: 24
+                  example: 3
+                  description: Número máximo de parcelas no cartão de crédito, de 1 a 24. Obrigatório quando `paymentMethods` inclui `CREDIT_CARD`, proibido caso contrário. Cada parcela deve ter no mínimo R$ 5,00.
+                  title: MaxInstallments
+                transferCardFeesToPayer:
+                  type: boolean
+                  example: false
+                  description: Repassa o custo da transação por cartão ao pagador. Obrigatório quando `paymentMethods` inclui `CREDIT_CARD`, proibido caso contrário.
+                  title: TransferCardFeesToPayer
+              example:
+                name: Assinatura Mensal
+                period: MONTHLY
+                paymentMethods:
+                - BANKSLIP
+                - IMMEDIATE_QRCODE
+                notifications:
+                  deliveryMediums:
+                  - Email
+                  email: pagador@exemplo.com
+                amount: 99.9
+                description: Plano mensal de serviços
+                startDate: '2026-07-01'
+                numberOfCycles: 12
+                account:
+                  number: '12345'
+                  branch: '0001'
+                payer:
+                  name: João Silva
+                  taxId: '12345678900'
+                  email: joao@exemplo.com
+              title: CreatePaymentLinkRecurrenceRequest
+      responses:
+        '201':
+          description: Link de pagamento recorrente criado com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  paymentLinkRecurrenceId:
+                    type: string
+                    format: uuid
+                    example: 019c8c26-ed76-7116-a333-d30ec882493e
+                    description: Identificador do link de pagamento recorrente
+                    title: PaymentLinkRecurrenceId
+                  name:
+                    type: string
+                    maxLength: 100
+                    example: Assinatura Mensal
+                    description: Nome da recorrência. Não pode conter URLs.
+                    title: RecurrenceName
+                  status:
+                    type: string
+                    enum:
+                    - ACTIVE
+                    - PAUSED
+                    - CANCELED
+                    - FINISHED
+                    example: ACTIVE
+                    description: Status da recorrência
+                    title: RecurrenceStatus
+                  period:
+                    type: string
+                    enum:
+                    - WEEKLY
+                    - MONTHLY
+                    - QUARTERLY
+                    - SEMI_ANNUALLY
+                    - ANNUALLY
+                    example: MONTHLY
+                    description: Periodicidade de geração dos ciclos
+                    title: RecurrencePeriod
+                  paymentMethods:
+                    type: array
+                    minItems: 1
+                    items:
+                      type: string
+                      enum:
+                      - BANKSLIP
+                      - IMMEDIATE_QRCODE
+                      - CREDIT_CARD
+                    example:
+                    - BANKSLIP
+                    - IMMEDIATE_QRCODE
+                    description: Métodos de pagamento permitidos nos links gerados
+                    title: PaymentMethods
+                  notifications:
+                    type: object
+                    properties:
+                      deliveryMediums:
+                        type: array
+                        items:
+                          type: string
+                          enum:
+                          - Sms
+                          - Email
+                          - Push
+                        example:
+                        - Email
+                        description: Meios de notificação
+                        title: DeliveryMediums
+                      email:
+                        type: string
+                        format: email
+                        example: exemplo@btgpactual.com
+                        title: Email
+                      phone:
+                        type: string
+                        example: '11912345678'
+                        title: PhoneNumber
+                    description: Configuração de notificação enviada ao pagador em cada ciclo. `email` é obrigatório quando `deliveryMediums` contém `Email` ou `Push`; `phone` é obrigatório quando contém `Sms`.
+                    title: Notifications
+                  startDate:
+                    type: string
+                    format: date
+                    example: '2026-07-01'
+                    description: Data no formato YYYY-MM-DD
+                    title: Date
+                  createdAt:
+                    type: string
+                    format: date-time
+                    example: '2026-07-01T00:00:00.000Z'
+                    title: DateTime
+                  updatedAt:
+                    type: string
+                    format: date-time
+                    example: '2026-07-01T00:00:00.000Z'
+                    title: DateTime
+                  payer:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: João Silva
+                      personType:
+                        type: string
+                        enum:
+                        - F
+                        - J
+                        example: J
+                        description: 'Tipo de pessoa: física (F) ou jurídica (J)'
+                        title: PersonType
+                      taxId:
+                        type: string
+                        example: '37297902000141'
+                        description: Documento (CPF ou CNPJ) sem formatação
+                        title: TaxId
+                      email:
+                        type: string
+                        format: email
+                        example: exemplo@btgpactual.com
+                        title: Email
+                      phoneNumber:
+                        type: string
+                        example: '11912345678'
+                        title: PhoneNumber
+                      deliveryMediums:
+                        type: array
+                        items:
+                          type: string
+                          enum:
+                          - Sms
+                          - Email
+                          - Push
+                        example:
+                        - Email
+                        description: Meios de notificação
+                        title: DeliveryMediums
+                      address:
+                        type: object
+                        required:
+                        - city
+                        - state
+                        - street
+                        - zipCode
+                        - number
+                        - neighborhood
+                        properties:
+                          city:
+                            type: string
+                            example: São Paulo
+                          state:
+                            type: string
+                            example: SP
+                          street:
+                            type: string
+                            example: Faria Lima
+                          zipCode:
+                            type: string
+                            example: '06312412'
+                          number:
+                            type: string
+                            example: '123'
+                          neighborhood:
+                            type: string
+                            example: Itaim Bibi
+                          complement:
+                            type: string
+                            example: Sala 12
+                        description: Endereço
+                        title: Address
+                    description: Pagador da recorrência
+                    title: PayerResponse
+                  account:
+                    type: object
+                    required:
+                    - number
+                    - branch
+                    properties:
+                      number:
+                        type: string
+                        example: '12345'
+                        description: Número da conta do beneficiário
+                      branch:
+                        type: string
+                        example: '0001'
+                        description: Agência do beneficiário
+                    description: Conta do beneficiário que receberá os pagamentos
+                    title: Account
+                  hasOverdueCycles:
+                    type: boolean
+                    example: false
+                    description: Indica se a recorrência possui ciclos em atraso
+                  linkUrl:
+                    type: string
+                    example: https://links.btgpactual.com/abc123
+                    description: URL pública única e estável da recorrência. Sempre resolve para o link de pagamento do ciclo corrente.
+                    title: LinkUrl
+                  amount:
+                    type: number
+                    example: 99.9
+                    description: Valor cobrado em cada ciclo da recorrência. Para `CREDIT_CARD`, mínimo de 5 e máximo de 999999.99.
+                    title: Amount
+                  description:
+                    type: string
+                    maxLength: 100
+                    example: Plano mensal de serviços
+                    description: Descrição da recorrência
+                    title: Description
+                  numberOfCycles:
+                    type: integer
+                    minimum: 1
+                    example: 12
+                    description: Critério de término por quantidade de ciclos. Opcional — quando omitido junto de `endDate`, a recorrência é indeterminada.
+                    title: NumberOfCycles
+                  endDate:
+                    type: string
+                    format: date
+                    example: '2026-07-01'
+                    description: Data no formato YYYY-MM-DD
+                    title: Date
+                  missedCyclesCount:
+                    type: integer
+                    example: 0
+                    description: Quantidade de ciclos que deixaram de ser gerados durante a pausa
+                  maxInstallments:
+                    type: integer
+                    minimum: 1
+                    maximum: 24
+                    example: 3
+                    description: Número máximo de parcelas no cartão de crédito, de 1 a 24. Obrigatório quando `paymentMethods` inclui `CREDIT_CARD`, proibido caso contrário. Cada parcela deve ter no mínimo R$ 5,00.
+                    title: MaxInstallments
+                  transferCardFeesToPayer:
+                    type: boolean
+                    example: false
+                    description: Repassa o custo da transação por cartão ao pagador. Obrigatório quando `paymentMethods` inclui `CREDIT_CARD`, proibido caso contrário.
+                    title: TransferCardFeesToPayer
+                required:
+                - paymentLinkRecurrenceId
+                - name
+                - status
+                - period
+                - paymentMethods
+                - notifications
+                - startDate
+                - createdAt
+                - updatedAt
+                - payer
+                - account
+                - hasOverdueCycles
+                title: PaymentLinkRecurrenceResponse
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: BRN referente ao erro.
+                  name:
+                    type: string
+                    example: InvalidInputError
+                    description: Nome do erro.
+                title: BadRequestErrorResponse
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:not-found-error
+                    description: BRN referente ao erro.
+                  name:
+                    type: string
+                    example: NotFoundError
+                    description: Nome do erro.
+                title: NotFoundErrorResponse
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: BRN referente ao erro.
+                  name:
+                    type: string
+                    example: UnprocessableEntityError
+                    description: Nome do erro.
+                title: UnprocessableEntityErrorResponse
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:internal-server-error
+                    description: BRN referente ao erro.
+                  name:
+                    type: string
+                    example: InternalServerError
+                    description: Nome do erro.
+                title: InternalServerErrorResponse
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20PaymentLinkRec/criar-link-de-pagamento-recorrente
+      summary: Create by company id banking payment link recurrence
+      x-summary-source: derived
+      operationId: postByCompanyIdBankingPaymentLinkRecurrence
+      x-operation-id-source: derived
+    get:
+      tags:
+      - Link de Pagamento Recorrente
+      description: 'API responsável por listar os links de pagamento recorrentes de uma empresa. O recurso é restrito ao beneficiário autenticado. A paginação é cursor-based: quando existe página seguinte, o campo `_links.next` traz o cursor codificado com os filtros ativos.'
+      parameters:
+      - in: query
+        name: pageSize
+        description: Quantidade de registros por página. Não obrigatório quando um `cursor` válido é enviado.
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 3000
+          example: 10
+          description: Quantidade de registros por página
+          title: PageSize
+      - in: query
+        name: pageNumber
+        description: Número da página. Não obrigatório quando um `cursor` válido é enviado.
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+          example: 1
+          description: Número da página
+          title: PageNumber
+      - in: query
+        name: status
+        required: false
+        description: Lista de status separados por vírgula.
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - ACTIVE
+            - PAUSED
+            - CANCELED
+            - FINISHED
+            example: ACTIVE
+            description: Status da recorrência
+            title: RecurrenceStatus
+      - in: query
+        name: period
+        required: false
+        description: Lista de periodicidades separadas por vírgula.
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - WEEKLY
+            - MONTHLY
+            - QUARTERLY
+            - SEMI_ANNUALLY
+            - ANNUALLY
+            example: MONTHLY
+            description: Periodicidade de geração dos ciclos
+            title: RecurrencePeriod
+      - in: query
+        name: payer.name
+        required: false
+        description: Filtro parcial (case-insensitive) pelo nome do pagador.
+        schema:
+          type: string
+          example: João da Silva
+      - in: query
+        name: payer.taxId
+        required: false
+        schema:
+          type: string
+          example: '37297902000141'
+          description: Documento (CPF ou CNPJ) sem formatação
+          title: TaxId
+      - in: query
+        name: hasOverdueCycles
+        required: false
+        description: Quando `true`, retorna apenas recorrências que possuem ciclos em atraso.
+        schema:
+          type: boolean
+          example: true
+      - in: query
+        name: name
+        required: false
+        description: Filtro parcial (case-insensitive) pelo nome da recorrência.
+        schema:
+          type: string
+          example: Assinatura Mensal
+      - in: query
+        name: minCreatedAt
+        required: false
+        description: Data inicial (inclusive) de criação da recorrência, no formato `YYYY-MM-DD`.
+        schema:
+          type: string
+          format: date
+          example: '2026-07-01'
+          description: Data no formato YYYY-MM-DD
+          title: Date
+      - in: query
+        name: maxCreatedAt
+        required: false
+        description: Data final (inclusive) de criação da recorrência, no formato `YYYY-MM-DD`.
+        schema:
+          type: string
+          format: date
+          example: '2026-07-01'
+          description: Data no formato YYYY-MM-DD
+          title: Date
+      - in: query
+        name: minAmount
+        required: false
+        description: Valor mínimo (inclusive) do valor cobrado por ciclo da recorrência.
+        schema:
+          type: number
+          example: 99.9
+      - in: query
+        name: maxAmount
+        required: false
+        description: Valor máximo (inclusive) do valor cobrado por ciclo da recorrência.
+        schema:
+          type: number
+          example: 199.9
+      - in: query
+        name: cursor
+        description: Cursor opaco devolvido em `_links.next`/`_links.previous`. Quando presente, os demais parâmetros são preenchidos pelo cursor decodificado.
+        required: false
+        schema:
+          type: string
+          example: eyJwYWdlU2l6ZSI6IjEwIiwicGFnZU51bWJlciI6IjIifQ==
+      - name: companyId
+        in: path
+        required: true
+        description: Identificador da empresa, validado pelo portal Developers
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        paymentLinkRecurrenceId:
+                          type: string
+                          format: uuid
+                          example: 019c8c26-ed76-7116-a333-d30ec882493e
+                          description: Identificador do link de pagamento recorrente
+                          title: PaymentLinkRecurrenceId
+                        name:
+                          type: string
+                          maxLength: 100
+                          example: Assinatura Mensal
+                          description: Nome da recorrência. Não pode conter URLs.
+                          title: RecurrenceName
+                        status:
+                          type: string
+                          enum:
+                          - ACTIVE
+                          - PAUSED
+                          - CANCELED
+                          - FINISHED
+                          example: ACTIVE
+                          description: Status da recorrência
+                          title: RecurrenceStatus
+                        period:
+                          type: string
+                          enum:
+                          - WEEKLY
+                          - MONTHLY
+                          - QUARTERLY
+                          - SEMI_ANNUALLY
+                          - ANNUALLY
+                          example: MONTHLY
+                          description: Periodicidade de geração dos ciclos
+                          title: RecurrencePeriod
+                        paymentMethods:
+                          type: array
+                          minItems: 1
+                          items:
+                            type: string
+                            enum:
+                            - BANKSLIP
+                            - IMMEDIATE_QRCODE
+                            - CREDIT_CARD
+                          example:
+                          - BANKSLIP
+                          - IMMEDIATE_QRCODE
+                          description: Métodos de pagamento permitidos nos links gerados
+                          title: PaymentMethods
+                        notifications:
+                          type: object
+                          properties:
+                            deliveryMediums:
+                              type: array
+                              items:
+                                type: string
+                                enum:
+                                - Sms
+                                - Email
+                                - Push
+                              example:
+                              - Email
+                              description: Meios de notificação
+                              title: DeliveryMediums
+                            email:
+                              type: string
+                              format: email
+                              example: exemplo@btgpactual.com
+                              title: Email
+                            phone:
+                              type: string
+                              example: '11912345678'
+                              title: PhoneNumber
+                          description: Configuração de notificação enviada ao pagador em cada ciclo. `email` é obrigatório quando `deliveryMediums` contém `Email` ou `Push`; `phone` é obrigatório quando contém `Sms`.
+                          title: Notifications
+                        startDate:
+                          type: string
+                          format: date
+                          example: '2026-07-01'
+                          description: Data no formato YYYY-MM-DD
+                          title: Date
+                        createdAt:
+                          type: string
+                          format: date-time
+                          example: '2026-07-01T00:00:00.000Z'
+                          title: DateTime
+                        updatedAt:
+                          type: string
+                          format: date-time
+                          example: '2026-07-01T00:00:00.000Z'
+                          title: DateTime
+                        payer:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              example: João Silva
+                            personType:
+                              type: string
+                              enum:
+                              - F
+                              - J
+                              example: J
+                              description: 'Tipo de pessoa: física (F) ou jurídica (J)'
+                              title: PersonType
+                            taxId:
+                              type: string
+                              example: '37297902000141'
+                              description: Documento (CPF ou CNPJ) sem formatação
+                              title: TaxId
+                            email:
+                              type: string
+                              format: email
+                              example: exemplo@btgpactual.com
+                              title: Email
+                            phoneNumber:
+                              type: string
+                              example: '11912345678'
+                              title: PhoneNumber
+                            deliveryMediums:
+                              type: array
+                              items:
+                                type: string
+                                enum:
+                                - Sms
+                                - Email
+                                - Push
+                              example:
+                              - Email
+                              description: Meios de notificação
+                              title: DeliveryMediums
+                            address:
+                              type: object
+                              required:
+                              - city
+                              - state
+                              - street
+                              - zipCode
+                              - number
+                              - neighborhood
+                              properties:
+                                city:
+                                  type: string
+                                  example: São Paulo
+                                state:
+                                  type: string
+                                  example: SP
+                                street:
+                                  type: string
+                                  example: Faria Lima
+                                zipCode:
+                                  type: string
+                                  example: '06312412'
+                                number:
+                                  type: string
+                                  example: '123'
+                                neighborhood:
+                                  type: string
+                                  example: Itaim Bibi
+                                complement:
+                                  type: string
+                                  example: Sala 12
+                              description: Endereço
+                              title: Address
+                          description: Pagador da recorrência
+                          title: PayerResponse
+                        account:
+                          type: object
+                          required:
+                          - number
+                          - branch
+                          properties:
+                            number:
+                              type: string
+                              example: '12345'
+                              description: Número da conta do beneficiário
+                            branch:
+                              type: string
+                              example: '0001'
+                              description: Agência do beneficiário
+                          description: Conta do beneficiário que receberá os pagamentos
+                          title: Account
+                        hasOverdueCycles:
+                          type: boolean
+                          example: false
+                          description: Indica se a recorrência possui ciclos em atraso
+                        linkUrl:
+                          type: string
+                          example: https://links.btgpactual.com/abc123
+                          description: URL pública única e estável da recorrência. Sempre resolve para o link de pagamento do ciclo corrente.
+                          title: LinkUrl
+                        amount:
+                          type: number
+                          example: 99.9
+                          description: Valor cobrado em cada ciclo da recorrência. Para `CREDIT_CARD`, mínimo de 5 e máximo de 999999.99.
+                          title: Amount
+                        description:
+                          type: string
+                          maxLength: 100
+                          example: Plano mensal de serviços
+                          description: Descrição da recorrência
+                          title: Description
+                        numberOfCycles:
+                          type: integer
+                          minimum: 1
+                          example: 12
+                          description: Critério de término por quantidade de ciclos. Opcional — quando omitido junto de `endDate`, a recorrência é indeterminada.
+                          title: NumberOfCycles
+                        endDate:
+                          type: string
+                          format: date
+                          example: '2026-07-01'
+                          description: Data no formato YYYY-MM-DD
+                          title: Date
+                        missedCyclesCount:
+                          type: integer
+                          example: 0
+                          description: Quantidade de ciclos que deixaram de ser gerados durante a pausa
+                        maxInstallments:
+                          type: integer
+                          minimum: 1
+                          maximum: 24
+                          example: 3
+                          description: Número máximo de parcelas no cartão de crédito, de 1 a 24. Obrigatório quando `paymentMethods` inclui `CREDIT_CARD`, proibido caso contrário. Cada parcela deve ter no mínimo R$ 5,00.
+                          title: MaxInstallments
+                        transferCardFeesToPayer:
+                          type: boolean
+                          example: false
+                          description: Repassa o custo da transação por cartão ao pagador. Obrigatório quando `paymentMethods` inclui `CREDIT_CARD`, proibido caso contrário.
+                          title: TransferCardFeesToPayer
+                      required:
+                      - paymentLinkRecurrenceId
+                      - name
+                      - status
+                      - period
+                      - paymentMethods
+                      - notifications
+                      - startDate
+                      - createdAt
+                      - updatedAt
+                      - payer
+                      - account
+                      - hasOverdueCycles
+                      title: PaymentLinkRecurrenceResponse
+                  _links:
+                    type: object
+                    properties:
+                      previous:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            example: /payment-link/recurrence?cursor=eyJwYWdlU2l6ZSI6IjEwIiwicGFnZU51bWJlciI6IjIifQ==
+                            description: Caminho relativo com o cursor da página. Para paginar, envie o valor do cursor no parâmetro `cursor` da rota documentada, incluindo o `companyId` no path.
+                          method:
+                            type: string
+                            example: GET
+                          type:
+                            type: string
+                            example: application/json
+                          rel:
+                            type: string
+                            example: self
+                        title: CursorLink
+                      next:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            example: /payment-link/recurrence?cursor=eyJwYWdlU2l6ZSI6IjEwIiwicGFnZU51bWJlciI6IjIifQ==
+                            description: Caminho relativo com o cursor da página. Para paginar, envie o valor do cursor no parâmetro `cursor` da rota documentada, incluindo o `companyId` no path.
+                          method:
+                            type: string
+                            example: GET
+                          type:
+                            type: string
+                            example: application/json
+                          rel:
+                            type: string
+                            example: self
+                        title: CursorLink
+                    description: Links de paginação. `next` é emitido apenas quando existe página seguinte; `previous` apenas quando a página atual é maior que 1.
+                    title: Cursor
+                title: ListPaymentLinkRecurrencesResponse
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: BRN referente ao erro.
+                  name:
+                    type: string
+                    example: InvalidInputError
+                    description: Nome do erro.
+                title: BadRequestErrorResponse
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:internal-server-error
+                    description: BRN referente ao erro.
+                  name:
+                    type: string
+                    example: InternalServerError
+                    description: Nome do erro.
+                title: InternalServerErrorResponse
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20PaymentLinkRec/listar-links-de-pagamento-recorrentes
+      summary: Get by company id banking payment link recurrence
+      x-summary-source: derived
+      operationId: getByCompanyIdBankingPaymentLinkRecurrence
+      x-operation-id-source: derived
+  /{companyId}/banking/payment-link/recurrence/{id}/cycle:
+    get:
+      tags:
+      - Link de Pagamento Recorrente
+      description: 'API responsável por listar os ciclos de um link de pagamento recorrente. O recurso é restrito ao beneficiário autenticado — recorrências de outros beneficiários resultam em `404`. A paginação é cursor-based: quando existe página seguinte, o campo `_links.next` traz o cursor codificado com os filtros ativos.'
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+          example: 019c8c26-ed76-7116-a333-d30ec882493e
+          description: Identificador do link de pagamento recorrente
+          title: PaymentLinkRecurrenceId
+      - in: query
+        name: pageSize
+        description: Quantidade de registros por página. Não obrigatório quando um `cursor` válido é enviado.
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 3000
+          example: 10
+          description: Quantidade de registros por página
+          title: PageSize
+      - in: query
+        name: pageNumber
+        description: Número da página. Não obrigatório quando um `cursor` válido é enviado.
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+          example: 1
+          description: Número da página
+          title: PageNumber
+      - in: query
+        name: status
+        required: false
+        description: 'Lista de status de ciclo separados por vírgula. Ex.: `SCHEDULED,ACTIVE`.'
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - SCHEDULED
+            - ACTIVE
+            - PAID
+            - EXPIRED
+            - CANCELED
+            - REACTIVATED
+            example: ACTIVE
+            description: Status do ciclo da recorrência
+            title: RecurrenceCycleStatus
+      - in: query
+        name: payer.name
+        required: false
+        description: Filtro parcial (case-insensitive) pelo nome do pagador do ciclo.
+        schema:
+          type: string
+          example: João da Silva
+      - in: query
+        name: minEndAt
+        required: false
+        description: Data inicial (inclusive) de término do ciclo, no formato `YYYY-MM-DD`.
+        schema:
+          type: string
+          format: date
+          example: '2026-07-01'
+          description: Data no formato YYYY-MM-DD
+          title: Date
+      - in: query
+        name: maxEndAt
+        required: false
+        description: Data final (inclusive) de término do ciclo, no formato `YYYY-MM-DD`.
+        schema:
+          type: string
+          format: date
+          example: '2026-07-01'
+          description: Data no formato YYYY-MM-DD
+          title: Date
+      - in: query
+        name: cycleNumber
+        required: false
+        description: Filtra pelo número exato do ciclo.
+        schema:
+          type: integer
+          minimum: 1
+          example: 3
+      - in: query
+        name: minAmount
+        required: false
+        description: Valor mínimo (inclusive) do valor do link de pagamento do ciclo.
+        schema:
+          type: number
+          example: 99.9
+      - in: query
+        name: maxAmount
+        required: false
+        description: Valor máximo (inclusive) do valor do link de pagamento do ciclo.
+        schema:
+          type: number
+          example: 199.9
+      - in: query
+        name: cursor
+        description: Cursor opaco devolvido em `_links.next`/`_links.previous`. Quando presente, os demais parâmetros são preenchidos pelo cursor decodificado.
+        required: false
+        schema:
+          type: string
+          example: eyJwYWdlU2l6ZSI6IjEwIiwicGFnZU51bWJlciI6IjIifQ==
+      - name: companyId
+        in: path
+        required: true
+        description: Identificador da empresa, validado pelo portal Developers
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        cycleId:
+                          type: string
+                          format: uuid
+                          example: 019ebc24-1afc-78c6-96a7-ff390b97a244
+                          description: Identificador do ciclo da recorrência
+                          title: PaymentLinkRecurrenceCycleId
+                        recurrenceId:
+                          type: string
+                          format: uuid
+                          example: 019c8c26-ed76-7116-a333-d30ec882493e
+                          description: Identificador do link de pagamento recorrente
+                          title: PaymentLinkRecurrenceId
+                        cycleNumber:
+                          type: integer
+                          example: 1
+                          description: Posição do ciclo na recorrência, começando em 1
+                        startAt:
+                          allOf:
+                          - type: string
+                            format: date
+                            example: '2026-07-01'
+                            description: Data no formato YYYY-MM-DD
+                            title: Date
+                          description: Início do ciclo. Equivale ao `endAt` do ciclo anterior; no primeiro ciclo, à data de início da recorrência.
+                        endAt:
+                          allOf:
+                          - type: string
+                            format: date
+                            example: '2026-07-01'
+                            description: Data no formato YYYY-MM-DD
+                            title: Date
+                          description: Fim do ciclo. Único critério de expiração do ciclo.
+                        status:
+                          type: string
+                          enum:
+                          - SCHEDULED
+                          - ACTIVE
+                          - PAID
+                          - EXPIRED
+                          - CANCELED
+                          - REACTIVATED
+                          example: ACTIVE
+                          description: Status do ciclo da recorrência
+                          title: RecurrenceCycleStatus
+                        createdAt:
+                          type: string
+                          format: date-time
+                          example: '2026-07-01T00:00:00.000Z'
+                          title: DateTime
+                        updatedAt:
+                          type: string
+                          format: date-time
+                          example: '2026-07-01T00:00:00.000Z'
+                          title: DateTime
+                        paymentLinkId:
+                          allOf:
+                          - type: string
+                            format: uuid
+                            example: 97c8ac0a-89cb-4bbe-842b-d4e79a685c39
+                            description: Identificador do link de pagamento gerado no ciclo
+                            title: PaymentLinkId
+                          description: Preenchido a partir da ativação do ciclo, quando o link de pagamento é criado.
+                        paymentLink:
+                          type: object
+                          description: Resumo do link de pagamento associado ao ciclo. Presente a partir da ativação do ciclo.
+                          properties:
+                            name:
+                              type: string
+                              example: Assinatura mensal
+                            amount:
+                              type: number
+                              example: 99.9
+                              description: Valor cobrado em cada ciclo da recorrência. Para `CREDIT_CARD`, mínimo de 5 e máximo de 999999.99.
+                              title: Amount
+                            status:
+                              type: string
+                              example: ACTIVE
+                            paymentMethods:
+                              type: array
+                              minItems: 1
+                              items:
+                                type: string
+                                enum:
+                                - BANKSLIP
+                                - IMMEDIATE_QRCODE
+                                - CREDIT_CARD
+                              example:
+                              - BANKSLIP
+                              - IMMEDIATE_QRCODE
+                              description: Métodos de pagamento permitidos nos links gerados
+                              title: PaymentMethods
+                            linkUrl:
+                              type: string
+                              example: https://links.btgpactual.com/abc123
+                              description: URL pública única e estável da recorrência. Sempre resolve para o link de pagamento do ciclo corrente.
+                              title: LinkUrl
+                            payer:
+                              type: object
+                              properties:
+                                name:
+                                  type: string
+                                  example: João Silva
+                                deliveryMediums:
+                                  type: array
+                                  items:
+                                    type: string
+                                    enum:
+                                    - Sms
+                                    - Email
+                                    - Push
+                                  example:
+                                  - Email
+                                  description: Meios de notificação
+                                  title: DeliveryMediums
+                          title: CyclePaymentLink
+                      required:
+                      - cycleId
+                      - recurrenceId
+                      - cycleNumber
+                      - startAt
+                      - endAt
+                      - status
+                      - createdAt
+                      - updatedAt
+                      title: PaymentLinkRecurrenceCycleResponse
+                  _links:
+                    type: object
+                    properties:
+                      previous:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            example: /payment-link/recurrence?cursor=eyJwYWdlU2l6ZSI6IjEwIiwicGFnZU51bWJlciI6IjIifQ==
+                            description: Caminho relativo com o cursor da página. Para paginar, envie o valor do cursor no parâmetro `cursor` da rota documentada, incluindo o `companyId` no path.
+                          method:
+                            type: string
+                            example: GET
+                          type:
+                            type: string
+                            example: application/json
+                          rel:
+                            type: string
+                            example: self
+                        title: CursorLink
+                      next:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            example: /payment-link/recurrence?cursor=eyJwYWdlU2l6ZSI6IjEwIiwicGFnZU51bWJlciI6IjIifQ==
+                            description: Caminho relativo com o cursor da página. Para paginar, envie o valor do cursor no parâmetro `cursor` da rota documentada, incluindo o `companyId` no path.
+                          method:
+                            type: string
+                            example: GET
+                          type:
+                            type: string
+                            example: application/json
+                          rel:
+                            type: string
+                            example: self
+                        title: CursorLink
+                    description: Links de paginação. `next` é emitido apenas quando existe página seguinte; `previous` apenas quando a página atual é maior que 1.
+                    title: Cursor
+                title: ListPaymentLinkRecurrenceCyclesResponse
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: BRN referente ao erro.
+                  name:
+                    type: string
+                    example: InvalidInputError
+                    description: Nome do erro.
+                title: BadRequestErrorResponse
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:not-found-error
+                    description: BRN referente ao erro.
+                  name:
+                    type: string
+                    example: NotFoundError
+                    description: Nome do erro.
+                title: NotFoundErrorResponse
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:internal-server-error
+                    description: BRN referente ao erro.
+                  name:
+                    type: string
+                    example: InternalServerError
+                    description: Nome do erro.
+                title: InternalServerErrorResponse
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20PaymentLinkRec/listar-ciclos-do-link-de-pagamento-recorrente
+      summary: Get by company id banking payment link recurrence by id cycle
+      x-summary-source: derived
+      operationId: getByCompanyIdBankingPaymentLinkRecurrenceByIdCycle
+      x-operation-id-source: derived
+  /{companyId}/banking/payment-link/recurrence/{id}/pause:
+    patch:
+      tags:
+      - Link de Pagamento Recorrente
+      description: API responsável por pausar um link de pagamento recorrente (transição `ACTIVE` → `PAUSED`). Nenhum novo ciclo é gerado enquanto pausada, e o link de pagamento do ciclo corrente permanece ativo. O recurso é restrito ao beneficiário autenticado.
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+          example: 019c8c26-ed76-7116-a333-d30ec882493e
+          description: Identificador do link de pagamento recorrente
+          title: PaymentLinkRecurrenceId
+      - name: companyId
+        in: path
+        required: true
+        description: Identificador da empresa, validado pelo portal Developers
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  paymentLinkRecurrenceId:
+                    type: string
+                    format: uuid
+                    example: 019c8c26-ed76-7116-a333-d30ec882493e
+                    description: Identificador do link de pagamento recorrente
+                    title: PaymentLinkRecurrenceId
+                  name:
+                    type: string
+                    maxLength: 100
+                    example: Assinatura Mensal
+                    description: Nome da recorrência. Não pode conter URLs.
+                    title: RecurrenceName
+                  status:
+                    type: string
+                    enum:
+                    - ACTIVE
+                    - PAUSED
+                    - CANCELED
+                    - FINISHED
+                    example: ACTIVE
+                    description: Status da recorrência
+                    title: RecurrenceStatus
+                  period:
+                    type: string
+                    enum:
+                    - WEEKLY
+                    - MONTHLY
+                    - QUARTERLY
+                    - SEMI_ANNUALLY
+                    - ANNUALLY
+                    example: MONTHLY
+                    description: Periodicidade de geração dos ciclos
+                    title: RecurrencePeriod
+                  paymentMethods:
+                    type: array
+                    minItems: 1
+                    items:
+                      type: string
+                      enum:
+                      - BANKSLIP
+                      - IMMEDIATE_QRCODE
+                      - CREDIT_CARD
+                    example:
+                    - BANKSLIP
+                    - IMMEDIATE_QRCODE
+                    description: Métodos de pagamento permitidos nos links gerados
+                    title: PaymentMethods
+                  notifications:
+                    type: object
+                    properties:
+                      deliveryMediums:
+                        type: array
+                        items:
+                          type: string
+                          enum:
+                          - Sms
+                          - Email
+                          - Push
+                        example:
+                        - Email
+                        description: Meios de notificação
+                        title: DeliveryMediums
+                      email:
+                        type: string
+                        format: email
+                        example: exemplo@btgpactual.com
+                        title: Email
+                      phone:
+                        type: string
+                        example: '11912345678'
+                        title: PhoneNumber
+                    description: Configuração de notificação enviada ao pagador em cada ciclo. `email` é obrigatório quando `deliveryMediums` contém `Email` ou `Push`; `phone` é obrigatório quando contém `Sms`.
+                    title: Notifications
+                  startDate:
+                    type: string
+                    format: date
+                    example: '2026-07-01'
+                    description: Data no formato YYYY-MM-DD
+                    title: Date
+                  createdAt:
+                    type: string
+                    format: date-time
+                    example: '2026-07-01T00:00:00.000Z'
+                    title: DateTime
+                  updatedAt:
+                    type: string
+                    format: date-time
+                    example: '2026-07-01T00:00:00.000Z'
+                    title: DateTime
+                  payer:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: João Silva
+                      personType:
+                        type: string
+                        enum:
+                        - F
+                        - J
+                        example: J
+                        description: 'Tipo de pessoa: física (F) ou jurídica (J)'
+                        title: PersonType
+                      taxId:
+                        type: string
+                        example: '37297902000141'
+                        description: Documento (CPF ou CNPJ) sem formatação
+                        title: TaxId
+                      email:
+                        type: string
+                        format: email
+                        example: exemplo@btgpactual.com
+                        title: Email
+                      phoneNumber:
+                        type: string
+                        example: '11912345678'
+                        title: PhoneNumber
+                      deliveryMediums:
+                        type: array
+                        items:
+                          type: string
+                          enum:
+                          - Sms
+                          - Email
+                          - Push
+                        example:
+                        - Email
+                        description: Meios de notificação
+                        title: DeliveryMediums
+                      address:
+                        type: object
+                        required:
+                        - city
+                        - state
+                        - street
+                        - zipCode
+                        - number
+                        - neighborhood
+                        properties:
+                          city:
+                            type: string
+                            example: São Paulo
+                          state:
+                            type: string
+                            example: SP
+                          street:
+                            type: string
+                            example: Faria Lima
+                          zipCode:
+                            type: string
+                            example: '06312412'
+                          number:
+                            type: string
+                            example: '123'
+                          neighborhood:
+                            type: string
+                            example: Itaim Bibi
+                          complement:
+                            type: string
+                            example: Sala 12
+                        description: Endereço
+                        title: Address
+                    description: Pagador da recorrência
+                    title: PayerResponse
+                  account:
+                    type: object
+                    required:
+                    - number
+                    - branch
+                    properties:
+                      number:
+                        type: string
+                        example: '12345'
+                        description: Número da conta do beneficiário
+                      branch:
+                        type: string
+                        example: '0001'
+                        description: Agência do beneficiário
+                    description: Conta do beneficiário que receberá os pagamentos
+                    title: Account
+                  hasOverdueCycles:
+                    type: boolean
+                    example: false
+                    description: Indica se a recorrência possui ciclos em atraso
+                  linkUrl:
+                    type: string
+                    example: https://links.btgpactual.com/abc123
+                    description: URL pública única e estável da recorrência. Sempre resolve para o link de pagamento do ciclo corrente.
+                    title: LinkUrl
+                  amount:
+                    type: number
+                    example: 99.9
+                    description: Valor cobrado em cada ciclo da recorrência. Para `CREDIT_CARD`, mínimo de 5 e máximo de 999999.99.
+                    title: Amount
+                  description:
+                    type: string
+                    maxLength: 100
+                    example: Plano mensal de serviços
+                    description: Descrição da recorrência
+                    title: Description
+                  numberOfCycles:
+                    type: integer
+                    minimum: 1
+                    example: 12
+                    description: Critério de término por quantidade de ciclos. Opcional — quando omitido junto de `endDate`, a recorrência é indeterminada.
+                    title: NumberOfCycles
+                  endDate:
+                    type: string
+                    format: date
+                    example: '2026-07-01'
+                    description: Data no formato YYYY-MM-DD
+                    title: Date
+                  missedCyclesCount:
+                    type: integer
+                    example: 0
+                    description: Quantidade de ciclos que deixaram de ser gerados durante a pausa
+                  maxInstallments:
+                    type: integer
+                    minimum: 1
+                    maximum: 24
+                    example: 3
+                    description: Número máximo de parcelas no cartão de crédito, de 1 a 24. Obrigatório quando `paymentMethods` inclui `CREDIT_CARD`, proibido caso contrário. Cada parcela deve ter no mínimo R$ 5,00.
+                    title: MaxInstallments
+                  transferCardFeesToPayer:
+                    type: boolean
+                    example: false
+                    description: Repassa o custo da transação por cartão ao pagador. Obrigatório quando `paymentMethods` inclui `CREDIT_CARD`, proibido caso contrário.
+                    title: TransferCardFeesToPayer
+                required:
+                - paymentLinkRecurrenceId
+                - name
+                - status
+                - period
+                - paymentMethods
+                - notifications
+                - startDate
+                - createdAt
+                - updatedAt
+                - payer
+                - account
+                - hasOverdueCycles
+                title: PaymentLinkRecurrenceResponse
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: BRN referente ao erro.
+                  name:
+                    type: string
+                    example: InvalidInputError
+                    description: Nome do erro.
+                title: BadRequestErrorResponse
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:not-found-error
+                    description: BRN referente ao erro.
+                  name:
+                    type: string
+                    example: NotFoundError
+                    description: Nome do erro.
+                title: NotFoundErrorResponse
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: BRN referente ao erro.
+                  name:
+                    type: string
+                    example: UnprocessableEntityError
+                    description: Nome do erro.
+                title: UnprocessableEntityErrorResponse
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:internal-server-error
+                    description: BRN referente ao erro.
+                  name:
+                    type: string
+                    example: InternalServerError
+                    description: Nome do erro.
+                title: InternalServerErrorResponse
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20PaymentLinkRec/pausar-link-de-pagamento-recorrente
+      summary: Update by company id banking payment link recurrence by id pause
+      x-summary-source: derived
+      operationId: patchByCompanyIdBankingPaymentLinkRecurrenceByIdPause
+      x-operation-id-source: derived
+  /{companyId}/banking/payment-link/recurrence/cycle/{cycleId}/reactivate:
+    post:
+      tags:
+      - Link de Pagamento Recorrente
+      description: API responsável por reativar um ciclo de link de pagamento recorrente expirado. O link de pagamento existente é reativado com um novo short link e uma nova data de expiração (fim do próximo ciclo). O recurso é restrito ao beneficiário autenticado.
+      parameters:
+      - in: path
+        name: cycleId
+        required: true
+        schema:
+          type: string
+          format: uuid
+          example: 019ebc24-1afc-78c6-96a7-ff390b97a244
+          description: Identificador do ciclo da recorrência
+          title: PaymentLinkRecurrenceCycleId
+      - name: companyId
+        in: path
+        required: true
+        description: Identificador da empresa, validado pelo portal Developers
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Ciclo reativado com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cycleId:
+                    type: string
+                    format: uuid
+                    example: 019ebc24-1afc-78c6-96a7-ff390b97a244
+                    description: Identificador do ciclo da recorrência
+                    title: PaymentLinkRecurrenceCycleId
+                  recurrenceId:
+                    type: string
+                    format: uuid
+                    example: 019c8c26-ed76-7116-a333-d30ec882493e
+                    description: Identificador do link de pagamento recorrente
+                    title: PaymentLinkRecurrenceId
+                  cycleNumber:
+                    type: integer
+                    example: 1
+                    description: Posição do ciclo na recorrência, começando em 1
+                  startAt:
+                    allOf:
+                    - type: string
+                      format: date
+                      example: '2026-07-01'
+                      description: Data no formato YYYY-MM-DD
+                      title: Date
+                    description: Início do ciclo. Equivale ao `endAt` do ciclo anterior; no primeiro ciclo, à data de início da recorrência.
+                  endAt:
+                    allOf:
+                    - type: string
+                      format: date
+                      example: '2026-07-01'
+                      description: Data no formato YYYY-MM-DD
+                      title: Date
+                    description: Fim do ciclo. Único critério de expiração do ciclo.
+                  status:
+                    type: string
+                    enum:
+                    - SCHEDULED
+                    - ACTIVE
+                    - PAID
+                    - EXPIRED
+                    - CANCELED
+                    - REACTIVATED
+                    example: ACTIVE
+                    description: Status do ciclo da recorrência
+                    title: RecurrenceCycleStatus
+                  createdAt:
+                    type: string
+                    format: date-time
+                    example: '2026-07-01T00:00:00.000Z'
+                    title: DateTime
+                  updatedAt:
+                    type: string
+                    format: date-time
+                    example: '2026-07-01T00:00:00.000Z'
+                    title: DateTime
+                  paymentLinkId:
+                    allOf:
+                    - type: string
+                      format: uuid
+                      example: 97c8ac0a-89cb-4bbe-842b-d4e79a685c39
+                      description: Identificador do link de pagamento gerado no ciclo
+                      title: PaymentLinkId
+                    description: Preenchido a partir da ativação do ciclo, quando o link de pagamento é criado.
+                  paymentLink:
+                    type: object
+                    description: Resumo do link de pagamento associado ao ciclo. Presente a partir da ativação do ciclo.
+                    properties:
+                      name:
+                        type: string
+                        example: Assinatura mensal
+                      amount:
+                        type: number
+                        example: 99.9
+                        description: Valor cobrado em cada ciclo da recorrência. Para `CREDIT_CARD`, mínimo de 5 e máximo de 999999.99.
+                        title: Amount
+                      status:
+                        type: string
+                        example: ACTIVE
+                      paymentMethods:
+                        type: array
+                        minItems: 1
+                        items:
+                          type: string
+                          enum:
+                          - BANKSLIP
+                          - IMMEDIATE_QRCODE
+                          - CREDIT_CARD
+                        example:
+                        - BANKSLIP
+                        - IMMEDIATE_QRCODE
+                        description: Métodos de pagamento permitidos nos links gerados
+                        title: PaymentMethods
+                      linkUrl:
+                        type: string
+                        example: https://links.btgpactual.com/abc123
+                        description: URL pública única e estável da recorrência. Sempre resolve para o link de pagamento do ciclo corrente.
+                        title: LinkUrl
+                      payer:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            example: João Silva
+                          deliveryMediums:
+                            type: array
+                            items:
+                              type: string
+                              enum:
+                              - Sms
+                              - Email
+                              - Push
+                            example:
+                            - Email
+                            description: Meios de notificação
+                            title: DeliveryMediums
+                    title: CyclePaymentLink
+                required:
+                - cycleId
+                - recurrenceId
+                - cycleNumber
+                - startAt
+                - endAt
+                - status
+                - createdAt
+                - updatedAt
+                title: PaymentLinkRecurrenceCycleResponse
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: BRN referente ao erro.
+                  name:
+                    type: string
+                    example: InvalidInputError
+                    description: Nome do erro.
+                title: BadRequestErrorResponse
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:not-found-error
+                    description: BRN referente ao erro.
+                  name:
+                    type: string
+                    example: NotFoundError
+                    description: Nome do erro.
+                title: NotFoundErrorResponse
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: BRN referente ao erro.
+                  name:
+                    type: string
+                    example: UnprocessableEntityError
+                    description: Nome do erro.
+                title: UnprocessableEntityErrorResponse
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:internal-server-error
+                    description: BRN referente ao erro.
+                  name:
+                    type: string
+                    example: InternalServerError
+                    description: Nome do erro.
+                title: InternalServerErrorResponse
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20PaymentLinkRec/reativar-ciclo-de-link-de-pagamento-recorrente
+      summary: Create by company id banking payment link recurrence cycle by cycle id…
+      x-summary-source: derived
+      operationId: postByCompanyIdBankingPaymentLinkRecurrenceCycleByCycleIdReactivate
+      x-operation-id-source: derived
+  /{companyId}/banking/payment-link/recurrence/{id}/resume:
+    patch:
+      tags:
+      - Link de Pagamento Recorrente
+      description: API responsável por retomar um link de pagamento recorrente pausado (transição `PAUSED` → `ACTIVE`). O recurso é restrito ao beneficiário autenticado.
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+          example: 019c8c26-ed76-7116-a333-d30ec882493e
+          description: Identificador do link de pagamento recorrente
+          title: PaymentLinkRecurrenceId
+      - name: companyId
+        in: path
+        required: true
+        description: Identificador da empresa, validado pelo portal Developers
+        schema:
+          type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                includeMissedCycles:
+                  type: boolean
+                  default: false
+                  description: Quando `true`, os ciclos perdidos durante a pausa são adicionados ao final da recorrência (estende `endDate`, mantém `numberOfCycles`). Quando `false` (padrão), a `endDate` é mantida e `numberOfCycles` é reduzido. Ignorado em recorrências indeterminadas.
+                  example: false
+              title: ResumePaymentLinkRecurrenceRequest
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  paymentLinkRecurrenceId:
+                    type: string
+                    format: uuid
+                    example: 019c8c26-ed76-7116-a333-d30ec882493e
+                    description: Identificador do link de pagamento recorrente
+                    title: PaymentLinkRecurrenceId
+                  name:
+                    type: string
+                    maxLength: 100
+                    example: Assinatura Mensal
+                    description: Nome da recorrência. Não pode conter URLs.
+                    title: RecurrenceName
+                  status:
+                    type: string
+                    enum:
+                    - ACTIVE
+                    - PAUSED
+                    - CANCELED
+                    - FINISHED
+                    example: ACTIVE
+                    description: Status da recorrência
+                    title: RecurrenceStatus
+                  period:
+                    type: string
+                    enum:
+                    - WEEKLY
+                    - MONTHLY
+                    - QUARTERLY
+                    - SEMI_ANNUALLY
+                    - ANNUALLY
+                    example: MONTHLY
+                    description: Periodicidade de geração dos ciclos
+                    title: RecurrencePeriod
+                  paymentMethods:
+                    type: array
+                    minItems: 1
+                    items:
+                      type: string
+                      enum:
+                      - BANKSLIP
+                      - IMMEDIATE_QRCODE
+                      - CREDIT_CARD
+                    example:
+                    - BANKSLIP
+                    - IMMEDIATE_QRCODE
+                    description: Métodos de pagamento permitidos nos links gerados
+                    title: PaymentMethods
+                  notifications:
+                    type: object
+                    properties:
+                      deliveryMediums:
+                        type: array
+                        items:
+                          type: string
+                          enum:
+                          - Sms
+                          - Email
+                          - Push
+                        example:
+                        - Email
+                        description: Meios de notificação
+                        title: DeliveryMediums
+                      email:
+                        type: string
+                        format: email
+                        example: exemplo@btgpactual.com
+                        title: Email
+                      phone:
+                        type: string
+                        example: '11912345678'
+                        title: PhoneNumber
+                    description: Configuração de notificação enviada ao pagador em cada ciclo. `email` é obrigatório quando `deliveryMediums` contém `Email` ou `Push`; `phone` é obrigatório quando contém `Sms`.
+                    title: Notifications
+                  startDate:
+                    type: string
+                    format: date
+                    example: '2026-07-01'
+                    description: Data no formato YYYY-MM-DD
+                    title: Date
+                  createdAt:
+                    type: string
+                    format: date-time
+                    example: '2026-07-01T00:00:00.000Z'
+                    title: DateTime
+                  updatedAt:
+                    type: string
+                    format: date-time
+                    example: '2026-07-01T00:00:00.000Z'
+                    title: DateTime
+                  payer:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: João Silva
+                      personType:
+                        type: string
+                        enum:
+                        - F
+                        - J
+                        example: J
+                        description: 'Tipo de pessoa: física (F) ou jurídica (J)'
+                        title: PersonType
+                      taxId:
+                        type: string
+                        example: '37297902000141'
+                        description: Documento (CPF ou CNPJ) sem formatação
+                        title: TaxId
+                      email:
+                        type: string
+                        format: email
+                        example: exemplo@btgpactual.com
+                        title: Email
+                      phoneNumber:
+                        type: string
+                        example: '11912345678'
+                        title: PhoneNumber
+                      deliveryMediums:
+                        type: array
+                        items:
+                          type: string
+                          enum:
+                          - Sms
+                          - Email
+                          - Push
+                        example:
+                        - Email
+                        description: Meios de notificação
+                        title: DeliveryMediums
+                      address:
+                        type: object
+                        required:
+                        - city
+                        - state
+                        - street
+                        - zipCode
+                        - number
+                        - neighborhood
+                        properties:
+                          city:
+                            type: string
+                            example: São Paulo
+                          state:
+                            type: string
+                            example: SP
+                          street:
+                            type: string
+                            example: Faria Lima
+                          zipCode:
+                            type: string
+                            example: '06312412'
+                          number:
+                            type: string
+                            example: '123'
+                          neighborhood:
+                            type: string
+                            example: Itaim Bibi
+                          complement:
+                            type: string
+                            example: Sala 12
+                        description: Endereço
+                        title: Address
+                    description: Pagador da recorrência
+                    title: PayerResponse
+                  account:
+                    type: object
+                    required:
+                    - number
+                    - branch
+                    properties:
+                      number:
+                        type: string
+                        example: '12345'
+                        description: Número da conta do beneficiário
+                      branch:
+                        type: string
+                        example: '0001'
+                        description: Agência do beneficiário
+                    description: Conta do beneficiário que receberá os pagamentos
+                    title: Account
+                  hasOverdueCycles:
+                    type: boolean
+                    example: false
+                    description: Indica se a recorrência possui ciclos em atraso
+                  linkUrl:
+                    type: string
+                    example: https://links.btgpactual.com/abc123
+                    description: URL pública única e estável da recorrência. Sempre resolve para o link de pagamento do ciclo corrente.
+                    title: LinkUrl
+                  amount:
+                    type: number
+                    example: 99.9
+                    description: Valor cobrado em cada ciclo da recorrência. Para `CREDIT_CARD`, mínimo de 5 e máximo de 999999.99.
+                    title: Amount
+                  description:
+                    type: string
+                    maxLength: 100
+                    example: Plano mensal de serviços
+                    description: Descrição da recorrência
+                    title: Description
+                  numberOfCycles:
+                    type: integer
+                    minimum: 1
+                    example: 12
+                    description: Critério de término por quantidade de ciclos. Opcional — quando omitido junto de `endDate`, a recorrência é indeterminada.
+                    title: NumberOfCycles
+                  endDate:
+                    type: string
+                    format: date
+                    example: '2026-07-01'
+                    description: Data no formato YYYY-MM-DD
+                    title: Date
+                  missedCyclesCount:
+                    type: integer
+                    example: 0
+                    description: Quantidade de ciclos que deixaram de ser gerados durante a pausa
+                  maxInstallments:
+                    type: integer
+                    minimum: 1
+                    maximum: 24
+                    example: 3
+                    description: Número máximo de parcelas no cartão de crédito, de 1 a 24. Obrigatório quando `paymentMethods` inclui `CREDIT_CARD`, proibido caso contrário. Cada parcela deve ter no mínimo R$ 5,00.
+                    title: MaxInstallments
+                  transferCardFeesToPayer:
+                    type: boolean
+                    example: false
+                    description: Repassa o custo da transação por cartão ao pagador. Obrigatório quando `paymentMethods` inclui `CREDIT_CARD`, proibido caso contrário.
+                    title: TransferCardFeesToPayer
+                required:
+                - paymentLinkRecurrenceId
+                - name
+                - status
+                - period
+                - paymentMethods
+                - notifications
+                - startDate
+                - createdAt
+                - updatedAt
+                - payer
+                - account
+                - hasOverdueCycles
+                title: PaymentLinkRecurrenceResponse
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: BRN referente ao erro.
+                  name:
+                    type: string
+                    example: InvalidInputError
+                    description: Nome do erro.
+                title: BadRequestErrorResponse
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:not-found-error
+                    description: BRN referente ao erro.
+                  name:
+                    type: string
+                    example: NotFoundError
+                    description: Nome do erro.
+                title: NotFoundErrorResponse
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: BRN referente ao erro.
+                  name:
+                    type: string
+                    example: UnprocessableEntityError
+                    description: Nome do erro.
+                title: UnprocessableEntityErrorResponse
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:internal-server-error
+                    description: BRN referente ao erro.
+                  name:
+                    type: string
+                    example: InternalServerError
+                    description: Nome do erro.
+                title: InternalServerErrorResponse
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20PaymentLinkRec/retomar-link-de-pagamento-recorrente
+      summary: Update by company id banking payment link recurrence by id resume
+      x-summary-source: derived
+      operationId: patchByCompanyIdBankingPaymentLinkRecurrenceByIdResume
+      x-operation-id-source: derived
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/f7b5d841.cb8b7cea.js
+  - https://developers.empresas.btgpactual.com/assets/js/6d8b9c4d.f0d939c2.js
+  - https://developers.empresas.btgpactual.com/assets/js/e5b54f41.9f5f32a5.js
+  - https://developers.empresas.btgpactual.com/assets/js/a4e49beb.05569163.js
+  - https://developers.empresas.btgpactual.com/assets/js/a731d26a.7303b345.js
+  - https://developers.empresas.btgpactual.com/assets/js/38a7a9bf.db24713c.js
+  - https://developers.empresas.btgpactual.com/assets/js/8784555a.e8a87092.js
+  - https://developers.empresas.btgpactual.com/assets/js/37a18f74.68d17a72.js
+  - https://developers.empresas.btgpactual.com/assets/js/c612ea92.2fe0b5b0.js

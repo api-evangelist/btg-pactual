@@ -1,0 +1,6 @@
+generated: '2026-10-18'
+method: none
+source: https://developers.empresas.btgpactual.com
+name: BTG Pactual decline codes
+decline_codes: []
+note: No decline codes reference found in the BTG Pactual documentation. While the provider offers payments APIs (PaymentLink, Cards, etc.), no specific decline codes documentation was located in the developer portal.

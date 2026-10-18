@@ -1,0 +1,751 @@
+# x-archived-from: btg-pactual-antecred-subcredenciadores-openapi.yml
+# x-archived-on: 2026-10-18
+openapi: 3.0.3
+info:
+  title: ANTECRED-Subcredenciadores
+  version: '1'
+  description: Endpoints da API de Subcredenciadoras do BTG PACTUAL Empresas
+  termsOfService: https://www.btgpactual.com/empresas/termos-e-politicas/
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com/api/v1
+  description: Sandbox
+- url: https://api.empresas.btgpactual.com/api/v1
+  description: Produção
+paths:
+  /credenciadoras/antecipacao:
+    post:
+      tags:
+      - Subcredenciadoras
+      description: Realiza a antecipação de recebíveis de subcredenciadoras
+      operationId: createReceivablesAnticipation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - recebiveis
+              - conta
+              properties:
+                recebiveis:
+                  type: array
+                  description: Lista de recebíveis a serem antecipados
+                  items:
+                    type: object
+                    required:
+                    - valorVencimento
+                    - sacadoCnpj
+                    - bandeira
+                    - dataVencimento
+                    properties:
+                      valorVencimento:
+                        type: number
+                        format: double
+                        description: Valor de vencimento do recebível
+                        example: 1000
+                      sacadoCnpj:
+                        type: string
+                        description: CNPJ do sacado (credenciadora)
+                        pattern: ^\d{14}$
+                        example: '12345678000100'
+                      sacadoNome:
+                        type: string
+                        description: Nome do sacado (credenciadora)
+                        example: Empresa Sacado LTDA
+                      bandeira:
+                        type: string
+                        description: Bandeira do cartão de crédito
+                        enum:
+                        - Visa
+                        - Mastercard
+                        - Elo
+                        - Amex
+                        - Hipercard
+                        example: Visa
+                      dataVencimento:
+                        type: string
+                        format: date
+                        description: Data de vencimento do recebível no formato ISO-8601 (yyyy-MM-dd)
+                        example: '2026-06-01'
+                      dataDesembolso:
+                        type: string
+                        format: date
+                        description: Data de desembolso no formato ISO-8601 (yyyy-MM-dd)
+                        example: '2026-04-20'
+                      idExterno:
+                        type: string
+                        description: Identificador externo do recebível
+                        example: ext-001
+                      cedenteCnpj:
+                        type: string
+                        description: CNPJ do cedente (estabelecimento comercial)
+                        pattern: ^\d{14}$
+                        example: '98765432000100'
+                      cedenteNome:
+                        type: string
+                        description: Nome do cedente (estabelecimento comercial)
+                        example: Empresa Cedente LTDA
+                    title: ReceivableRequest
+                conta:
+                  type: object
+                  required:
+                  - codigoBanco
+                  - agencia
+                  - numeroConta
+                  - digitoConta
+                  properties:
+                    codigoBanco:
+                      type: string
+                      description: Código do banco
+                      example: '208'
+                    agencia:
+                      type: string
+                      description: Número da agência
+                      example: '1'
+                    numeroConta:
+                      type: string
+                      description: Número da conta
+                      example: '12345'
+                    digitoConta:
+                      type: string
+                      description: Dígito verificador da conta
+                      example: '6'
+                  title: ContaBancaria
+              title: OperationRequest
+            example:
+              recebiveis:
+              - valorVencimento: 1000
+                sacadoCnpj: '12345678000100'
+                sacadoNome: Empresa Sacado LTDA
+                bandeira: Visa
+                dataVencimento: '2026-06-01'
+                dataDesembolso: '2026-04-20'
+                idExterno: ext-001
+                cedenteCnpj: '98765432000100'
+                cedenteNome: Empresa Cedente LTDA
+              conta:
+                codigoBanco: '208'
+                agencia: '1'
+                numeroConta: '12345'
+                digitoConta: '6'
+      responses:
+        '200':
+          description: Antecipação realizada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  recebiveis:
+                    type: array
+                    description: Lista de recebíveis com suas respectivas cotações
+                    items:
+                      type: object
+                      properties:
+                        cotacao:
+                          type: number
+                          format: double
+                          description: Valor da cotação (valor de desembolso)
+                          example: 950
+                          nullable: true
+                        erro:
+                          type: string
+                          description: Mensagem de erro caso a cotação não seja possível
+                          example: null
+                          nullable: true
+                        recebivel:
+                          type: object
+                          required:
+                          - valorVencimento
+                          - sacadoCnpj
+                          - bandeira
+                          - dataVencimento
+                          properties:
+                            valorVencimento:
+                              type: number
+                              format: double
+                              description: Valor de vencimento do recebível
+                              example: 1000
+                            sacadoCnpj:
+                              type: string
+                              description: CNPJ do sacado (credenciadora)
+                              pattern: ^\d{14}$
+                              example: '12345678000100'
+                            sacadoNome:
+                              type: string
+                              description: Nome do sacado (credenciadora)
+                              example: Empresa Sacado LTDA
+                            bandeira:
+                              type: string
+                              description: Bandeira do cartão de crédito
+                              enum:
+                              - Visa
+                              - Mastercard
+                              - Elo
+                              - Amex
+                              - Hipercard
+                              example: Visa
+                            dataVencimento:
+                              type: string
+                              format: date
+                              description: Data de vencimento do recebível no formato ISO-8601 (yyyy-MM-dd)
+                              example: '2026-06-01'
+                            dataDesembolso:
+                              type: string
+                              format: date
+                              description: Data de desembolso no formato ISO-8601 (yyyy-MM-dd)
+                              example: '2026-04-20'
+                            idExterno:
+                              type: string
+                              description: Identificador externo do recebível
+                              example: ext-001
+                            cedenteCnpj:
+                              type: string
+                              description: CNPJ do cedente (estabelecimento comercial)
+                              pattern: ^\d{14}$
+                              example: '98765432000100'
+                            cedenteNome:
+                              type: string
+                              description: Nome do cedente (estabelecimento comercial)
+                              example: Empresa Cedente LTDA
+                          title: ReceivableRequest
+                        trackingId:
+                          type: string
+                          description: Identificador de rastreamento da cotação
+                          example: abc-123-def-456
+                        taxaMensal:
+                          type: number
+                          format: double
+                          description: Taxa mensal aplicada
+                          example: 1.5
+                        taxaTotal:
+                          type: number
+                          format: double
+                          description: Taxa total aplicada
+                          example: 3
+                        tier:
+                          type: string
+                          description: Tier do cliente
+                          example: TIER_A
+                        tierId:
+                          type: integer
+                          format: int64
+                          description: Identificador do tier
+                          example: 1
+                      title: ReceivableResult
+                  conta:
+                    type: object
+                    required:
+                    - codigoBanco
+                    - agencia
+                    - numeroConta
+                    - digitoConta
+                    properties:
+                      codigoBanco:
+                        type: string
+                        description: Código do banco
+                        example: '208'
+                      agencia:
+                        type: string
+                        description: Número da agência
+                        example: '1'
+                      numeroConta:
+                        type: string
+                        description: Número da conta
+                        example: '12345'
+                      digitoConta:
+                        type: string
+                        description: Dígito verificador da conta
+                        example: '6'
+                    title: ContaBancaria
+                  erro:
+                    type: string
+                    description: Mensagem de erro caso a operação não seja possível
+                    example: null
+                    nullable: true
+                title: OperationResult
+              example:
+                recebiveis:
+                - cotacao: 950
+                  erro: null
+                  recebivel:
+                    valorVencimento: 1000
+                    sacadoCnpj: '12345678000100'
+                    sacadoNome: Empresa Sacado LTDA
+                    bandeira: Visa
+                    dataVencimento: '2026-06-01'
+                    dataDesembolso: '2026-04-20'
+                    idExterno: ext-001
+                    cedenteCnpj: '98765432000100'
+                    cedenteNome: Empresa Cedente LTDA
+                  trackingId: abc-123-def-456
+                  taxaMensal: 1.5
+                  taxaTotal: 3
+                  tier: TIER_A
+                  tierId: 1
+                conta:
+                  codigoBanco: '208'
+                  agencia: '1'
+                  numeroConta: '12345'
+                  digitoConta: '6'
+                erro: null
+        '400':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    description: Lista de erros de validação
+                    items:
+                      type: object
+                      properties:
+                        field:
+                          type: string
+                          description: Campo que contém o erro
+                          example: sacadoCnpj
+                        message:
+                          type: string
+                          description: Mensagem de erro
+                          example: CNPJ inválido
+                title: ValidationError
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - write:
+        - brn:btg:empresas:scf:sub-acquirers
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/ANTECRED-Subcredenciadores/create-receivables-anticipation
+  /credenciadoras/recebiveis:
+    get:
+      tags:
+      - Subcredenciadoras
+      description: 'Retorna a lista de recebíveis de cartão de crédito disponíveis para antecipação do cedente autenticado, filtrados pelo CNPJ do sacado (credenciadora). O cedente é identificado automaticamente a partir do token de autenticação.
+
+        '
+      operationId: getCreditCardReceivablesCedente
+      parameters:
+      - name: sacadoCnpj
+        in: query
+        required: true
+        description: CNPJ do sacado (credenciadora) no formato de 14 dígitos numéricos
+        schema:
+          type: string
+          pattern: ^\d{14}$
+          example: '12345678000100'
+      - name: $filter
+        in: query
+        required: false
+        description: Filtro OData para refinar os resultados
+        schema:
+          type: string
+          example: maturityDate ge 2026-06-01
+      - name: $orderby
+        in: query
+        required: false
+        description: Ordenação OData dos resultados
+        schema:
+          type: string
+          example: maturityDate asc
+      - name: $top
+        in: query
+        required: false
+        description: Número máximo de registros a retornar (OData)
+        schema:
+          type: integer
+          example: 50
+      - name: $skip
+        in: query
+        required: false
+        description: Número de registros a ignorar para paginação (OData)
+        schema:
+          type: integer
+          example: 0
+      responses:
+        '200':
+          description: Lista de recebíveis de cartão disponíveis para o cedente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  description: Representa um recebível de cartão de crédito disponível para antecipação pelo cedente
+                  properties:
+                    id:
+                      type: string
+                      format: uuid
+                      description: Identificador único do recebível
+                      example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+                    valorVencimento:
+                      type: number
+                      format: double
+                      description: Valor de face do recebível no vencimento
+                      example: 1000
+                    valorAntecipado:
+                      type: number
+                      format: double
+                      description: Valor líquido caso o recebível seja antecipado
+                      example: 950
+                      nullable: true
+                    sacadoCnpj:
+                      type: string
+                      description: CNPJ do sacado (credenciadora)
+                      pattern: ^\d{14}$
+                      example: '12345678000100'
+                    sacadoNome:
+                      type: string
+                      description: Nome do sacado (credenciadora)
+                      example: Empresa Sacado LTDA
+                    cedenteCnpj:
+                      type: string
+                      description: CNPJ do cedente (estabelecimento comercial)
+                      pattern: ^\d{14}$
+                      example: '98765432000100'
+                    cedenteNome:
+                      type: string
+                      description: Nome do cedente (estabelecimento comercial)
+                      example: Empresa Cedente LTDA
+                    bandeira:
+                      type: string
+                      description: Bandeira do cartão de crédito
+                      enum:
+                      - Visa
+                      - Mastercard
+                      - Elo
+                      - Amex
+                      - Hipercard
+                      example: Visa
+                    dataVencimento:
+                      type: string
+                      format: date
+                      description: Data de vencimento do recebível no formato ISO-8601 (yyyy-MM-dd)
+                      example: '2026-06-01'
+                    dataDesembolso:
+                      type: string
+                      format: date
+                      description: Data prevista de desembolso no formato ISO-8601 (yyyy-MM-dd)
+                      example: '2026-04-20'
+                      nullable: true
+                    tipoProduto:
+                      type: string
+                      description: Tipo do produto financeiro
+                      enum:
+                      - Cartao
+                      example: Cartao
+                  title: ReceivableCedenteDto
+              example:
+              - id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+                valorVencimento: 1000
+                valorAntecipado: 950
+                sacadoCnpj: '12345678000100'
+                sacadoNome: Empresa Sacado LTDA
+                cedenteCnpj: '98765432000100'
+                cedenteNome: Empresa Cedente LTDA
+                bandeira: Visa
+                dataVencimento: '2026-06-01'
+                dataDesembolso: '2026-04-20'
+                tipoProduto: Cartao
+        '400':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    description: Lista de erros de validação
+                    items:
+                      type: object
+                      properties:
+                        field:
+                          type: string
+                          description: Campo que contém o erro
+                          example: sacadoCnpj
+                        message:
+                          type: string
+                          description: Mensagem de erro
+                          example: CNPJ inválido
+                title: ValidationError
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: 'Recurso não encontrado. Pode ocorrer quando: - O cedente (empresa do token autenticado) não é encontrado pelo CNPJ. - O sacado informado via sacadoCnpj não está vinculado ao cedente.
+
+            '
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensagem descritiva do recurso não encontrado
+                    example: Cedente não encontrado. Verifique o CNPJ.
+                title: NotFoundError
+              examples:
+                cedente_nao_encontrado:
+                  summary: Cedente não encontrado
+                  value:
+                    message: Cedente não encontrado. Verifique o CNPJ.
+                sacado_nao_encontrado:
+                  summary: Sacado não encontrado
+                  value:
+                    message: Sacado não encontrado. Verifique o CNPJ.
+      security:
+      - write:
+        - qf:Receivables.Get
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/ANTECRED-Subcredenciadores/get-credit-card-receivables-cedente
+  /credenciadoras/cotacao:
+    post:
+      tags:
+      - Subcredenciadoras
+      description: Obtém cotações para uma lista de recebíveis de subcredenciadoras
+      operationId: getReceivablesQuote
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                required:
+                - valorVencimento
+                - sacadoCnpj
+                - bandeira
+                - dataVencimento
+                properties:
+                  valorVencimento:
+                    type: number
+                    format: double
+                    description: Valor de vencimento do recebível
+                    example: 1000
+                  sacadoCnpj:
+                    type: string
+                    description: CNPJ do sacado (credenciadora)
+                    pattern: ^\d{14}$
+                    example: '12345678000100'
+                  sacadoNome:
+                    type: string
+                    description: Nome do sacado (credenciadora)
+                    example: Empresa Sacado LTDA
+                  bandeira:
+                    type: string
+                    description: Bandeira do cartão de crédito
+                    enum:
+                    - Visa
+                    - Mastercard
+                    - Elo
+                    - Amex
+                    - Hipercard
+                    example: Visa
+                  dataVencimento:
+                    type: string
+                    format: date
+                    description: Data de vencimento do recebível no formato ISO-8601 (yyyy-MM-dd)
+                    example: '2026-06-01'
+                  dataDesembolso:
+                    type: string
+                    format: date
+                    description: Data de desembolso no formato ISO-8601 (yyyy-MM-dd)
+                    example: '2026-04-20'
+                  idExterno:
+                    type: string
+                    description: Identificador externo do recebível
+                    example: ext-001
+                  cedenteCnpj:
+                    type: string
+                    description: CNPJ do cedente (estabelecimento comercial)
+                    pattern: ^\d{14}$
+                    example: '98765432000100'
+                  cedenteNome:
+                    type: string
+                    description: Nome do cedente (estabelecimento comercial)
+                    example: Empresa Cedente LTDA
+                title: ReceivableRequest
+            example:
+            - valorVencimento: 1000
+              sacadoCnpj: '12345678000100'
+              sacadoNome: Empresa Sacado LTDA
+              bandeira: Visa
+              dataVencimento: '2026-06-01'
+              dataDesembolso: '2026-04-20'
+              idExterno: ext-001
+              cedenteCnpj: '98765432000100'
+              cedenteNome: Empresa Cedente LTDA
+      responses:
+        '200':
+          description: Cotação realizada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    cotacao:
+                      type: number
+                      format: double
+                      description: Valor da cotação (valor de desembolso)
+                      example: 950
+                      nullable: true
+                    erro:
+                      type: string
+                      description: Mensagem de erro caso a cotação não seja possível
+                      example: null
+                      nullable: true
+                    recebivel:
+                      type: object
+                      required:
+                      - valorVencimento
+                      - sacadoCnpj
+                      - bandeira
+                      - dataVencimento
+                      properties:
+                        valorVencimento:
+                          type: number
+                          format: double
+                          description: Valor de vencimento do recebível
+                          example: 1000
+                        sacadoCnpj:
+                          type: string
+                          description: CNPJ do sacado (credenciadora)
+                          pattern: ^\d{14}$
+                          example: '12345678000100'
+                        sacadoNome:
+                          type: string
+                          description: Nome do sacado (credenciadora)
+                          example: Empresa Sacado LTDA
+                        bandeira:
+                          type: string
+                          description: Bandeira do cartão de crédito
+                          enum:
+                          - Visa
+                          - Mastercard
+                          - Elo
+                          - Amex
+                          - Hipercard
+                          example: Visa
+                        dataVencimento:
+                          type: string
+                          format: date
+                          description: Data de vencimento do recebível no formato ISO-8601 (yyyy-MM-dd)
+                          example: '2026-06-01'
+                        dataDesembolso:
+                          type: string
+                          format: date
+                          description: Data de desembolso no formato ISO-8601 (yyyy-MM-dd)
+                          example: '2026-04-20'
+                        idExterno:
+                          type: string
+                          description: Identificador externo do recebível
+                          example: ext-001
+                        cedenteCnpj:
+                          type: string
+                          description: CNPJ do cedente (estabelecimento comercial)
+                          pattern: ^\d{14}$
+                          example: '98765432000100'
+                        cedenteNome:
+                          type: string
+                          description: Nome do cedente (estabelecimento comercial)
+                          example: Empresa Cedente LTDA
+                      title: ReceivableRequest
+                    trackingId:
+                      type: string
+                      description: Identificador de rastreamento da cotação
+                      example: abc-123-def-456
+                    taxaMensal:
+                      type: number
+                      format: double
+                      description: Taxa mensal aplicada
+                      example: 1.5
+                    taxaTotal:
+                      type: number
+                      format: double
+                      description: Taxa total aplicada
+                      example: 3
+                    tier:
+                      type: string
+                      description: Tier do cliente
+                      example: TIER_A
+                    tierId:
+                      type: integer
+                      format: int64
+                      description: Identificador do tier
+                      example: 1
+                  title: ReceivableResult
+              example:
+              - cotacao: 950
+                erro: null
+                recebivel:
+                  valorVencimento: 1000
+                  sacadoCnpj: '12345678000100'
+                  sacadoNome: Empresa Sacado LTDA
+                  bandeira: Visa
+                  dataVencimento: '2026-06-01'
+                  dataDesembolso: '2026-04-20'
+                  idExterno: ext-001
+                  cedenteCnpj: '98765432000100'
+                  cedenteNome: Empresa Cedente LTDA
+                trackingId: abc-123-def-456
+                taxaMensal: 1.5
+                taxaTotal: 3
+                tier: TIER_A
+                tierId: 1
+        '400':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    description: Lista de erros de validação
+                    items:
+                      type: object
+                      properties:
+                        field:
+                          type: string
+                          description: Campo que contém o erro
+                          example: sacadoCnpj
+                        message:
+                          type: string
+                          description: Mensagem de erro
+                          example: CNPJ inválido
+                title: ValidationError
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - write:
+        - brn:btg:empresas:scf:sub-acquirers
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/ANTECRED-Subcredenciadores/get-receivables-quote
+components:
+  securitySchemes:
+    write:
+      type: oauth2
+      flows:
+        authorizationCode:
+          tokenUrl: https://id.btgpactual.com/oauth2/token
+          authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+          scopes:
+            brn:btg:empresas:scf:sub-acquirers:quote: Obter cotações de recebíveis de subcredenciadoras
+            brn:btg:empresas:scf:sub-acquirers:anticipation: Realizar antecipação de recebíveis de subcredenciadoras
+            qf:Receivables.Get: Consultar recebíveis de cartão de crédito do cedente
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/5ded6254.221c5005.js
+  - https://developers.empresas.btgpactual.com/assets/js/19cfa557.17dd4e7e.js
+  - https://developers.empresas.btgpactual.com/assets/js/0bac5574.30d4c40d.js

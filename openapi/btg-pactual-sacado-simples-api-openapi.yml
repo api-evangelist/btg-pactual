@@ -1,0 +1,250 @@
+openapi: 3.2.0
+info:
+  title: SCF - Risco Sacado Sacado Simples API
+  description: Esta API tem a finalidade de contratar Antecipações de Recebíveis. Para autenticação é necessário a utilização do fluxo de client credentials para autenticação na documentação da API. `AUTENTICAÇÃO -> Fluxos de Autenticação -> Client Credentials`
+  version: 1.4.1
+  contact:
+    name: Time BTG Empresas
+    email: ol-it-btgempresas@btgpactual.com
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com/v1/scf
+  description: SANDBOX URL
+- url: https://api.empresas.btgpactual.com/v1/scf
+  description: PROD URL
+tags:
+- name: Sacado-Simples
+paths:
+  /financiers-payer:
+    post:
+      tags:
+      - Sacado-Simples
+      description: Cadastro simplificado de pagador
+      operationId: createFinancierPayer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              required:
+              - Identification
+              - PartnerConfigurationId
+              type: object
+              properties:
+                PartnerConfigurationId:
+                  type: string
+                  example: 00000000-0000-0000-0000-00000000000
+                Name:
+                  description: ''
+                  type: string
+                  example: Nome
+                Identification:
+                  description: ''
+                  type: string
+                  example: '9999999999999'
+                BirthDate:
+                  format: date
+                  description: ''
+                  type: string
+                  example: '2006-05-04T00:00:00'
+                PhoneNumber:
+                  description: ''
+                  type: string
+                  example: '5541999999999'
+                EmailAddress:
+                  description: ''
+                  type: string
+                  example: exemplo@exemplo.com
+                Addresses:
+                  description: ''
+                  type: array
+                  items:
+                    description: ''
+                    required:
+                    - countryCode
+                    - countryName
+                    - cityName
+                    - stateCode
+                    - zipCode
+                    - street
+                    - number
+                    - type
+                    - neighborhood
+                    type: object
+                    properties:
+                      cityName:
+                        description: ''
+                        type: string
+                        example: São Paulo
+                      complement:
+                        description: ''
+                        type: string
+                        example: Decimo nono andar
+                      countryCode:
+                        description: ''
+                        type: string
+                        example: BR
+                      countryName:
+                        description: ''
+                        type: string
+                        example: Brazil
+                      neighborhood:
+                        description: ''
+                        type: string
+                        example: CENTRO
+                      number:
+                        description: ''
+                        type: string
+                        example: '12345'
+                      stateCode:
+                        description: ''
+                        type: string
+                        example: SP
+                      street:
+                        description: ''
+                        type: string
+                        example: Av. Brigadeiro Faria Lima
+                      type:
+                        description: ''
+                        type: string
+                        example: RESIDENCIAL
+                      zipCode:
+                        description: ''
+                        type: string
+                        example: 04538133
+                    title: FinancierAddress
+                Documents:
+                  description: ''
+                  type: array
+                  items:
+                    description: ''
+                    required:
+                    - SubType
+                    - Files
+                    type: object
+                    properties:
+                      Type:
+                        description: ''
+                        enum:
+                        - IDENTIFICACAO
+                        - BIOMETRIA
+                        - CONTRATO_SOCIAL
+                        - ATA_ELEICAO
+                        type: string
+                      SubType:
+                        description: ''
+                        enum:
+                        - CNH
+                        - SELFIE
+                        type: string
+                      Files:
+                        description: ''
+                        type: array
+                        items:
+                          description: ''
+                          required:
+                          - Url
+                          - Name
+                          - PageType
+                          - Extension
+                          type: object
+                          properties:
+                            Name:
+                              description: ''
+                              type: string
+                            Url:
+                              description: url de documento enviado pela API de files
+                              type: string
+                              example: https://pme-files-uat.s3.sa-east-1.amazonaws.com/jjjjjjjjj-aea8-4e10-zzzz-e2bdddddb5ff
+                            PageType:
+                              description: ''
+                              enum:
+                              - MULTI_PAGINAS
+                              - FRENTE
+                              - VERSO
+                              - COMPLETO
+                              type: string
+                            Extension:
+                              description: ''
+                              enum:
+                              - pdf
+                              - jpg
+                              - jpeg
+                              - docx
+                              - doc
+                              - png
+                              - jfif
+                              - ai
+                              type: string
+                          title: FinanciersFiles
+                    title: FinancierDocument
+              title: FinancierBody
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              examples:
+                201Response:
+                  value:
+                    OnboardingId: GUID
+          description: Sucesso
+        '400':
+          content:
+            application/json:
+              examples:
+                400Response:
+                  value:
+                    isInternal: false
+                    errorType: ValidationException
+                    failures:
+                    - fieldName: Identification
+                      errorCode: SCFDEV_SACADO_SIMPLES_004
+                      errorMessage: Identificação invalida
+          description: Bad Request
+        '401':
+          description: Unauthorized
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/payer-onboardings
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/SCF%20-%20Risco%20Sacado/create-financier-payer
+      summary: Create financier payer
+      x-summary-source: derived
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+          scopes:
+            empresas.btgpactual.com/scf/borderos: Scope to borderos
+            empresas.btgpactual.com/scf/borderos.readonly: Scope to borderos read
+            empresas.btgpactual.com/scf/companies: Scope to companies
+            empresas.btgpactual.com/scf/companies.readonly: Scope to companies read
+            empresas.btgpactual.com/scf/operations: Scope to operations
+            empresas.btgpactual.com/scf/operations.readonly: Scope to operations read
+            empresas.btgpactual.com/scf/receivables: Scope to receivables
+            empresas.btgpactual.com/scf/receivables.readonly: Scope to receivables read
+            empresas.btgpactual.com/scf/settlements: Scope to settlements
+            empresas.btgpactual.com/scf/settlements.readonly: Scope to settlements read
+            empresas.btgpactual.com/scf/trades: Scope to trades
+            empresas.btgpactual.com/scf/trades.readonly: Scope to trades read
+            empresas.btgpactual.com/payer-onboardings: Scope to financiers-payer
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/58e6a5f6.d603bf94.js
+  - https://developers.empresas.btgpactual.com/assets/js/0e797970.5126fe3c.js
+  - https://developers.empresas.btgpactual.com/assets/js/4ac3e447.07b626b1.js
+  - https://developers.empresas.btgpactual.com/assets/js/17b7cd34.31efc121.js
+  - https://developers.empresas.btgpactual.com/assets/js/69c7c660.61e0039c.js
+  - https://developers.empresas.btgpactual.com/assets/js/d83fedfc.69d77805.js
+  - https://developers.empresas.btgpactual.com/assets/js/091533f9.2c5d3d51.js
+  - https://developers.empresas.btgpactual.com/assets/js/51cd407d.7f26ecb2.js
+  - https://developers.empresas.btgpactual.com/assets/js/522d5b94.745f73fc.js
+  - https://developers.empresas.btgpactual.com/assets/js/a9f41984.1f49d7c9.js
+  - https://developers.empresas.btgpactual.com/assets/js/10287afc.7e9c97f3.js
+  - https://developers.empresas.btgpactual.com/assets/js/6687c7ea.dec258dc.js
+  - https://developers.empresas.btgpactual.com/assets/js/fb9f95a5.4835ae79.js
+  - https://developers.empresas.btgpactual.com/assets/js/0938da15.d9b57531.js

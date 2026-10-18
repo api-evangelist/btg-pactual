@@ -1,0 +1,313 @@
+openapi: 3.2.0
+info:
+  title: Banking - Cards Cartões API
+  description: API de Cartão de Crédito
+  contact: {}
+  version: '1.0'
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com
+  description: Sandbox
+- url: https://api.empresas.btgpactual.com
+  description: Produção
+tags:
+- name: Cartões
+paths:
+  /{companyId}/banking/cards:
+    get:
+      tags:
+      - Cartões
+      description: '## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o Wiremock
+
+
+        > No sandbox este endpoint requer a utilização de Sandbox Headers
+
+
+        | Header | Descrição | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      - name: itemsPerPage
+        in: query
+        schema:
+          type:
+          - integer
+          - 'null'
+          format: int32
+        description: Número de itens por página
+        example: 50
+      - name: cursor
+        in: query
+        schema:
+          type:
+          - string
+          - 'null'
+        description: Cursor para paginação dos resultados
+      - name: page
+        in: query
+        schema:
+          type:
+          - integer
+          - 'null'
+          format: int32
+        example: 1
+        description: Número da página
+      - name: ownerDocument
+        in: query
+        schema:
+          type:
+          - string
+          - 'null'
+        description: CPF ou CNPJ do dono do cartão
+        example: '11111111111'
+      - name: status
+        in: query
+        schema:
+          type:
+          - string
+          - 'null'
+        description: Status do cartão
+        example: REQUESTED
+      - name: last4Digits
+        in: query
+        schema:
+          type:
+          - string
+          - 'null'
+        example: '1234'
+        description: Últimos 4 dígitos do cartão
+      - name: isContactlessEnabled
+        in: query
+        schema:
+          type:
+          - boolean
+          - 'null'
+        description: Indica se o cartão tem aproximação habilitada
+        example: true
+      - name: isTravelNoticeEnabled
+        in: query
+        schema:
+          type:
+          - boolean
+          - 'null'
+        example: false
+        description: Indica se o aviso de viagem está habilitado
+      - name: isOnlineShoppingEnabled
+        in: query
+        schema:
+          type:
+          - boolean
+          - 'null'
+        example: true
+        description: Indica se compras online estão habilitadas
+      - name: isWithdrawalEnabled
+        in: query
+        schema:
+          type:
+          - boolean
+          - 'null'
+        example: false
+        description: Indica se saques estão habilitados
+      - name: printedName
+        in: query
+        schema:
+          type:
+          - string
+          - 'null'
+        example: JOAO DA SILVA
+        description: Nome impresso no cartão
+      - name: order
+        in: query
+        schema:
+          type:
+          - string
+          - 'null'
+        description: Ordem de exibição dos resultados
+      - name: sortBy
+        in: query
+        schema:
+          type:
+          - string
+          - 'null'
+        description: Campo para ordenação dos resultados
+      - name: limitOperator
+        in: query
+        schema:
+          type:
+          - string
+          - 'null'
+        description: Operador para filtro de limite do cartão
+      - name: limitAmount
+        in: query
+        schema:
+          type:
+          - string
+          - 'null'
+        description: Valor para filtro de limite do cartão
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type:
+                    - array
+                    - 'null'
+                    items:
+                      type: object
+                      properties:
+                        cardId:
+                          type:
+                          - string
+                          - 'null'
+                          example: f47d235c-17de-4e4b-87eb-a60208acf11f
+                          description: Identificador único do cartão
+                        last4Digits:
+                          type:
+                          - string
+                          - 'null'
+                          example: '1234'
+                          description: Últimos 4 dígitos do cartão
+                        status:
+                          type:
+                          - string
+                          - 'null'
+                          enum:
+                          - CREATED
+                          - REQUESTED
+                          example: REQUESTED
+                          description: Status do cartão
+                        printedName:
+                          type:
+                          - string
+                          - 'null'
+                          example: JOAO DA SILVA
+                          description: Nome impresso no cartão
+                        modality:
+                          type:
+                          - string
+                          - 'null'
+                          enum:
+                          - CREDIT
+                          - DEBIT
+                          example: DEBIT
+                          description: Modalidade do cartão
+                        variant:
+                          type:
+                          - string
+                          - 'null'
+                          example: GOLD
+                          description: Variante do cartão
+                        activatedAt:
+                          type:
+                          - string
+                          - 'null'
+                          example: '2023-01-15'
+                          description: Data de ativação do cartão
+                        type:
+                          type:
+                          - string
+                          - 'null'
+                          example: PHYSICAL
+                          description: Tipo do cartão
+                        owner:
+                          type: object
+                          properties:
+                            document:
+                              type:
+                              - string
+                              - 'null'
+                              example: '11111111111'
+                              description: CPF or CNPJ do dono do cartão
+                            name:
+                              type:
+                              - string
+                              - 'null'
+                              example: JOAO DA SILVA
+                              description: Nome do dono do cartão
+                            birthDate:
+                              type:
+                              - string
+                              - 'null'
+                              example: '1980-01-01'
+                              description: Data de nascimento do dono do cartão
+                            phone:
+                              type:
+                              - string
+                              - 'null'
+                              example: '+5511999999999'
+                              description: Telefone do dono do cartão
+                          additionalProperties: false
+                          title: CardOwnerItem
+                        debitAccount:
+                          type: object
+                          properties:
+                            branch:
+                              type:
+                              - string
+                              - 'null'
+                              example: '50'
+                              description: Agência da conta débito vinculada ao cartão
+                            number:
+                              type:
+                              - string
+                              - 'null'
+                              example: 12345-6
+                              description: Número da conta débito vinculada ao cartão
+                          additionalProperties: false
+                          title: DebitAccountItem
+                      additionalProperties: false
+                      title: CardItem
+                  _links:
+                    type: object
+                    properties:
+                      next:
+                        type:
+                        - string
+                        - 'null'
+                      previous:
+                        type:
+                        - string
+                        - 'null'
+                    additionalProperties: false
+                    title: Links
+                additionalProperties: false
+                title: GetCardsByAccountAndFiltersResponseV2
+      security:
+      - read:
+        - brn:btg:empresas:credit-cards:invoices
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Cards/listar-cartoes
+      summary: Get by company id banking cards
+      x-summary-source: derived
+      operationId: getByCompanyIdBankingCards
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    read:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://id.btgpactual.com/oauth2/token
+          scopes:
+            brn:btg:empresas:credit-cards:invoices: Consultar faturas de cartão de crédito
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/77773214.ad4c8d3a.js
+  - https://developers.empresas.btgpactual.com/assets/js/532021f6.4e301274.js
+  - https://developers.empresas.btgpactual.com/assets/js/c471b1dd.e2583128.js
+  - https://developers.empresas.btgpactual.com/assets/js/ce171c97.3cc3c506.js

@@ -1,0 +1,32 @@
+generated: '2026-10-18'
+method: searched
+source: https://developers.empresas.btgpactual.com/docs/starting-doc/Integrando/APIs/definicoes-gerais
+name: BTG Pactual conformance
+standards:
+- id: oauth2
+  conforms: true
+  evidence: As APIs BTG Empresas utilizam o protocolo de autorização OpenID Connect, baseado no OAuth2.0, que permite o acesso de aplicativos
+    terceiros aos recursos do cliente.
+- id: openid-connect
+  conforms: true
+  evidence: As APIs BTG Empresas utilizam o protocolo de autorização OpenID Connect, baseado no OAuth2.0.
+- id: https
+  conforms: true
+  evidence: Todos os endpoints da API BTG Pactual Empresas utilizam o protocolo HTTPS.
+- id: http-status-codes
+  conforms: true
+  evidence: 'As APIs do BTG Pactual Empresas usam códigos de resposta HTTP convencionais para indicar status nas requisições. Códigos 2XX: sucesso.
+    Códigos 4XX: erro nos parâmetros enviados à API pelo cliente. Códigos 5XX: erro nos servidores BTG Empresas.'
+- id: openapi-3.0
+  conforms: true
+  evidence: the document declares 3.0.3
+- id: rfc9457
+  conforms: false
+  evidence: no response declares application/problem+json
+- id: idempotency
+  conforms: true
+  evidence: x-idempotency-key declared on 5 of 116 mutating operations (partial)
+- id: pagination
+  conforms: true
+  evidence: list operations take cursor, limit, page
+note: Standards compliance documented in the general definitions page of the developer portal.

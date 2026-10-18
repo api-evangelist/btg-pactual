@@ -1,0 +1,47 @@
+generated: '2026-10-18'
+method: searched
+source: https://developers.empresas.btgpactual.com/docs/starting-doc/Integrando/APIs/definicoes-gerais
+name: BTG Pactual error catalog
+format: http-status-codes
+envelope: standard-http
+problems:
+- status: 200
+  title: OK
+  description: Requisição bem sucedida.
+- status: 201
+  title: Created
+  description: Recurso criado. Esse código vem sempre acompanhado da header Location com o endereço do recurso criado.
+- status: 202
+  title: Accepted
+  description: Requisição de operação assíncrona bem sucedida.
+- status: 400
+  title: Bad Request
+  description: Requisição mal formada ou com parâmetros inválidos.
+- status: 401
+  title: Unauthorized
+  description: Falha na autenticação ou autorização.
+- status: 403
+  title: Forbidden
+  description: Acesso negado ao recurso solicitado.
+- status: 404
+  title: Not Found
+  description: Recurso não encontrado.
+- status: 409
+  title: Conflict
+  description: Conflito com o estado atual do recurso.
+- status: 429
+  title: Too Many Requests
+  description: Limite de requisições excedido.
+- status: 500
+  title: Internal Server Error
+  description: Erro interno do servidor BTG Empresas.
+- status: 502
+  title: Bad Gateway
+  description: Erro de gateway.
+- status: 503
+  title: Service Unavailable
+  description: Serviço temporariamente indisponível.
+- status: 504
+  title: Gateway Timeout
+  description: Timeout do gateway.
+note: Error codes documented in the general definitions page. Additional troubleshooting guides available for specific error codes like 403 and 401.

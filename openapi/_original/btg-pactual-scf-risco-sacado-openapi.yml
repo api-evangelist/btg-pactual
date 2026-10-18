@@ -1,0 +1,2358 @@
+# x-archived-from: btg-pactual-scf-risco-sacado-openapi.yml
+# x-archived-on: 2026-10-18
+openapi: 3.0.3
+info:
+  title: SCF - Risco Sacado
+  description: Esta API tem a finalidade de contratar Antecipações de Recebíveis. Para autenticação é necessário a utilização do fluxo de client credentials para autenticação na documentação da API. `AUTENTICAÇÃO -> Fluxos de Autenticação -> Client Credentials`
+  version: 1.4.1
+  contact:
+    name: Time BTG Empresas
+    email: ol-it-btgempresas@btgpactual.com
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com/v1/scf
+  description: SANDBOX URL
+- url: https://api.empresas.btgpactual.com/v1/scf
+  description: PROD URL
+paths:
+  /companies/commercial-strategies:
+    post:
+      tags:
+      - Company
+      - Commercial strategy
+      description: Associação de lote de empresas a uma estratégia comercial.
+      operationId: addCompaniesToCommercialStrategyRequest
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - companies
+              - strategyUuid
+              properties:
+                companies:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - taxId
+                    properties:
+                      taxId:
+                        type: string
+                      name:
+                        type: string
+                    title: CompanyNameTaxIdDto
+                strategyUuid:
+                  type: string
+      responses:
+        '200':
+          description: Define se houve sucesso ou erro ao executar o fluxo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  isValid:
+                    type: boolean
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        errorMessage:
+                          type: string
+                          description: Erro ocorrido
+                        errorCode:
+                          type: string
+                          enum:
+                          - CACSQF0001
+                          - CACSQF0002
+                          - CACSQF0003
+                          - CACSQF0004
+                          - CACSQF0005
+                          - CACSQF0006
+                          - CACSQF0007
+                          - CACSQF0008
+                          - CACSQF0009
+                          description: '___
+
+                            Errors:
+
+                            * CACSQF0001 - Commercial strategy UUID must be provided.
+
+                            * CACSQF0002 - Commercial strategy not found.
+
+                            * CACSQF0003 - Incomplete commercial strategy.
+
+                            * CACSQF0004 - At least one company must be provided.
+
+                            * CACSQF0005 - Company TaxId must be provided.
+
+                            * CACSQF0006 - Can''t add company without name.
+
+                            * CACSQF0007 - Company with id {companyId} had error on associate with commercial strategy {strategyUuid}.
+
+                            * CACSQF0008 - Error on creating counterparties.
+
+                            '
+                        propertyName:
+                          type: string
+                          description: Propriedade que houve erro.
+                title: ValidationResultSchema
+        '400':
+          description: Define se houve sucesso ou erro ao executar o fluxo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  isValid:
+                    type: boolean
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        errorMessage:
+                          type: string
+                          description: Erro ocorrido
+                        errorCode:
+                          type: string
+                          enum:
+                          - CACSQF0001
+                          - CACSQF0002
+                          - CACSQF0003
+                          - CACSQF0004
+                          - CACSQF0005
+                          - CACSQF0006
+                          - CACSQF0007
+                          - CACSQF0008
+                          - CACSQF0009
+                          description: '___
+
+                            Errors:
+
+                            * CACSQF0001 - Commercial strategy UUID must be provided.
+
+                            * CACSQF0002 - Commercial strategy not found.
+
+                            * CACSQF0003 - Incomplete commercial strategy.
+
+                            * CACSQF0004 - At least one company must be provided.
+
+                            * CACSQF0005 - Company TaxId must be provided.
+
+                            * CACSQF0006 - Can''t add company without name.
+
+                            * CACSQF0007 - Company with id {companyId} had error on associate with commercial strategy {strategyUuid}.
+
+                            * CACSQF0008 - Error on creating counterparties.
+
+                            '
+                        propertyName:
+                          type: string
+                          description: Propriedade que houve erro.
+                title: ValidationResultSchema
+        '401':
+          description: Não autorizado
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/scf/companies
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/SCF%20-%20Risco%20Sacado/add-companies-to-commercial-strategy-request
+  /borderos/{trackingId}/receivables-cancellation:
+    post:
+      tags:
+      - Bordero
+      description: Esta rota serve para cancelar recebíveis de um bordero.
+      operationId: cancelReceivablesFromBordero
+      parameters:
+      - in: path
+        name: trackingId
+        schema:
+          type: string
+          description: Uid Gerado
+          example: 3382cc6f-1c59-4423-b364-c837deaf110d
+          title: UIDSchema
+        required: true
+        description: Tracking Id do bordero
+      requestBody:
+        description: Dados para cancelar recebíveis
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - receivables
+              properties:
+                receivables:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - identification
+                    - maturityDate
+                    - maturityAmount
+                    properties:
+                      identification:
+                        type: string
+                        description: 'Identificação do recebível (ex: Nº da NF)'
+                        example: '5120070562'
+                        title: ReceivableIdentificationSchema
+                      maturityDate:
+                        description: Data de vencimento
+                        type: string
+                        format: date
+                      maturityAmount:
+                        description: Valor de vencimento
+                        type: number
+                        format: double
+                    title: ReceivableCancelSchema
+        required: true
+      responses:
+        '204':
+          description: Sucesso
+        '400':
+          description: Erro de validação
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                  errorDetails:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        target:
+                          type: string
+                        code:
+                          type: string
+                          enum:
+                          - BDQF0001
+                          - BDQF0002
+                          - BDQF0003
+                          - BDQF0004
+                          - BDQF0005
+                          - BDQF0006
+                          - BDQF0007
+                          - BDQF0008
+                          - BDQF0009
+                          - BDQF0010
+                          - BDQF0011
+                          - BDQF0012
+                          - BDQF0013
+                          - BDQF0014
+                          - BDQF0015
+                          - BDQF0016
+                          - BDQF0017
+                          - BDQF0018
+                          - BDQF0019
+                          - BDQF0020
+                          - BDQF0021
+                          - BDQF0022
+                          - BDQF0023
+                          - BDQF0024
+                          - BDQF0025
+                          - BDQF0026
+                          - BDQF0027
+                          - BDQF0028
+                          - BDQF0029
+                          - BDQF0030
+                          - BDQF0031
+                          - BDQF0032
+                          - BDQF0033
+                          - BDQF0034
+                          - BDQF0035
+                          - BDQF0036
+                          - BDQF0037
+                          - BDQF0038
+                          - BDQF0039
+                          - BDQF0040
+                          - BDQF0041
+                          - BDQF0042
+                          - BDQF0043
+                          - BDQF0044
+                          - BDQF0045
+                          - BDQF0046
+                          - BDQF0047
+                          - BDQF0048
+                          - BDQF0049
+                          description: "___\nErrors:\n * BDQF0001 - Cadastro do bordero bloqueado\n * BDQF0002 - Sacado inválido\n * BDQF0003 - Necessário ao menos 1 recebível\n * BDQF0004 - Estratégia inválida\n * BDQF0005 - Uma moeda por bordero\n * BDQF0006 - Identificação do recebível necessária\n * BDQF0007 - Recebível duplicado na requisição\n * BDQF0008 - Recebível já existente\n * BDQF0009 - Data de vencimento inválida\n * BDQF0010 - Taxa não cadastrada\n * BDQF0011 - Taxa fornecedor inválida\n * BDQF0012 - Tipo de documento necessário\n * BDQF0013 - Tipo de documento inválido\n * BDQF0014 - Identificação do Fornecedor necessária\n * BDQF0015 - Fornecedor inválido\n * BDQF0016 - Fornecedor desativado\n * BDQF0017 - CPF inválido\n * BDQF0018 - CNPJ inválido\n * BDQF0019 - Falta de cadastro para caso offshore\n * BDQF0020 - Valor de vencimento inválido\n * BDQF0021 - Código do banco necessário\n * BDQF0022 - Agência inválida\n * BDQF0023 - Número da conta necessário\n * BDQF0024 -\
+                            \ Dígito da conta necessário\n * BDQF0025 - Dígito da conta inválido\n * BDQF0026 - Arquivos necessários\n * BDQF0027 - URL do arquivo necessário\n * BDQF0028 - URL do arquivo inválido\n * BDQF0029 - Tipo de arquivo necessário\n * BDQF0030 - Tipo de arquivo inválido\n * BDQF0031 - Recebível não existe\n * BDQF0032 - Recebível não cancelável\n * BDQF0033 - Produto ou estratégia necessário\n * BDQF0034 - Produto inválido\n * BDQF0035 - Identificação do Sacado necessária\n * BDQF0036 - Deve haver apenas uma empresa principal no bordero (Sacado ou Fornecedor dependendo do produto)\n * BDQF0037 - Empresa principal inválida (Sacado ou Fornecedor dependendo do produto)\n * BDQF0038 - Moeda inválida\n * BDQF0039 - Data de desembolso inválida\n * BDQF0040 - Valor de desembolso inválido\n * BDQF0041 - Valor de desembolso não permitido\n * BDQF0042 - Sacado desativado\n * BDQF0043 - Registradora inválida\n * BDQF0044 - Extensão do arquivo necessária\n * BDQF0045 - Extensão\
+                            \ do arquivo inválida\n * BDQF0046 - Rebate inválido\n * BDQF0047 - Rebate não permitido\n * BDQF0048 - Registradora necessária\n * BDQF0049 - Número de registro necessário\n"
+                          title: ValidationErrorsBorderoEnumSchema
+                title: BorderoBadRequestResponseSchema
+        '401':
+          description: Não autorizado
+        default:
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                title: ErrorResponseSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/scf/borderos
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/SCF%20-%20Risco%20Sacado/cancel-receivables-from-bordero
+  /settlements/{settlementId}:
+    get:
+      tags:
+      - Settlement
+      description: O objetivo dessa rota é pesquisar um pedido de liquidação previamente cadastrado.
+      parameters:
+      - in: path
+        name: settlementId
+        description: Id da liquidação
+        schema:
+          description: Identificador
+          type: string
+          example: 3382cc6f-1c59-4423-b364-c837deaf110d
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    description: Identificador da liquidação
+                    type: string
+                    example: 3382cc6f-1c59-4423-b364-c837deaf110e
+                  payment:
+                    type: object
+                    properties:
+                      account:
+                        type: object
+                        description: Dados da conta bancária
+                        properties:
+                          bank:
+                            description: Código do banco
+                            type: string
+                          agency:
+                            description: Agência da conta bancária
+                            type: string
+                          number:
+                            description: Número da conta bancária
+                            type: string
+                          digit:
+                            description: Dígito da conta bancária
+                            type: string
+                        title: AccountSchema
+                      method:
+                        enum:
+                        - pix
+                        - ted
+                        type: string
+                        example: ted
+                      code:
+                        description: Identificador a ser preenchido na transferência via PIX ou TED.
+                        type: string
+                        example: c3357540-fa15-4dbf-844c-1ce70ddb0d6c
+                      maturityDate:
+                        description: Timestamp (ISO 8601) da data e hora limite para expiração do pagamento. O pagamento deve ser realizado até essa hora, caso contrário, a liquidação será cancelada.
+                        type: string
+                        example: '2023-02-01T18:00:00.000Z'
+                  trades:
+                    type: array
+                    items:
+                      required:
+                      - identification
+                      - paidDate
+                      - paidAmount
+                      type: object
+                      properties:
+                        tradeId:
+                          description: Identificador do trade
+                          type: string
+                        amount:
+                          description: Valor de pagamento da transação
+                          type: string
+                        amount_settled:
+                          description: Valor já pago do recebivel
+                          type: string
+                        status:
+                          description: Status do trade
+                          enum:
+                          - PROCESSING
+                          - PROCESSED
+                          - CANCELLED
+                          - INVALID
+                          type: string
+                          title: SettlementTradeStatusSchema
+                        reason:
+                          description: Descrição do status
+                          type: string
+                  status:
+                    description: Status da liquidação
+                    enum:
+                    - CREATED
+                    - VALIDATING
+                    - INVALID
+                    - WAITING_FOR_PAYMENT
+                    - PROCESSED
+                    - EXPIRED
+                    type: string
+                    title: SettlementStatusSchema
+                title: SettlementReadSchema
+          description: Sucesso na consulta do pedido de liquidação.
+        '400':
+          description: Erro de validação
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                  errorDetails:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        target:
+                          type: string
+                        code:
+                          type: string
+                          enum:
+                          - STQF0001
+                          - STQF0002
+                          - STQF0003
+                          - STQF0004
+                          - STQF0005
+                          - STQF0006
+                          - STQF0007
+                          - STQF0008
+                          - STQF0009
+                          - STQF0010
+                          - STQF0011
+                          - STQF0012
+                          - STQF0013
+                          - STQF0014
+                          - STQF0015
+                          - STQF0016
+                          - STQF0017
+                          - STQF0018
+                          description: "___\nErrors:\n * STQF0001 - Identificação do pagador não preenchido\n * STQF0002 - Identificação do pagador inválido\n * STQF0003 - Identificação do pagador não relacionado com as entidades de um ou mais trades\n * STQF0004 - Pagamento não preenchido\n * STQF0005 - Método de pagamento não preenchido\n * STQF0006 - Método de pagamento inválido\n * STQF0007 - Trade não preenchido\n * STQF0008 - Existem trades duplicados na coleção\n * STQF0009 - Identificador do Trade inválido\n * STQF0010 - Identificador do Trade não encontrado\n * STQF0011 - Trade já liquidado previamente\n * STQF0012 - Trade sendo processado em outro pedido de liquidação\n * STQF0013 - Valor do trade inválido\n * STQF0014 - Valor do trade menor ou igual a zero\n * STQF0015 - Valor do trade diferente do valor de vencimento do recebivel\n * STQF0016 - Valor do trade indisponível\n * STQF0017 - Identificador da liquidação inválido\n * STQF0018 - Liquidação não encontrada\n"
+                          title: ValidationErrorsSettlementEnumSchema
+                title: SettlementBadRequestResponseSchema
+        '401':
+          description: Não autorizado
+        default:
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                title: ErrorResponseSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/scf/settlements
+        - empresas.btgpactual.com/scf/settlements.readonly
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/SCF%20-%20Risco%20Sacado/consultar-um-pedido-de-liquidacao-cadastrado
+  /borderos:
+    post:
+      tags:
+      - Bordero
+      description: Esta rota tem como objetivo criar um bordero para Antecipação de Recebíveis. Você nos enviará os recebíveis dos cedentes ou sacados, informando os campos necessários, com a possibilidade de informar a Estratégia cuja função é configurar as taxas da operação.
+      operationId: createBordero
+      requestBody:
+        description: Dados dos recebíveis para antecipação
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - receivables
+              properties:
+                receivables:
+                  type: array
+                  items:
+                    required:
+                    - identification
+                    - maturityDate
+                    - maturityAmount
+                    - payerTaxId
+                    - payeeTaxId
+                    - documentType
+                    - currency
+                    type: object
+                    properties:
+                      identification:
+                        type: string
+                        description: 'Identificação do recebível (ex: Nº da NF)'
+                        example: '5120070562'
+                        title: ReceivableIdentificationSchema
+                      maturityDate:
+                        description: Data de vencimento
+                        type: string
+                        format: date
+                      maturityAmount:
+                        description: Valor de vencimento
+                        type: number
+                        format: double
+                      disbursementAmount:
+                        description: Valor de desembolso
+                        type: number
+                        format: double
+                      payerTaxId:
+                        description: Documento do sacado
+                        type: string
+                      payeeTaxId:
+                        description: Documento do cedente
+                        type: string
+                      documentType:
+                        description: Tipo de documento do cedente ou sacado (depende do produto)
+                        type: string
+                        enum:
+                        - CNPJ
+                        - CPF
+                      currency:
+                        enum:
+                        - BRL
+                        - USD
+                        - EUR
+                        description: Moeda
+                        type: string
+                        title: CurrencySchema
+                      repository:
+                        description: Registradora
+                        type: string
+                        enum:
+                        - CERC
+                        - CIP
+                        - ADIQ
+                        - CIELO
+                      registerNumber:
+                        description: Número de registro
+                        type: string
+                      account:
+                        type: object
+                        description: Dados da conta bancária
+                        properties:
+                          bank:
+                            description: Código do banco
+                            type: string
+                          agency:
+                            description: Agência da conta bancária
+                            type: string
+                          number:
+                            description: Número da conta bancária
+                            type: string
+                          digit:
+                            description: Dígito da conta bancária
+                            type: string
+                        title: AccountSchema
+                      files:
+                        type: array
+                        items:
+                          description: Arquivos necessários serão alinhados de acordo com a especificação do negócio
+                          type: object
+                          properties:
+                            url:
+                              description: URL do arquivo
+                              type: string
+                            type:
+                              description: Tipo do arquivo
+                              type: string
+                              enum:
+                              - Nota
+                              - Contrato
+                              - Garantia
+                              - Adesao
+                              - Auxiliar
+                              - Duplicata
+                              - Canhoto
+                              example: Nota
+                            extension:
+                              description: Extensão do arquivo
+                              type: string
+                              example: PDF
+                          title: FileSchema
+                product:
+                  enum:
+                  - CSCSacado
+                  - CSCCedente
+                  - CCC
+                  description: Produto a operar
+                  type: string
+                  title: ProductSchema
+                strategy:
+                  type: string
+                  description: GUID da Estratégia
+                  example: 72e4d0db-841c-4bcd-9750-98e333507f67
+        required: true
+      responses:
+        '201':
+          description: Sucesso ao criar bordero de antecipação
+          headers:
+            Location:
+              schema:
+                type: string
+                description: Uid Gerado
+                example: 3382cc6f-1c59-4423-b364-c837deaf110d
+                title: UIDSchema
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  trackingId:
+                    type: string
+                    description: Uid Gerado
+                    example: 3382cc6f-1c59-4423-b364-c837deaf110d
+                    title: UIDSchema
+        '400':
+          description: Erro de validação
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                  errorDetails:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        target:
+                          type: string
+                        code:
+                          type: string
+                          enum:
+                          - BDQF0001
+                          - BDQF0002
+                          - BDQF0003
+                          - BDQF0004
+                          - BDQF0005
+                          - BDQF0006
+                          - BDQF0007
+                          - BDQF0008
+                          - BDQF0009
+                          - BDQF0010
+                          - BDQF0011
+                          - BDQF0012
+                          - BDQF0013
+                          - BDQF0014
+                          - BDQF0015
+                          - BDQF0016
+                          - BDQF0017
+                          - BDQF0018
+                          - BDQF0019
+                          - BDQF0020
+                          - BDQF0021
+                          - BDQF0022
+                          - BDQF0023
+                          - BDQF0024
+                          - BDQF0025
+                          - BDQF0026
+                          - BDQF0027
+                          - BDQF0028
+                          - BDQF0029
+                          - BDQF0030
+                          - BDQF0031
+                          - BDQF0032
+                          - BDQF0033
+                          - BDQF0034
+                          - BDQF0035
+                          - BDQF0036
+                          - BDQF0037
+                          - BDQF0038
+                          - BDQF0039
+                          - BDQF0040
+                          - BDQF0041
+                          - BDQF0042
+                          - BDQF0043
+                          - BDQF0044
+                          - BDQF0045
+                          - BDQF0046
+                          - BDQF0047
+                          - BDQF0048
+                          - BDQF0049
+                          description: "___\nErrors:\n * BDQF0001 - Cadastro do bordero bloqueado\n * BDQF0002 - Sacado inválido\n * BDQF0003 - Necessário ao menos 1 recebível\n * BDQF0004 - Estratégia inválida\n * BDQF0005 - Uma moeda por bordero\n * BDQF0006 - Identificação do recebível necessária\n * BDQF0007 - Recebível duplicado na requisição\n * BDQF0008 - Recebível já existente\n * BDQF0009 - Data de vencimento inválida\n * BDQF0010 - Taxa não cadastrada\n * BDQF0011 - Taxa fornecedor inválida\n * BDQF0012 - Tipo de documento necessário\n * BDQF0013 - Tipo de documento inválido\n * BDQF0014 - Identificação do Fornecedor necessária\n * BDQF0015 - Fornecedor inválido\n * BDQF0016 - Fornecedor desativado\n * BDQF0017 - CPF inválido\n * BDQF0018 - CNPJ inválido\n * BDQF0019 - Falta de cadastro para caso offshore\n * BDQF0020 - Valor de vencimento inválido\n * BDQF0021 - Código do banco necessário\n * BDQF0022 - Agência inválida\n * BDQF0023 - Número da conta necessário\n * BDQF0024 -\
+                            \ Dígito da conta necessário\n * BDQF0025 - Dígito da conta inválido\n * BDQF0026 - Arquivos necessários\n * BDQF0027 - URL do arquivo necessário\n * BDQF0028 - URL do arquivo inválido\n * BDQF0029 - Tipo de arquivo necessário\n * BDQF0030 - Tipo de arquivo inválido\n * BDQF0031 - Recebível não existe\n * BDQF0032 - Recebível não cancelável\n * BDQF0033 - Produto ou estratégia necessário\n * BDQF0034 - Produto inválido\n * BDQF0035 - Identificação do Sacado necessária\n * BDQF0036 - Deve haver apenas uma empresa principal no bordero (Sacado ou Fornecedor dependendo do produto)\n * BDQF0037 - Empresa principal inválida (Sacado ou Fornecedor dependendo do produto)\n * BDQF0038 - Moeda inválida\n * BDQF0039 - Data de desembolso inválida\n * BDQF0040 - Valor de desembolso inválido\n * BDQF0041 - Valor de desembolso não permitido\n * BDQF0042 - Sacado desativado\n * BDQF0043 - Registradora inválida\n * BDQF0044 - Extensão do arquivo necessária\n * BDQF0045 - Extensão\
+                            \ do arquivo inválida\n * BDQF0046 - Rebate inválido\n * BDQF0047 - Rebate não permitido\n * BDQF0048 - Registradora necessária\n * BDQF0049 - Número de registro necessário\n"
+                          title: ValidationErrorsBorderoEnumSchema
+                title: BorderoBadRequestResponseSchema
+        '401':
+          description: Não autorizado
+        default:
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                title: ErrorResponseSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/scf/borderos
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/SCF%20-%20Risco%20Sacado/create-bordero
+  /companies/{payerTaxId}/payees:
+    post:
+      tags:
+      - Company
+      description: Esta rota serve para cadastrar novos fornecedores para o sacado.
+      operationId: createCompany
+      parameters:
+      - in: path
+        name: payerTaxId
+        description: Identificação do sacado
+        schema:
+          type: string
+          description: CNPJ/CPF
+          example: '15996430000182'
+          title: TaxIdSchema
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - payees
+              properties:
+                payees:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - payee
+                    properties:
+                      strategy:
+                        description: Guid da Estratégia
+                        type: string
+                      payee:
+                        type: object
+                        required:
+                        - taxId
+                        properties:
+                          taxId:
+                            description: Documento do fornecedor
+                            type: string
+                          legalName:
+                            description: Razão social do fornecedor
+                            type: string
+                        title: CompanyDto
+                      invite:
+                        type: object
+                        properties:
+                          email:
+                            description: E-mail para envio do invite
+                            type: string
+                        title: InvitationDto
+                    title: CreateCompanyRequestDto
+        required: true
+      responses:
+        '202':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  description: Documento dos fornecedores
+                  type: object
+                  properties:
+                    taxId:
+                      type: string
+                      description: CNPJ/CPF
+                      example: '15996430000182'
+                      title: TaxIdSchema
+        '400':
+          description: Erro de validação
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                  errorDetails:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        target:
+                          type: string
+                        code:
+                          type: string
+                          enum:
+                          - CIQF0001
+                          - CIQF0002
+                          - CIQF0003
+                          - CIQF0004
+                          - CIQF0005
+                          - CIQF0006
+                          - CIQF0007
+                          - CIQF0008
+                          - CIQF0009
+                          description: "___\nErrors:\n * CIQF0001 - Identificação do Sacado necessária\n * CIQF0002 - Sacado inválido\n * CIQF0003 - Necessário ao menos 1 Fornecedor\n * CIQF0004 - Estratégia inválida\n * CIQF0005 - Razão social do Fornecedor necessária\n * CIQF0006 - Identificação do Fornecedor necessária\n * CIQF0007 - CPF do Fornecedor inválido\n * CIQF0008 - CNPJ do Fornecedor inválido\n * CIQF0009 - E-mail para envio de invite inválido\n"
+                          title: ValidationErrorsCompanyEnumSchema
+                title: CompanyBadRequestResponseSchema
+        '401':
+          description: Não autorizado
+        default:
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                title: ErrorResponseSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/scf/companies
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/SCF%20-%20Risco%20Sacado/create-company
+  /financiers-payer:
+    post:
+      tags:
+      - Sacado-Simples
+      description: Cadastro simplificado de pagador
+      operationId: createFinancierPayer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              required:
+              - Identification
+              - PartnerConfigurationId
+              type: object
+              properties:
+                PartnerConfigurationId:
+                  type: string
+                  example: 00000000-0000-0000-0000-00000000000
+                Name:
+                  description: ''
+                  type: string
+                  example: Nome
+                Identification:
+                  description: ''
+                  type: string
+                  example: '9999999999999'
+                BirthDate:
+                  format: date
+                  description: ''
+                  type: string
+                  example: '2006-05-04T00:00:00'
+                PhoneNumber:
+                  description: ''
+                  type: string
+                  example: '5541999999999'
+                EmailAddress:
+                  description: ''
+                  type: string
+                  example: exemplo@exemplo.com
+                Addresses:
+                  description: ''
+                  type: array
+                  items:
+                    description: ''
+                    required:
+                    - countryCode
+                    - countryName
+                    - cityName
+                    - stateCode
+                    - zipCode
+                    - street
+                    - number
+                    - type
+                    - neighborhood
+                    type: object
+                    properties:
+                      cityName:
+                        description: ''
+                        type: string
+                        example: São Paulo
+                      complement:
+                        description: ''
+                        type: string
+                        example: Decimo nono andar
+                      countryCode:
+                        description: ''
+                        type: string
+                        example: BR
+                      countryName:
+                        description: ''
+                        type: string
+                        example: Brazil
+                      neighborhood:
+                        description: ''
+                        type: string
+                        example: CENTRO
+                      number:
+                        description: ''
+                        type: string
+                        example: '12345'
+                      stateCode:
+                        description: ''
+                        type: string
+                        example: SP
+                      street:
+                        description: ''
+                        type: string
+                        example: Av. Brigadeiro Faria Lima
+                      type:
+                        description: ''
+                        type: string
+                        example: RESIDENCIAL
+                      zipCode:
+                        description: ''
+                        type: string
+                        example: 04538133
+                    title: FinancierAddress
+                Documents:
+                  description: ''
+                  type: array
+                  items:
+                    description: ''
+                    required:
+                    - SubType
+                    - Files
+                    type: object
+                    properties:
+                      Type:
+                        description: ''
+                        enum:
+                        - IDENTIFICACAO
+                        - BIOMETRIA
+                        - CONTRATO_SOCIAL
+                        - ATA_ELEICAO
+                        type: string
+                      SubType:
+                        description: ''
+                        enum:
+                        - CNH
+                        - SELFIE
+                        type: string
+                      Files:
+                        description: ''
+                        type: array
+                        items:
+                          description: ''
+                          required:
+                          - Url
+                          - Name
+                          - PageType
+                          - Extension
+                          type: object
+                          properties:
+                            Name:
+                              description: ''
+                              type: string
+                            Url:
+                              description: url de documento enviado pela API de files
+                              type: string
+                              example: https://pme-files-uat.s3.sa-east-1.amazonaws.com/jjjjjjjjj-aea8-4e10-zzzz-e2bdddddb5ff
+                            PageType:
+                              description: ''
+                              enum:
+                              - MULTI_PAGINAS
+                              - FRENTE
+                              - VERSO
+                              - COMPLETO
+                              type: string
+                            Extension:
+                              description: ''
+                              enum:
+                              - pdf
+                              - jpg
+                              - jpeg
+                              - docx
+                              - doc
+                              - png
+                              - jfif
+                              - ai
+                              type: string
+                          title: FinanciersFiles
+                    title: FinancierDocument
+              title: FinancierBody
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              examples:
+                201Response:
+                  value:
+                    OnboardingId: GUID
+          description: Sucesso
+        '400':
+          content:
+            application/json:
+              examples:
+                400Response:
+                  value:
+                    isInternal: false
+                    errorType: ValidationException
+                    failures:
+                    - fieldName: Identification
+                      errorCode: SCFDEV_SACADO_SIMPLES_004
+                      errorMessage: Identificação invalida
+          description: Bad Request
+        '401':
+          description: Unauthorized
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/payer-onboardings
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/SCF%20-%20Risco%20Sacado/create-financier-payer
+  /operations:
+    post:
+      tags:
+      - Operation
+      description: Esta rota serve para criar operações de antecipação com os recebíveis selecionados.
+      operationId: createOperation
+      requestBody:
+        description: Dados para criação de operação
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - payerTaxId
+              - payeeTaxId
+              - receivables
+              properties:
+                payerTaxId:
+                  description: Documento do sacado
+                  type: string
+                payeeTaxId:
+                  description: Documento do fornecedor
+                  type: string
+                receivables:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - identification
+                    - maturityDate
+                    properties:
+                      identification:
+                        type: string
+                        description: 'Identificação do recebível (ex: Nº da NF)'
+                        example: '5120070562'
+                        title: ReceivableIdentificationSchema
+                      maturityDate:
+                        description: Data de vencimento
+                        type: string
+                        format: date
+                      disbursementAmount:
+                        description: Valor de desembolso
+                        type: number
+                        format: double
+                      repository:
+                        description: Registradora
+                        type: string
+                        enum:
+                        - CERC
+                        - CIP
+                        - ADIQ
+                        - CIELO
+                      registerNumber:
+                        description: Número de registro na registradora
+                        type: string
+                      pixEmv:
+                        description: Pix copia e cola
+                        type: string
+                      bankSlipBarCode:
+                        description: Número de código de barras do boleto
+                        type: string
+                    title: ReceivableOperationSchema
+                account:
+                  type: object
+                  description: Dados da conta bancária
+                  properties:
+                    bank:
+                      description: Código do banco
+                      type: string
+                    agency:
+                      description: Agência da conta bancária
+                      type: string
+                    number:
+                      description: Número da conta bancária
+                      type: string
+                    digit:
+                      description: Dígito da conta bancária
+                      type: string
+                  title: AccountSchema
+                files:
+                  type: array
+                  items:
+                    description: Arquivos necessários serão alinhados de acordo com a especificação do negócio
+                    type: object
+                    properties:
+                      url:
+                        description: URL do arquivo
+                        type: string
+                      type:
+                        description: Tipo do arquivo
+                        type: string
+                        enum:
+                        - Nota
+                        - Contrato
+                        - Garantia
+                        - Adesao
+                        - Auxiliar
+                        - Duplicata
+                        - Canhoto
+                        example: Nota
+                      extension:
+                        description: Extensão do arquivo
+                        type: string
+                        example: PDF
+                    title: FileSchema
+                fees:
+                  type: array
+                  items:
+                    description: Valores de FEEs que serão alinhados de acordo com a especificação do negócio
+                    type: object
+                    properties:
+                      value:
+                        description: Valor do FEE
+                        type: number
+                        format: double
+                      type:
+                        description: Tipo de FEE
+                        type: string
+                        example: CASHBACK
+                      receiverTaxId:
+                        description: Identificador (CPF/CNPJ) do recebedor do Fee
+                        type: string
+                        example: '15996430000182'
+                    title: FeesSchema
+        required: true
+      responses:
+        '201':
+          description: Sucesso
+          headers:
+            Location:
+              schema:
+                description: Path para o GET da Operation
+                type: string
+                example: /operations/11
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  operationId:
+                    description: Id da Operação
+                    type: integer
+                  receivableErrors:
+                    description: Recebíveis com erro
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        receivable:
+                          type: object
+                          required:
+                          - identification
+                          - maturityDate
+                          properties:
+                            identification:
+                              type: string
+                              description: 'Identificação do recebível (ex: Nº da NF)'
+                              example: '5120070562'
+                              title: ReceivableIdentificationSchema
+                            maturityDate:
+                              description: Data de vencimento
+                              type: string
+                              format: date
+                            disbursementAmount:
+                              description: Valor de desembolso
+                              type: number
+                              format: double
+                            repository:
+                              description: Registradora
+                              type: string
+                              enum:
+                              - CERC
+                              - CIP
+                              - ADIQ
+                              - CIELO
+                            registerNumber:
+                              description: Número de registro na registradora
+                              type: string
+                            pixEmv:
+                              description: Pix copia e cola
+                              type: string
+                            bankSlipBarCode:
+                              description: Número de código de barras do boleto
+                              type: string
+                          title: ReceivableOperationSchema
+                        errorMessages:
+                          description: Mensagens de erro
+                          type: array
+                          items:
+                            type: string
+                            enum:
+                            - OPQF0001
+                            - OPQF0002
+                            - OPQF0003
+                            - OPQF0004
+                            - OPQF0005
+                            - OPQF0006
+                            - OPQF0007
+                            - OPQF0008
+                            - OPQF0009
+                            - OPQF0010
+                            - OPQF0011
+                            - OPQF0012
+                            - OPQF0013
+                            - OPQF0014
+                            - OPQF0015
+                            - OPQF0016
+                            - OPQF0017
+                            - OPQF0018
+                            - OPQF0019
+                            - OPQF0020
+                            - OPQF0021
+                            - OPQF0022
+                            - OPQF0023
+                            - OPQF0024
+                            - OPQF0025
+                            - OPQF0026
+                            - OPQF0027
+                            - OPQF0028
+                            - OPQF0029
+                            - OPQF0030
+                            - OPQF0031
+                            - OPQF0032
+                            - OPQF0033
+                            - OPQF0034
+                            - OPQF0035
+                            - OPQF0036
+                            description: "___\nErrors:\n * OPQF0001 - Identificação do Sacado necessária\n * OPQF0002 - Sacado não existente\n * OPQF0003 - Relacionamento Sacado/Fornecedor não existente\n * OPQF0004 - Identificação do Fornecedor necessária\n * OPQF0005 - Fornecedor não existente\n * OPQF0006 - Conta bancária necessária\n * OPQF0007 - Código do banco necessário\n * OPQF0008 - Agência necessária\n * OPQF0009 - Número da conta necessário\n * OPQF0010 - Dígito da conta necessário\n * OPQF0011 - Recebíveis necessários\n * OPQF0012 - Recebíveis duplicados na lista\n * OPQF0013 - Identificação do recebível necessária\n * OPQF0014 - Data de vencimento necessária\n * OPQF0015 - Valor de vencimento necessário\n * OPQF0016 - Recebível não existe\n * OPQF0017 - Recebível com status inválido\n * OPQF0018 - Recebível já está em outra operação\n * OPQF0019 - Estratégia do recebível nula\n * OPQF0020 - Date de desembolso do recebível não é hoje\n * OPQF0021 - Horário limite de operação\
+                              \ atingido\n * OPQF0022 - Não há taxa cadastrada para o recebível\n * OPQF0023 - Valor de desembolso inválido\n * OPQF0024 - Arquivos necessários\n * OPQF0025 - URL do arquivo necessário\n * OPQF0026 - URL do arquivo inválido\n * OPQF0027 - Tipo de arquivo necessário\n * OPQF0028 - Tipo de arquivo inválido\n * OPQF0029 - Agência inválida\n * OPQF0030 - Dígito da conta inválido\n * OPQF0031 - Valor de fee necessário\n * OPQF0032 - Valor de fee menor ou igual a zero\n * OPQF0033 - Identificador do recebedor da fee necessário\n * OPQF0034 - Tipo de fee necessário\n * OPQF0035 - Extensão de arquivo necessário\n * OPQF0036 - Extensão de arquivo inválido\n"
+                            title: ValidationErrorsOperationEnumSchema
+        '400':
+          description: Erro de validação
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                  errorDetails:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        target:
+                          type: string
+                        code:
+                          type: string
+                          enum:
+                          - OPQF0001
+                          - OPQF0002
+                          - OPQF0003
+                          - OPQF0004
+                          - OPQF0005
+                          - OPQF0006
+                          - OPQF0007
+                          - OPQF0008
+                          - OPQF0009
+                          - OPQF0010
+                          - OPQF0011
+                          - OPQF0012
+                          - OPQF0013
+                          - OPQF0014
+                          - OPQF0015
+                          - OPQF0016
+                          - OPQF0017
+                          - OPQF0018
+                          - OPQF0019
+                          - OPQF0020
+                          - OPQF0021
+                          - OPQF0022
+                          - OPQF0023
+                          - OPQF0024
+                          - OPQF0025
+                          - OPQF0026
+                          - OPQF0027
+                          - OPQF0028
+                          - OPQF0029
+                          - OPQF0030
+                          - OPQF0031
+                          - OPQF0032
+                          - OPQF0033
+                          - OPQF0034
+                          - OPQF0035
+                          - OPQF0036
+                          description: "___\nErrors:\n * OPQF0001 - Identificação do Sacado necessária\n * OPQF0002 - Sacado não existente\n * OPQF0003 - Relacionamento Sacado/Fornecedor não existente\n * OPQF0004 - Identificação do Fornecedor necessária\n * OPQF0005 - Fornecedor não existente\n * OPQF0006 - Conta bancária necessária\n * OPQF0007 - Código do banco necessário\n * OPQF0008 - Agência necessária\n * OPQF0009 - Número da conta necessário\n * OPQF0010 - Dígito da conta necessário\n * OPQF0011 - Recebíveis necessários\n * OPQF0012 - Recebíveis duplicados na lista\n * OPQF0013 - Identificação do recebível necessária\n * OPQF0014 - Data de vencimento necessária\n * OPQF0015 - Valor de vencimento necessário\n * OPQF0016 - Recebível não existe\n * OPQF0017 - Recebível com status inválido\n * OPQF0018 - Recebível já está em outra operação\n * OPQF0019 - Estratégia do recebível nula\n * OPQF0020 - Date de desembolso do recebível não é hoje\n * OPQF0021 - Horário limite de operação atingido\n\
+                            \ * OPQF0022 - Não há taxa cadastrada para o recebível\n * OPQF0023 - Valor de desembolso inválido\n * OPQF0024 - Arquivos necessários\n * OPQF0025 - URL do arquivo necessário\n * OPQF0026 - URL do arquivo inválido\n * OPQF0027 - Tipo de arquivo necessário\n * OPQF0028 - Tipo de arquivo inválido\n * OPQF0029 - Agência inválida\n * OPQF0030 - Dígito da conta inválido\n * OPQF0031 - Valor de fee necessário\n * OPQF0032 - Valor de fee menor ou igual a zero\n * OPQF0033 - Identificador do recebedor da fee necessário\n * OPQF0034 - Tipo de fee necessário\n * OPQF0035 - Extensão de arquivo necessário\n * OPQF0036 - Extensão de arquivo inválido\n"
+                          title: ValidationErrorsOperationEnumSchema
+                title: OperationBadRequestResponseSchema
+        '401':
+          description: Não autorizado
+        default:
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                title: ErrorResponseSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/scf/operations
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/SCF%20-%20Risco%20Sacado/create-operation
+  /settlements:
+    post:
+      tags:
+      - Settlement
+      description: O objetivo dessa rota é cadastrar um pedido de liquidação de recebiveis.
+      requestBody:
+        description: Dados de liquidação
+        content:
+          application/json:
+            schema:
+              required:
+              - payment
+              - trades
+              - payerTaxId
+              type: object
+              properties:
+                payerTaxId:
+                  description: Documento do pagador
+                  type: string
+                payment:
+                  type: object
+                  properties:
+                    method:
+                      description: Método de pagamento para a transferência, Pix ou Ted
+                      enum:
+                      - pix
+                      - ted
+                      type: string
+                      example: ted
+                trades:
+                  type: array
+                  items:
+                    required:
+                    - tradeId
+                    - amount
+                    type: object
+                    properties:
+                      tradeId:
+                        description: Identificador do trade
+                        type: string
+                      amount:
+                        description: Valor de pagamento da transação
+                        type: string
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    description: Identificador da liquidação
+                    type: string
+                    example: 3382cc6f-1c59-4423-b364-c837deaf110e
+                  payment:
+                    type: object
+                    properties:
+                      method:
+                        enum:
+                        - pix
+                        - ted
+                        type: string
+                        example: ted
+                      maturityDate:
+                        description: Timestamp (ISO 8601) da data e hora limite para expiração do pagamento. O pagamento deve ser realizado até essa hora, caso contrário, a liquidação será cancelada.
+                        type: string
+                        example: '2023-02-01T18:00:00.000Z'
+                  trades:
+                    type: array
+                    items:
+                      required:
+                      - identification
+                      - paidDate
+                      - paidAmount
+                      type: object
+                      properties:
+                        tradeId:
+                          description: Identificador do trade
+                          type: string
+                        amount:
+                          description: Valor de pagamento da transação
+                          type: string
+                        amount_settled:
+                          description: Valor já pago do recebivel
+                          type: string
+                        status:
+                          description: Status do trade
+                          enum:
+                          - PROCESSING
+                          - PROCESSED
+                          - CANCELLED
+                          - INVALID
+                          type: string
+                          title: SettlementTradeStatusSchema
+                  status:
+                    description: Status da liquidação
+                    enum:
+                    - CREATED
+                    - VALIDATING
+                    - INVALID
+                    - WAITING_FOR_PAYMENT
+                    - PROCESSED
+                    - EXPIRED
+                    type: string
+                    title: SettlementStatusSchema
+                title: SettlementSchema
+          description: Pedido de liquidação cadastrado com sucesso.
+        '400':
+          description: Erro de validação
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                  errorDetails:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        target:
+                          type: string
+                        code:
+                          type: string
+                          enum:
+                          - STQF0001
+                          - STQF0002
+                          - STQF0003
+                          - STQF0004
+                          - STQF0005
+                          - STQF0006
+                          - STQF0007
+                          - STQF0008
+                          - STQF0009
+                          - STQF0010
+                          - STQF0011
+                          - STQF0012
+                          - STQF0013
+                          - STQF0014
+                          - STQF0015
+                          - STQF0016
+                          - STQF0017
+                          - STQF0018
+                          description: "___\nErrors:\n * STQF0001 - Identificação do pagador não preenchido\n * STQF0002 - Identificação do pagador inválido\n * STQF0003 - Identificação do pagador não relacionado com as entidades de um ou mais trades\n * STQF0004 - Pagamento não preenchido\n * STQF0005 - Método de pagamento não preenchido\n * STQF0006 - Método de pagamento inválido\n * STQF0007 - Trade não preenchido\n * STQF0008 - Existem trades duplicados na coleção\n * STQF0009 - Identificador do Trade inválido\n * STQF0010 - Identificador do Trade não encontrado\n * STQF0011 - Trade já liquidado previamente\n * STQF0012 - Trade sendo processado em outro pedido de liquidação\n * STQF0013 - Valor do trade inválido\n * STQF0014 - Valor do trade menor ou igual a zero\n * STQF0015 - Valor do trade diferente do valor de vencimento do recebivel\n * STQF0016 - Valor do trade indisponível\n * STQF0017 - Identificador da liquidação inválido\n * STQF0018 - Liquidação não encontrada\n"
+                          title: ValidationErrorsSettlementEnumSchema
+                title: SettlementBadRequestResponseSchema
+        '401':
+          description: Não autorizado
+        default:
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                title: ErrorResponseSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/scf/settlements
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/SCF%20-%20Risco%20Sacado/criar-pedido-de-liquidacao-de-recebiveis
+  /companies/{payerTaxId}/payees/{payeeTaxId}:
+    get:
+      tags:
+      - Company
+      description: Consulta dos status de onboardings do fornecedor identificado por 'payeeTaxId'.
+      operationId: getCompanyById
+      parameters:
+      - in: path
+        name: payerTaxId
+        description: Identificação do sacado
+        schema:
+          type: string
+          description: CNPJ/CPF
+          example: '15996430000182'
+          title: TaxIdSchema
+        required: true
+      - in: path
+        name: payeeTaxId
+        description: Identificação do fornecedor
+        schema:
+          type: string
+          description: CNPJ/CPF
+          example: '15996430000182'
+          title: TaxIdSchema
+        required: true
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  taxId:
+                    description: Documento do fornecedor
+                    type: string
+                  status:
+                    type: string
+                    description: Status do fornecedor
+                title: CompanyOnboardingsDto
+        '401':
+          description: Não autorizado
+        '404':
+          description: Empresa com esse 'payeeTaxId' não encontrada.
+        default:
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                title: ErrorResponseSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/scf/companies
+        - empresas.btgpactual.com/scf/companies.readonly
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/SCF%20-%20Risco%20Sacado/get-company-by-id
+  /operations/{operationId}:
+    get:
+      tags:
+      - Operation
+      description: Esta rota serve para consultar uma operação utilizando o 'operationId' retornado na sua criação.
+      operationId: getOperationById
+      parameters:
+      - in: path
+        name: operationId
+        description: Id da operação
+        schema:
+          description: Id da operação
+          type: integer
+        required: true
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    description: Id da operação
+                    type: integer
+                  companyIdentification:
+                    description: CNPJ/CPF da empresa com quem foi realizada a operação
+                    type: string
+                  companyName:
+                    description: Nome da empresa com quem foi realizada a operação
+                    type: string
+                  createdAt:
+                    description: Data de criação da operação
+                    type: string
+                    format: date-time
+                  totalMaturityAmount:
+                    description: Valor de vencimento total da operação
+                    type: number
+                  totalDisbursementAmount:
+                    description: Valor de desembolso total da operação
+                    type: number
+                  operationStatus:
+                    enum:
+                    - Pending
+                    - PartiallyCanceled
+                    - Canceled
+                    - WaitingContractSignature
+                    - PartiallySigned
+                    - WaitingSolicitation
+                    - InDisbursement
+                    - PartiallyDisbursed
+                    - PartiallyDisbursedWithSomeCancels
+                    - DisbursedWithSomeCancels
+                    - Completed
+                    - PartiallySettled
+                    - PartiallySettledWithSomeCancels
+                    - Settled
+                    - Unsettled
+                    - UnsettledWithSomeCancels
+                    type: string
+                    example: Pending
+                    description: "Status da operação\n___\nDefinições:\n  * Pending - Operação pendente de processamento (status transitório)\n  * PartiallyCanceled - Operação parcialmente cancelada (status transitório)\n  * Canceled - Operação cancelada\n  * WaitingContractSignature - Operação aguardando assinatura do contrato\n  * PartiallySigned - Operação parcialmente assinada (status transitório)\n  * WaitingSolicitation - Operação em processamento (status transitório)\n  * InDisbursement - Operação em desembolso (status transitório)\n  * PartiallyDisbursed - Operação parcialmente desembolsada (status transitório)\n  * PartiallyDisbursedWithSomeCancels - Operação parcialmente desembolsada com alguns cancelamentos (status transitório)\n  * DisbursedWithSomeCancels - Operação desembolsada com alguns cancelamentos\n  * Completed - Operação desembolsada\n  * PartiallySettled - Operação parcialmente liquidada\n  * PartiallySettledWithSomeCancels - Operação parcialmente liquidada com alguns\
+                      \ cancelamentos\n  * Settled - Operação liquidada\n  * Unsettled - Operação com liquidação em atraso\n  * UnsettledWithSomeCancels - Operação com liquidação em atraso e alguns cancelamentos\n"
+                    title: OperationStatus
+                  account:
+                    type: object
+                    description: Dados da conta bancária
+                    properties:
+                      bank:
+                        description: Código do banco
+                        type: string
+                      agency:
+                        description: Agência da conta bancária
+                        type: string
+                      number:
+                        description: Número da conta bancária
+                        type: string
+                      digit:
+                        description: Dígito da conta bancária
+                        type: string
+                    title: AccountSchema
+                title: OperationSchema
+        '401':
+          description: Não autorizado
+        '404':
+          description: Operação com esse 'operationId' não encontrada.
+        default:
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                title: ErrorResponseSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/scf/operations
+        - empresas.btgpactual.com/scf/operations.readonly
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/SCF%20-%20Risco%20Sacado/get-operation-by-id
+  /borderos/{trackingId}/receivables:
+    get:
+      tags:
+      - Bordero
+      description: Esta rota serve para consultar os recebíveis de um bordero a partir do 'trackingId' retornado na criação. Na resposta, é possível verificar todos os dados.
+      operationId: getReceivablesFromBordero
+      parameters:
+      - in: path
+        name: trackingId
+        schema:
+          type: string
+          description: Uid Gerado
+          example: 3382cc6f-1c59-4423-b364-c837deaf110d
+          title: UIDSchema
+        required: true
+        description: Tracking Id do bordero
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  trackingId:
+                    type: string
+                    description: Uid Gerado
+                    example: 3382cc6f-1c59-4423-b364-c837deaf110d
+                    title: UIDSchema
+                  createdAt:
+                    description: Data de criação do bordero
+                    type: string
+                    format: date-time
+                  receivables:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          description: Id do recebível
+                          type: integer
+                        identification:
+                          type: string
+                          description: 'Identificação do recebível (ex: Nº da NF)'
+                          example: '5120070562'
+                          title: ReceivableIdentificationSchema
+                        trades:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                description: Id do trade
+                              contractNumber:
+                                type: string
+                                description: Número de contrato do trade
+                                example: 123-12345
+                              disbursedAmount:
+                                type: number
+                                format: double
+                                description: Valor desembolsado
+                        maturityAmount:
+                          type: number
+                          format: double
+                          description: Valor de vencimento
+                        maturityDate:
+                          type: string
+                          format: date
+                          description: Data de vencimento
+                        status:
+                          enum:
+                          - Aberto
+                          - EmAprovacao
+                          - Aprovado
+                          - EmAgendamento
+                          - Agendado
+                          - EmAntecipacao
+                          - Antecipado
+                          - Liquidado
+                          - Pago
+                          - Cancelado
+                          - EmAtraso
+                          - Indisponivel
+                          type: string
+                          example: Aprovado
+                          description: "Status do recebível\n___\nDefinições (o recebível não passará obrigatoriamente por todos os status):\n  * Aberto - Recebível criado e passando por validações\n  * EmAprovacao - Recebível pendente aprovação\n  * Aprovado - Recebível aprovado e disponível para antecipação\n  * EmAntecipacao - Recebível em processo de antecipação\n  * Antecipado - Recebível antecipado (pagamento ao cedente)\n  * Liquidado - Recebível liquidado (pagamento ao banco pelo cliente)\n  * Cancelado - Recebível cancelado\n  * EmAtraso - Liquidação do recebível em atraso (pagamento ao banco pelo cliente)\n  * Indisponivel - Recebível indisponível para antecipação\n"
+                          title: ReceivableStatus
+                        payeeTaxId:
+                          type: string
+                          description: Documento do cedente
+                        payerTaxId:
+                          type: string
+                          description: Documento do sacado
+                        currency:
+                          enum:
+                          - BRL
+                          - USD
+                          - EUR
+                          description: Moeda
+                          type: string
+                          title: CurrencySchema
+                      title: ReceivableSchema
+                title: BorderoSchema
+        '401':
+          description: Não autorizado
+        '404':
+          description: Bordero com esse 'trackingId' não encontrado.
+        default:
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                title: ErrorResponseSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/scf/borderos
+        - empresas.btgpactual.com/scf/borderos.readonly
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/SCF%20-%20Risco%20Sacado/get-receivables-from-bordero
+  /trades/{tradeId}:
+    get:
+      tags:
+      - Trade
+      description: O objetivo dessa rota é pesquisar a posição de uma operação especifica realizada anteriormente.
+      operationId: getTradeById
+      parameters:
+      - in: path
+        name: tradeId
+        required: true
+        description: Id do trade
+        schema:
+          description: Identificador
+          type: string
+          example: '123456'
+      responses:
+        '200':
+          description: Sucesso na consulta de posição de trade.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: '123456'
+                    description: Identificador do trade
+                    title: TradeIdSchema
+                  maturityDate:
+                    type: string
+                    format: date
+                    description: Data de vencimento
+                  contractNumber:
+                    type: string
+                    description: Número de contrato do trade
+                    example: 123-12345
+                  status:
+                    enum:
+                    - Aberto
+                    - EmAgendamento
+                    - Agendado
+                    - EmAprovacao
+                    - Aprovado
+                    - EmAntecipacao
+                    - Antecipado
+                    - Liquidado
+                    - Cancelado
+                    - EmAtraso
+                    - Indisponivel
+                    - Pago
+                    - EmCancelamento
+                    description: Status do trade
+                    type: string
+                    title: ReceivableTradeStatusSchema
+                  balance:
+                    type: object
+                    properties:
+                      principal:
+                        description: Valor de principal da operação
+                        type: number
+                        format: double
+                        example: 123.12
+                      interestArrears:
+                        description: Valor de mora
+                        type: number
+                        format: double
+                        example: 123.12
+                      penaltyFee:
+                        description: Valor de multa
+                        type: number
+                        format: double
+                        example: 123.12
+                      latePaymentFee:
+                        description: Valor de juros
+                        type: number
+                        format: double
+                        example: 123.12
+                title: TradeSchema
+        '400':
+          description: Erro de validação
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                  errorDetails:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        target:
+                          type: string
+                        code:
+                          type: string
+                          enum:
+                          - TRQF0001
+                          - TRQF0002
+                          description: "___\nErrors:\n * TRQF0001 - Identificação do trade invalida\n * TRQF0002 - Trade não encontrado\n"
+                          title: ValidationErrorsTradeEnumSchema
+                title: TradeBadRequestResponseSchema
+        '401':
+          description: Não autorizado
+        '404':
+          description: Trade com esse 'tradeId' não encontrado.
+        default:
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                title: ErrorResponseSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/scf/trades
+        - empresas.btgpactual.com/scf/trades.readonly
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/SCF%20-%20Risco%20Sacado/get-trade-by-id
+  /trades:
+    get:
+      tags:
+      - Trade
+      description: Esta rota serve para consultar a carteira de operações. É obrigatorio o envio das informações do cursor ou do status ou dos tradeIds.
+      operationId: getTrades
+      parameters:
+      - in: query
+        name: status
+        description: Status do trade
+        schema:
+          enum:
+          - Aberto
+          - EmAgendamento
+          - Agendado
+          - EmAprovacao
+          - Aprovado
+          - EmAntecipacao
+          - Antecipado
+          - Liquidado
+          - Cancelado
+          - EmAtraso
+          - Indisponivel
+          - Pago
+          - EmCancelamento
+          description: Status do trade
+          type: string
+          title: ReceivableTradeStatusSchema
+      - in: query
+        name: tradeIds
+        description: Identificadores de trades. Lista de identificadores separados por virgula.
+        schema:
+          type: string
+          example: 123456,654321,135790
+      - in: query
+        name: payerTaxId
+        description: Identificação do sacado
+        schema:
+          type: string
+          description: CNPJ/CPF
+          example: '15996430000182'
+          title: TaxIdSchema
+      - in: query
+        name: payeeTaxId
+        description: Identificação do fornecedor
+        schema:
+          type: string
+          description: CNPJ/CPF
+          example: '15996430000182'
+          title: TaxIdSchema
+      - in: query
+        name: cursor
+        description: Cursor para navegar entre as paginas
+        schema:
+          description: Referência do cursor
+          type: string
+          example: cGFnZT0yJml0ZW1zUGVyUGFnZT0xMCZ0eXBlPW51bGwmc3RhdHVzPVNFTlQ=
+      - in: query
+        name: limit
+        description: Limite de registros por paginação. Permitido de 1 a 10000.
+        schema:
+          description: Limite de registros por paginação
+          type: integer
+          example: 1000
+          minimum: 1
+          maximum: 10000
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  trades:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: '123456'
+                          description: Identificador do trade
+                          title: TradeIdSchema
+                        maturityDate:
+                          type: string
+                          format: date
+                          description: Data de vencimento
+                        contractNumber:
+                          type: string
+                          description: Número de contrato do trade
+                          example: 123-12345
+                        status:
+                          enum:
+                          - Aberto
+                          - EmAgendamento
+                          - Agendado
+                          - EmAprovacao
+                          - Aprovado
+                          - EmAntecipacao
+                          - Antecipado
+                          - Liquidado
+                          - Cancelado
+                          - EmAtraso
+                          - Indisponivel
+                          - Pago
+                          - EmCancelamento
+                          description: Status do trade
+                          type: string
+                          title: ReceivableTradeStatusSchema
+                        balance:
+                          type: object
+                          properties:
+                            principal:
+                              description: Valor de principal da operação
+                              type: number
+                              format: double
+                              example: 123.12
+                            interestArrears:
+                              description: Valor de mora
+                              type: number
+                              format: double
+                              example: 123.12
+                            penaltyFee:
+                              description: Valor de multa
+                              type: number
+                              format: double
+                              example: 123.12
+                            latePaymentFee:
+                              description: Valor de juros
+                              type: number
+                              format: double
+                              example: 123.12
+                      title: TradeSchema
+                  _links:
+                    type: object
+                    properties:
+                      next:
+                        type: object
+                        properties:
+                          href:
+                            description: Link para a pesquisa da proxima pagina
+                            type: string
+                            example: /v1/scf/trades?cursor=cGFnZT0yJml0ZW1zUGVyUGFnZT0xMCZ0eXBlPW51bGwmc3RhdHVzPVNFTlQ=
+                          method:
+                            description: Método do protocolo HTTP
+                            type: string
+                            enum:
+                            - GET
+                            - POST
+                            - PUT
+                            - PATCH
+                            - DELETE
+                            - HEAD
+                            - OPTIONS
+                            example: GET
+                        title: NextCursorSchema
+                title: TradeWalletSchema
+        '400':
+          description: Erro de validação
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                  errorDetails:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        target:
+                          type: string
+                        code:
+                          type: string
+                          enum:
+                          - TSQF0001
+                          - TSQF0002
+                          - TSQF0003
+                          - TSQF0004
+                          - TSQF0005
+                          - TSQF0006
+                          - TSQF0007
+                          - TSQF0008
+                          description: "___\nErrors:\n * TSQF0001 - Recebido outros parametros junto com o parametro de cursor de forma inválida\n * TSQF0002 - Campo  de cursor invalido\n * TSQF0003 - Parametros minimos não informados. Status, cursor ou tradeIds não informados.\n * TSQF0004 - Identificador de trades inválido\n * TSQF0005 - Status do trade inválido\n * TSQF0006 - Identificação do sacado inválido\n * TSQF0007 - Identificação do fornecedor inválido\n * TSQF0008 - Valor de limite de registros inválido\n"
+                          title: ValidationErrorsTradeSummaryEnumSchema
+                title: TradeSummaryBadRequestResponseSchema
+        '401':
+          description: Não autorizado
+        default:
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                title: ErrorResponseSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/scf/trades
+        - empresas.btgpactual.com/scf/trades.readonly
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/SCF%20-%20Risco%20Sacado/get-trades
+  /receivables/files:
+    put:
+      tags:
+      - Receivables
+      description: Esta rota tem como objetivo anexar novos arquivos aos recebíveis indicados.
+      operationId: receivableFiles
+      requestBody:
+        description: Dados dos recebíveis e arquivos
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                receivables:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - identification
+                    - maturityDate
+                    - payerTaxId
+                    - payeeTaxId
+                    - files
+                    properties:
+                      payerTaxId:
+                        description: Documento do sacado
+                        type: string
+                      payeeTaxId:
+                        description: Documento do fornecedor
+                        type: string
+                      identification:
+                        type: string
+                        description: 'Identificação do recebível (ex: Nº da NF)'
+                        example: '5120070562'
+                        title: ReceivableIdentificationSchema
+                      maturityDate:
+                        description: Data de vencimento
+                        type: string
+                        format: date
+                      files:
+                        type: array
+                        items:
+                          description: Arquivos necessários serão alinhados de acordo com a especificação do negócio
+                          type: object
+                          properties:
+                            url:
+                              description: URL do arquivo
+                              type: string
+                            type:
+                              description: Tipo do arquivo
+                              type: string
+                              enum:
+                              - Nota
+                              - Contrato
+                              - Garantia
+                              - Adesao
+                              - Auxiliar
+                              - Duplicata
+                              - Canhoto
+                              example: Nota
+                            extension:
+                              description: Extensão do arquivo
+                              type: string
+                              example: PDF
+                          title: FileSchema
+                    title: ReceivableFilesSchema
+      responses:
+        '204':
+          description: Sucesso
+        '400':
+          description: Erro de validação
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                  errorDetails:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        target:
+                          type: string
+                        code:
+                          type: string
+                          enum:
+                          - RCQF0001
+                          - RCQF0002
+                          - RCQF0003
+                          - RCQF0004
+                          - RCQF0005
+                          - RCQF0006
+                          - RCQF0007
+                          - RCQF0008
+                          - RCQF0009
+                          - RCQF0010
+                          - RCQF0011
+                          - RCQF0012
+                          - RCQF0013
+                          - RCQF0014
+                          - RCQF0015
+                          - RCQF0016
+                          description: "___\nErrors:\n * RCQF0001 - Recebível não existente\n * RCQF0002 - Data de vencimento inválida\n * RCQF0003 - Identificação do recebível inválida\n * RCQF0004 - Identificação do sacado inválida\n * RCQF0005 - Identificação do fornecedor inválida\n * RCQF0006 - Identificadores inválidos\n * RCQF0007 - Recebível não cancelável\n * RCQF0008 - Arquivos necessários\n * RCQF0009 - URL do arquivo necessária\n * RCQF0010 - URL do arquivo inválida\n * RCQF0011 - Tipo do arquivo necessário\n * RCQF0012 - Tipo do arquivo inválido\n * RCQF0013 - Extensão do arquivo necessária\n * RCQF0014 - Extensão do arquivo inválida\n * RCQF0015 - Tipo do arquivo repetido\n * RCQF0016 - Arquivo com este tipo já existente para este recebível\n"
+                          title: ValidationErrorsReceivableEnumSchema
+                title: ReceivableBadRequestResponseSchema
+        '401':
+          description: Não autorizado
+        '500':
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                title: ErrorResponseSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/scf/receivables
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/SCF%20-%20Risco%20Sacado/receivable-files
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+          scopes:
+            empresas.btgpactual.com/scf/borderos: Scope to borderos
+            empresas.btgpactual.com/scf/borderos.readonly: Scope to borderos read
+            empresas.btgpactual.com/scf/companies: Scope to companies
+            empresas.btgpactual.com/scf/companies.readonly: Scope to companies read
+            empresas.btgpactual.com/scf/operations: Scope to operations
+            empresas.btgpactual.com/scf/operations.readonly: Scope to operations read
+            empresas.btgpactual.com/scf/receivables: Scope to receivables
+            empresas.btgpactual.com/scf/receivables.readonly: Scope to receivables read
+            empresas.btgpactual.com/scf/settlements: Scope to settlements
+            empresas.btgpactual.com/scf/settlements.readonly: Scope to settlements read
+            empresas.btgpactual.com/scf/trades: Scope to trades
+            empresas.btgpactual.com/scf/trades.readonly: Scope to trades read
+            empresas.btgpactual.com/payer-onboardings: Scope to financiers-payer
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/58e6a5f6.d603bf94.js
+  - https://developers.empresas.btgpactual.com/assets/js/0e797970.5126fe3c.js
+  - https://developers.empresas.btgpactual.com/assets/js/4ac3e447.07b626b1.js
+  - https://developers.empresas.btgpactual.com/assets/js/17b7cd34.31efc121.js
+  - https://developers.empresas.btgpactual.com/assets/js/69c7c660.61e0039c.js
+  - https://developers.empresas.btgpactual.com/assets/js/d83fedfc.69d77805.js
+  - https://developers.empresas.btgpactual.com/assets/js/091533f9.2c5d3d51.js
+  - https://developers.empresas.btgpactual.com/assets/js/51cd407d.7f26ecb2.js
+  - https://developers.empresas.btgpactual.com/assets/js/522d5b94.745f73fc.js
+  - https://developers.empresas.btgpactual.com/assets/js/a9f41984.1f49d7c9.js
+  - https://developers.empresas.btgpactual.com/assets/js/10287afc.7e9c97f3.js
+  - https://developers.empresas.btgpactual.com/assets/js/6687c7ea.dec258dc.js
+  - https://developers.empresas.btgpactual.com/assets/js/fb9f95a5.4835ae79.js
+  - https://developers.empresas.btgpactual.com/assets/js/0938da15.d9b57531.js

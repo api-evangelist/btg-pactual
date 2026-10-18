@@ -1,0 +1,916 @@
+openapi: 3.2.0
+info:
+  description: API responsável por gerenciar as autorizações e agendamentos do Pix Automático
+  version: 1.5.1
+  title: Banking - Pix Automático Agendamento API
+  contact:
+    name: Contas a Receber
+    email: OL-IT-BtgEmpresas-ContasAReceber@btgpactual.com
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com
+  description: Sandbox
+- url: https://api.empresas.btgpactual.com
+  description: Produção
+tags:
+- name: Agendamento
+paths:
+  /{companyId}/banking/collections/automatic-pix/scheduling-instruction/{schedulingInstructionId}:
+    delete:
+      tags:
+      - Agendamento
+      description: '## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o Wiremock
+
+
+        > No sandbox este endpoint requer a utilização de Sandbox Headers
+
+
+        | Header | Descrição | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      - in: path
+        name: schedulingInstructionId
+        schema:
+          type: string
+          format: uuid
+          example: 611a3814-dc17-4d0b-b7fc-20f98ba618ee
+          description: Id do agendamento
+          title: SchedulingId
+        required: true
+        description: Id do agendamento
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: InvalidInputError
+                    description: Nome do erro.
+                title: BadRequestErrorResponse
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:internal-server-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: InternalServerError
+                    description: Nome do erro.
+                title: InternalServerErrorResponse
+      security:
+      - write:
+        - brn:btg:empresas:banking:automatic-pix
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Pix%20Autom%5Cxe1tico/cancelar-um-agendamento-de-cobranca-para-pix-automatico
+      summary: Delete by company id banking collections automatic pix scheduling instruction…
+      x-summary-source: derived
+      operationId: deleteByCompanyIdBankingCollectionsAutomaticPixSchedulingInstructionBySchedulingInstructionId
+      x-operation-id-source: derived
+  /{companyId}/banking/collections/automatic-pix/authorization/{authorizationId}/scheduling-instruction:
+    post:
+      tags:
+      - Agendamento
+      description: '## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o Wiremock
+
+
+        > No sandbox este endpoint requer a utilização de Sandbox Headers
+
+
+        | Header | Descrição | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      - in: path
+        name: authorizationId
+        schema:
+          type: string
+          format: uuid
+          example: 611a3814-dc17-4d0b-b7fc-20f98ba618ee
+          description: Id da autorização
+          title: AuthorizationId
+        required: true
+        description: Id da autorização
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - scheduledDate
+              - amount
+              properties:
+                scheduledDate:
+                  type: string
+                  example: '2025-04-15'
+                  description: Data do agendamento (respeitar a antecedência de 3 a 10 dias em relação à data prevista para a liquidação)
+                  title: ScheduledDate
+                amount:
+                  type: number
+                  example: 270.87
+                  description: Valor da cobrança
+                  title: Amount
+                additionalInformation:
+                  type: string
+                  maxLength: 140
+                  example: Descrição do agendamento
+                  description: Descrição do agendamento
+                  title: AdditionalInformation
+                txId:
+                  type: string
+                  minLength: 26
+                  maxLength: 35
+                  example: 56487asd654ads8qwe4500000awwa
+                  description: Identificador da transação
+                  title: TxId
+              title: CreateSchedulingRequest
+      responses:
+        '201':
+          description: Agendamento criado com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - id
+                - authorizationId
+                - status
+                - createdAt
+                - scheduledDate
+                - amount
+                - payee
+                - origin
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    example: 611a3814-dc17-4d0b-b7fc-20f98ba618ee
+                    description: Id do agendamento
+                    title: SchedulingId
+                  authorizationId:
+                    type: string
+                    format: uuid
+                    example: 611a3814-dc17-4d0b-b7fc-20f98ba618ee
+                    description: Id da autorização
+                    title: AuthorizationId
+                  createdAt:
+                    type: string
+                    example: '2025-04-15T21:00:44.875Z'
+                    description: Data da criação
+                    title: CreatedAt
+                  installmentNumber:
+                    type: number
+                    example: 10
+                    description: Número da parcela (existirá apenas caso a autorização do Pix Automático tenha uma data final definida)
+                    title: InstallmentNumber
+                  scheduledDate:
+                    type: string
+                    example: '2025-04-15'
+                    description: Data do agendamento (respeitar a antecedência de 3 a 10 dias em relação à data prevista para a liquidação)
+                    title: ScheduledDate
+                  amount:
+                    type: number
+                    example: 270.87
+                    description: Valor da cobrança
+                    title: Amount
+                  additionalInformation:
+                    type: string
+                    maxLength: 140
+                    example: Descrição do agendamento
+                    description: Descrição do agendamento
+                    title: AdditionalInformation
+                  updatedAt:
+                    type: string
+                    example: '2025-04-15T21:00:44.875Z'
+                    description: Data da atualização
+                    title: UpdatedAt
+                  status:
+                    type: string
+                    enum:
+                    - WAITING_SCHEDULING
+                    - SENT_SCHEDULING
+                    - CONFIRMED
+                    - PAID
+                    - CANCELED
+                    - CANCELING
+                    - REJECTED
+                    - EXPIRED
+                    - FAILED
+                    example: SENT_SCHEDULING
+                    description: Status do agendamento
+                    title: SchedulingStatus
+                  periodInitialDate:
+                    type: string
+                    example: '2025-04-18'
+                    description: Data início do ciclo
+                    title: SchedulingInitialDate
+                  periodFinalDate:
+                    type: string
+                    example: '2025-05-17'
+                    description: Data final do ciclo
+                    title: SchedulingFinalDate
+                  payee:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: VECHI CONSULTORIA E PROJETOS LTDA
+                        description: Nome do recebedor
+                        title: PayeeName
+                      personType:
+                        type: string
+                        enum:
+                        - J
+                        - F
+                        example: J
+                        description: Tipo do documento
+                        title: PersonType
+                      taxId:
+                        type: string
+                        example: '37297902000141'
+                        description: Documento do recebedor
+                        title: TaxId
+                      account:
+                        type: object
+                        required:
+                        - number
+                        - branch
+                        properties:
+                          number:
+                            type: string
+                            example: 003886850
+                            description: Número da conta com dígito
+                            title: AccountNumber
+                          branch:
+                            type: string
+                            example: '50'
+                            description: Agência bancária
+                            title: AccountBranch
+                        description: Dados da conta do recebedor
+                        title: Account
+                    title: Payee
+                  origin:
+                    type: string
+                    example: WEB
+                    title: Origin
+                  canceledAt:
+                    type: string
+                    example: '2025-04-15T21:00:44.875Z'
+                    description: Data de cancelamento
+                    title: CanceledAt
+                  cancellationCode:
+                    type: string
+                    enum:
+                    - ACCT
+                    - BLCK
+                    - CCLD
+                    - FAIL
+                    - OTHR
+                    - SLBD
+                    - SLCR
+                    example: ACCT
+                    description: 'Scheduling Instruction Cancellation Code:
+
+                      - `ACCT`: Encerramento da conta transacional do usuário pagador ou do usuário recebedor
+
+                      - `BLCK`: Bloqueio da conta transacional do usuário pagador ou do usuário recebedor
+
+                      - `CCLD`: Autorização cancelada
+
+                      - `FAIL`: Falha no fluxo de liquidação
+
+                      - `OTHR`: Solicitado pela instituição financeira do pagador ou recebedor
+
+                      - `SLBD`: Solicitado pelo usuário pagador
+
+                      - `SLCR`: Solicitado pelo usuário recebedor
+
+                      '
+                    title: SchedulingInstructionCancellationCode
+                  cancellationDescription:
+                    type: string
+                    example: Descrição do cancelamento
+                    title: CancellationDescription
+                  settledAt:
+                    type: string
+                    example: '2025-04-16T21:00:44.875Z'
+                    description: Data da liquidação
+                    title: SettledAt
+                  paidAt:
+                    type: string
+                    example: '2025-04-16T21:00:44.875Z'
+                    description: Data do pagamento
+                    title: PaidAt
+                  rejectedAt:
+                    type: string
+                    example: '2025-04-15T21:00:44.875Z'
+                    description: Data da rejeição
+                    title: RejectedAt
+                  rejectionCode:
+                    type: string
+                    enum:
+                    - AB10
+                    - AC05
+                    - AC06
+                    - AG12
+                    - AM02
+                    - AM09
+                    - DENC
+                    - DS27
+                    - DTED
+                    - DTNT
+                    - FBRD
+                    - IRNT
+                    - MIDI
+                    - MSUC
+                    - NIEC
+                    - NIPA
+                    - NITX
+                    - QUNT
+                    - RC09
+                    - UDEI
+                    - PRJL
+                    - FF08
+                    - CRNC
+                    - CH16
+                    example: AB10
+                    description: 'Scheduling Instruction Rejection Code:
+
+                      - `AB10`: Transação interrompida devido a um erro na instituição financeira do usuário pagador
+
+                      - `AC05`: A conta transacional do usuário pagador foi encerrada
+
+                      - `AC06`: A conta transacional do usuário pagador está bloqueada
+
+                      - `AG12`: A solicitação de agendamento não é permitida de uma conta transacional para outra dentro da mesma instituição financeira
+
+                      - `AM02`: O valor cobrado excede o valor máximo definido pelo usuário pagador
+
+                      - `AM09`: O valor cobrado não corresponde ao valor definido na autorização do Pix Automático
+
+                      - `DENC`: O número do documento do usuário pagador não corresponde aos dados contidos na autorização do Pix Automático
+
+                      - `DS27`: A instituição financeira não está registrado ou ainda não iniciou as operações no SPI
+
+                      - `DTED`: A data de agendamento não corresponde à frequência da autorização do Pix Automático com base na última programação e/ou regras do produto
+
+                      - `DTNT`: Não são permitidas novas tentativas de agendamento após a data de vencimento além do limite da regra de negócios
+
+                      - `FBRD`: Solicitação de agendamento recebida após o prazo para cumprimento das regras comerciais
+
+                      - `IRNT`: Essa autorização de Pix Automático não permite novas tentativas de agendamento após o vencimento
+
+                      - `MIDI`: O ID da autorização de Pix Automático informado não existe ou está incorreto
+
+                      - `MSUC`: Agendamento rejeitado pois a autorização do Pix Automático não está aprovada
+
+                      - `NIEC`: A nova instrução de agendamento é inválida porque a mesma cobrança já possui um agendamento em aberto
+
+                      - `NIPA`: A nova instrução de agendamento é inválida, o agendamento já foi feito
+
+                      - `NITX`: A nova instrução de agendamento não corresponde a uma autorização de Pix Automático
+
+                      - `QUNT`: O número de novas tentativas de agendamento após a data de vencimento excede o limite definido pela regra de negócios
+
+                      - `RC09`: O número de ISPB da instituição financeira do usuário pagador é inválido ou inexistente
+
+                      - `UDEI`: O número do documento do devedor está incorreto
+
+                      - `PRJL`: Cancelamento de agendamento inválido, pois o pagamento já foi concluído com sucesso
+
+                      - `FF08`: O EndToEnd da transação não corresponde ao valor informado originalmente
+
+                      - `CRNC`: O número do documento do usuário destinatário não corresponde aos dados contidos na autorização
+
+                      - `CH16`: O identificador da transação não corresponde ao valor informado originalmente
+
+                      '
+                    title: SchedulingInstructionRejectionCode
+                  rejectionDescription:
+                    type: string
+                    example: Descrição da rejeição
+                    title: RejectionDescription
+                title: SchedulingInstructionResponse
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: InvalidInputError
+                    description: Nome do erro.
+                title: BadRequestErrorResponse
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:internal-server-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: InternalServerError
+                    description: Nome do erro.
+                title: InternalServerErrorResponse
+      security:
+      - write:
+        - brn:btg:empresas:banking:automatic-pix
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Pix%20Autom%5Cxe1tico/criar-agendamento-de-cobranca-para-pix-automatico
+      summary: Create by company id banking collections automatic pix authorization by…
+      x-summary-source: derived
+      operationId: postByCompanyIdBankingCollectionsAutomaticPixAuthorizationByAuthorizationIdSchedulingInstruction
+      x-operation-id-source: derived
+    get:
+      tags:
+      - Agendamento
+      description: '## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o Wiremock
+
+
+        > No sandbox este endpoint requer a utilização de Sandbox Headers
+
+
+        | Header | Descrição | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      - in: path
+        name: authorizationId
+        schema:
+          type: string
+          format: uuid
+          example: 611a3814-dc17-4d0b-b7fc-20f98ba618ee
+          description: Id da autorização
+          title: AuthorizationId
+        required: true
+        description: Id da autorização
+      - in: query
+        name: pageSize
+        schema:
+          type: number
+          example: 10
+          description: Número de itens por página
+          title: PageSize
+        required: true
+        description: Número de itens por página
+      - in: query
+        name: pageNumber
+        schema:
+          type: number
+          example: 1
+          description: Número da página
+          title: PageNumber
+        required: true
+        description: Número da página
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - id
+                      - authorizationId
+                      - status
+                      - createdAt
+                      - scheduledDate
+                      - amount
+                      - payee
+                      - origin
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                          example: 611a3814-dc17-4d0b-b7fc-20f98ba618ee
+                          description: Id do agendamento
+                          title: SchedulingId
+                        authorizationId:
+                          type: string
+                          format: uuid
+                          example: 611a3814-dc17-4d0b-b7fc-20f98ba618ee
+                          description: Id da autorização
+                          title: AuthorizationId
+                        createdAt:
+                          type: string
+                          example: '2025-04-15T21:00:44.875Z'
+                          description: Data da criação
+                          title: CreatedAt
+                        installmentNumber:
+                          type: number
+                          example: 10
+                          description: Número da parcela (existirá apenas caso a autorização do Pix Automático tenha uma data final definida)
+                          title: InstallmentNumber
+                        scheduledDate:
+                          type: string
+                          example: '2025-04-15'
+                          description: Data do agendamento (respeitar a antecedência de 3 a 10 dias em relação à data prevista para a liquidação)
+                          title: ScheduledDate
+                        amount:
+                          type: number
+                          example: 270.87
+                          description: Valor da cobrança
+                          title: Amount
+                        additionalInformation:
+                          type: string
+                          maxLength: 140
+                          example: Descrição do agendamento
+                          description: Descrição do agendamento
+                          title: AdditionalInformation
+                        updatedAt:
+                          type: string
+                          example: '2025-04-15T21:00:44.875Z'
+                          description: Data da atualização
+                          title: UpdatedAt
+                        status:
+                          type: string
+                          enum:
+                          - WAITING_SCHEDULING
+                          - SENT_SCHEDULING
+                          - CONFIRMED
+                          - PAID
+                          - CANCELED
+                          - CANCELING
+                          - REJECTED
+                          - EXPIRED
+                          - FAILED
+                          example: SENT_SCHEDULING
+                          description: Status do agendamento
+                          title: SchedulingStatus
+                        periodInitialDate:
+                          type: string
+                          example: '2025-04-18'
+                          description: Data início do ciclo
+                          title: SchedulingInitialDate
+                        periodFinalDate:
+                          type: string
+                          example: '2025-05-17'
+                          description: Data final do ciclo
+                          title: SchedulingFinalDate
+                        payee:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              example: VECHI CONSULTORIA E PROJETOS LTDA
+                              description: Nome do recebedor
+                              title: PayeeName
+                            personType:
+                              type: string
+                              enum:
+                              - J
+                              - F
+                              example: J
+                              description: Tipo do documento
+                              title: PersonType
+                            taxId:
+                              type: string
+                              example: '37297902000141'
+                              description: Documento do recebedor
+                              title: TaxId
+                            account:
+                              type: object
+                              required:
+                              - number
+                              - branch
+                              properties:
+                                number:
+                                  type: string
+                                  example: 003886850
+                                  description: Número da conta com dígito
+                                  title: AccountNumber
+                                branch:
+                                  type: string
+                                  example: '50'
+                                  description: Agência bancária
+                                  title: AccountBranch
+                              description: Dados da conta do recebedor
+                              title: Account
+                          title: Payee
+                        origin:
+                          type: string
+                          example: WEB
+                          title: Origin
+                        canceledAt:
+                          type: string
+                          example: '2025-04-15T21:00:44.875Z'
+                          description: Data de cancelamento
+                          title: CanceledAt
+                        cancellationCode:
+                          type: string
+                          enum:
+                          - ACCT
+                          - BLCK
+                          - CCLD
+                          - FAIL
+                          - OTHR
+                          - SLBD
+                          - SLCR
+                          example: ACCT
+                          description: 'Scheduling Instruction Cancellation Code:
+
+                            - `ACCT`: Encerramento da conta transacional do usuário pagador ou do usuário recebedor
+
+                            - `BLCK`: Bloqueio da conta transacional do usuário pagador ou do usuário recebedor
+
+                            - `CCLD`: Autorização cancelada
+
+                            - `FAIL`: Falha no fluxo de liquidação
+
+                            - `OTHR`: Solicitado pela instituição financeira do pagador ou recebedor
+
+                            - `SLBD`: Solicitado pelo usuário pagador
+
+                            - `SLCR`: Solicitado pelo usuário recebedor
+
+                            '
+                          title: SchedulingInstructionCancellationCode
+                        cancellationDescription:
+                          type: string
+                          example: Descrição do cancelamento
+                          title: CancellationDescription
+                        settledAt:
+                          type: string
+                          example: '2025-04-16T21:00:44.875Z'
+                          description: Data da liquidação
+                          title: SettledAt
+                        paidAt:
+                          type: string
+                          example: '2025-04-16T21:00:44.875Z'
+                          description: Data do pagamento
+                          title: PaidAt
+                        rejectedAt:
+                          type: string
+                          example: '2025-04-15T21:00:44.875Z'
+                          description: Data da rejeição
+                          title: RejectedAt
+                        rejectionCode:
+                          type: string
+                          enum:
+                          - AB10
+                          - AC05
+                          - AC06
+                          - AG12
+                          - AM02
+                          - AM09
+                          - DENC
+                          - DS27
+                          - DTED
+                          - DTNT
+                          - FBRD
+                          - IRNT
+                          - MIDI
+                          - MSUC
+                          - NIEC
+                          - NIPA
+                          - NITX
+                          - QUNT
+                          - RC09
+                          - UDEI
+                          - PRJL
+                          - FF08
+                          - CRNC
+                          - CH16
+                          example: AB10
+                          description: 'Scheduling Instruction Rejection Code:
+
+                            - `AB10`: Transação interrompida devido a um erro na instituição financeira do usuário pagador
+
+                            - `AC05`: A conta transacional do usuário pagador foi encerrada
+
+                            - `AC06`: A conta transacional do usuário pagador está bloqueada
+
+                            - `AG12`: A solicitação de agendamento não é permitida de uma conta transacional para outra dentro da mesma instituição financeira
+
+                            - `AM02`: O valor cobrado excede o valor máximo definido pelo usuário pagador
+
+                            - `AM09`: O valor cobrado não corresponde ao valor definido na autorização do Pix Automático
+
+                            - `DENC`: O número do documento do usuário pagador não corresponde aos dados contidos na autorização do Pix Automático
+
+                            - `DS27`: A instituição financeira não está registrado ou ainda não iniciou as operações no SPI
+
+                            - `DTED`: A data de agendamento não corresponde à frequência da autorização do Pix Automático com base na última programação e/ou regras do produto
+
+                            - `DTNT`: Não são permitidas novas tentativas de agendamento após a data de vencimento além do limite da regra de negócios
+
+                            - `FBRD`: Solicitação de agendamento recebida após o prazo para cumprimento das regras comerciais
+
+                            - `IRNT`: Essa autorização de Pix Automático não permite novas tentativas de agendamento após o vencimento
+
+                            - `MIDI`: O ID da autorização de Pix Automático informado não existe ou está incorreto
+
+                            - `MSUC`: Agendamento rejeitado pois a autorização do Pix Automático não está aprovada
+
+                            - `NIEC`: A nova instrução de agendamento é inválida porque a mesma cobrança já possui um agendamento em aberto
+
+                            - `NIPA`: A nova instrução de agendamento é inválida, o agendamento já foi feito
+
+                            - `NITX`: A nova instrução de agendamento não corresponde a uma autorização de Pix Automático
+
+                            - `QUNT`: O número de novas tentativas de agendamento após a data de vencimento excede o limite definido pela regra de negócios
+
+                            - `RC09`: O número de ISPB da instituição financeira do usuário pagador é inválido ou inexistente
+
+                            - `UDEI`: O número do documento do devedor está incorreto
+
+                            - `PRJL`: Cancelamento de agendamento inválido, pois o pagamento já foi concluído com sucesso
+
+                            - `FF08`: O EndToEnd da transação não corresponde ao valor informado originalmente
+
+                            - `CRNC`: O número do documento do usuário destinatário não corresponde aos dados contidos na autorização
+
+                            - `CH16`: O identificador da transação não corresponde ao valor informado originalmente
+
+                            '
+                          title: SchedulingInstructionRejectionCode
+                        rejectionDescription:
+                          type: string
+                          example: Descrição da rejeição
+                          title: RejectionDescription
+                      title: SchedulingInstructionResponse
+                  _links:
+                    type: object
+                    properties:
+                      previous:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            example: /AutomaticPix/authorization?cursor=eyJwYWdlTnVtYmVyIjoiMiIsInBhZ2VTaXplIjoiMTAiLCJ4LWlkZW50aWZpY2F0aW9uIjoiNDczMjg2NDkwMDAxMDgifQ==
+                          method:
+                            type: string
+                            example: GET
+                          type:
+                            type: string
+                            example: application/json
+                          rel:
+                            type: string
+                            example: self
+                      next:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            example: /AutomaticPix/authorization?cursor=eyJwYWdlTnVtYmVyIjoiMiIsInBhZ2VTaXplIjoiMTAiLCJ4LWlkZW50aWZpY2F0aW9uIjoiNDczMjg2NDkwMDAxMDgifQ==
+                          method:
+                            type: string
+                            example: GET
+                          type:
+                            type: string
+                            example: application/json
+                          rel:
+                            type: string
+                            example: self
+                    title: Cursor
+                title: ListSchedulingInstructionsResponse
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: InvalidInputError
+                    description: Nome do erro.
+                title: BadRequestErrorResponse
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:internal-server-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: InternalServerError
+                    description: Nome do erro.
+                title: InternalServerErrorResponse
+      security:
+      - read:
+        - brn:btg:empresas:banking:automatic-pix
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Pix%20Autom%5Cxe1tico/listar-cobrancas-agendadas-para-pix-automatico
+      summary: Get by company id banking collections automatic pix authorization by…
+      x-summary-source: derived
+      operationId: getByCompanyIdBankingCollectionsAutomaticPixAuthorizationByAuthorizationIdSchedulingInstruction
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    write:
+      type: oauth2
+      flows:
+        authorizationCode:
+          tokenUrl: https://id.btgpactual.com/oauth2/token
+          authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+          scopes:
+            brn:btg:empresas:banking:automatic-pix: Criar, modificar e cancelar autorizações e agendamentos de Pix Automático
+    read:
+      type: oauth2
+      flows:
+        authorizationCode:
+          tokenUrl: https://id.btgpactual.com/oauth2/token
+          authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+          scopes:
+            brn:btg:empresas:banking:automatic-pix: Consultar autorizações e agendamentos de Pix Automático
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/1dc94b6a.32cb240b.js
+  - https://developers.empresas.btgpactual.com/assets/js/d6358b8e.bbed056f.js
+  - https://developers.empresas.btgpactual.com/assets/js/4239e9ea.1c43b05d.js
+  - https://developers.empresas.btgpactual.com/assets/js/1aed9a34.26ac3073.js
+  - https://developers.empresas.btgpactual.com/assets/js/a431a7c7.c8c4f4c4.js
+  - https://developers.empresas.btgpactual.com/assets/js/3f5b6675.82a27960.js
+  - https://developers.empresas.btgpactual.com/assets/js/e1eb4c0a.250a08b7.js

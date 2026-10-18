@@ -1,0 +1,2940 @@
+# x-archived-from: btg-pactual-banking-pix-automatico-openapi.yml
+# x-archived-on: 2026-10-18
+openapi: 3.0.3
+info:
+  description: API responsável por gerenciar as autorizações e agendamentos do Pix Automático
+  version: 1.5.1
+  title: Banking - Pix Automático
+  contact:
+    name: Contas a Receber
+    email: OL-IT-BtgEmpresas-ContasAReceber@btgpactual.com
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com
+  description: Sandbox
+- url: https://api.empresas.btgpactual.com
+  description: Produção
+paths:
+  /{companyId}/banking/collections/automatic-pix/authorization/{authorizationId}:
+    delete:
+      tags:
+      - Autorização
+      description: ' ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o [Wiremock](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-com-wiremock-v2)
+
+
+        > No sandbox este endpoint requer a utilização de [Sandbox Headers](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-headers)
+
+
+        | Header     | Descrição                            | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      - in: path
+        name: authorizationId
+        schema:
+          type: string
+          format: uuid
+          example: 611a3814-dc17-4d0b-b7fc-20f98ba618ee
+          description: Id da autorização
+          title: AuthorizationId
+        required: true
+        description: Id da autorização
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: InvalidInputError
+                    description: Nome do erro.
+                title: BadRequestErrorResponse
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: ForbiddenError
+                    description: Nome do erro.
+                title: ForbiddenErrorResponse
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:not-found-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: NotFoundError
+                    description: Nome do erro.
+                title: NotFoundErrorResponse
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: UnprocessableEntityError
+                    description: Nome do erro.
+                title: UnprocessableEntityErrorResponse
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:internal-server-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: InternalServerError
+                    description: Nome do erro.
+                title: InternalServerErrorResponse
+      security:
+      - write:
+        - brn:btg:empresas:banking:automatic-pix
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Pix%20Autom%5Cxe1tico/cancelar-autorizacao-de-pix-automatico
+    patch:
+      tags:
+      - Autorização
+      description: ' ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o [Wiremock](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-com-wiremock-v2)
+
+
+        > No sandbox este endpoint requer a utilização de [Sandbox Headers](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-headers)
+
+
+        | Header     | Descrição                            | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      - in: path
+        name: authorizationId
+        schema:
+          type: string
+          format: uuid
+          example: 611a3814-dc17-4d0b-b7fc-20f98ba618ee
+          description: Id da autorização
+          title: AuthorizationId
+        required: true
+        description: Id da autorização
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                initialDate:
+                  type: string
+                  example: '2025-04-18'
+                  description: Data do primeiro pagamento (deve respeitar um intervalo mínimo de 3 dias a partir da data atual)
+                  title: InitialDate
+                debtorName:
+                  type: string
+                  example: Nome do devedor
+                  description: Nome do devedor
+                  title: DebtorName
+                locationId:
+                  type: string
+                  example: 323f2ecf-63e3-4fc8-a1d1-debce1546066
+                  description: Id da location
+                  title: LocationId
+                activationTxId:
+                  type: string
+                  minLength: 26
+                  maxLength: 35
+                  example: 56487asd654ads8qwe4500000awwa
+                  description: Identificador da transação
+                  title: TxId
+              title: UpdateAuthorizationRequest
+      responses:
+        '200':
+          description: Autorização criada com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - authorizationId
+                - createdAt
+                - initialDate
+                - retryPolicy
+                - period
+                - updatedAt
+                - status
+                - payee
+                - activation
+                - origin
+                properties:
+                  authorizationId:
+                    type: string
+                    format: uuid
+                    example: 611a3814-dc17-4d0b-b7fc-20f98ba618ee
+                    description: Id da autorização
+                    title: AuthorizationId
+                  createdAt:
+                    type: string
+                    example: '2025-04-15T21:00:44.875Z'
+                    description: Data da criação
+                    title: CreatedAt
+                  initialDate:
+                    type: string
+                    example: '2025-04-18'
+                    description: Data do primeiro pagamento (deve respeitar um intervalo mínimo de 3 dias a partir da data atual)
+                    title: InitialDate
+                  finalDate:
+                    type: string
+                    example: '2026-04-18'
+                    description: Data prevista do último pagamento
+                    title: FinalDate
+                  link:
+                    type: object
+                    required:
+                    - contract
+                    - debtor
+                    properties:
+                      contract:
+                        type: string
+                        maxLength: 35
+                        example: 54872120205AASS12
+                        description: Identificador do contrato (deve ser gerenciado pelo recebedor e não pode ser reutilizado caso esteja associado a uma autorização pendente ou aprovada)
+                        title: Contract
+                      description:
+                        type: string
+                        maxLength: 35
+                        example: Descrição do contrato
+                        description: Descrição do contrato
+                        title: LinkDescription
+                      debtor:
+                        type: object
+                        required:
+                        - taxId
+                        - name
+                        - personType
+                        properties:
+                          taxId:
+                            type: string
+                            example: '37297902000141'
+                            description: Documento do devedor
+                            title: DebtorTaxId
+                          name:
+                            type: string
+                            example: Nome do devedor
+                            description: Nome do devedor
+                            title: DebtorName
+                          personType:
+                            type: string
+                            enum:
+                            - J
+                            - F
+                            example: J
+                            description: Tipo do documento
+                            title: PersonType
+                        description: 'Dados do devedor. Não necessariamente será também o pagador, no Pix Automático a autorização pode ser realizada por outra pessoa. Exemplo: O filho(a) assina um plano mensal de academia, mas o QrCode da autorização é aprovado por algum parente, ou seja, o parente será o responsável pelo pagamento'
+                        title: Debtor
+                    description: 'Deve constar os dados do vínculo entre o recebedor e o devedor, exemplo: o devedor contratou um plano mensal de academia'
+                    title: Link
+                  amount:
+                    type: number
+                    example: 270.87
+                    description: Valor da cobrança
+                    title: Amount
+                  retryPolicy:
+                    type: string
+                    enum:
+                    - ACCEPT_3R_7D
+                    - NOT_APPLICABLE
+                    example: ACCEPT_3R_7D
+                    description: Retentativa de pagamento
+                    title: RetryPolicy
+                  period:
+                    type: string
+                    enum:
+                    - ANNUALLY
+                    - MONTHLY
+                    - QUARTERLY
+                    - SEMIANNUAL
+                    - WEEKLY
+                    example: ANNUALLY
+                    description: Período da autorização
+                    title: Period
+                  updatedAt:
+                    type: string
+                    example: '2025-04-15T21:00:44.875Z'
+                    description: Data da atualização
+                    title: UpdatedAt
+                  requests:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        requestId:
+                          type: string
+                          format: uuid
+                          example: c6184dae-3f92-42ed-8b47-d9f4593ee0a5
+                          description: Id da solicitação
+                          title: RequestId
+                        authorizationId:
+                          type: string
+                          format: uuid
+                          example: 611a3814-dc17-4d0b-b7fc-20f98ba618ee
+                          description: Id da autorização
+                          title: AuthorizationId
+                        createdAt:
+                          type: string
+                          example: '2025-04-15T21:00:44.875Z'
+                          description: Data da criação
+                          title: CreatedAt
+                        expirationDate:
+                          type: string
+                          example: '2025-04-15T23:23:59.547Z'
+                          description: Data de expiração da solicitação
+                          title: ExpirationDate
+                        origin:
+                          type: string
+                          example: WEB
+                          title: Origin
+                        recipient:
+                          type: object
+                          required:
+                          - taxId
+                          - name
+                          - personType
+                          - account
+                          properties:
+                            taxId:
+                              type: string
+                              example: '37297902000141'
+                              description: Documento do pagador (destinatário) que receberá a solicitação da autorização por notificação push - jornada 1
+                              title: RecipientTaxId
+                            name:
+                              type: string
+                              maxLength: 140
+                              example: W A PRODUTOS DIGITAIS LTDA
+                              description: Nome do pagador (destinatário) - jornada 1
+                              title: RecipientName
+                            personType:
+                              type: string
+                              enum:
+                              - J
+                              - F
+                              example: J
+                              description: Tipo do documento
+                              title: PersonType
+                            account:
+                              type: object
+                              required:
+                              - ispbParticipant
+                              - number
+                              properties:
+                                ispbParticipant:
+                                  type: string
+                                  minLength: 8
+                                  maxLength: 8
+                                  example: '00000000'
+                                  description: Código de identificação da instituição
+                                  title: IspbParticipant
+                                number:
+                                  type: string
+                                  example: 003886850
+                                  description: Número da conta com dígito
+                                  title: AccountNumber
+                                branch:
+                                  type: string
+                                  example: '50'
+                                  description: Agência bancária
+                                  title: AccountBranch
+                              description: Dados da conta do pagador (destinatário) - jornada 1
+                              title: RecipientAccount
+                          description: Dados do pagador (destinatário) - jornada 1
+                          title: Recipient
+                        status:
+                          type: string
+                          enum:
+                          - PROCESSING
+                          - CREATED
+                          - CANCELED
+                          - EXPIRED
+                          - APPROVED
+                          - REJECTED
+                          - SENT
+                          - RECEIVED
+                          example: CREATED
+                          description: Status da solicitação por push - jornada 1
+                          title: RequestStatus
+                      title: RequestResponse
+                  status:
+                    type: string
+                    enum:
+                    - PROCESSING
+                    - CREATED
+                    - CANCELED
+                    - CANCELING
+                    - EXPIRED
+                    - APPROVED
+                    - REJECTED
+                    - FINISHED
+                    example: CREATED
+                    description: Status da autorização
+                    title: AuthorizationStatus
+                  totalInstallments:
+                    type: number
+                    example: 10
+                    description: Total de pagamentos previstos (existirá apenas caso a autorização do Pix Automático tenha uma data final definida)
+                    title: TotalInstallments
+                  payee:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: VECHI CONSULTORIA E PROJETOS LTDA
+                        description: Nome do recebedor
+                        title: PayeeName
+                      personType:
+                        type: string
+                        enum:
+                        - J
+                        - F
+                        example: J
+                        description: Tipo do documento
+                        title: PersonType
+                      taxId:
+                        type: string
+                        example: '37297902000141'
+                        description: Documento do recebedor
+                        title: TaxId
+                      account:
+                        type: object
+                        required:
+                        - number
+                        - branch
+                        properties:
+                          number:
+                            type: string
+                            example: 003886850
+                            description: Número da conta com dígito
+                            title: AccountNumber
+                          branch:
+                            type: string
+                            example: '50'
+                            description: Agência bancária
+                            title: AccountBranch
+                        description: Dados da conta do recebedor
+                        title: Account
+                    title: Payee
+                  activation:
+                    type: object
+                    required:
+                    - journeyType
+                    properties:
+                      journeyType:
+                        type: string
+                        enum:
+                        - JOURNEY_1
+                        - JOURNEY_2
+                        - JOURNEY_3
+                        - JOURNEY_4
+                        - WAITING_DEFINITION
+                        example: JOURNEY_1
+                        description: Tipo de jornada da ativação
+                        title: JourneyType
+                      txId:
+                        type: string
+                        minLength: 26
+                        maxLength: 35
+                        example: 56487asd654ads8qwe4500000awwa
+                        description: Identificador da transação
+                        title: TxId
+                    title: Activation
+                  origin:
+                    type: string
+                    example: WEB
+                    title: Origin
+                  location:
+                    type: object
+                    required:
+                    - locationId
+                    - payeeTaxId
+                    - typeCob
+                    - createdAt
+                    - description
+                    properties:
+                      locationId:
+                        type: string
+                        example: 323f2ecf-63e3-4fc8-a1d1-debce1546066
+                        description: Id da location
+                        title: LocationId
+                      payeeTaxId:
+                        type: string
+                        example: '37297902000141'
+                        description: Documento do recebedor
+                        title: TaxId
+                      typeCob:
+                        type: string
+                        example: REC
+                        description: Tipo da location
+                        title: LocationType
+                      createdAt:
+                        type: string
+                        example: '2025-04-15T21:00:44.875Z'
+                        description: Data da criação
+                        title: CreatedAt
+                      description:
+                        type: string
+                        example: REC
+                        description: Descrição da location
+                        title: LocationDescription
+                    title: Location
+                  qrCodeInfo:
+                    type: object
+                    properties:
+                      emv:
+                        type: string
+                        example: 00020101021226930014br.gov.bcb.pix2571api-h.developer.btgpactual.com/pc/p/v2/573597357dc04cd388ebf85dfdd4d1cd5204000053039865802BR5925INSTITUTO PACTO PELO ESPO6009SAO PAULO61080453813362070503***80970014
+                        description: Códido do copia e cola para leitura
+                        title: Emv
+                      journeyType:
+                        type: string
+                        enum:
+                        - JOURNEY_1
+                        - JOURNEY_2
+                        - JOURNEY_3
+                        - JOURNEY_4
+                        - WAITING_DEFINITION
+                        example: JOURNEY_1
+                        description: Tipo de jornada da ativação
+                        title: JourneyType
+                    title: QrCodeInfo
+                title: AuthorizationResponse
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: InvalidInputError
+                    description: Nome do erro.
+                title: BadRequestErrorResponse
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: ForbiddenError
+                    description: Nome do erro.
+                title: ForbiddenErrorResponse
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:not-found-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: NotFoundError
+                    description: Nome do erro.
+                title: NotFoundErrorResponse
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: UnprocessableEntityError
+                    description: Nome do erro.
+                title: UnprocessableEntityErrorResponse
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:internal-server-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: InternalServerError
+                    description: Nome do erro.
+                title: InternalServerErrorResponse
+      security:
+      - write:
+        - brn:btg:empresas:banking:automatic-pix
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Pix%20Autom%5Cxe1tico/modificar-autorizacao-de-pix-automatico
+  /{companyId}/banking/collections/automatic-pix/scheduling-instruction/{schedulingInstructionId}:
+    delete:
+      tags:
+      - Agendamento
+      description: ' ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o [Wiremock](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-com-wiremock-v2)
+
+
+        > No sandbox este endpoint requer a utilização de [Sandbox Headers](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-headers)
+
+
+        | Header     | Descrição                            | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      - in: path
+        name: schedulingInstructionId
+        schema:
+          type: string
+          format: uuid
+          example: 611a3814-dc17-4d0b-b7fc-20f98ba618ee
+          description: Id do agendamento
+          title: SchedulingId
+        required: true
+        description: Id do agendamento
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: InvalidInputError
+                    description: Nome do erro.
+                title: BadRequestErrorResponse
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:internal-server-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: InternalServerError
+                    description: Nome do erro.
+                title: InternalServerErrorResponse
+      security:
+      - write:
+        - brn:btg:empresas:banking:automatic-pix
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Pix%20Autom%5Cxe1tico/cancelar-um-agendamento-de-cobranca-para-pix-automatico
+  /{companyId}/banking/collections/automatic-pix/authorization/{authorizationId}/scheduling-instruction:
+    post:
+      tags:
+      - Agendamento
+      description: ' ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o [Wiremock](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-com-wiremock-v2)
+
+
+        > No sandbox este endpoint requer a utilização de [Sandbox Headers](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-headers)
+
+
+        | Header     | Descrição                            | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      - in: path
+        name: authorizationId
+        schema:
+          type: string
+          format: uuid
+          example: 611a3814-dc17-4d0b-b7fc-20f98ba618ee
+          description: Id da autorização
+          title: AuthorizationId
+        required: true
+        description: Id da autorização
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - scheduledDate
+              - amount
+              properties:
+                scheduledDate:
+                  type: string
+                  example: '2025-04-15'
+                  description: Data do agendamento (respeitar a antecedência de 3 a 10 dias em relação à data prevista para a liquidação)
+                  title: ScheduledDate
+                amount:
+                  type: number
+                  example: 270.87
+                  description: Valor da cobrança
+                  title: Amount
+                additionalInformation:
+                  type: string
+                  maxLength: 140
+                  example: Descrição do agendamento
+                  description: Descrição do agendamento
+                  title: AdditionalInformation
+                txId:
+                  type: string
+                  minLength: 26
+                  maxLength: 35
+                  example: 56487asd654ads8qwe4500000awwa
+                  description: Identificador da transação
+                  title: TxId
+              title: CreateSchedulingRequest
+      responses:
+        '201':
+          description: Agendamento criado com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - id
+                - authorizationId
+                - status
+                - createdAt
+                - scheduledDate
+                - amount
+                - payee
+                - origin
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    example: 611a3814-dc17-4d0b-b7fc-20f98ba618ee
+                    description: Id do agendamento
+                    title: SchedulingId
+                  authorizationId:
+                    type: string
+                    format: uuid
+                    example: 611a3814-dc17-4d0b-b7fc-20f98ba618ee
+                    description: Id da autorização
+                    title: AuthorizationId
+                  createdAt:
+                    type: string
+                    example: '2025-04-15T21:00:44.875Z'
+                    description: Data da criação
+                    title: CreatedAt
+                  installmentNumber:
+                    type: number
+                    example: 10
+                    description: Número da parcela (existirá apenas caso a autorização do Pix Automático tenha uma data final definida)
+                    title: InstallmentNumber
+                  scheduledDate:
+                    type: string
+                    example: '2025-04-15'
+                    description: Data do agendamento (respeitar a antecedência de 3 a 10 dias em relação à data prevista para a liquidação)
+                    title: ScheduledDate
+                  amount:
+                    type: number
+                    example: 270.87
+                    description: Valor da cobrança
+                    title: Amount
+                  additionalInformation:
+                    type: string
+                    maxLength: 140
+                    example: Descrição do agendamento
+                    description: Descrição do agendamento
+                    title: AdditionalInformation
+                  updatedAt:
+                    type: string
+                    example: '2025-04-15T21:00:44.875Z'
+                    description: Data da atualização
+                    title: UpdatedAt
+                  status:
+                    type: string
+                    enum:
+                    - WAITING_SCHEDULING
+                    - SENT_SCHEDULING
+                    - CONFIRMED
+                    - PAID
+                    - CANCELED
+                    - CANCELING
+                    - REJECTED
+                    - EXPIRED
+                    - FAILED
+                    example: SENT_SCHEDULING
+                    description: Status do agendamento
+                    title: SchedulingStatus
+                  periodInitialDate:
+                    type: string
+                    example: '2025-04-18'
+                    description: Data início do ciclo
+                    title: SchedulingInitialDate
+                  periodFinalDate:
+                    type: string
+                    example: '2025-05-17'
+                    description: Data final do ciclo
+                    title: SchedulingFinalDate
+                  payee:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: VECHI CONSULTORIA E PROJETOS LTDA
+                        description: Nome do recebedor
+                        title: PayeeName
+                      personType:
+                        type: string
+                        enum:
+                        - J
+                        - F
+                        example: J
+                        description: Tipo do documento
+                        title: PersonType
+                      taxId:
+                        type: string
+                        example: '37297902000141'
+                        description: Documento do recebedor
+                        title: TaxId
+                      account:
+                        type: object
+                        required:
+                        - number
+                        - branch
+                        properties:
+                          number:
+                            type: string
+                            example: 003886850
+                            description: Número da conta com dígito
+                            title: AccountNumber
+                          branch:
+                            type: string
+                            example: '50'
+                            description: Agência bancária
+                            title: AccountBranch
+                        description: Dados da conta do recebedor
+                        title: Account
+                    title: Payee
+                  origin:
+                    type: string
+                    example: WEB
+                    title: Origin
+                  canceledAt:
+                    type: string
+                    example: '2025-04-15T21:00:44.875Z'
+                    description: Data de cancelamento
+                    title: CanceledAt
+                  cancellationCode:
+                    type: string
+                    enum:
+                    - ACCT
+                    - BLCK
+                    - CCLD
+                    - FAIL
+                    - OTHR
+                    - SLBD
+                    - SLCR
+                    example: ACCT
+                    description: 'Scheduling Instruction Cancellation Code:
+
+                      - `ACCT`: Encerramento da conta transacional do usuário pagador ou do usuário recebedor
+
+                      - `BLCK`: Bloqueio da conta transacional do usuário pagador ou do usuário recebedor
+
+                      - `CCLD`: Autorização cancelada
+
+                      - `FAIL`: Falha no fluxo de liquidação
+
+                      - `OTHR`: Solicitado pela instituição financeira do pagador ou recebedor
+
+                      - `SLBD`: Solicitado pelo usuário pagador
+
+                      - `SLCR`: Solicitado pelo usuário recebedor
+
+                      '
+                    title: SchedulingInstructionCancellationCode
+                  cancellationDescription:
+                    type: string
+                    example: Descrição do cancelamento
+                    title: CancellationDescription
+                  settledAt:
+                    type: string
+                    example: '2025-04-16T21:00:44.875Z'
+                    description: Data da liquidação
+                    title: SettledAt
+                  paidAt:
+                    type: string
+                    example: '2025-04-16T21:00:44.875Z'
+                    description: Data do pagamento
+                    title: PaidAt
+                  rejectedAt:
+                    type: string
+                    example: '2025-04-15T21:00:44.875Z'
+                    description: Data da rejeição
+                    title: RejectedAt
+                  rejectionCode:
+                    type: string
+                    enum:
+                    - AB10
+                    - AC05
+                    - AC06
+                    - AG12
+                    - AM02
+                    - AM09
+                    - DENC
+                    - DS27
+                    - DTED
+                    - DTNT
+                    - FBRD
+                    - IRNT
+                    - MIDI
+                    - MSUC
+                    - NIEC
+                    - NIPA
+                    - NITX
+                    - QUNT
+                    - RC09
+                    - UDEI
+                    - PRJL
+                    - FF08
+                    - CRNC
+                    - CH16
+                    example: AB10
+                    description: 'Scheduling Instruction Rejection Code:
+
+                      - `AB10`: Transação interrompida devido a um erro na instituição financeira do usuário pagador
+
+                      - `AC05`: A conta transacional do usuário pagador foi encerrada
+
+                      - `AC06`: A conta transacional do usuário pagador está bloqueada
+
+                      - `AG12`: A solicitação de agendamento não é permitida de uma conta transacional para outra dentro da mesma instituição financeira
+
+                      - `AM02`: O valor cobrado excede o valor máximo definido pelo usuário pagador
+
+                      - `AM09`: O valor cobrado não corresponde ao valor definido na autorização do Pix Automático
+
+                      - `DENC`: O número do documento do usuário pagador não corresponde aos dados contidos na autorização do Pix Automático
+
+                      - `DS27`: A instituição financeira não está registrado ou ainda não iniciou as operações no SPI
+
+                      - `DTED`: A data de agendamento não corresponde à frequência da autorização do Pix Automático com base na última programação e/ou regras do produto
+
+                      - `DTNT`: Não são permitidas novas tentativas de agendamento após a data de vencimento além do limite da regra de negócios
+
+                      - `FBRD`: Solicitação de agendamento recebida após o prazo para cumprimento das regras comerciais
+
+                      - `IRNT`: Essa autorização de Pix Automático não permite novas tentativas de agendamento após o vencimento
+
+                      - `MIDI`: O ID da autorização de Pix Automático informado não existe ou está incorreto
+
+                      - `MSUC`: Agendamento rejeitado pois a autorização do Pix Automático não está aprovada
+
+                      - `NIEC`: A nova instrução de agendamento é inválida porque a mesma cobrança já possui um agendamento em aberto
+
+                      - `NIPA`: A nova instrução de agendamento é inválida, o agendamento já foi feito
+
+                      - `NITX`: A nova instrução de agendamento não corresponde a uma autorização de Pix Automático
+
+                      - `QUNT`: O número de novas tentativas de agendamento após a data de vencimento excede o limite definido pela regra de negócios
+
+                      - `RC09`: O número de ISPB da instituição financeira do usuário pagador é inválido ou inexistente
+
+                      - `UDEI`: O número do documento do devedor está incorreto
+
+                      - `PRJL`: Cancelamento de agendamento inválido, pois o pagamento já foi concluído com sucesso
+
+                      - `FF08`: O EndToEnd da transação não corresponde ao valor informado originalmente
+
+                      - `CRNC`: O número do documento do usuário destinatário não corresponde aos dados contidos na autorização
+
+                      - `CH16`: O identificador da transação não corresponde ao valor informado originalmente
+
+                      '
+                    title: SchedulingInstructionRejectionCode
+                  rejectionDescription:
+                    type: string
+                    example: Descrição da rejeição
+                    title: RejectionDescription
+                title: SchedulingInstructionResponse
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: InvalidInputError
+                    description: Nome do erro.
+                title: BadRequestErrorResponse
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:internal-server-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: InternalServerError
+                    description: Nome do erro.
+                title: InternalServerErrorResponse
+      security:
+      - write:
+        - brn:btg:empresas:banking:automatic-pix
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Pix%20Autom%5Cxe1tico/criar-agendamento-de-cobranca-para-pix-automatico
+    get:
+      tags:
+      - Agendamento
+      description: ' ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o [Wiremock](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-com-wiremock-v2)
+
+
+        > No sandbox este endpoint requer a utilização de [Sandbox Headers](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-headers)
+
+
+        | Header     | Descrição                            | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      - in: path
+        name: authorizationId
+        schema:
+          type: string
+          format: uuid
+          example: 611a3814-dc17-4d0b-b7fc-20f98ba618ee
+          description: Id da autorização
+          title: AuthorizationId
+        required: true
+        description: Id da autorização
+      - in: query
+        name: pageSize
+        schema:
+          type: number
+          example: 10
+          description: Número de itens por página
+          title: PageSize
+        required: true
+        description: Número de itens por página
+      - in: query
+        name: pageNumber
+        schema:
+          type: number
+          example: 1
+          description: Número da página
+          title: PageNumber
+        required: true
+        description: Número da página
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - id
+                      - authorizationId
+                      - status
+                      - createdAt
+                      - scheduledDate
+                      - amount
+                      - payee
+                      - origin
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                          example: 611a3814-dc17-4d0b-b7fc-20f98ba618ee
+                          description: Id do agendamento
+                          title: SchedulingId
+                        authorizationId:
+                          type: string
+                          format: uuid
+                          example: 611a3814-dc17-4d0b-b7fc-20f98ba618ee
+                          description: Id da autorização
+                          title: AuthorizationId
+                        createdAt:
+                          type: string
+                          example: '2025-04-15T21:00:44.875Z'
+                          description: Data da criação
+                          title: CreatedAt
+                        installmentNumber:
+                          type: number
+                          example: 10
+                          description: Número da parcela (existirá apenas caso a autorização do Pix Automático tenha uma data final definida)
+                          title: InstallmentNumber
+                        scheduledDate:
+                          type: string
+                          example: '2025-04-15'
+                          description: Data do agendamento (respeitar a antecedência de 3 a 10 dias em relação à data prevista para a liquidação)
+                          title: ScheduledDate
+                        amount:
+                          type: number
+                          example: 270.87
+                          description: Valor da cobrança
+                          title: Amount
+                        additionalInformation:
+                          type: string
+                          maxLength: 140
+                          example: Descrição do agendamento
+                          description: Descrição do agendamento
+                          title: AdditionalInformation
+                        updatedAt:
+                          type: string
+                          example: '2025-04-15T21:00:44.875Z'
+                          description: Data da atualização
+                          title: UpdatedAt
+                        status:
+                          type: string
+                          enum:
+                          - WAITING_SCHEDULING
+                          - SENT_SCHEDULING
+                          - CONFIRMED
+                          - PAID
+                          - CANCELED
+                          - CANCELING
+                          - REJECTED
+                          - EXPIRED
+                          - FAILED
+                          example: SENT_SCHEDULING
+                          description: Status do agendamento
+                          title: SchedulingStatus
+                        periodInitialDate:
+                          type: string
+                          example: '2025-04-18'
+                          description: Data início do ciclo
+                          title: SchedulingInitialDate
+                        periodFinalDate:
+                          type: string
+                          example: '2025-05-17'
+                          description: Data final do ciclo
+                          title: SchedulingFinalDate
+                        payee:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              example: VECHI CONSULTORIA E PROJETOS LTDA
+                              description: Nome do recebedor
+                              title: PayeeName
+                            personType:
+                              type: string
+                              enum:
+                              - J
+                              - F
+                              example: J
+                              description: Tipo do documento
+                              title: PersonType
+                            taxId:
+                              type: string
+                              example: '37297902000141'
+                              description: Documento do recebedor
+                              title: TaxId
+                            account:
+                              type: object
+                              required:
+                              - number
+                              - branch
+                              properties:
+                                number:
+                                  type: string
+                                  example: 003886850
+                                  description: Número da conta com dígito
+                                  title: AccountNumber
+                                branch:
+                                  type: string
+                                  example: '50'
+                                  description: Agência bancária
+                                  title: AccountBranch
+                              description: Dados da conta do recebedor
+                              title: Account
+                          title: Payee
+                        origin:
+                          type: string
+                          example: WEB
+                          title: Origin
+                        canceledAt:
+                          type: string
+                          example: '2025-04-15T21:00:44.875Z'
+                          description: Data de cancelamento
+                          title: CanceledAt
+                        cancellationCode:
+                          type: string
+                          enum:
+                          - ACCT
+                          - BLCK
+                          - CCLD
+                          - FAIL
+                          - OTHR
+                          - SLBD
+                          - SLCR
+                          example: ACCT
+                          description: 'Scheduling Instruction Cancellation Code:
+
+                            - `ACCT`: Encerramento da conta transacional do usuário pagador ou do usuário recebedor
+
+                            - `BLCK`: Bloqueio da conta transacional do usuário pagador ou do usuário recebedor
+
+                            - `CCLD`: Autorização cancelada
+
+                            - `FAIL`: Falha no fluxo de liquidação
+
+                            - `OTHR`: Solicitado pela instituição financeira do pagador ou recebedor
+
+                            - `SLBD`: Solicitado pelo usuário pagador
+
+                            - `SLCR`: Solicitado pelo usuário recebedor
+
+                            '
+                          title: SchedulingInstructionCancellationCode
+                        cancellationDescription:
+                          type: string
+                          example: Descrição do cancelamento
+                          title: CancellationDescription
+                        settledAt:
+                          type: string
+                          example: '2025-04-16T21:00:44.875Z'
+                          description: Data da liquidação
+                          title: SettledAt
+                        paidAt:
+                          type: string
+                          example: '2025-04-16T21:00:44.875Z'
+                          description: Data do pagamento
+                          title: PaidAt
+                        rejectedAt:
+                          type: string
+                          example: '2025-04-15T21:00:44.875Z'
+                          description: Data da rejeição
+                          title: RejectedAt
+                        rejectionCode:
+                          type: string
+                          enum:
+                          - AB10
+                          - AC05
+                          - AC06
+                          - AG12
+                          - AM02
+                          - AM09
+                          - DENC
+                          - DS27
+                          - DTED
+                          - DTNT
+                          - FBRD
+                          - IRNT
+                          - MIDI
+                          - MSUC
+                          - NIEC
+                          - NIPA
+                          - NITX
+                          - QUNT
+                          - RC09
+                          - UDEI
+                          - PRJL
+                          - FF08
+                          - CRNC
+                          - CH16
+                          example: AB10
+                          description: 'Scheduling Instruction Rejection Code:
+
+                            - `AB10`: Transação interrompida devido a um erro na instituição financeira do usuário pagador
+
+                            - `AC05`: A conta transacional do usuário pagador foi encerrada
+
+                            - `AC06`: A conta transacional do usuário pagador está bloqueada
+
+                            - `AG12`: A solicitação de agendamento não é permitida de uma conta transacional para outra dentro da mesma instituição financeira
+
+                            - `AM02`: O valor cobrado excede o valor máximo definido pelo usuário pagador
+
+                            - `AM09`: O valor cobrado não corresponde ao valor definido na autorização do Pix Automático
+
+                            - `DENC`: O número do documento do usuário pagador não corresponde aos dados contidos na autorização do Pix Automático
+
+                            - `DS27`: A instituição financeira não está registrado ou ainda não iniciou as operações no SPI
+
+                            - `DTED`: A data de agendamento não corresponde à frequência da autorização do Pix Automático com base na última programação e/ou regras do produto
+
+                            - `DTNT`: Não são permitidas novas tentativas de agendamento após a data de vencimento além do limite da regra de negócios
+
+                            - `FBRD`: Solicitação de agendamento recebida após o prazo para cumprimento das regras comerciais
+
+                            - `IRNT`: Essa autorização de Pix Automático não permite novas tentativas de agendamento após o vencimento
+
+                            - `MIDI`: O ID da autorização de Pix Automático informado não existe ou está incorreto
+
+                            - `MSUC`: Agendamento rejeitado pois a autorização do Pix Automático não está aprovada
+
+                            - `NIEC`: A nova instrução de agendamento é inválida porque a mesma cobrança já possui um agendamento em aberto
+
+                            - `NIPA`: A nova instrução de agendamento é inválida, o agendamento já foi feito
+
+                            - `NITX`: A nova instrução de agendamento não corresponde a uma autorização de Pix Automático
+
+                            - `QUNT`: O número de novas tentativas de agendamento após a data de vencimento excede o limite definido pela regra de negócios
+
+                            - `RC09`: O número de ISPB da instituição financeira do usuário pagador é inválido ou inexistente
+
+                            - `UDEI`: O número do documento do devedor está incorreto
+
+                            - `PRJL`: Cancelamento de agendamento inválido, pois o pagamento já foi concluído com sucesso
+
+                            - `FF08`: O EndToEnd da transação não corresponde ao valor informado originalmente
+
+                            - `CRNC`: O número do documento do usuário destinatário não corresponde aos dados contidos na autorização
+
+                            - `CH16`: O identificador da transação não corresponde ao valor informado originalmente
+
+                            '
+                          title: SchedulingInstructionRejectionCode
+                        rejectionDescription:
+                          type: string
+                          example: Descrição da rejeição
+                          title: RejectionDescription
+                      title: SchedulingInstructionResponse
+                  _links:
+                    type: object
+                    properties:
+                      previous:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            example: /AutomaticPix/authorization?cursor=eyJwYWdlTnVtYmVyIjoiMiIsInBhZ2VTaXplIjoiMTAiLCJ4LWlkZW50aWZpY2F0aW9uIjoiNDczMjg2NDkwMDAxMDgifQ==
+                          method:
+                            type: string
+                            example: GET
+                          type:
+                            type: string
+                            example: application/json
+                          rel:
+                            type: string
+                            example: self
+                      next:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            example: /AutomaticPix/authorization?cursor=eyJwYWdlTnVtYmVyIjoiMiIsInBhZ2VTaXplIjoiMTAiLCJ4LWlkZW50aWZpY2F0aW9uIjoiNDczMjg2NDkwMDAxMDgifQ==
+                          method:
+                            type: string
+                            example: GET
+                          type:
+                            type: string
+                            example: application/json
+                          rel:
+                            type: string
+                            example: self
+                    title: Cursor
+                title: ListSchedulingInstructionsResponse
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: InvalidInputError
+                    description: Nome do erro.
+                title: BadRequestErrorResponse
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:internal-server-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: InternalServerError
+                    description: Nome do erro.
+                title: InternalServerErrorResponse
+      security:
+      - read:
+        - brn:btg:empresas:banking:automatic-pix
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Pix%20Autom%5Cxe1tico/listar-cobrancas-agendadas-para-pix-automatico
+  /{companyId}/banking/collections/automatic-pix/authorization/flow:
+    post:
+      tags:
+      - Autorização
+      description: ' ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o [Wiremock](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-com-wiremock-v2)
+
+
+        > No sandbox este endpoint requer a utilização de [Sandbox Headers](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-headers)
+
+
+        | Header     | Descrição                            | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - initialDate
+              - account
+              - retryPolicy
+              - period
+              properties:
+                initialDate:
+                  type: string
+                  example: '2025-04-18'
+                  description: Data do primeiro pagamento (deve respeitar um intervalo mínimo de 3 dias a partir da data atual)
+                  title: InitialDate
+                finalDate:
+                  type: string
+                  example: '2026-04-18'
+                  description: Data prevista do último pagamento
+                  title: FinalDate
+                link:
+                  type: object
+                  required:
+                  - contract
+                  - debtor
+                  properties:
+                    contract:
+                      type: string
+                      maxLength: 35
+                      example: 54872120205AASS12
+                      description: Identificador do contrato (deve ser gerenciado pelo recebedor e não pode ser reutilizado caso esteja associado a uma autorização pendente ou aprovada)
+                      title: Contract
+                    description:
+                      type: string
+                      maxLength: 35
+                      example: Descrição do contrato
+                      description: Descrição do contrato
+                      title: LinkDescription
+                    debtor:
+                      type: object
+                      required:
+                      - taxId
+                      - name
+                      - personType
+                      properties:
+                        taxId:
+                          type: string
+                          example: '37297902000141'
+                          description: Documento do devedor
+                          title: DebtorTaxId
+                        name:
+                          type: string
+                          example: Nome do devedor
+                          description: Nome do devedor
+                          title: DebtorName
+                        personType:
+                          type: string
+                          enum:
+                          - J
+                          - F
+                          example: J
+                          description: Tipo do documento
+                          title: PersonType
+                      description: 'Dados do devedor. Não necessariamente será também o pagador, no Pix Automático a autorização pode ser realizada por outra pessoa. Exemplo: O filho(a) assina um plano mensal de academia, mas o QrCode da autorização é aprovado por algum parente, ou seja, o parente será o responsável pelo pagamento'
+                      title: Debtor
+                  description: 'Deve constar os dados do vínculo entre o recebedor e o devedor, exemplo: o devedor contratou um plano mensal de academia'
+                  title: Link
+                account:
+                  type: object
+                  required:
+                  - number
+                  - branch
+                  properties:
+                    number:
+                      type: string
+                      example: 003886850
+                      description: Número da conta com dígito
+                      title: AccountNumber
+                    branch:
+                      type: string
+                      example: '50'
+                      description: Agência bancária
+                      title: AccountBranch
+                  description: Dados da conta do recebedor
+                  title: Account
+                amount:
+                  type: number
+                  example: 270.87
+                  description: Valor da cobrança
+                  title: Amount
+                totalInstallments:
+                  type: number
+                  example: 10
+                  description: Total de pagamentos previstos (deverá ser removido caso o campo finalDate seja informado)
+                  title: TotalInstallmentsRequest
+                minimumAmountPayee:
+                  type: number
+                  example: 100
+                  description: Valor mínimo para pagamento
+                  title: MinimumAmountPayee
+                retryPolicy:
+                  type: string
+                  enum:
+                  - ACCEPT_3R_7D
+                  - NOT_APPLICABLE
+                  example: ACCEPT_3R_7D
+                  description: Retentativa de pagamento
+                  title: RetryPolicy
+                period:
+                  type: string
+                  enum:
+                  - ANNUALLY
+                  - MONTHLY
+                  - QUARTERLY
+                  - SEMIANNUAL
+                  - WEEKLY
+                  example: ANNUALLY
+                  description: Período da autorização
+                  title: Period
+                request:
+                  type: object
+                  required:
+                  - expirationDate
+                  - recipient
+                  properties:
+                    expirationDate:
+                      type: string
+                      example: '2025-04-15T23:23:59.547Z'
+                      description: Data de expiração da solicitação
+                      title: ExpirationDate
+                    recipient:
+                      type: object
+                      required:
+                      - taxId
+                      - name
+                      - personType
+                      - account
+                      properties:
+                        taxId:
+                          type: string
+                          example: '37297902000141'
+                          description: Documento do pagador (destinatário) que receberá a solicitação da autorização por notificação push - jornada 1
+                          title: RecipientTaxId
+                        name:
+                          type: string
+                          maxLength: 140
+                          example: W A PRODUTOS DIGITAIS LTDA
+                          description: Nome do pagador (destinatário) - jornada 1
+                          title: RecipientName
+                        personType:
+                          type: string
+                          enum:
+                          - J
+                          - F
+                          example: J
+                          description: Tipo do documento
+                          title: PersonType
+                        account:
+                          type: object
+                          required:
+                          - ispbParticipant
+                          - number
+                          properties:
+                            ispbParticipant:
+                              type: string
+                              minLength: 8
+                              maxLength: 8
+                              example: '00000000'
+                              description: Código de identificação da instituição
+                              title: IspbParticipant
+                            number:
+                              type: string
+                              example: 003886850
+                              description: Número da conta com dígito
+                              title: AccountNumber
+                            branch:
+                              type: string
+                              example: '50'
+                              description: Agência bancária
+                              title: AccountBranch
+                          description: Dados da conta do pagador (destinatário) - jornada 1
+                          title: RecipientAccount
+                      description: Dados do pagador (destinatário) - jornada 1
+                      title: Recipient
+                  description: Exclusivo para a jornada 1 (no aplicativo do banco do pagador chegará uma notificação via push para autorizar o Pix Automático)
+                  title: Request
+                immediatePix:
+                  type: object
+                  required:
+                  - amount
+                  properties:
+                    allowCustomerChangeValue:
+                      type: boolean
+                      example: true
+                      description: 'Permitir a edição do valor no momento do pagamento - default: false'
+                      title: AllowCustomerChangeValue
+                    expiresIn:
+                      type: number
+                      example: 8900
+                      description: 'Tempo de expiração em segundos - default: 86400 (1 dia)'
+                      title: ExpiresIn
+                    pixKey:
+                      type: string
+                      maxLength: 77
+                      example: teste@hotmail.com
+                      description: Chave pix - Caso não informado será usado uma chave EVP (aleatória)
+                      title: PixKey
+                    description:
+                      type: string
+                      maxLength: 140
+                      example: Descrição para o pagador
+                      description: Descrição para o pagador
+                      title: ImmediatePixDescription
+                    locationId:
+                      type: string
+                      example: 323f2ecf-63e3-4fc8-a1d1-debce1546066
+                      description: Id da location
+                      title: LocationId
+                    amount:
+                      type: number
+                      example: 270.87
+                      description: Valor da cobrança
+                      title: Amount
+                    txId:
+                      type: string
+                      example: 5s7e8w5a4s6a27wq8a96s520a4s5
+                      description: Identificador da transação (caso não informado será gerado um valor automaticamente
+                    extraInfos:
+                      type: array
+                      maxLength: 50
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            example: Nome da informação extra
+                            description: Nome da informação extra
+                            title: ExtraInfosName
+                          value:
+                            type: string
+                            example: Valor da informação extra
+                            description: Valor da informação extra
+                            title: ExtraInfosValue
+                        title: ExtraInfos
+                  description: Exclusivo para a jornada 3 (autorização por leitura de QrCode com pagamento imediato)
+                  title: ImmediatePix
+              title: CreateAuthorizationFlowRequest
+      responses:
+        '201':
+          description: Autorização atualizada com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - authorizationId
+                - createdAt
+                - initialDate
+                - retryPolicy
+                - period
+                - updatedAt
+                - status
+                - payee
+                - activation
+                - origin
+                properties:
+                  authorizationId:
+                    type: string
+                    format: uuid
+                    example: 611a3814-dc17-4d0b-b7fc-20f98ba618ee
+                    description: Id da autorização
+                    title: AuthorizationId
+                  createdAt:
+                    type: string
+                    example: '2025-04-15T21:00:44.875Z'
+                    description: Data da criação
+                    title: CreatedAt
+                  initialDate:
+                    type: string
+                    example: '2025-04-18'
+                    description: Data do primeiro pagamento (deve respeitar um intervalo mínimo de 3 dias a partir da data atual)
+                    title: InitialDate
+                  finalDate:
+                    type: string
+                    example: '2026-04-18'
+                    description: Data prevista do último pagamento
+                    title: FinalDate
+                  link:
+                    type: object
+                    required:
+                    - contract
+                    - debtor
+                    properties:
+                      contract:
+                        type: string
+                        maxLength: 35
+                        example: 54872120205AASS12
+                        description: Identificador do contrato (deve ser gerenciado pelo recebedor e não pode ser reutilizado caso esteja associado a uma autorização pendente ou aprovada)
+                        title: Contract
+                      description:
+                        type: string
+                        maxLength: 35
+                        example: Descrição do contrato
+                        description: Descrição do contrato
+                        title: LinkDescription
+                      debtor:
+                        type: object
+                        required:
+                        - taxId
+                        - name
+                        - personType
+                        properties:
+                          taxId:
+                            type: string
+                            example: '37297902000141'
+                            description: Documento do devedor
+                            title: DebtorTaxId
+                          name:
+                            type: string
+                            example: Nome do devedor
+                            description: Nome do devedor
+                            title: DebtorName
+                          personType:
+                            type: string
+                            enum:
+                            - J
+                            - F
+                            example: J
+                            description: Tipo do documento
+                            title: PersonType
+                        description: 'Dados do devedor. Não necessariamente será também o pagador, no Pix Automático a autorização pode ser realizada por outra pessoa. Exemplo: O filho(a) assina um plano mensal de academia, mas o QrCode da autorização é aprovado por algum parente, ou seja, o parente será o responsável pelo pagamento'
+                        title: Debtor
+                    description: 'Deve constar os dados do vínculo entre o recebedor e o devedor, exemplo: o devedor contratou um plano mensal de academia'
+                    title: Link
+                  amount:
+                    type: number
+                    example: 270.87
+                    description: Valor da cobrança
+                    title: Amount
+                  retryPolicy:
+                    type: string
+                    enum:
+                    - ACCEPT_3R_7D
+                    - NOT_APPLICABLE
+                    example: ACCEPT_3R_7D
+                    description: Retentativa de pagamento
+                    title: RetryPolicy
+                  period:
+                    type: string
+                    enum:
+                    - ANNUALLY
+                    - MONTHLY
+                    - QUARTERLY
+                    - SEMIANNUAL
+                    - WEEKLY
+                    example: ANNUALLY
+                    description: Período da autorização
+                    title: Period
+                  updatedAt:
+                    type: string
+                    example: '2025-04-15T21:00:44.875Z'
+                    description: Data da atualização
+                    title: UpdatedAt
+                  requests:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        requestId:
+                          type: string
+                          format: uuid
+                          example: c6184dae-3f92-42ed-8b47-d9f4593ee0a5
+                          description: Id da solicitação
+                          title: RequestId
+                        authorizationId:
+                          type: string
+                          format: uuid
+                          example: 611a3814-dc17-4d0b-b7fc-20f98ba618ee
+                          description: Id da autorização
+                          title: AuthorizationId
+                        createdAt:
+                          type: string
+                          example: '2025-04-15T21:00:44.875Z'
+                          description: Data da criação
+                          title: CreatedAt
+                        expirationDate:
+                          type: string
+                          example: '2025-04-15T23:23:59.547Z'
+                          description: Data de expiração da solicitação
+                          title: ExpirationDate
+                        origin:
+                          type: string
+                          example: WEB
+                          title: Origin
+                        recipient:
+                          type: object
+                          required:
+                          - taxId
+                          - name
+                          - personType
+                          - account
+                          properties:
+                            taxId:
+                              type: string
+                              example: '37297902000141'
+                              description: Documento do pagador (destinatário) que receberá a solicitação da autorização por notificação push - jornada 1
+                              title: RecipientTaxId
+                            name:
+                              type: string
+                              maxLength: 140
+                              example: W A PRODUTOS DIGITAIS LTDA
+                              description: Nome do pagador (destinatário) - jornada 1
+                              title: RecipientName
+                            personType:
+                              type: string
+                              enum:
+                              - J
+                              - F
+                              example: J
+                              description: Tipo do documento
+                              title: PersonType
+                            account:
+                              type: object
+                              required:
+                              - ispbParticipant
+                              - number
+                              properties:
+                                ispbParticipant:
+                                  type: string
+                                  minLength: 8
+                                  maxLength: 8
+                                  example: '00000000'
+                                  description: Código de identificação da instituição
+                                  title: IspbParticipant
+                                number:
+                                  type: string
+                                  example: 003886850
+                                  description: Número da conta com dígito
+                                  title: AccountNumber
+                                branch:
+                                  type: string
+                                  example: '50'
+                                  description: Agência bancária
+                                  title: AccountBranch
+                              description: Dados da conta do pagador (destinatário) - jornada 1
+                              title: RecipientAccount
+                          description: Dados do pagador (destinatário) - jornada 1
+                          title: Recipient
+                        status:
+                          type: string
+                          enum:
+                          - PROCESSING
+                          - CREATED
+                          - CANCELED
+                          - EXPIRED
+                          - APPROVED
+                          - REJECTED
+                          - SENT
+                          - RECEIVED
+                          example: CREATED
+                          description: Status da solicitação por push - jornada 1
+                          title: RequestStatus
+                      title: RequestResponse
+                  status:
+                    type: string
+                    enum:
+                    - PROCESSING
+                    - CREATED
+                    - CANCELED
+                    - CANCELING
+                    - EXPIRED
+                    - APPROVED
+                    - REJECTED
+                    - FINISHED
+                    example: CREATED
+                    description: Status da autorização
+                    title: AuthorizationStatus
+                  totalInstallments:
+                    type: number
+                    example: 10
+                    description: Total de pagamentos previstos (existirá apenas caso a autorização do Pix Automático tenha uma data final definida)
+                    title: TotalInstallments
+                  payee:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: VECHI CONSULTORIA E PROJETOS LTDA
+                        description: Nome do recebedor
+                        title: PayeeName
+                      personType:
+                        type: string
+                        enum:
+                        - J
+                        - F
+                        example: J
+                        description: Tipo do documento
+                        title: PersonType
+                      taxId:
+                        type: string
+                        example: '37297902000141'
+                        description: Documento do recebedor
+                        title: TaxId
+                      account:
+                        type: object
+                        required:
+                        - number
+                        - branch
+                        properties:
+                          number:
+                            type: string
+                            example: 003886850
+                            description: Número da conta com dígito
+                            title: AccountNumber
+                          branch:
+                            type: string
+                            example: '50'
+                            description: Agência bancária
+                            title: AccountBranch
+                        description: Dados da conta do recebedor
+                        title: Account
+                    title: Payee
+                  activation:
+                    type: object
+                    required:
+                    - journeyType
+                    properties:
+                      journeyType:
+                        type: string
+                        enum:
+                        - JOURNEY_1
+                        - JOURNEY_2
+                        - JOURNEY_3
+                        - JOURNEY_4
+                        - WAITING_DEFINITION
+                        example: JOURNEY_1
+                        description: Tipo de jornada da ativação
+                        title: JourneyType
+                      txId:
+                        type: string
+                        minLength: 26
+                        maxLength: 35
+                        example: 56487asd654ads8qwe4500000awwa
+                        description: Identificador da transação
+                        title: TxId
+                    title: Activation
+                  origin:
+                    type: string
+                    example: WEB
+                    title: Origin
+                  location:
+                    type: object
+                    required:
+                    - locationId
+                    - payeeTaxId
+                    - typeCob
+                    - createdAt
+                    - description
+                    properties:
+                      locationId:
+                        type: string
+                        example: 323f2ecf-63e3-4fc8-a1d1-debce1546066
+                        description: Id da location
+                        title: LocationId
+                      payeeTaxId:
+                        type: string
+                        example: '37297902000141'
+                        description: Documento do recebedor
+                        title: TaxId
+                      typeCob:
+                        type: string
+                        example: REC
+                        description: Tipo da location
+                        title: LocationType
+                      createdAt:
+                        type: string
+                        example: '2025-04-15T21:00:44.875Z'
+                        description: Data da criação
+                        title: CreatedAt
+                      description:
+                        type: string
+                        example: REC
+                        description: Descrição da location
+                        title: LocationDescription
+                    title: Location
+                  qrCodeInfo:
+                    type: object
+                    properties:
+                      emv:
+                        type: string
+                        example: 00020101021226930014br.gov.bcb.pix2571api-h.developer.btgpactual.com/pc/p/v2/573597357dc04cd388ebf85dfdd4d1cd5204000053039865802BR5925INSTITUTO PACTO PELO ESPO6009SAO PAULO61080453813362070503***80970014
+                        description: Códido do copia e cola para leitura
+                        title: Emv
+                      journeyType:
+                        type: string
+                        enum:
+                        - JOURNEY_1
+                        - JOURNEY_2
+                        - JOURNEY_3
+                        - JOURNEY_4
+                        - WAITING_DEFINITION
+                        example: JOURNEY_1
+                        description: Tipo de jornada da ativação
+                        title: JourneyType
+                    title: QrCodeInfo
+                title: AuthorizationResponse
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: InvalidInputError
+                    description: Nome do erro.
+                title: BadRequestErrorResponse
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: UnprocessableEntityError
+                    description: Nome do erro.
+                title: UnprocessableEntityErrorResponse
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:internal-server-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: InternalServerError
+                    description: Nome do erro.
+                title: InternalServerErrorResponse
+      security:
+      - write:
+        - brn:btg:empresas:banking:automatic-pix
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Pix%20Autom%5Cxe1tico/criar-autorizacao-de-pix-automatico
+  /{companyId}/banking/collections/automatic-pix/authorization:
+    get:
+      tags:
+      - Autorização
+      description: ' ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o [Wiremock](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-com-wiremock-v2)
+
+
+        > No sandbox este endpoint requer a utilização de [Sandbox Headers](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-headers)
+
+
+        | Header     | Descrição                            | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      - in: query
+        name: pageSize
+        schema:
+          type: number
+          example: 10
+          description: Número de itens por página
+          title: PageSize
+        required: true
+        description: Número de itens por página
+      - in: query
+        name: pageNumber
+        schema:
+          type: number
+          example: 1
+          description: Número da página
+          title: PageNumber
+        required: true
+        description: Número da página
+      - in: query
+        name: contract
+        schema:
+          type: string
+          maxLength: 35
+          example: 54872120205AASS12
+          description: Identificador do contrato (deve ser gerenciado pelo recebedor e não pode ser reutilizado caso esteja associado a uma autorização pendente ou aprovada)
+          title: Contract
+        required: false
+        description: Identificador único do contrato
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    required:
+                    - id
+                    - createdAt
+                    - initialDate
+                    - retryPolicy
+                    - period
+                    - updatedAt
+                    - status
+                    - payee
+                    - activation
+                    - origin
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                        example: 611a3814-dc17-4d0b-b7fc-20f98ba618ee
+                        description: Id da autorização
+                        title: AuthorizationId
+                      createdAt:
+                        type: string
+                        example: '2025-04-15T21:00:44.875Z'
+                        description: Data da criação
+                        title: CreatedAt
+                      initialDate:
+                        type: string
+                        example: '2025-04-18'
+                        description: Data do primeiro pagamento (deve respeitar um intervalo mínimo de 3 dias a partir da data atual)
+                        title: InitialDate
+                      approvedAt:
+                        type: string
+                        example: '2025-04-15T21:00:44.875Z'
+                        description: Data da aprovação
+                        title: ApprovedAt
+                      canceledAt:
+                        type: string
+                        example: '2025-04-15T21:00:44.875Z'
+                        description: Data de cancelamento
+                        title: CanceledAt
+                      cancellationCode:
+                        type: string
+                        enum:
+                        - ACCL
+                        - CPCL
+                        - DCSD
+                        - FRUD
+                        - SLCR
+                        - SLDB
+                        - ERSL
+                        - NRES
+                        - PCFD
+                        - EPDI
+                        - EPDF
+                        example: ACCL
+                        description: 'Authorization Cancellation Code:
+
+                          - `ACCL`: Conta encerrada
+
+                          - `CPCL`: Encerramento de empresa
+
+                          - `DCSD`: Falecido
+
+                          - `FRUD`: Fraude
+
+                          - `SLCR`: Solicitado pelo usuário recebedor
+
+                          - `SLDB`: Solicitado pelo usuário pagador
+
+                          - `EPDI`: Expiração da data inicial de pagamento, a aprovação precisa ser realizada com 3 dias de antecedência para que seja possível realizar o primeiro agendamento
+
+                          - `EPDF`: A expiração ocorreu porque a data final foi excedida
+
+                          '
+                        title: AuthorizationCancellationCode
+                      cancellationDescription:
+                        type: string
+                        example: Descrição do cancelamento
+                        title: CancellationDescription
+                      rejectedAt:
+                        type: string
+                        example: '2025-04-15T21:00:44.875Z'
+                        description: Data da rejeição
+                        title: RejectedAt
+                      rejectionCode:
+                        type: string
+                        enum:
+                        - AC01
+                        - AC04
+                        - AC06
+                        - AG12
+                        - AM05
+                        - AP01
+                        - AP02
+                        - AP03
+                        - AP04
+                        - AP05
+                        - AP06
+                        - AP07
+                        - AP08
+                        - AP09
+                        - AP10
+                        - AP11
+                        - AP12
+                        - AP13
+                        - AP14
+                        - AP15
+                        - CH16
+                        - DS27
+                        - MD01
+                        - MD20
+                        - RC09
+                        - RC10
+                        example: AC01
+                        description: 'Authorization Rejection Code:
+
+                          - `AC01`: Conta não encontrada
+
+                          - `AC04`: Conta encerrada
+
+                          - `AC06`: Conta bloqueada
+
+                          - `AG12`: Não é permitido o envio de solicitações para conta transacional na mesma instituição
+
+                          - `AM05`: Solicitação previamente confirmada ou aguardando confirmação do usuário pagador
+
+                          - `AP01`: Rejeitado por divergência nas informações
+
+                          - `AP02`: Divergência no documento do usuário pagador
+
+                          - `AP03`: Agência não encontrada
+
+                          - `AP04`: Id da solicitação inválido ou não corresponde ao original
+
+                          - `AP05`: Status da solicitação está inconsistente
+
+                          - `AP06`: O número do documento do usuário destinatário está incorreto
+
+                          - `AP07`: Confirmação de recorrência pelo usuário pagador realizada fora do prazo
+
+                          - `AP08`: O primeiro pagamento imediato associado à solicitação não foi identificado
+
+                          - `AP09`: A confirmação da solicitação não foi identificada para permitir o cancelamento
+
+                          - `AP10`: O documento do solicitante de cancelamento não corresponde à identificação do usuário pagador ou recebedor
+
+                          - `AP11`: O identificador da instituição do pagador difere da informação contida na solicitação
+
+                          - `AP12`: O identificador da instituição do recebedor difere da informação contida na solicitação
+
+                          - `AP13`: Solicitação rejeitada pelo usuário pagador devido ao não reconhecimento pelo usuário recebedor
+
+                          - `AP14`: Solicitação rejeitada pelo usuário pagador por não ter interesse em utilizar o Pix Automático para o usuário recebedor
+
+                          - `AP15`: Solicitação indeferida pela instituição do usuário pagador que optou por não oferecer o uso do Pix Automático para clientes pessoa jurídica
+
+                          - `CH16`: Rejeitado pois alguma informação está incorreta
+
+                          - `DS27`: O participante não está registrado ou ainda não começou a operar no SPI
+
+                          - `MD01`: A solicitação sujeita à solicitação de cancelamento não existe
+
+                          - `MD20`: Solicitação de cancelamento já expirou
+
+                          - `RC09`: ISPB do usuário pagante participante inválido ou inexistente
+
+                          - `RC10`: ISPB do usuário recebedor participante inválido ou inexistente
+
+                          '
+                        title: AuthorizationRejectionCode
+                      rejectionDescription:
+                        type: string
+                        example: Descrição da rejeição
+                        title: RejectionDescription
+                      finalDate:
+                        type: string
+                        example: '2026-04-18'
+                        description: Data prevista do último pagamento
+                        title: FinalDate
+                      link:
+                        type: object
+                        required:
+                        - contract
+                        - debtor
+                        properties:
+                          contract:
+                            type: string
+                            maxLength: 35
+                            example: 54872120205AASS12
+                            description: Identificador do contrato (deve ser gerenciado pelo recebedor e não pode ser reutilizado caso esteja associado a uma autorização pendente ou aprovada)
+                            title: Contract
+                          description:
+                            type: string
+                            maxLength: 35
+                            example: Descrição do contrato
+                            description: Descrição do contrato
+                            title: LinkDescription
+                          debtor:
+                            type: object
+                            required:
+                            - taxId
+                            - name
+                            - personType
+                            properties:
+                              taxId:
+                                type: string
+                                example: '37297902000141'
+                                description: Documento do devedor
+                                title: DebtorTaxId
+                              name:
+                                type: string
+                                example: Nome do devedor
+                                description: Nome do devedor
+                                title: DebtorName
+                              personType:
+                                type: string
+                                enum:
+                                - J
+                                - F
+                                example: J
+                                description: Tipo do documento
+                                title: PersonType
+                            description: 'Dados do devedor. Não necessariamente será também o pagador, no Pix Automático a autorização pode ser realizada por outra pessoa. Exemplo: O filho(a) assina um plano mensal de academia, mas o QrCode da autorização é aprovado por algum parente, ou seja, o parente será o responsável pelo pagamento'
+                            title: Debtor
+                        description: 'Deve constar os dados do vínculo entre o recebedor e o devedor, exemplo: o devedor contratou um plano mensal de academia'
+                        title: Link
+                      amount:
+                        type: number
+                        example: 270.87
+                        description: Valor da cobrança
+                        title: Amount
+                      retryPolicy:
+                        type: string
+                        enum:
+                        - ACCEPT_3R_7D
+                        - NOT_APPLICABLE
+                        example: ACCEPT_3R_7D
+                        description: Retentativa de pagamento
+                        title: RetryPolicy
+                      period:
+                        type: string
+                        enum:
+                        - ANNUALLY
+                        - MONTHLY
+                        - QUARTERLY
+                        - SEMIANNUAL
+                        - WEEKLY
+                        example: ANNUALLY
+                        description: Período da autorização
+                        title: Period
+                      updatedAt:
+                        type: string
+                        example: '2025-04-15T21:00:44.875Z'
+                        description: Data da atualização
+                        title: UpdatedAt
+                      requests:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            requestId:
+                              type: string
+                              format: uuid
+                              example: c6184dae-3f92-42ed-8b47-d9f4593ee0a5
+                              description: Id da solicitação
+                              title: RequestId
+                            authorizationId:
+                              type: string
+                              format: uuid
+                              example: 611a3814-dc17-4d0b-b7fc-20f98ba618ee
+                              description: Id da autorização
+                              title: AuthorizationId
+                            createdAt:
+                              type: string
+                              example: '2025-04-15T21:00:44.875Z'
+                              description: Data da criação
+                              title: CreatedAt
+                            expirationDate:
+                              type: string
+                              example: '2025-04-15T23:23:59.547Z'
+                              description: Data de expiração da solicitação
+                              title: ExpirationDate
+                            origin:
+                              type: string
+                              example: WEB
+                              title: Origin
+                            recipient:
+                              type: object
+                              required:
+                              - taxId
+                              - name
+                              - personType
+                              - account
+                              properties:
+                                taxId:
+                                  type: string
+                                  example: '37297902000141'
+                                  description: Documento do pagador (destinatário) que receberá a solicitação da autorização por notificação push - jornada 1
+                                  title: RecipientTaxId
+                                name:
+                                  type: string
+                                  maxLength: 140
+                                  example: W A PRODUTOS DIGITAIS LTDA
+                                  description: Nome do pagador (destinatário) - jornada 1
+                                  title: RecipientName
+                                personType:
+                                  type: string
+                                  enum:
+                                  - J
+                                  - F
+                                  example: J
+                                  description: Tipo do documento
+                                  title: PersonType
+                                account:
+                                  type: object
+                                  required:
+                                  - ispbParticipant
+                                  - number
+                                  properties:
+                                    ispbParticipant:
+                                      type: string
+                                      minLength: 8
+                                      maxLength: 8
+                                      example: '00000000'
+                                      description: Código de identificação da instituição
+                                      title: IspbParticipant
+                                    number:
+                                      type: string
+                                      example: 003886850
+                                      description: Número da conta com dígito
+                                      title: AccountNumber
+                                    branch:
+                                      type: string
+                                      example: '50'
+                                      description: Agência bancária
+                                      title: AccountBranch
+                                  description: Dados da conta do pagador (destinatário) - jornada 1
+                                  title: RecipientAccount
+                              description: Dados do pagador (destinatário) - jornada 1
+                              title: Recipient
+                            status:
+                              type: string
+                              enum:
+                              - PROCESSING
+                              - CREATED
+                              - CANCELED
+                              - EXPIRED
+                              - APPROVED
+                              - REJECTED
+                              - SENT
+                              - RECEIVED
+                              example: CREATED
+                              description: Status da solicitação por push - jornada 1
+                              title: RequestStatus
+                          title: RequestResponse
+                      status:
+                        type: string
+                        enum:
+                        - PROCESSING
+                        - CREATED
+                        - CANCELED
+                        - CANCELING
+                        - EXPIRED
+                        - APPROVED
+                        - REJECTED
+                        - FINISHED
+                        example: CREATED
+                        description: Status da autorização
+                        title: AuthorizationStatus
+                      totalInstallments:
+                        type: number
+                        example: 10
+                        description: Total de pagamentos previstos (existirá apenas caso a autorização do Pix Automático tenha uma data final definida)
+                        title: TotalInstallments
+                      payee:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            example: VECHI CONSULTORIA E PROJETOS LTDA
+                            description: Nome do recebedor
+                            title: PayeeName
+                          personType:
+                            type: string
+                            enum:
+                            - J
+                            - F
+                            example: J
+                            description: Tipo do documento
+                            title: PersonType
+                          taxId:
+                            type: string
+                            example: '37297902000141'
+                            description: Documento do recebedor
+                            title: TaxId
+                          account:
+                            type: object
+                            required:
+                            - number
+                            - branch
+                            properties:
+                              number:
+                                type: string
+                                example: 003886850
+                                description: Número da conta com dígito
+                                title: AccountNumber
+                              branch:
+                                type: string
+                                example: '50'
+                                description: Agência bancária
+                                title: AccountBranch
+                            description: Dados da conta do recebedor
+                            title: Account
+                        title: Payee
+                      payer:
+                        type: object
+                        properties:
+                          taxId:
+                            type: string
+                            example: '***071010**'
+                            description: Documento do pagador
+                            title: PayerTaxId
+                          personType:
+                            type: string
+                            enum:
+                            - J
+                            - F
+                            example: J
+                            description: Tipo do documento
+                            title: PersonType
+                          account:
+                            type: object
+                            required:
+                            - number
+                            - branch
+                            properties:
+                              number:
+                                type: string
+                                example: 003886850
+                                description: Número da conta com dígito
+                                title: AccountNumber
+                              branch:
+                                type: string
+                                example: '50'
+                                description: Agência bancária
+                                title: AccountBranch
+                              ispbParticipant:
+                                type: string
+                                minLength: 8
+                                maxLength: 8
+                                example: '00000000'
+                                description: Código de identificação da instituição
+                                title: IspbParticipant
+                            title: PayerAccount
+                        title: Payer
+                      activation:
+                        type: object
+                        required:
+                        - journeyType
+                        properties:
+                          journeyType:
+                            type: string
+                            enum:
+                            - JOURNEY_1
+                            - JOURNEY_2
+                            - JOURNEY_3
+                            - JOURNEY_4
+                            - WAITING_DEFINITION
+                            example: JOURNEY_1
+                            description: Tipo de jornada da ativação
+                            title: JourneyType
+                          txId:
+                            type: string
+                            minLength: 26
+                            maxLength: 35
+                            example: 56487asd654ads8qwe4500000awwa
+                            description: Identificador da transação
+                            title: TxId
+                        title: Activation
+                      origin:
+                        type: string
+                        example: WEB
+                        title: Origin
+                      location:
+                        type: object
+                        required:
+                        - locationId
+                        - payeeTaxId
+                        - typeCob
+                        - createdAt
+                        - description
+                        properties:
+                          locationId:
+                            type: string
+                            example: 323f2ecf-63e3-4fc8-a1d1-debce1546066
+                            description: Id da location
+                            title: LocationId
+                          payeeTaxId:
+                            type: string
+                            example: '37297902000141'
+                            description: Documento do recebedor
+                            title: TaxId
+                          typeCob:
+                            type: string
+                            example: REC
+                            description: Tipo da location
+                            title: LocationType
+                          createdAt:
+                            type: string
+                            example: '2025-04-15T21:00:44.875Z'
+                            description: Data da criação
+                            title: CreatedAt
+                          description:
+                            type: string
+                            example: REC
+                            description: Descrição da location
+                            title: LocationDescription
+                        title: Location
+                      qrCodeInfo:
+                        type: object
+                        properties:
+                          emv:
+                            type: string
+                            example: 00020101021226930014br.gov.bcb.pix2571api-h.developer.btgpactual.com/pc/p/v2/573597357dc04cd388ebf85dfdd4d1cd5204000053039865802BR5925INSTITUTO PACTO PELO ESPO6009SAO PAULO61080453813362070503***80970014
+                            description: Códido do copia e cola para leitura
+                            title: Emv
+                          journeyType:
+                            type: string
+                            enum:
+                            - JOURNEY_1
+                            - JOURNEY_2
+                            - JOURNEY_3
+                            - JOURNEY_4
+                            - WAITING_DEFINITION
+                            example: JOURNEY_1
+                            description: Tipo de jornada da ativação
+                            title: JourneyType
+                        title: QrCodeInfo
+                      externalId:
+                        type: string
+                        format: uuid
+                        example: ad0a3873-cec6-41c6-9147-792707084835
+                        description: Id externo autorização
+                        title: ExternalId
+                    title: AuthorizationDataResponse
+                  _links:
+                    type: object
+                    properties:
+                      previous:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            example: /AutomaticPix/authorization?cursor=eyJwYWdlTnVtYmVyIjoiMiIsInBhZ2VTaXplIjoiMTAiLCJ4LWlkZW50aWZpY2F0aW9uIjoiNDczMjg2NDkwMDAxMDgifQ==
+                          method:
+                            type: string
+                            example: GET
+                          type:
+                            type: string
+                            example: application/json
+                          rel:
+                            type: string
+                            example: self
+                      next:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            example: /AutomaticPix/authorization?cursor=eyJwYWdlTnVtYmVyIjoiMiIsInBhZ2VTaXplIjoiMTAiLCJ4LWlkZW50aWZpY2F0aW9uIjoiNDczMjg2NDkwMDAxMDgifQ==
+                          method:
+                            type: string
+                            example: GET
+                          type:
+                            type: string
+                            example: application/json
+                          rel:
+                            type: string
+                            example: self
+                    title: Cursor
+                title: ListAuthorizationsResponse
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: InvalidInputError
+                    description: Nome do erro.
+                title: BadRequestErrorResponse
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:internal-server-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: InternalServerError
+                    description: Nome do erro.
+                title: InternalServerErrorResponse
+      security:
+      - read:
+        - brn:btg:empresas:banking:automatic-pix
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Pix%20Autom%5Cxe1tico/listar-autorizacoes-de-pix-automatico
+components:
+  securitySchemes:
+    write:
+      type: oauth2
+      flows:
+        authorizationCode:
+          tokenUrl: https://id.btgpactual.com/oauth2/token
+          authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+          scopes:
+            brn:btg:empresas:banking:automatic-pix: Criar, modificar e cancelar autorizações e agendamentos de Pix Automático
+    read:
+      type: oauth2
+      flows:
+        authorizationCode:
+          tokenUrl: https://id.btgpactual.com/oauth2/token
+          authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+          scopes:
+            brn:btg:empresas:banking:automatic-pix: Consultar autorizações e agendamentos de Pix Automático
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/1dc94b6a.32cb240b.js
+  - https://developers.empresas.btgpactual.com/assets/js/d6358b8e.bbed056f.js
+  - https://developers.empresas.btgpactual.com/assets/js/4239e9ea.1c43b05d.js
+  - https://developers.empresas.btgpactual.com/assets/js/1aed9a34.26ac3073.js
+  - https://developers.empresas.btgpactual.com/assets/js/a431a7c7.c8c4f4c4.js
+  - https://developers.empresas.btgpactual.com/assets/js/3f5b6675.82a27960.js
+  - https://developers.empresas.btgpactual.com/assets/js/e1eb4c0a.250a08b7.js

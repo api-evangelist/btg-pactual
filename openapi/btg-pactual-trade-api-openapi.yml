@@ -1,0 +1,405 @@
+openapi: 3.2.0
+info:
+  title: SCF - Risco Sacado Trade API
+  description: Esta API tem a finalidade de contratar Antecipações de Recebíveis. Para autenticação é necessário a utilização do fluxo de client credentials para autenticação na documentação da API. `AUTENTICAÇÃO -> Fluxos de Autenticação -> Client Credentials`
+  version: 1.4.1
+  contact:
+    name: Time BTG Empresas
+    email: ol-it-btgempresas@btgpactual.com
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com/v1/scf
+  description: SANDBOX URL
+- url: https://api.empresas.btgpactual.com/v1/scf
+  description: PROD URL
+tags:
+- name: Trade
+paths:
+  /trades/{tradeId}:
+    get:
+      tags:
+      - Trade
+      description: O objetivo dessa rota é pesquisar a posição de uma operação especifica realizada anteriormente.
+      operationId: getTradeById
+      parameters:
+      - in: path
+        name: tradeId
+        required: true
+        description: Id do trade
+        schema:
+          description: Identificador
+          type: string
+          example: '123456'
+      responses:
+        '200':
+          description: Sucesso na consulta de posição de trade.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: '123456'
+                    description: Identificador do trade
+                    title: TradeIdSchema
+                  maturityDate:
+                    type: string
+                    format: date
+                    description: Data de vencimento
+                  contractNumber:
+                    type: string
+                    description: Número de contrato do trade
+                    example: 123-12345
+                  status:
+                    enum:
+                    - Aberto
+                    - EmAgendamento
+                    - Agendado
+                    - EmAprovacao
+                    - Aprovado
+                    - EmAntecipacao
+                    - Antecipado
+                    - Liquidado
+                    - Cancelado
+                    - EmAtraso
+                    - Indisponivel
+                    - Pago
+                    - EmCancelamento
+                    description: Status do trade
+                    type: string
+                    title: ReceivableTradeStatusSchema
+                  balance:
+                    type: object
+                    properties:
+                      principal:
+                        description: Valor de principal da operação
+                        type: number
+                        format: double
+                        example: 123.12
+                      interestArrears:
+                        description: Valor de mora
+                        type: number
+                        format: double
+                        example: 123.12
+                      penaltyFee:
+                        description: Valor de multa
+                        type: number
+                        format: double
+                        example: 123.12
+                      latePaymentFee:
+                        description: Valor de juros
+                        type: number
+                        format: double
+                        example: 123.12
+                title: TradeSchema
+        '400':
+          description: Erro de validação
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                  errorDetails:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        target:
+                          type: string
+                        code:
+                          type: string
+                          enum:
+                          - TRQF0001
+                          - TRQF0002
+                          description: "___\nErrors:\n * TRQF0001 - Identificação do trade invalida\n * TRQF0002 - Trade não encontrado\n"
+                          title: ValidationErrorsTradeEnumSchema
+                title: TradeBadRequestResponseSchema
+        '401':
+          description: Não autorizado
+        '404':
+          description: Trade com esse 'tradeId' não encontrado.
+        default:
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                title: ErrorResponseSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/scf/trades
+        - empresas.btgpactual.com/scf/trades.readonly
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/SCF%20-%20Risco%20Sacado/get-trade-by-id
+      summary: Get trade by id
+      x-summary-source: derived
+  /trades:
+    get:
+      tags:
+      - Trade
+      description: Esta rota serve para consultar a carteira de operações. É obrigatorio o envio das informações do cursor ou do status ou dos tradeIds.
+      operationId: getTrades
+      parameters:
+      - in: query
+        name: status
+        description: Status do trade
+        schema:
+          enum:
+          - Aberto
+          - EmAgendamento
+          - Agendado
+          - EmAprovacao
+          - Aprovado
+          - EmAntecipacao
+          - Antecipado
+          - Liquidado
+          - Cancelado
+          - EmAtraso
+          - Indisponivel
+          - Pago
+          - EmCancelamento
+          description: Status do trade
+          type: string
+          title: ReceivableTradeStatusSchema
+      - in: query
+        name: tradeIds
+        description: Identificadores de trades. Lista de identificadores separados por virgula.
+        schema:
+          type: string
+          example: 123456,654321,135790
+      - in: query
+        name: payerTaxId
+        description: Identificação do sacado
+        schema:
+          type: string
+          description: CNPJ/CPF
+          example: '15996430000182'
+          title: TaxIdSchema
+      - in: query
+        name: payeeTaxId
+        description: Identificação do fornecedor
+        schema:
+          type: string
+          description: CNPJ/CPF
+          example: '15996430000182'
+          title: TaxIdSchema
+      - in: query
+        name: cursor
+        description: Cursor para navegar entre as paginas
+        schema:
+          description: Referência do cursor
+          type: string
+          example: cGFnZT0yJml0ZW1zUGVyUGFnZT0xMCZ0eXBlPW51bGwmc3RhdHVzPVNFTlQ=
+      - in: query
+        name: limit
+        description: Limite de registros por paginação. Permitido de 1 a 10000.
+        schema:
+          description: Limite de registros por paginação
+          type: integer
+          example: 1000
+          minimum: 1
+          maximum: 10000
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  trades:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: '123456'
+                          description: Identificador do trade
+                          title: TradeIdSchema
+                        maturityDate:
+                          type: string
+                          format: date
+                          description: Data de vencimento
+                        contractNumber:
+                          type: string
+                          description: Número de contrato do trade
+                          example: 123-12345
+                        status:
+                          enum:
+                          - Aberto
+                          - EmAgendamento
+                          - Agendado
+                          - EmAprovacao
+                          - Aprovado
+                          - EmAntecipacao
+                          - Antecipado
+                          - Liquidado
+                          - Cancelado
+                          - EmAtraso
+                          - Indisponivel
+                          - Pago
+                          - EmCancelamento
+                          description: Status do trade
+                          type: string
+                          title: ReceivableTradeStatusSchema
+                        balance:
+                          type: object
+                          properties:
+                            principal:
+                              description: Valor de principal da operação
+                              type: number
+                              format: double
+                              example: 123.12
+                            interestArrears:
+                              description: Valor de mora
+                              type: number
+                              format: double
+                              example: 123.12
+                            penaltyFee:
+                              description: Valor de multa
+                              type: number
+                              format: double
+                              example: 123.12
+                            latePaymentFee:
+                              description: Valor de juros
+                              type: number
+                              format: double
+                              example: 123.12
+                      title: TradeSchema
+                  _links:
+                    type: object
+                    properties:
+                      next:
+                        type: object
+                        properties:
+                          href:
+                            description: Link para a pesquisa da proxima pagina
+                            type: string
+                            example: /v1/scf/trades?cursor=cGFnZT0yJml0ZW1zUGVyUGFnZT0xMCZ0eXBlPW51bGwmc3RhdHVzPVNFTlQ=
+                          method:
+                            description: Método do protocolo HTTP
+                            type: string
+                            enum:
+                            - GET
+                            - POST
+                            - PUT
+                            - PATCH
+                            - DELETE
+                            - HEAD
+                            - OPTIONS
+                            example: GET
+                        title: NextCursorSchema
+                title: TradeWalletSchema
+        '400':
+          description: Erro de validação
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                  errorDetails:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        target:
+                          type: string
+                        code:
+                          type: string
+                          enum:
+                          - TSQF0001
+                          - TSQF0002
+                          - TSQF0003
+                          - TSQF0004
+                          - TSQF0005
+                          - TSQF0006
+                          - TSQF0007
+                          - TSQF0008
+                          description: "___\nErrors:\n * TSQF0001 - Recebido outros parametros junto com o parametro de cursor de forma inválida\n * TSQF0002 - Campo  de cursor invalido\n * TSQF0003 - Parametros minimos não informados. Status, cursor ou tradeIds não informados.\n * TSQF0004 - Identificador de trades inválido\n * TSQF0005 - Status do trade inválido\n * TSQF0006 - Identificação do sacado inválido\n * TSQF0007 - Identificação do fornecedor inválido\n * TSQF0008 - Valor de limite de registros inválido\n"
+                          title: ValidationErrorsTradeSummaryEnumSchema
+                title: TradeSummaryBadRequestResponseSchema
+        '401':
+          description: Não autorizado
+        default:
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                title: ErrorResponseSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/scf/trades
+        - empresas.btgpactual.com/scf/trades.readonly
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/SCF%20-%20Risco%20Sacado/get-trades
+      summary: Get trades
+      x-summary-source: derived
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+          scopes:
+            empresas.btgpactual.com/scf/borderos: Scope to borderos
+            empresas.btgpactual.com/scf/borderos.readonly: Scope to borderos read
+            empresas.btgpactual.com/scf/companies: Scope to companies
+            empresas.btgpactual.com/scf/companies.readonly: Scope to companies read
+            empresas.btgpactual.com/scf/operations: Scope to operations
+            empresas.btgpactual.com/scf/operations.readonly: Scope to operations read
+            empresas.btgpactual.com/scf/receivables: Scope to receivables
+            empresas.btgpactual.com/scf/receivables.readonly: Scope to receivables read
+            empresas.btgpactual.com/scf/settlements: Scope to settlements
+            empresas.btgpactual.com/scf/settlements.readonly: Scope to settlements read
+            empresas.btgpactual.com/scf/trades: Scope to trades
+            empresas.btgpactual.com/scf/trades.readonly: Scope to trades read
+            empresas.btgpactual.com/payer-onboardings: Scope to financiers-payer
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/58e6a5f6.d603bf94.js
+  - https://developers.empresas.btgpactual.com/assets/js/0e797970.5126fe3c.js
+  - https://developers.empresas.btgpactual.com/assets/js/4ac3e447.07b626b1.js
+  - https://developers.empresas.btgpactual.com/assets/js/17b7cd34.31efc121.js
+  - https://developers.empresas.btgpactual.com/assets/js/69c7c660.61e0039c.js
+  - https://developers.empresas.btgpactual.com/assets/js/d83fedfc.69d77805.js
+  - https://developers.empresas.btgpactual.com/assets/js/091533f9.2c5d3d51.js
+  - https://developers.empresas.btgpactual.com/assets/js/51cd407d.7f26ecb2.js
+  - https://developers.empresas.btgpactual.com/assets/js/522d5b94.745f73fc.js
+  - https://developers.empresas.btgpactual.com/assets/js/a9f41984.1f49d7c9.js
+  - https://developers.empresas.btgpactual.com/assets/js/10287afc.7e9c97f3.js
+  - https://developers.empresas.btgpactual.com/assets/js/6687c7ea.dec258dc.js
+  - https://developers.empresas.btgpactual.com/assets/js/fb9f95a5.4835ae79.js
+  - https://developers.empresas.btgpactual.com/assets/js/0938da15.d9b57531.js

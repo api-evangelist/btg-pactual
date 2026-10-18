@@ -1,0 +1,397 @@
+openapi: 3.2.0
+info:
+  title: SCF - Risco Sacado Company API
+  description: Esta API tem a finalidade de contratar Antecipações de Recebíveis. Para autenticação é necessário a utilização do fluxo de client credentials para autenticação na documentação da API. `AUTENTICAÇÃO -> Fluxos de Autenticação -> Client Credentials`
+  version: 1.4.1
+  contact:
+    name: Time BTG Empresas
+    email: ol-it-btgempresas@btgpactual.com
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com/v1/scf
+  description: SANDBOX URL
+- url: https://api.empresas.btgpactual.com/v1/scf
+  description: PROD URL
+tags:
+- name: Company
+paths:
+  /companies/commercial-strategies:
+    post:
+      tags:
+      - Company
+      description: Associação de lote de empresas a uma estratégia comercial.
+      operationId: addCompaniesToCommercialStrategyRequest
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - companies
+              - strategyUuid
+              properties:
+                companies:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - taxId
+                    properties:
+                      taxId:
+                        type: string
+                      name:
+                        type: string
+                    title: CompanyNameTaxIdDto
+                strategyUuid:
+                  type: string
+      responses:
+        '200':
+          description: Define se houve sucesso ou erro ao executar o fluxo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  isValid:
+                    type: boolean
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        errorMessage:
+                          type: string
+                          description: Erro ocorrido
+                        errorCode:
+                          type: string
+                          enum:
+                          - CACSQF0001
+                          - CACSQF0002
+                          - CACSQF0003
+                          - CACSQF0004
+                          - CACSQF0005
+                          - CACSQF0006
+                          - CACSQF0007
+                          - CACSQF0008
+                          - CACSQF0009
+                          description: '___
+
+                            Errors:
+
+                            * CACSQF0001 - Commercial strategy UUID must be provided.
+
+                            * CACSQF0002 - Commercial strategy not found.
+
+                            * CACSQF0003 - Incomplete commercial strategy.
+
+                            * CACSQF0004 - At least one company must be provided.
+
+                            * CACSQF0005 - Company TaxId must be provided.
+
+                            * CACSQF0006 - Can''t add company without name.
+
+                            * CACSQF0007 - Company with id {companyId} had error on associate with commercial strategy {strategyUuid}.
+
+                            * CACSQF0008 - Error on creating counterparties.
+
+                            '
+                        propertyName:
+                          type: string
+                          description: Propriedade que houve erro.
+                title: ValidationResultSchema
+        '400':
+          description: Define se houve sucesso ou erro ao executar o fluxo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  isValid:
+                    type: boolean
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        errorMessage:
+                          type: string
+                          description: Erro ocorrido
+                        errorCode:
+                          type: string
+                          enum:
+                          - CACSQF0001
+                          - CACSQF0002
+                          - CACSQF0003
+                          - CACSQF0004
+                          - CACSQF0005
+                          - CACSQF0006
+                          - CACSQF0007
+                          - CACSQF0008
+                          - CACSQF0009
+                          description: '___
+
+                            Errors:
+
+                            * CACSQF0001 - Commercial strategy UUID must be provided.
+
+                            * CACSQF0002 - Commercial strategy not found.
+
+                            * CACSQF0003 - Incomplete commercial strategy.
+
+                            * CACSQF0004 - At least one company must be provided.
+
+                            * CACSQF0005 - Company TaxId must be provided.
+
+                            * CACSQF0006 - Can''t add company without name.
+
+                            * CACSQF0007 - Company with id {companyId} had error on associate with commercial strategy {strategyUuid}.
+
+                            * CACSQF0008 - Error on creating counterparties.
+
+                            '
+                        propertyName:
+                          type: string
+                          description: Propriedade que houve erro.
+                title: ValidationResultSchema
+        '401':
+          description: Não autorizado
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/scf/companies
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/SCF%20-%20Risco%20Sacado/add-companies-to-commercial-strategy-request
+      summary: Add companies to commercial strategy request
+      x-summary-source: derived
+  /companies/{payerTaxId}/payees:
+    post:
+      tags:
+      - Company
+      description: Esta rota serve para cadastrar novos fornecedores para o sacado.
+      operationId: createCompany
+      parameters:
+      - in: path
+        name: payerTaxId
+        description: Identificação do sacado
+        schema:
+          type: string
+          description: CNPJ/CPF
+          example: '15996430000182'
+          title: TaxIdSchema
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - payees
+              properties:
+                payees:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - payee
+                    properties:
+                      strategy:
+                        description: Guid da Estratégia
+                        type: string
+                      payee:
+                        type: object
+                        required:
+                        - taxId
+                        properties:
+                          taxId:
+                            description: Documento do fornecedor
+                            type: string
+                          legalName:
+                            description: Razão social do fornecedor
+                            type: string
+                        title: CompanyDto
+                      invite:
+                        type: object
+                        properties:
+                          email:
+                            description: E-mail para envio do invite
+                            type: string
+                        title: InvitationDto
+                    title: CreateCompanyRequestDto
+        required: true
+      responses:
+        '202':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  description: Documento dos fornecedores
+                  type: object
+                  properties:
+                    taxId:
+                      type: string
+                      description: CNPJ/CPF
+                      example: '15996430000182'
+                      title: TaxIdSchema
+        '400':
+          description: Erro de validação
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                  errorDetails:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        target:
+                          type: string
+                        code:
+                          type: string
+                          enum:
+                          - CIQF0001
+                          - CIQF0002
+                          - CIQF0003
+                          - CIQF0004
+                          - CIQF0005
+                          - CIQF0006
+                          - CIQF0007
+                          - CIQF0008
+                          - CIQF0009
+                          description: "___\nErrors:\n * CIQF0001 - Identificação do Sacado necessária\n * CIQF0002 - Sacado inválido\n * CIQF0003 - Necessário ao menos 1 Fornecedor\n * CIQF0004 - Estratégia inválida\n * CIQF0005 - Razão social do Fornecedor necessária\n * CIQF0006 - Identificação do Fornecedor necessária\n * CIQF0007 - CPF do Fornecedor inválido\n * CIQF0008 - CNPJ do Fornecedor inválido\n * CIQF0009 - E-mail para envio de invite inválido\n"
+                          title: ValidationErrorsCompanyEnumSchema
+                title: CompanyBadRequestResponseSchema
+        '401':
+          description: Não autorizado
+        default:
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                title: ErrorResponseSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/scf/companies
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/SCF%20-%20Risco%20Sacado/create-company
+      summary: Create company
+      x-summary-source: derived
+  /companies/{payerTaxId}/payees/{payeeTaxId}:
+    get:
+      tags:
+      - Company
+      description: Consulta dos status de onboardings do fornecedor identificado por 'payeeTaxId'.
+      operationId: getCompanyById
+      parameters:
+      - in: path
+        name: payerTaxId
+        description: Identificação do sacado
+        schema:
+          type: string
+          description: CNPJ/CPF
+          example: '15996430000182'
+          title: TaxIdSchema
+        required: true
+      - in: path
+        name: payeeTaxId
+        description: Identificação do fornecedor
+        schema:
+          type: string
+          description: CNPJ/CPF
+          example: '15996430000182'
+          title: TaxIdSchema
+        required: true
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  taxId:
+                    description: Documento do fornecedor
+                    type: string
+                  status:
+                    type: string
+                    description: Status do fornecedor
+                title: CompanyOnboardingsDto
+        '401':
+          description: Não autorizado
+        '404':
+          description: Empresa com esse 'payeeTaxId' não encontrada.
+        default:
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                title: ErrorResponseSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/scf/companies
+        - empresas.btgpactual.com/scf/companies.readonly
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/SCF%20-%20Risco%20Sacado/get-company-by-id
+      summary: Get company by id
+      x-summary-source: derived
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+          scopes:
+            empresas.btgpactual.com/scf/borderos: Scope to borderos
+            empresas.btgpactual.com/scf/borderos.readonly: Scope to borderos read
+            empresas.btgpactual.com/scf/companies: Scope to companies
+            empresas.btgpactual.com/scf/companies.readonly: Scope to companies read
+            empresas.btgpactual.com/scf/operations: Scope to operations
+            empresas.btgpactual.com/scf/operations.readonly: Scope to operations read
+            empresas.btgpactual.com/scf/receivables: Scope to receivables
+            empresas.btgpactual.com/scf/receivables.readonly: Scope to receivables read
+            empresas.btgpactual.com/scf/settlements: Scope to settlements
+            empresas.btgpactual.com/scf/settlements.readonly: Scope to settlements read
+            empresas.btgpactual.com/scf/trades: Scope to trades
+            empresas.btgpactual.com/scf/trades.readonly: Scope to trades read
+            empresas.btgpactual.com/payer-onboardings: Scope to financiers-payer
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/58e6a5f6.d603bf94.js
+  - https://developers.empresas.btgpactual.com/assets/js/0e797970.5126fe3c.js
+  - https://developers.empresas.btgpactual.com/assets/js/4ac3e447.07b626b1.js
+  - https://developers.empresas.btgpactual.com/assets/js/17b7cd34.31efc121.js
+  - https://developers.empresas.btgpactual.com/assets/js/69c7c660.61e0039c.js
+  - https://developers.empresas.btgpactual.com/assets/js/d83fedfc.69d77805.js
+  - https://developers.empresas.btgpactual.com/assets/js/091533f9.2c5d3d51.js
+  - https://developers.empresas.btgpactual.com/assets/js/51cd407d.7f26ecb2.js
+  - https://developers.empresas.btgpactual.com/assets/js/522d5b94.745f73fc.js
+  - https://developers.empresas.btgpactual.com/assets/js/a9f41984.1f49d7c9.js
+  - https://developers.empresas.btgpactual.com/assets/js/10287afc.7e9c97f3.js
+  - https://developers.empresas.btgpactual.com/assets/js/6687c7ea.dec258dc.js
+  - https://developers.empresas.btgpactual.com/assets/js/fb9f95a5.4835ae79.js
+  - https://developers.empresas.btgpactual.com/assets/js/0938da15.d9b57531.js

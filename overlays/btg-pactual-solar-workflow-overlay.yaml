@@ -1,0 +1,63 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist overlay for Solar-Workflow
+  version: 1.0.0
+extends: ../openapi/_original/btg-pactual-solar-workflow-openapi.yml
+x-generated: '2026-10-18'
+x-method: generated
+x-source: openapi/btg-pactual-solar-workflow-openapi.yml
+x-rationale: Adds provenance metadata and, where the BTG Pactual contract omits them, derived operationIds (method + path) so MCP candidate tools can bind to stable names. The original OpenAPI is not mutated.
+actions:
+- target: $.info
+  description: Record API Evangelist provenance for this BTG Pactual Empresas contract.
+  update:
+    x-apievangelist-provider: btg-pactual
+    x-apievangelist-source: openapi/btg-pactual-solar-workflow-openapi.yml
+- target: $.paths['/form/solar/proposals/accept'].post
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: postSolarProposalsAccept
+- target: $.paths['/customers/{customerIdentification}/operators/{operatorIdentification}/documents/{externalIdentification}'].get
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: getCustomersOperatorsDocumentsByExternalIdentification
+- target: $.paths['/form/solar/income-auth-cards'].post
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: postIncomeAuthCards
+- target: $.paths['/form/solar/render-proposals'].post
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: postSolarRenderProposals
+- target: $.paths['/form/solar/disbursement-receipts'].post
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: postSolarDisbursementReceipts
+- target: $.paths['/form/solar/notify-email-proposals'].post
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: postNotifyEmailProposals
+- target: $.paths['/form/solar/invoices'].post
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: postFormSolarInvoices
+- target: $.paths['/form/solar/invoices/pendencies'].post
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: postSolarInvoicesPendencies
+- target: $.paths['/form/solar/receipts/installation'].post
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: postSolarReceiptsInstallation
+- target: $.paths['/form/solar/start'].post
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: postFormSolarStart
+- target: $.paths['/form/solar/documents'].post
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: postFormSolarDocuments
+- target: $.paths['/form/solar/documents/pendencies'].post
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: postSolarDocumentsPendencies

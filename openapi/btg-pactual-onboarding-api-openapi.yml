@@ -1,0 +1,1111 @@
+openapi: 3.2.0
+info:
+  title: Banking - Payroll Onboarding API
+  version: v1
+  description: API para gestão de folha de pagamentos
+  termsOfService: https://www.btgpactual.com/empresas/termos-e-politicas/
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com
+  description: Sandbox
+- url: https://api.empresas.btgpactual.com
+  description: Produção
+tags:
+- name: Onboarding
+paths:
+  /{companyId}/banking/payroll/onboarding/issuers:
+    get:
+      tags:
+      - Onboarding
+      description: 'Retorna a lista de emissores de documento de identidade disponíveis para onboarding. Use o campo `id` de cada emissor como valor de `issuingAuthority` ao cadastrar colaboradores via `POST /{companyId}/banking/payroll/onboarding/employees`.
+
+
+        ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o Wiremock
+
+
+        > No sandbox este endpoint requer a utilização de Sandbox Headers
+
+
+        | Header | Descrição | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      operationId: listIssuers
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type:
+                      - string
+                      - 'null'
+                    name:
+                      type:
+                      - string
+                      - 'null'
+                  additionalProperties: false
+                  title: IssuerResponse
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type:
+                      - string
+                      - 'null'
+                    name:
+                      type:
+                      - string
+                      - 'null'
+                  additionalProperties: false
+                  title: IssuerResponse
+            text/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type:
+                      - string
+                      - 'null'
+                    name:
+                      type:
+                      - string
+                      - 'null'
+                  additionalProperties: false
+                  title: IssuerResponse
+        '500':
+          description: Server Error
+          content:
+            text/plain:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type:
+                    - string
+                    - 'null'
+                  title:
+                    type:
+                    - string
+                    - 'null'
+                  status:
+                    type: integer
+                    format: int32
+                  detail:
+                    type:
+                    - string
+                    - 'null'
+                  invalidParams:
+                    type:
+                    - array
+                    - 'null'
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type:
+                          - string
+                          - 'null'
+                        reason:
+                          type:
+                          - string
+                          - 'null'
+                        value:
+                          type:
+                          - string
+                          - 'null'
+                      additionalProperties: false
+                      title: PayrollInvalidParam
+                additionalProperties: false
+                title: PayrollProblemDetails
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type:
+                    - string
+                    - 'null'
+                  title:
+                    type:
+                    - string
+                    - 'null'
+                  status:
+                    type: integer
+                    format: int32
+                  detail:
+                    type:
+                    - string
+                    - 'null'
+                  invalidParams:
+                    type:
+                    - array
+                    - 'null'
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type:
+                          - string
+                          - 'null'
+                        reason:
+                          type:
+                          - string
+                          - 'null'
+                        value:
+                          type:
+                          - string
+                          - 'null'
+                      additionalProperties: false
+                      title: PayrollInvalidParam
+                additionalProperties: false
+                title: PayrollProblemDetails
+            text/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type:
+                    - string
+                    - 'null'
+                  title:
+                    type:
+                    - string
+                    - 'null'
+                  status:
+                    type: integer
+                    format: int32
+                  detail:
+                    type:
+                    - string
+                    - 'null'
+                  invalidParams:
+                    type:
+                    - array
+                    - 'null'
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type:
+                          - string
+                          - 'null'
+                        reason:
+                          type:
+                          - string
+                          - 'null'
+                        value:
+                          type:
+                          - string
+                          - 'null'
+                      additionalProperties: false
+                      title: PayrollInvalidParam
+                additionalProperties: false
+                title: PayrollProblemDetails
+      security:
+      - read:
+        - brn:btg:empresas:banking:payroll
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Payroll/list-issuers
+      summary: List issuers
+      x-summary-source: derived
+  /{companyId}/banking/payroll/onboarding/employees:
+    post:
+      tags:
+      - Onboarding
+      description: 'Submete um ou mais colaboradores para abertura de conta BTG. O processamento é assíncrono e retorna `202 Accepted` imediatamente.
+
+
+        O campo `issuingAuthority` aceita apenas os códigos retornados por `GET /{companyId}/banking/payroll/onboarding/issuers`.
+
+
+        ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o Wiremock
+
+
+        > No sandbox este endpoint requer a utilização de Sandbox Headers
+
+
+        | Header | Descrição | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      operationId: submitOnboardingEmployees
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: X-Idempotency-Key
+        in: header
+        description: Chave de idempotência (UUID v4). Evita reprocessamento em caso de retentativa.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json-patch+json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  companyTaxId:
+                    type:
+                    - string
+                    - 'null'
+                  name:
+                    type:
+                    - string
+                    - 'null'
+                  taxId:
+                    type:
+                    - string
+                    - 'null'
+                  email:
+                    type:
+                    - string
+                    - 'null'
+                  phone:
+                    type:
+                    - string
+                    - 'null'
+                  admissionDate:
+                    type:
+                    - string
+                    - 'null'
+                  grossMonthlySalary:
+                    type: number
+                    format: double
+                  accountType:
+                    type:
+                    - string
+                    - 'null'
+                  idNumber:
+                    type:
+                    - string
+                    - 'null'
+                  issuingAuthority:
+                    type:
+                    - string
+                    - 'null'
+                    description: Código do emissor do documento de identidade. Deve ser um dos valores retornados por GET /payroll/issuers. Valores arbitrários são rejeitados com 400.
+                  address:
+                    type: object
+                    properties:
+                      street:
+                        type:
+                        - string
+                        - 'null'
+                      number:
+                        type:
+                        - string
+                        - 'null'
+                      neighborhood:
+                        type:
+                        - string
+                        - 'null'
+                      zipCode:
+                        type:
+                        - string
+                        - 'null'
+                    additionalProperties: false
+                    title: AddressRequest
+                  isUnderage:
+                    type: boolean
+                  representative:
+                    type: object
+                    properties:
+                      taxId:
+                        type:
+                        - string
+                        - 'null'
+                      phone:
+                        type:
+                        - string
+                        - 'null'
+                      email:
+                        type:
+                        - string
+                        - 'null'
+                      idNumber:
+                        type:
+                        - string
+                        - 'null'
+                      issuingAuthority:
+                        type:
+                        - string
+                        - 'null'
+                    additionalProperties: false
+                    title: LegalRepresentativeRequest
+                additionalProperties: false
+                title: EmployeeRequest
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  companyTaxId:
+                    type:
+                    - string
+                    - 'null'
+                  name:
+                    type:
+                    - string
+                    - 'null'
+                  taxId:
+                    type:
+                    - string
+                    - 'null'
+                  email:
+                    type:
+                    - string
+                    - 'null'
+                  phone:
+                    type:
+                    - string
+                    - 'null'
+                  admissionDate:
+                    type:
+                    - string
+                    - 'null'
+                  grossMonthlySalary:
+                    type: number
+                    format: double
+                  accountType:
+                    type:
+                    - string
+                    - 'null'
+                  idNumber:
+                    type:
+                    - string
+                    - 'null'
+                  issuingAuthority:
+                    type:
+                    - string
+                    - 'null'
+                    description: Código do emissor do documento de identidade. Deve ser um dos valores retornados por GET /payroll/issuers. Valores arbitrários são rejeitados com 400.
+                  address:
+                    type: object
+                    properties:
+                      street:
+                        type:
+                        - string
+                        - 'null'
+                      number:
+                        type:
+                        - string
+                        - 'null'
+                      neighborhood:
+                        type:
+                        - string
+                        - 'null'
+                      zipCode:
+                        type:
+                        - string
+                        - 'null'
+                    additionalProperties: false
+                    title: AddressRequest
+                  isUnderage:
+                    type: boolean
+                  representative:
+                    type: object
+                    properties:
+                      taxId:
+                        type:
+                        - string
+                        - 'null'
+                      phone:
+                        type:
+                        - string
+                        - 'null'
+                      email:
+                        type:
+                        - string
+                        - 'null'
+                      idNumber:
+                        type:
+                        - string
+                        - 'null'
+                      issuingAuthority:
+                        type:
+                        - string
+                        - 'null'
+                    additionalProperties: false
+                    title: LegalRepresentativeRequest
+                additionalProperties: false
+                title: EmployeeRequest
+          text/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  companyTaxId:
+                    type:
+                    - string
+                    - 'null'
+                  name:
+                    type:
+                    - string
+                    - 'null'
+                  taxId:
+                    type:
+                    - string
+                    - 'null'
+                  email:
+                    type:
+                    - string
+                    - 'null'
+                  phone:
+                    type:
+                    - string
+                    - 'null'
+                  admissionDate:
+                    type:
+                    - string
+                    - 'null'
+                  grossMonthlySalary:
+                    type: number
+                    format: double
+                  accountType:
+                    type:
+                    - string
+                    - 'null'
+                  idNumber:
+                    type:
+                    - string
+                    - 'null'
+                  issuingAuthority:
+                    type:
+                    - string
+                    - 'null'
+                    description: Código do emissor do documento de identidade. Deve ser um dos valores retornados por GET /payroll/issuers. Valores arbitrários são rejeitados com 400.
+                  address:
+                    type: object
+                    properties:
+                      street:
+                        type:
+                        - string
+                        - 'null'
+                      number:
+                        type:
+                        - string
+                        - 'null'
+                      neighborhood:
+                        type:
+                        - string
+                        - 'null'
+                      zipCode:
+                        type:
+                        - string
+                        - 'null'
+                    additionalProperties: false
+                    title: AddressRequest
+                  isUnderage:
+                    type: boolean
+                  representative:
+                    type: object
+                    properties:
+                      taxId:
+                        type:
+                        - string
+                        - 'null'
+                      phone:
+                        type:
+                        - string
+                        - 'null'
+                      email:
+                        type:
+                        - string
+                        - 'null'
+                      idNumber:
+                        type:
+                        - string
+                        - 'null'
+                      issuingAuthority:
+                        type:
+                        - string
+                        - 'null'
+                    additionalProperties: false
+                    title: LegalRepresentativeRequest
+                additionalProperties: false
+                title: EmployeeRequest
+          application/*+json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  companyTaxId:
+                    type:
+                    - string
+                    - 'null'
+                  name:
+                    type:
+                    - string
+                    - 'null'
+                  taxId:
+                    type:
+                    - string
+                    - 'null'
+                  email:
+                    type:
+                    - string
+                    - 'null'
+                  phone:
+                    type:
+                    - string
+                    - 'null'
+                  admissionDate:
+                    type:
+                    - string
+                    - 'null'
+                  grossMonthlySalary:
+                    type: number
+                    format: double
+                  accountType:
+                    type:
+                    - string
+                    - 'null'
+                  idNumber:
+                    type:
+                    - string
+                    - 'null'
+                  issuingAuthority:
+                    type:
+                    - string
+                    - 'null'
+                    description: Código do emissor do documento de identidade. Deve ser um dos valores retornados por GET /payroll/issuers. Valores arbitrários são rejeitados com 400.
+                  address:
+                    type: object
+                    properties:
+                      street:
+                        type:
+                        - string
+                        - 'null'
+                      number:
+                        type:
+                        - string
+                        - 'null'
+                      neighborhood:
+                        type:
+                        - string
+                        - 'null'
+                      zipCode:
+                        type:
+                        - string
+                        - 'null'
+                    additionalProperties: false
+                    title: AddressRequest
+                  isUnderage:
+                    type: boolean
+                  representative:
+                    type: object
+                    properties:
+                      taxId:
+                        type:
+                        - string
+                        - 'null'
+                      phone:
+                        type:
+                        - string
+                        - 'null'
+                      email:
+                        type:
+                        - string
+                        - 'null'
+                      idNumber:
+                        type:
+                        - string
+                        - 'null'
+                      issuingAuthority:
+                        type:
+                        - string
+                        - 'null'
+                    additionalProperties: false
+                    title: LegalRepresentativeRequest
+                additionalProperties: false
+                title: EmployeeRequest
+      responses:
+        '202':
+          description: Accepted
+          content:
+            text/plain:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type:
+                    - string
+                    - 'null'
+                additionalProperties: false
+                title: SubmitEmployeesResponse
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type:
+                    - string
+                    - 'null'
+                additionalProperties: false
+                title: SubmitEmployeesResponse
+            text/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type:
+                    - string
+                    - 'null'
+                additionalProperties: false
+                title: SubmitEmployeesResponse
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type:
+                    - string
+                    - 'null'
+                  title:
+                    type:
+                    - string
+                    - 'null'
+                  status:
+                    type: integer
+                    format: int32
+                  detail:
+                    type:
+                    - string
+                    - 'null'
+                  invalidParams:
+                    type:
+                    - array
+                    - 'null'
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type:
+                          - string
+                          - 'null'
+                        reason:
+                          type:
+                          - string
+                          - 'null'
+                        value:
+                          type:
+                          - string
+                          - 'null'
+                      additionalProperties: false
+                      title: PayrollInvalidParam
+                additionalProperties: false
+                title: PayrollProblemDetails
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type:
+                    - string
+                    - 'null'
+                  title:
+                    type:
+                    - string
+                    - 'null'
+                  status:
+                    type: integer
+                    format: int32
+                  detail:
+                    type:
+                    - string
+                    - 'null'
+                  invalidParams:
+                    type:
+                    - array
+                    - 'null'
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type:
+                          - string
+                          - 'null'
+                        reason:
+                          type:
+                          - string
+                          - 'null'
+                        value:
+                          type:
+                          - string
+                          - 'null'
+                      additionalProperties: false
+                      title: PayrollInvalidParam
+                additionalProperties: false
+                title: PayrollProblemDetails
+            text/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type:
+                    - string
+                    - 'null'
+                  title:
+                    type:
+                    - string
+                    - 'null'
+                  status:
+                    type: integer
+                    format: int32
+                  detail:
+                    type:
+                    - string
+                    - 'null'
+                  invalidParams:
+                    type:
+                    - array
+                    - 'null'
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type:
+                          - string
+                          - 'null'
+                        reason:
+                          type:
+                          - string
+                          - 'null'
+                        value:
+                          type:
+                          - string
+                          - 'null'
+                      additionalProperties: false
+                      title: PayrollInvalidParam
+                additionalProperties: false
+                title: PayrollProblemDetails
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type:
+                    - string
+                    - 'null'
+                  title:
+                    type:
+                    - string
+                    - 'null'
+                  status:
+                    type: integer
+                    format: int32
+                  detail:
+                    type:
+                    - string
+                    - 'null'
+                  invalidParams:
+                    type:
+                    - array
+                    - 'null'
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type:
+                          - string
+                          - 'null'
+                        reason:
+                          type:
+                          - string
+                          - 'null'
+                        value:
+                          type:
+                          - string
+                          - 'null'
+                      additionalProperties: false
+                      title: PayrollInvalidParam
+                additionalProperties: false
+                title: PayrollProblemDetails
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type:
+                    - string
+                    - 'null'
+                  title:
+                    type:
+                    - string
+                    - 'null'
+                  status:
+                    type: integer
+                    format: int32
+                  detail:
+                    type:
+                    - string
+                    - 'null'
+                  invalidParams:
+                    type:
+                    - array
+                    - 'null'
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type:
+                          - string
+                          - 'null'
+                        reason:
+                          type:
+                          - string
+                          - 'null'
+                        value:
+                          type:
+                          - string
+                          - 'null'
+                      additionalProperties: false
+                      title: PayrollInvalidParam
+                additionalProperties: false
+                title: PayrollProblemDetails
+            text/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type:
+                    - string
+                    - 'null'
+                  title:
+                    type:
+                    - string
+                    - 'null'
+                  status:
+                    type: integer
+                    format: int32
+                  detail:
+                    type:
+                    - string
+                    - 'null'
+                  invalidParams:
+                    type:
+                    - array
+                    - 'null'
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type:
+                          - string
+                          - 'null'
+                        reason:
+                          type:
+                          - string
+                          - 'null'
+                        value:
+                          type:
+                          - string
+                          - 'null'
+                      additionalProperties: false
+                      title: PayrollInvalidParam
+                additionalProperties: false
+                title: PayrollProblemDetails
+        '500':
+          description: Server Error
+          content:
+            text/plain:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type:
+                    - string
+                    - 'null'
+                  title:
+                    type:
+                    - string
+                    - 'null'
+                  status:
+                    type: integer
+                    format: int32
+                  detail:
+                    type:
+                    - string
+                    - 'null'
+                  invalidParams:
+                    type:
+                    - array
+                    - 'null'
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type:
+                          - string
+                          - 'null'
+                        reason:
+                          type:
+                          - string
+                          - 'null'
+                        value:
+                          type:
+                          - string
+                          - 'null'
+                      additionalProperties: false
+                      title: PayrollInvalidParam
+                additionalProperties: false
+                title: PayrollProblemDetails
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type:
+                    - string
+                    - 'null'
+                  title:
+                    type:
+                    - string
+                    - 'null'
+                  status:
+                    type: integer
+                    format: int32
+                  detail:
+                    type:
+                    - string
+                    - 'null'
+                  invalidParams:
+                    type:
+                    - array
+                    - 'null'
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type:
+                          - string
+                          - 'null'
+                        reason:
+                          type:
+                          - string
+                          - 'null'
+                        value:
+                          type:
+                          - string
+                          - 'null'
+                      additionalProperties: false
+                      title: PayrollInvalidParam
+                additionalProperties: false
+                title: PayrollProblemDetails
+            text/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type:
+                    - string
+                    - 'null'
+                  title:
+                    type:
+                    - string
+                    - 'null'
+                  status:
+                    type: integer
+                    format: int32
+                  detail:
+                    type:
+                    - string
+                    - 'null'
+                  invalidParams:
+                    type:
+                    - array
+                    - 'null'
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type:
+                          - string
+                          - 'null'
+                        reason:
+                          type:
+                          - string
+                          - 'null'
+                        value:
+                          type:
+                          - string
+                          - 'null'
+                      additionalProperties: false
+                      title: PayrollInvalidParam
+                additionalProperties: false
+                title: PayrollProblemDetails
+      security:
+      - write:
+        - brn:btg:empresas:banking:payroll
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Payroll/submit-onboarding-employees
+      summary: Submit onboarding employees
+      x-summary-source: derived
+components:
+  securitySchemes:
+    write:
+      type: oauth2
+      flows:
+        authorizationCode:
+          tokenUrl: https://id.btgpactual.com/oauth2/token
+          authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+          scopes:
+            brn:btg:empresas:banking:payroll: Emitir, consultar e alterar cobranças
+    read:
+      type: oauth2
+      flows:
+        authorizationCode:
+          tokenUrl: https://id.btgpactual.com/oauth2/token
+          authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+          scopes:
+            brn:btg:empresas:banking:payroll: Emitir, consultar e alterar cobranças
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/38973012.25b9cd62.js
+  - https://developers.empresas.btgpactual.com/assets/js/598e9e63.fdb89eb4.js
+  - https://developers.empresas.btgpactual.com/assets/js/e5ef9134.b4bf3d3f.js
+  - https://developers.empresas.btgpactual.com/assets/js/ea18104e.f75d22d9.js
+  - https://developers.empresas.btgpactual.com/assets/js/bf74b837.41bd2ccb.js
+  - https://developers.empresas.btgpactual.com/assets/js/745fa7a1.f45788f8.js
+  - https://developers.empresas.btgpactual.com/assets/js/30b2326e.452872ce.js
+  - https://developers.empresas.btgpactual.com/assets/js/b01372b5.ce38ba89.js
+  - https://developers.empresas.btgpactual.com/assets/js/6941d395.dbdd8453.js
+  - https://developers.empresas.btgpactual.com/assets/js/0162b3af.a9ab753d.js
+  - https://developers.empresas.btgpactual.com/assets/js/8e23139e.8abcd350.js

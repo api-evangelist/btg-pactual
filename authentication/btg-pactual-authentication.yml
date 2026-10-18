@@ -1,0 +1,31 @@
+generated: '2026-10-18'
+method: searched
+generator: extract-docs-artifacts.py (deepseek)
+source: https://developers.empresas.btgpactual.com/docs/starting-doc/Produtos%20de%20API/Abertura%20de%20conta/Autentica%C3%A7%C3%A3o%20e%20SSO/id-token
+sources:
+- https://developers.empresas.btgpactual.com/docs/starting-doc/Produtos%20de%20API/Abertura%20de%20conta/Autentica%C3%A7%C3%A3o%20e%20SSO/id-token
+- https://developers.empresas.btgpactual.com/docs/starting-doc/Recursos%20para%20Desenvolvedores/Tutoriais/fluxo-de-client-credentials
+- https://developers.empresas.btgpactual.com/docs/category/onboarding-api
+- https://developers.empresas.btgpactual.com/docs/tecspecs/SCF%20-%20Cadastro%20de%20Cedente
+description: BTG Pactual authentication schemes include JWT id tokens for user identity and OAuth2 client credentials flow for API access.
+schemes:
+- type: jwt
+  name: Id token
+  evidence: O id token é um JWT único a cada sessão e que contém informações de identidade do usuário.
+- type: oauth2
+  name: Client Credentials
+  evidence: O fluxo de client credentials é um dos fluxos de autenticação e autorização disponíveis no BTG Id.
+  header: 'Authorization: Basic <client_id:client_secret>'
+  location: header
+  scopes:
+  - empresas.btgpactual.com/payer-register
+  flows:
+  - client_credentials
+  token_url: 'https://id.btgpactual.com/oauth2/token para produção
+
+    https://id.sandbox.btgpactual.com/oauth2/token para sandbox'
+  how_to_obtain: Buscamos nosso clientId e client secret conforme mostrado aqui
+docs: https://developers.empresas.btgpactual.com/docs/starting-doc/Produtos%20de%20API/Abertura%20de%20conta/Autentica%C3%A7%C3%A3o%20e%20SSO/id-token,
+  https://developers.empresas.btgpactual.com/docs/starting-doc/Recursos%20para%20Desenvolvedores/Tutoriais/fluxo-de-client-credentials, https://developers.empresas.btgpactual.com/docs/tecspecs/SCF%20-%20Cadastro%20de%20Cedente
+note: 'The token URLs are provided as two separate lines in the documentation: one for production and one for sandbox. The header format includes
+  the Basic authentication scheme with base64 encoded client_id:client_secret.'

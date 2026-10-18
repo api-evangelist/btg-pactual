@@ -1,0 +1,479 @@
+openapi: 3.2.0
+info:
+  title: FIDC Payment API
+  version: 1.0.0
+  description: Esta API tem a finalidade de contratar e simular empréstimos, realizar cessão de direitos creditórios e consulta de carteira.
+  termsOfService: https://www.btgpactual.com/empresas/termos-e-politicas/
+  contact:
+    name: Time BTG Empresas
+    email: ol-it-btgempresas@btgpactual.com
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com
+  description: Sandbox
+- url: https://api.empresas.btgpactual.com
+  description: Produção
+tags:
+- name: Payment
+paths:
+  /fidc-loan/v1/settlement/{settlementId}:
+    get:
+      tags:
+      - Payment
+      description: O objetivo dessa rota é pesquisar um pedido de pagamento previamente cadastrado.
+      parameters:
+      - in: path
+        name: settlementId
+        required: true
+        description: Id da liquidação
+        schema:
+          description: Identificador
+          type: string
+          example: 3382cc6f-1c59-4423-b364-c837deaf110d
+      - in: query
+        name: agreementId
+        required: true
+        description: Id do convênio
+        schema:
+          description: Identificador do convênio
+          type: string
+          example: 75dc01b7-6b7d-439d-85bb-7ed0038a9b21
+      responses:
+        '200':
+          description: Resultado da consulta de pedido de liquidação
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    description: Identificador da liquidação
+                    type: string
+                    example: 3382cc6f-1c59-4423-b364-c837deaf110e
+                  payment:
+                    type: object
+                    properties:
+                      account:
+                        type: object
+                        description: Dados da conta bancária
+                        properties:
+                          bank:
+                            description: Código do banco
+                            type: string
+                          agency:
+                            description: Agência da conta bancária
+                            type: string
+                          number:
+                            description: Número da conta bancária
+                            type: string
+                          digit:
+                            description: Dígito da conta bancária
+                            type: string
+                        title: AccountSchema
+                      method:
+                        type: string
+                        enum:
+                        - pix
+                        - ted
+                        example: ted
+                      code:
+                        type: string
+                        description: Identificador a ser preenchido na transferência via PIX ou TED.
+                        example: c3357540-fa15-4dbf-844c-1ce70ddb0d6c
+                      maturityDate:
+                        type: string
+                        description: Timestamp (ISO 8601) da data e hora limite para expiração do pagamento. O pagamento deve ser realizado até essa hora, caso contrário, a liquidação será cancelada.
+                        example: '2023-02-01 18:00:00'
+                      amount:
+                        description: Valor de pagamento da transação
+                        type: number
+                        example: 200.87
+                  contracts:
+                    type: array
+                    items:
+                      required:
+                      - identification
+                      - paidDate
+                      - paidAmount
+                      type: object
+                      properties:
+                        contractId:
+                          description: Identificador do contrato
+                          type: string
+                        installments:
+                          type: array
+                          items:
+                            type: number
+                            description: Número da parcela
+                            example: 1
+                        status:
+                          enum:
+                          - PROCESSING
+                          - PROCESSED
+                          - CANCELLED
+                          - INVALID
+                          description: Status do trade
+                          type: string
+                        reason:
+                          description: Descrição do status
+                          type: string
+                  status:
+                    enum:
+                    - CREATED
+                    - VALIDATING
+                    - INVALID
+                    - WAITING_FOR_PAYMENT
+                    - PROCESSED
+                    - EXPIRED
+                    description: Status da liquidação
+                    type: string
+                title: SettlementReadSchema
+        '401':
+          description: Não autorizado
+        '404':
+          description: Não encontrado
+        '500':
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                title: ErrorResponseSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/loans
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/FIDC%20-%20Payment/consultar-um-pedido-de-pagamento-cadastrado
+      summary: Get fidc loan settlement by settlement id
+      x-summary-source: derived
+      operationId: getFidcLoanV1SettlementBySettlementId
+      x-operation-id-source: derived
+  /fidc-loan/v1/settlement:
+    post:
+      tags:
+      - Payment
+      description: O objetivo desta rota é cadastrar um pedido de pagamento de crédito.
+      parameters:
+      - in: query
+        name: agreementId
+        required: true
+        description: Id do convênio
+        schema:
+          description: Identificador do convênio
+          type: string
+          example: 75dc01b7-6b7d-439d-85bb-7ed0038a9b21
+      requestBody:
+        description: Dados da liquidação
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                payerTaxId:
+                  type: string
+                  description: Identificação do pagador
+                  example: 15996430000182
+                payment:
+                  type: object
+                  properties:
+                    method:
+                      type: string
+                      description: Método de pagamento para a transferência, Pix ou Ted
+                      example: ted
+                contracts:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      contractId:
+                        type: string
+                        description: Idenfiticador do contrato
+                        example: 6764459321/EP
+                      installments:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            InstallmentNumber:
+                              type: number
+                              description: Número da parcela
+                              example: 1
+                            Amount:
+                              type: number
+                              description: Valor
+                              example: 200
+      responses:
+        '200':
+          description: Pedido de liquidação criado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    description: Identificador da liquidação
+                    type: string
+                    example: 3382cc6f-1c59-4423-b364-c837deaf110e
+                  payment:
+                    type: object
+                    properties:
+                      method:
+                        type: string
+                        enum:
+                        - pix
+                        - ted
+                        example: ted
+                      maturityDate:
+                        type: string
+                        description: Timestamp (ISO 8601) da data e hora limite para expiração do pagamento. O pagamento deve ser realizado até essa hora, caso contrário, a liquidação será cancelada.
+                        example: '2023-02-01 18:00:00'
+                      amount:
+                        description: Valor de pagamento da transação
+                        type: string
+                  contracts:
+                    type: array
+                    items:
+                      required:
+                      - identification
+                      - paidDate
+                      - paidAmount
+                      type: object
+                      properties:
+                        contractId:
+                          description: Identificador do contrato
+                          type: string
+                        installments:
+                          type: array
+                          items:
+                            type: number
+                            description: Número da parcela
+                            example: 1
+                        status:
+                          enum:
+                          - PROCESSING
+                          - PROCESSED
+                          - CANCELLED
+                          - INVALID
+                          description: Status do contrato
+                          type: string
+                  status:
+                    enum:
+                    - CREATED
+                    - VALIDATING
+                    - INVALID
+                    - WAITING_FOR_PAYMENT
+                    - PROCESSED
+                    - EXPIRED
+                    description: Status da liquidação
+                    type: string
+                title: SettlementSchema
+        '400':
+          description: Erro de validação
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: INVALID_PARAMETERS
+                      details:
+                        type: object
+                        properties:
+                          payerTaxId:
+                            type: array
+                            items:
+                              type:
+                              - string
+                              - 'null'
+                            description: '___
+
+                              Examples:
+
+                              * STCR0001 - Identificação do pagador não preenchido
+
+                              * STCR0002 - Identificação do pagador {payerTaxId} inválido
+
+                              * STCR0003 - Identificação do pagador {payerTaxId} não relacionado com as entidades de um ou mais contratos
+
+                              '
+                          payment:
+                            oneOf:
+                            - type:
+                              - array
+                              - 'null'
+                              items:
+                                type: string
+                              description: '___
+
+                                Examples:
+
+                                *  STCR0004 - Informações sobre o pagamento não preenchidas
+
+                                '
+                              title: Settlement_Payment_Error_Schema
+                            - type: object
+                              properties:
+                                method:
+                                  type: array
+                                  items:
+                                    type:
+                                    - string
+                                    - 'null'
+                                  description: "___\nExamples: \n* STCR0005 - Método de pagamento não preenchido\n* STCR0006 - Método de pagamento {method} inválido\n"
+                              title: Settlement_Payment_Method_Error_Schema
+                          contract:
+                            oneOf:
+                            - type: array
+                              items:
+                                type:
+                                - string
+                                - 'null'
+                              description: '___
+
+                                Examples:
+
+                                * STCR0007 - Informações dos contratos não preenchido
+
+                                '
+                              title: Settlement_Contract_Error_Schema
+                            - type:
+                              - object
+                              - 'null'
+                              properties:
+                                contractId:
+                                  type: array
+                                  items:
+                                    type:
+                                    - string
+                                    - 'null'
+                                  description: '___
+
+                                    Examples:
+
+                                    * STCR0008 - Existem contratos duplicados dentro da coleção
+
+                                    * STCR0010 - Identificador do contrato {contractId} inválido
+
+                                    * STCR0011 - Identificador do contrato {contractId} não encontrado
+
+                                    * STCR0012 - Contrato {contractId} já liquidado previamente
+
+                                    * STCR0019 - Identificador do contrato não preenchido
+
+                                    '
+                              title: Settlement_Contract_Identification_Error_Schema
+                            - type:
+                              - object
+                              - 'null'
+                              properties:
+                                installments:
+                                  type: array
+                                  items:
+                                    type:
+                                    - string
+                                    - 'null'
+                                  description: '___
+
+                                    Examples:
+
+                                    * STCR0020 - Informações de parcela do contrato {contractId} não preenchido
+
+                                    '
+                              title: Settlement_Contract_Installments_Error_Schema
+                            - type:
+                              - object
+                              - 'null'
+                              properties:
+                                installments:
+                                  type:
+                                  - object
+                                  - 'null'
+                                  properties:
+                                    installmentNumber:
+                                      type: array
+                                      items:
+                                        type:
+                                        - string
+                                        - 'null'
+                                      description: "___\nExamples:\n* STCR0009 - Existem parcelas duplicadas do mesmo contrato na coleção \n* STCR0013 - Parcelas {1, 2 e 3} do contrato {contractId} já liquidado previamente\n* STCR0014 - Parcelas {1, 2 e 3} do contrato {contractId} já estão sendo processadas em outro pedido de liquidação\n* STCR0021 - Número da parcela não preenchido para o contrato {contractId}\n* STCR0022 - Número da parcela inválido para o contrato {contractId}\n"
+                              title: Settlement_Contract_Installments_Number_Error_Schema
+                            - type:
+                              - object
+                              - 'null'
+                              properties:
+                                installments:
+                                  type:
+                                  - object
+                                  - 'null'
+                                  properties:
+                                    amount:
+                                      type: array
+                                      items:
+                                        type:
+                                        - string
+                                        - 'null'
+                                      description: '___
+
+                                        Examples:
+
+                                        * STCR0015 - Valor da parcela {1, 2 e 3} do contrato {contractId} inválido
+
+                                        * STCR0016 - Valor da parcela {1, 2 e 3} do contrato {contractId} menor ou igual a zero
+
+                                        * STCR0017 - Valor da parcela {1, 2 e 3} do contrato {contractId} diferente do valor de vencimento do recebivel
+
+                                        * STCR0018 - Valor da parcela {1, 2 e 3} do contrato {contractId} indisponível
+
+                                        '
+                              title: Settlement_Contract_Installments_Amount_Error_Schema
+                title: SettlementBadRequestResponseSchema
+        '401':
+          description: Não autorizado
+        '500':
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                title: ErrorResponseSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/loans
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/FIDC%20-%20Payment/criar-um-pedido-de-pagamento-de-credito
+      summary: Create fidc loan settlement
+      x-summary-source: derived
+      operationId: postFidcLoanV1Settlement
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+          scopes:
+            empresas.btgpactual.com/loans: Scope to loans
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/96e7fb14.b1b1e7d4.js
+  - https://developers.empresas.btgpactual.com/assets/js/4dc014de.1a3481c8.js

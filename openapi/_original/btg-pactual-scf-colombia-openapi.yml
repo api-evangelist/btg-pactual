@@ -1,0 +1,504 @@
+# x-archived-from: btg-pactual-scf-colombia-openapi.yml
+# x-archived-on: 2026-10-18
+openapi: 3.0.3
+info:
+  title: SCF - Colombia
+  description: API para consultar límites y gestionar operaciones de Supply Chain Finance en Colombia.
+  version: '1'
+servers:
+- url: https://api.uat.empresas.btgpactual.com/v1/scf
+  description: UAT
+- url: https://api.empresas.btgpactual.com/v1/scf
+  description: Producción
+paths:
+  /borderos/{trackingId}/receivables/cancel:
+    post:
+      tags:
+      - Operaciones
+      description: Cancelar facturas de una operación
+      operationId: cancelColombiaBorderoReceivables
+      parameters:
+      - name: trackingId
+        in: path
+        required: true
+        description: Identificador de seguimiento de la operación.
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - Receivables
+              properties:
+                Receivables:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: object
+                    required:
+                    - Identification
+                    - MaturityDate
+                    - MaturityAmount
+                    properties:
+                      Identification:
+                        type: string
+                      MaturityDate:
+                        type: string
+                        format: date-time
+                      MaturityAmount:
+                        type: number
+                        format: double
+              title: CancelReceivablesRequest
+      responses:
+        '200':
+          description: Solicitud de cancelación recibida correctamente.
+        '400':
+          description: Solicitud inválida.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Code:
+                    type: string
+                  Message:
+                    type: string
+                title: ErrorResponse
+        '404':
+          description: Recurso no encontrado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Code:
+                    type: string
+                  Message:
+                    type: string
+                title: ErrorResponse
+      security:
+      - write:
+        - empresas.btgpactual.com/scf/borderos
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/SCF%20-%20Colombia/cancel-colombia-bordero-receivables
+  /borderos:
+    post:
+      tags:
+      - Operaciones
+      description: Crea una operación con sus facturas en Colombia.
+      operationId: createColombiaBordero
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - Receivables
+              - Product
+              properties:
+                PayerTaxId:
+                  type: string
+                  nullable: true
+                  description: NIT del pagador aplicable a todos los documentos por cobrar.
+                PayerCountryCode:
+                  type: string
+                  nullable: true
+                  description: Código ISO 3166-1 alpha-2 del país del pagador.
+                  example: CO
+                Receivables:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: object
+                    required:
+                    - PayerTaxId
+                    - PayeeTaxId
+                    - Identification
+                    - MaturityDate
+                    - MaturityAmount
+                    - DocumentType
+                    - Currency
+                    - RadianEvent
+                    properties:
+                      PayerTaxId:
+                        type: string
+                        description: NIT del pagador.
+                        example: '900000001'
+                      PayerCountryCode:
+                        type: string
+                        enum:
+                        - CO
+                        description: Código ISO 3166-1 alpha-2 del país del pagador.
+                      PayeeTaxId:
+                        type: string
+                        description: NIT del proveedor.
+                        example: '900000002'
+                      PayeeName:
+                        type: string
+                        description: Razón social del proveedor.
+                      PayeeCountryCode:
+                        type: string
+                        enum:
+                        - CO
+                        description: Código ISO 3166-1 alpha-2 del país del proveedor.
+                      Identification:
+                        type: string
+                        description: Identificador único del documento por cobrar.
+                      MaturityDate:
+                        type: string
+                        format: date-time
+                        description: Fecha de vencimiento.
+                      MaturityAmount:
+                        type: number
+                        format: double
+                        description: Valor nominal al vencimiento.
+                      DisbursementAmount:
+                        type: number
+                        format: double
+                        nullable: true
+                        description: Valor previsto para el desembolso.
+                      DisbursementDate:
+                        type: string
+                        format: date-time
+                        nullable: true
+                        description: Fecha prevista para el desembolso.
+                      DocumentType:
+                        type: string
+                        enum:
+                        - Offshore
+                        description: Tipo de documento utilizado en la operación.
+                      Currency:
+                        type: string
+                        enum:
+                        - COP
+                        description: Moneda de la operación.
+                      OriginId:
+                        type: string
+                        nullable: true
+                        description: Identificador del documento en el sistema de origen.
+                      InvoiceKey:
+                        type: string
+                        nullable: true
+                        description: CUFE de la factura electrónica.
+                      SubProduct:
+                        type: string
+                        nullable: true
+                        enum:
+                        - Confirming
+                        - Factoring
+                        description: Modalidad de la operación.
+                      LegitimateHolderTaxId:
+                        type: string
+                        nullable: true
+                        description: NIT del legítimo tenedor.
+                      LegitimateHolderName:
+                        type: string
+                        nullable: true
+                        description: Razón social del legítimo tenedor.
+                      Account:
+                        type: object
+                        allOf:
+                        - type: object
+                          properties:
+                            Bank:
+                              type: string
+                              nullable: true
+                              description: Código del banco.
+                            Agency:
+                              type: string
+                              nullable: true
+                              description: Código de la sucursal.
+                            AgencyDigit:
+                              type: string
+                              nullable: true
+                              description: Dígito de la sucursal.
+                            Number:
+                              type: string
+                              nullable: true
+                              description: Número de la cuenta.
+                            Digit:
+                              type: string
+                              nullable: true
+                              description: Dígito de la cuenta.
+                            Type:
+                              type: string
+                              nullable: true
+                              description: Tipo de cuenta, por ejemplo Ahorros o Corriente.
+                            OwnerTaxId:
+                              type: string
+                              nullable: true
+                              description: NIT del titular de la cuenta.
+                            OwnerName:
+                              type: string
+                              nullable: true
+                              description: Razón social del titular de la cuenta.
+                            Company:
+                              type: string
+                              nullable: true
+                              description: Identificador de la empresa asociada.
+                            Cge:
+                              type: string
+                              nullable: true
+                              description: Identificador CGE.
+                          title: ColombiaAccount
+                        nullable: true
+                      IssueDate:
+                        type: string
+                        format: date-time
+                        nullable: true
+                        description: Fecha de emisión de la factura.
+                      RadianEvent:
+                        type: string
+                        description: Código obligatorio del evento RADIAN.
+                        example: '037'
+                      DiscountDate:
+                        type: string
+                        format: date-time
+                        nullable: true
+                        description: Fecha de descuento.
+                    title: ColombiaReceivable
+                Strategy:
+                  type: string
+                  format: uuid
+                  nullable: true
+                  description: Identificador de la estrategia comercial. Campo opcional.
+                Product:
+                  type: string
+                  enum:
+                  - CSCSacado
+                  description: Producto de la operación. Debe informarse como CSCSacado.
+                TrackingId:
+                  type: string
+                  format: uuid
+                  nullable: true
+                  description: Identificador de seguimiento proporcionado por el cliente. Campo opcional.
+                PartnerIdentification:
+                  type: string
+                  nullable: true
+                  description: Identificación del partner que origina la operación.
+              title: CreateBorderoRequest
+            example:
+              PayerTaxId: null
+              PayerCountryCode: null
+              Receivables:
+              - PayerTaxId: '900000001'
+                PayerCountryCode: CO
+                PayeeTaxId: '900000002'
+                PayeeName: PROVEEDOR DE EJEMPLO SAS
+                PayeeCountryCode: CO
+                Identification: FE-2669
+                MaturityDate: '2026-09-11T00:00:00-03:00'
+                MaturityAmount: 752256558
+                DisbursementAmount: 742640140.34779
+                DisbursementDate: '2026-08-14T00:00:00-03:00'
+                DocumentType: Offshore
+                Currency: COP
+                OriginId: 2b3fe241-2dc3-4a04-a0f0-342b1872861d
+                InvoiceKey: CUFE-1234567890
+                SubProduct: Confirming
+                LegitimateHolderTaxId: '900000003'
+                LegitimateHolderName: TENEDOR LEGÍTIMO DE EJEMPLO SAS
+                Account:
+                  Bank: '1007'
+                  Agency: '999'
+                  AgencyDigit: null
+                  Number: '0000000000'
+                  Digit: null
+                  Type: Ahorros
+                  OwnerTaxId: '900000003'
+                  OwnerName: TENEDOR LEGÍTIMO DE EJEMPLO SAS
+                  Company: null
+                  Cge: null
+                IssueDate: '2026-08-05T00:00:00-03:00'
+                RadianEvent: '037'
+                DiscountDate: '2026-08-14T00:00:00-03:00'
+              Strategy: ba00e42d-1a7f-470e-b9c5-cae2d82ec435
+              Product: CSCSacado
+              TrackingId: 64166ec5-0d73-4050-9e2f-244f674ce86f
+              PartnerIdentification: null
+      responses:
+        '201':
+          description: Operación creada correctamente.
+          headers:
+            Location:
+              description: Dirección para consultar la operación creada.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - TrackingId
+                properties:
+                  TrackingId:
+                    type: string
+                    format: uuid
+                    description: Identificador de seguimiento de la operación creada.
+                title: CreateBorderoResponse
+        '400':
+          description: Solicitud inválida.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Code:
+                    type: string
+                  Message:
+                    type: string
+                title: ErrorResponse
+      security:
+      - write:
+        - empresas.btgpactual.com/scf/borderos
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/SCF%20-%20Colombia/create-colombia-bordero
+  /borderos/{trackingId}/receivables:
+    get:
+      tags:
+      - Operaciones
+      description: Consultar las facturas de una operación
+      operationId: getColombiaBorderoReceivables
+      parameters:
+      - name: trackingId
+        in: path
+        required: true
+        description: Identificador de seguimiento de la operación.
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Facturas consultadas correctamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  TrackingId:
+                    type: string
+                    format: uuid
+                  CreatedAt:
+                    type: string
+                    format: date-time
+                  Receivables:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        Identification:
+                          type: string
+                        Status:
+                          type: string
+                title: BorderoResponse
+        '404':
+          description: Recurso no encontrado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Code:
+                    type: string
+                  Message:
+                    type: string
+                title: ErrorResponse
+      security:
+      - write:
+        - empresas.btgpactual.com/scf/borderos
+      - read:
+        - empresas.btgpactual.com/scf/borderos.readonly
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/SCF%20-%20Colombia/get-colombia-bordero-receivables
+  /companies/limit/{payerTaxId}:
+    get:
+      tags:
+      - Consultar límite del pagador
+      description: Devuelve el límite total y el límite disponible del pagador informado.
+      operationId: getColombiaPayerLimit
+      parameters:
+      - name: payerTaxId
+        in: path
+        required: true
+        description: NIT del pagador, sin caracteres de formato.
+        schema:
+          type: string
+        example: '900000001'
+      responses:
+        '200':
+          description: Límite consultado correctamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - MaxLimit
+                - AvailableLimit
+                properties:
+                  MaxLimit:
+                    type: number
+                    format: double
+                    description: Límite total aprobado para el pagador.
+                  AvailableLimit:
+                    type: number
+                    format: double
+                    description: Límite disponible para nuevas operaciones.
+                title: LimitResponse
+              example:
+                MaxLimit: 1000000000
+                AvailableLimit: 750000000
+        '400':
+          description: Solicitud inválida.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Code:
+                    type: string
+                  Message:
+                    type: string
+                title: ErrorResponse
+        '404':
+          description: Recurso no encontrado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Code:
+                    type: string
+                  Message:
+                    type: string
+                title: ErrorResponse
+      security:
+      - read:
+        - empresas.btgpactual.com/scf/companies.readonly
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/SCF%20-%20Colombia/get-colombia-payer-limit
+components:
+  securitySchemes:
+    write:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://id.btgpactual.com/oauth2/token
+          scopes:
+            empresas.btgpactual.com/scf/borderos: Crear y cancelar operaciones.
+    read:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://id.btgpactual.com/oauth2/token
+          scopes:
+            empresas.btgpactual.com/scf/borderos.readonly: Consultar operaciones.
+            empresas.btgpactual.com/scf/companies.readonly: Consultar límites de empresas.
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/fbd0b353.31d1d2ce.js
+  - https://developers.empresas.btgpactual.com/assets/js/08c77af0.814da34c.js
+  - https://developers.empresas.btgpactual.com/assets/js/67203ac0.4a8ffdda.js
+  - https://developers.empresas.btgpactual.com/assets/js/14f9e484.52c9d025.js

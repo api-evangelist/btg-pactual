@@ -1,0 +1,116 @@
+# x-archived-from: btg-pactual-bankinghub-open-finance-balance-refresh-openapi.yml
+# x-archived-on: 2026-10-18
+openapi: 3.0.3
+info:
+  title: BankingHub - Open Finance Balance Refresh
+  version: 1.0.0
+  termsOfService: https://www.btgpactual.com/empresas/termos-e-politicas/
+  contact:
+    name: Time BTG Empresas
+    email: ol-it-btgempresas@btgpactual.com
+servers:
+- url: https://api.uat.empresas.btgpactual.com
+  description: uat
+- url: https://api.empresas.btgpactual.com
+  description: Produção
+paths:
+  /{taxId}/banking/accounts/{accountId}/balances/refresh:
+    get:
+      tags:
+      - Accounts
+      description: Disparar refresh on-demand do saldo Open Finance
+      operationId: refreshOpenFinanceBalance
+      parameters:
+      - name: taxId
+        in: path
+        required: true
+        description: CNPJ (somente dígitos) da empresa titular da conta.
+        schema:
+          type: string
+          example: '30306294000145'
+      - name: accountId
+        in: path
+        required: true
+        description: Identificador composto da conta, no formato `{taxId}-{bankCode}-{agency}-{accountNumber}`. Os componentes `bankCode`, `agency` e `accountNumber` são extraídos deste identificador e enviados ao upstream como parâmetros de consulta.
+        schema:
+          type: string
+          example: 30306294000145-208-50-1234567
+      responses:
+        '202':
+          description: Solicitação de refresh aceita. Corpo vazio — o refresh é processado de forma assíncrona.
+        '400':
+          description: '`accountId` em formato inválido (esperado `{taxId}-{bankCode}-{agency}-{accountNumber}`), ou requisição rejeitada pelo serviço upstream. O corpo do erro, quando presente, é repassado do upstream sem alteração.'
+        '401':
+          description: Não autorizado — token ausente, inválido ou expirado.
+        '403':
+          description: Acesso negado — `taxId`/`accountId` ausentes no path ou identidade sem permissão sobre a conta.
+        '429':
+          description: Limite de requisições excedido (6 requisições a cada 12 horas por identidade autenticada).
+        '500':
+          description: Erro no serviço upstream. Status e corpo repassados do upstream sem alteração.
+      security:
+      - oauth2:
+        - brn:btg:empresas:openfinance:accounts:balances.readonly
+        - brn:btg:empresas:openfinance:accounts:info.readonly
+        - empresas.btgpactual.com/accounts.readonly
+        - empresas.btgpactual.com/accounts
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/BankingHub%20-%20Open%20Finance%20Balance%20Refresh/refresh-open-finance-balance
+  /{taxId}/banking/accounts/{accountId}/statements/refresh:
+    get:
+      tags:
+      - Accounts
+      description: Disparar refresh on-demand do extrato Open Finance
+      operationId: refreshOpenFinanceStatement
+      parameters:
+      - name: taxId
+        in: path
+        required: true
+        description: CNPJ (somente dígitos) da empresa titular da conta.
+        schema:
+          type: string
+          example: '30306294000145'
+      - name: accountId
+        in: path
+        required: true
+        description: Identificador composto da conta, no formato `{taxId}-{bankCode}-{agency}-{accountNumber}`. Os componentes `bankCode`, `agency` e `accountNumber` são extraídos deste identificador e enviados ao upstream como parâmetros de consulta.
+        schema:
+          type: string
+          example: 30306294000145-208-50-1234567
+      responses:
+        '202':
+          description: Solicitação de refresh aceita. Corpo vazio — o refresh é processado de forma assíncrona.
+        '400':
+          description: '`accountId` em formato inválido (esperado `{taxId}-{bankCode}-{agency}-{accountNumber}`), ou requisição rejeitada pelo serviço upstream. O corpo do erro, quando presente, é repassado do upstream sem alteração.'
+        '401':
+          description: Não autorizado — token ausente, inválido ou expirado.
+        '403':
+          description: Acesso negado — `taxId`/`accountId` ausentes no path ou identidade sem permissão sobre a conta.
+        '429':
+          description: Limite de requisições excedido (6 requisições a cada 12 horas por identidade autenticada).
+        '500':
+          description: Erro no serviço upstream. Status e corpo repassados do upstream sem alteração.
+      security:
+      - oauth2:
+        - brn:btg:empresas:openfinance:accounts:balances.readonly
+        - brn:btg:empresas:openfinance:accounts:info.readonly
+        - empresas.btgpactual.com/accounts.readonly
+        - empresas.btgpactual.com/accounts
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/BankingHub%20-%20Open%20Finance%20Balance%20Refresh/refresh-open-finance-statement
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+          scopes:
+            brn:btg:empresas:openfinance:accounts:balances.readonly: Leitura de saldos de contas Open Finance
+            brn:btg:empresas:openfinance:accounts:info.readonly: Leitura de informações de contas Open Finance
+            empresas.btgpactual.com/accounts.readonly: Leitura de contas
+            empresas.btgpactual.com/accounts: Acesso a contas
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/fd39ae19.d2c25308.js
+  - https://developers.empresas.btgpactual.com/assets/js/5da5560f.95b7cc89.js

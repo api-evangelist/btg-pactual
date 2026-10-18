@@ -1,0 +1,1304 @@
+openapi: 3.2.0
+info:
+  title: Banking - DDA Débito Direto Autorizado API
+  description: API to manage authorized direct debit
+  version: 1.0.0
+servers:
+- url: https://api-sandbox.empresas.btgpactual.com
+  description: Sandbox
+- url: https://api.empresas.btgpactual.com
+  description: Produção
+tags:
+- name: Débito Direto Autorizado
+paths:
+  /{companyId}/banking/direct-debit:
+    post:
+      tags:
+      - Débito Direto Autorizado
+      description: '## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o Wiremock
+
+
+        > No sandbox este endpoint requer a utilização de Sandbox Headers
+
+
+        | Header | Descrição | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tags:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      key:
+                        description: Chave da tag
+                        type: string
+                        example: name
+                      value:
+                        description: Valor da tag
+                        type: string
+                        example: value
+                    title: Tag
+                  title: Tags
+        required: false
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        description: ID do DDA
+                        type: string
+                        example: d2627834-dd84-4094-9dcf-ca784460b352
+                        title: Id
+                      owner:
+                        type: object
+                        properties:
+                          document:
+                            description: CNPJ ou CPF
+                            type: string
+                            example: '37297902000141'
+                            title: TaxId
+                          name:
+                            description: Nome
+                            type: string
+                            example: VECHI CONSULTORIA E PROJETOS LTDA
+                            title: Name
+                      status:
+                        description: Status do DDA
+                        type: string
+                        enum:
+                        - ENABLED
+                        - DISABLED
+                        - PENDING_ENABLED
+                        - PENDING_DISABLED
+                      tags:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            key:
+                              description: Chave da tag
+                              type: string
+                              example: name
+                            value:
+                              description: Valor da tag
+                              type: string
+                              example: value
+                          title: Tag
+                        title: Tags
+                    title: DirectDebit
+                  _links:
+                    type: object
+                    properties:
+                      enable:
+                        type: object
+                        properties:
+                          rel:
+                            type: string
+                            example: self
+                          href:
+                            type: string
+                            example: /direct-debits/d2627834-dd84-4094-9dcf-ca784460b352
+                          method:
+                            type: string
+                            example: DELETE
+                          type:
+                            type: string
+                            example: application/json
+                        title: Link
+                      disable:
+                        type: object
+                        properties:
+                          rel:
+                            type: string
+                            example: self
+                          href:
+                            type: string
+                            example: /direct-debits/d2627834-dd84-4094-9dcf-ca784460b352
+                          method:
+                            type: string
+                            example: DELETE
+                          type:
+                            type: string
+                            example: application/json
+                        title: Link
+                title: DirectDebitResponse
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: Type
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        detail:
+                          type: string
+                          example: Mensagem de erro
+                        code:
+                          type: string
+                          example: btg:enterprise:banking:payments:error:code
+                        arguments:
+                          type: object
+                          example: {}
+                      title: Error
+                title: ErrorResponse
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: Type
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        detail:
+                          type: string
+                          example: Mensagem de erro
+                        code:
+                          type: string
+                          example: btg:enterprise:banking:payments:error:code
+                        arguments:
+                          type: object
+                          example: {}
+                      title: Error
+                title: ErrorResponse
+      security:
+      - write:
+        - brn:btg:empresas:banking:direct-debit
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20DDA/ativar-dda-para-o-usuario
+      summary: Create by company id banking direct debit
+      x-summary-source: derived
+      operationId: postByCompanyIdBankingDirectDebit
+      x-operation-id-source: derived
+    delete:
+      tags:
+      - Débito Direto Autorizado
+      description: '## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o Wiremock
+
+
+        > No sandbox este endpoint requer a utilização de Sandbox Headers
+
+
+        | Header | Descrição | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      operationId: deleteDirectDebit
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        description: ID do DDA
+                        type: string
+                        example: d2627834-dd84-4094-9dcf-ca784460b352
+                        title: Id
+                      owner:
+                        type: object
+                        properties:
+                          document:
+                            description: CNPJ ou CPF
+                            type: string
+                            example: '37297902000141'
+                            title: TaxId
+                          name:
+                            description: Nome
+                            type: string
+                            example: VECHI CONSULTORIA E PROJETOS LTDA
+                            title: Name
+                      status:
+                        description: Status do DDA
+                        type: string
+                        enum:
+                        - ENABLED
+                        - DISABLED
+                        - PENDING_ENABLED
+                        - PENDING_DISABLED
+                      tags:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            key:
+                              description: Chave da tag
+                              type: string
+                              example: name
+                            value:
+                              description: Valor da tag
+                              type: string
+                              example: value
+                          title: Tag
+                        title: Tags
+                    title: DirectDebit
+                  _links:
+                    type: object
+                    properties:
+                      enable:
+                        type: object
+                        properties:
+                          rel:
+                            type: string
+                            example: self
+                          href:
+                            type: string
+                            example: /direct-debits/d2627834-dd84-4094-9dcf-ca784460b352
+                          method:
+                            type: string
+                            example: DELETE
+                          type:
+                            type: string
+                            example: application/json
+                        title: Link
+                      disable:
+                        type: object
+                        properties:
+                          rel:
+                            type: string
+                            example: self
+                          href:
+                            type: string
+                            example: /direct-debits/d2627834-dd84-4094-9dcf-ca784460b352
+                          method:
+                            type: string
+                            example: DELETE
+                          type:
+                            type: string
+                            example: application/json
+                        title: Link
+                title: DirectDebitResponse
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: Type
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        detail:
+                          type: string
+                          example: Mensagem de erro
+                        code:
+                          type: string
+                          example: btg:enterprise:banking:payments:error:code
+                        arguments:
+                          type: object
+                          example: {}
+                      title: Error
+                title: ErrorResponse
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: Type
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        detail:
+                          type: string
+                          example: Mensagem de erro
+                        code:
+                          type: string
+                          example: btg:enterprise:banking:payments:error:code
+                        arguments:
+                          type: object
+                          example: {}
+                      title: Error
+                title: ErrorResponse
+      security:
+      - write:
+        - brn:btg:empresas:banking:direct-debit
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20DDA/delete-direct-debit
+      summary: Delete direct debit
+      x-summary-source: derived
+  /{companyId}/banking/direct-debit/configs:
+    delete:
+      tags:
+      - Débito Direto Autorizado
+      description: '## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o Wiremock
+
+
+        > No sandbox este endpoint requer a utilização de Sandbox Headers
+
+
+        | Header | Descrição | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      operationId: deleteConfig
+      parameters:
+      - name: payeeDocuments
+        in: query
+        description: Documento do emissor
+        required: true
+        schema:
+          type: string
+          example: 04692027000143,51783866000157
+      - name: configType
+        in: query
+        description: Tipo da configuração a ser removida
+        required: true
+        schema:
+          type: string
+          description: Tipo de configuração
+          enum:
+          - AUTO_HIDE
+          example: AUTO_HIDE
+          title: ConfigType
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      responses:
+        '200':
+          description: Ok
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: Type
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        detail:
+                          type: string
+                          example: Mensagem de erro
+                        code:
+                          type: string
+                          example: btg:enterprise:banking:payments:error:code
+                        arguments:
+                          type: object
+                          example: {}
+                      title: Error
+                title: ErrorResponse
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: Type
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        detail:
+                          type: string
+                          example: Mensagem de erro
+                        code:
+                          type: string
+                          example: btg:enterprise:banking:payments:error:code
+                        arguments:
+                          type: object
+                          example: {}
+                      title: Error
+                title: ErrorResponse
+      security:
+      - write:
+        - brn:btg:empresas:banking:direct-debit
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20DDA/delete-config
+      summary: Delete config
+      x-summary-source: derived
+    post:
+      tags:
+      - Débito Direto Autorizado
+      description: '## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o Wiremock
+
+
+        > No sandbox este endpoint requer a utilização de Sandbox Headers
+
+
+        | Header | Descrição | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      operationId: postConfig
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      requestBody:
+        description: Configuration
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        description: Tipo de configuração
+                        enum:
+                        - AUTO_HIDE
+                        example: AUTO_HIDE
+                        title: ConfigType
+                      payeeDocument:
+                        description: CNPJ ou CPF
+                        type: string
+                        example: '37297902000141'
+                        title: TaxId
+        required: true
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                description: Configuração
+                type: object
+                properties:
+                  id:
+                    description: ID do DDA
+                    type: string
+                    example: d2627834-dd84-4094-9dcf-ca784460b352
+                    title: Id
+                  type:
+                    type: string
+                    enum:
+                    - AUTO_HIDE
+                    example: AUTO_HIDE
+                  payeeDocument:
+                    description: CNPJ ou CPF
+                    type: string
+                    example: '37297902000141'
+                    title: TaxId
+                title: Configuration
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: Type
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        detail:
+                          type: string
+                          example: Mensagem de erro
+                        code:
+                          type: string
+                          example: btg:enterprise:banking:payments:error:code
+                        arguments:
+                          type: object
+                          example: {}
+                      title: Error
+                title: ErrorResponse
+      security:
+      - write:
+        - brn:btg:empresas:banking:direct-debit
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20DDA/post-config
+      summary: Post config
+      x-summary-source: derived
+  /{companyId}/banking/direct-debit/debits:
+    get:
+      tags:
+      - Débito Direto Autorizado
+      description: '## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o Wiremock
+
+
+        > No sandbox este endpoint requer a utilização de Sandbox Headers
+
+
+        | Header | Descrição | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      operationId: getDebits
+      parameters:
+      - name: pageNumber
+        in: query
+        description: Número da página a ser retornada
+        schema:
+          type: integer
+          example: 1
+      - name: pageSize
+        in: query
+        schema:
+          description: Número de itens por página
+          type: integer
+          example: 10
+      - name: payeeDocument
+        in: query
+        description: Documento do emissor
+        schema:
+          type: string
+          example: '37297902000141'
+      - name: payeeBankCode
+        in: query
+        description: Código do banco do emissor
+        schema:
+          type: string
+          example: '208'
+      - name: status
+        description: Status do débito
+        in: query
+        schema:
+          type: string
+          example: CREATED
+      - name: minAmount
+        description: Valor mínimo do débito
+        in: query
+        schema:
+          description: Valor
+          type: number
+          example: 10.23
+          title: Amount
+      - name: maxAmount
+        description: Valor máximo do débito
+        in: query
+        schema:
+          description: Valor
+          type: number
+          example: 10.23
+          title: Amount
+      - name: minDueDate
+        description: Data mínima de vencimento
+        in: query
+        schema:
+          description: Data
+          type: string
+          example: '2024-06-18T00:00:00.000Z'
+          title: Date
+      - name: maxDueDate
+        description: Data máxima de vencimento
+        in: query
+        schema:
+          description: Data
+          type: string
+          example: '2024-06-18T00:00:00.000Z'
+          title: Date
+      - name: hidden
+        description: Indica se o débito está oculto
+        in: query
+        schema:
+          type: boolean
+          example: false
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      allOf:
+                      - description: Débito
+                        type: object
+                        properties:
+                          id:
+                            description: ID do DDA
+                            type: string
+                            example: d2627834-dd84-4094-9dcf-ca784460b352
+                            title: Id
+                          amount:
+                            description: Valor
+                            type: number
+                            example: 10.23
+                            title: Amount
+                          dueDate:
+                            description: Data
+                            type: string
+                            example: '2024-06-18T00:00:00.000Z'
+                            title: Date
+                          expirationDate:
+                            description: Data
+                            type: string
+                            example: '2024-06-18T00:00:00.000Z'
+                            title: Date
+                          digitableLine:
+                            description: Linha digitável
+                            type: string
+                            example: '20890050091784560129710038868500996680000100000'
+                          payee:
+                            description: Emissor
+                            type: object
+                            properties:
+                              document:
+                                description: CNPJ ou CPF
+                                type: string
+                                example: '37297902000141'
+                                title: TaxId
+                              fantasyName:
+                                description: Nome
+                                type: string
+                                example: VECHI CONSULTORIA E PROJETOS LTDA
+                                title: Name
+                              socialName:
+                                description: Nome
+                                type: string
+                                example: VECHI CONSULTORIA E PROJETOS LTDA
+                                title: Name
+                              bankCode:
+                                type: string
+                                example: '208'
+                                description: Código bancário
+                                title: BankCode
+                              bankName:
+                                description: Nome
+                                type: string
+                                example: VECHI CONSULTORIA E PROJETOS LTDA
+                                title: Name
+                            title: Payee
+                          hidden:
+                            description: Indica se o débito está oculto
+                            type: boolean
+                            example: false
+                          status:
+                            description: Status do débito
+                            type: string
+                            enum:
+                            - CREATED
+                            - OVERDUE
+                            - PAYMENT_PENDING_APPROVAL
+                            - PAYMENT_PROCESSING
+                            - PAYMENT_CONFIRMED
+                            - SCHEDULED
+                        title: Debit
+                      - properties:
+                          _links:
+                            type: object
+                            properties:
+                              hide:
+                                type: object
+                                properties:
+                                  rel:
+                                    type: string
+                                    example: self
+                                  href:
+                                    type: string
+                                    example: /direct-debits/d2627834-dd84-4094-9dcf-ca784460b352
+                                  method:
+                                    type: string
+                                    example: DELETE
+                                  type:
+                                    type: string
+                                    example: application/json
+                                title: Link
+                  _links:
+                    type: object
+                    properties:
+                      next:
+                        type: object
+                        properties:
+                          rel:
+                            type: string
+                            example: self
+                          href:
+                            type: string
+                            example: /direct-debits/d2627834-dd84-4094-9dcf-ca784460b352
+                          method:
+                            type: string
+                            example: DELETE
+                          type:
+                            type: string
+                            example: application/json
+                        title: Link
+                      previous:
+                        type: object
+                        properties:
+                          rel:
+                            type: string
+                            example: self
+                          href:
+                            type: string
+                            example: /direct-debits/d2627834-dd84-4094-9dcf-ca784460b352
+                          method:
+                            type: string
+                            example: DELETE
+                          type:
+                            type: string
+                            example: application/json
+                        title: Link
+                title: DebitsResponse
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: Type
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        detail:
+                          type: string
+                          example: Mensagem de erro
+                        code:
+                          type: string
+                          example: btg:enterprise:banking:payments:error:code
+                        arguments:
+                          type: object
+                          example: {}
+                      title: Error
+                title: ErrorResponse
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: Type
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        detail:
+                          type: string
+                          example: Mensagem de erro
+                        code:
+                          type: string
+                          example: btg:enterprise:banking:payments:error:code
+                        arguments:
+                          type: object
+                          example: {}
+                      title: Error
+                title: ErrorResponse
+      security:
+      - read:
+        - empresas.btgpactual.com/authorized-direct-debits.readonly
+        - brn:btg:empresas:banking:direct-debit.readonly
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20DDA/get-debits
+      summary: Get debits
+      x-summary-source: derived
+    patch:
+      tags:
+      - Débito Direto Autorizado
+      description: '## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o Wiremock
+
+
+        > No sandbox este endpoint requer a utilização de Sandbox Headers
+
+
+        | Header | Descrição | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      operationId: patchDebit
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      requestBody:
+        description: Mostrar ou ocultar um débito específico
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      hidden:
+                        description: Indica se o débito está oculto
+                        type: boolean
+                        example: true
+                      id:
+                        description: ID do DDA
+                        type: string
+                        example: d2627834-dd84-4094-9dcf-ca784460b352
+                        title: Id
+        required: true
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    description: Débito
+                    type: object
+                    properties:
+                      id:
+                        description: ID do DDA
+                        type: string
+                        example: d2627834-dd84-4094-9dcf-ca784460b352
+                        title: Id
+                      amount:
+                        description: Valor
+                        type: number
+                        example: 10.23
+                        title: Amount
+                      dueDate:
+                        description: Data
+                        type: string
+                        example: '2024-06-18T00:00:00.000Z'
+                        title: Date
+                      expirationDate:
+                        description: Data
+                        type: string
+                        example: '2024-06-18T00:00:00.000Z'
+                        title: Date
+                      digitableLine:
+                        description: Linha digitável
+                        type: string
+                        example: '20890050091784560129710038868500996680000100000'
+                      payee:
+                        description: Emissor
+                        type: object
+                        properties:
+                          document:
+                            description: CNPJ ou CPF
+                            type: string
+                            example: '37297902000141'
+                            title: TaxId
+                          fantasyName:
+                            description: Nome
+                            type: string
+                            example: VECHI CONSULTORIA E PROJETOS LTDA
+                            title: Name
+                          socialName:
+                            description: Nome
+                            type: string
+                            example: VECHI CONSULTORIA E PROJETOS LTDA
+                            title: Name
+                          bankCode:
+                            type: string
+                            example: '208'
+                            description: Código bancário
+                            title: BankCode
+                          bankName:
+                            description: Nome
+                            type: string
+                            example: VECHI CONSULTORIA E PROJETOS LTDA
+                            title: Name
+                        title: Payee
+                      hidden:
+                        description: Indica se o débito está oculto
+                        type: boolean
+                        example: false
+                      status:
+                        description: Status do débito
+                        type: string
+                        enum:
+                        - CREATED
+                        - OVERDUE
+                        - PAYMENT_PENDING_APPROVAL
+                        - PAYMENT_PROCESSING
+                        - PAYMENT_CONFIRMED
+                        - SCHEDULED
+                    title: Debit
+                  _links:
+                    type: object
+                    properties:
+                      next:
+                        type: object
+                        properties:
+                          rel:
+                            type: string
+                            example: self
+                          href:
+                            type: string
+                            example: /direct-debits/d2627834-dd84-4094-9dcf-ca784460b352
+                          method:
+                            type: string
+                            example: DELETE
+                          type:
+                            type: string
+                            example: application/json
+                        title: Link
+                      previous:
+                        type: object
+                        properties:
+                          rel:
+                            type: string
+                            example: self
+                          href:
+                            type: string
+                            example: /direct-debits/d2627834-dd84-4094-9dcf-ca784460b352
+                          method:
+                            type: string
+                            example: DELETE
+                          type:
+                            type: string
+                            example: application/json
+                        title: Link
+                title: DebitResponse
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: Type
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        detail:
+                          type: string
+                          example: Mensagem de erro
+                        code:
+                          type: string
+                          example: btg:enterprise:banking:payments:error:code
+                        arguments:
+                          type: object
+                          example: {}
+                      title: Error
+                title: ErrorResponse
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: Type
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        detail:
+                          type: string
+                          example: Mensagem de erro
+                        code:
+                          type: string
+                          example: btg:enterprise:banking:payments:error:code
+                        arguments:
+                          type: object
+                          example: {}
+                      title: Error
+                title: ErrorResponse
+      security:
+      - write:
+        - brn:btg:empresas:banking:direct-debit
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20DDA/patch-debit
+      summary: Patch debit
+      x-summary-source: derived
+  /{companyId}/banking/direct-debit/debits/summary:
+    get:
+      tags:
+      - Débito Direto Autorizado
+      description: '## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o Wiremock
+
+
+        > No sandbox este endpoint requer a utilização de Sandbox Headers
+
+
+        | Header | Descrição | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      operationId: getDebitsSummary
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      total:
+                        type: object
+                        properties:
+                          count:
+                            type: integer
+                            example: 10
+                          amount:
+                            type: number
+                            example: 10.33
+                        title: SummaryItem
+                      totalOverdue:
+                        type: object
+                        properties:
+                          count:
+                            type: integer
+                            example: 10
+                          amount:
+                            type: number
+                            example: 10.33
+                        title: SummaryItem
+                      totalCreated:
+                        type: object
+                        properties:
+                          count:
+                            type: integer
+                            example: 10
+                          amount:
+                            type: number
+                            example: 10.33
+                        title: SummaryItem
+                      totalPendingApproval:
+                        type: object
+                        properties:
+                          count:
+                            type: integer
+                            example: 10
+                          amount:
+                            type: number
+                            example: 10.33
+                        title: SummaryItem
+                      totalScheduled:
+                        type: object
+                        properties:
+                          count:
+                            type: integer
+                            example: 10
+                          amount:
+                            type: number
+                            example: 10.33
+                        title: SummaryItem
+                  _links:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        rel:
+                          type: string
+                          example: self
+                        href:
+                          type: string
+                          example: /direct-debits/d2627834-dd84-4094-9dcf-ca784460b352
+                        method:
+                          type: string
+                          example: DELETE
+                        type:
+                          type: string
+                          example: application/json
+                      title: Link
+                    title: Links
+                title: DebitsSummaryResponse
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: Type
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        detail:
+                          type: string
+                          example: Mensagem de erro
+                        code:
+                          type: string
+                          example: btg:enterprise:banking:payments:error:code
+                        arguments:
+                          type: object
+                          example: {}
+                      title: Error
+                title: ErrorResponse
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: Type
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        detail:
+                          type: string
+                          example: Mensagem de erro
+                        code:
+                          type: string
+                          example: btg:enterprise:banking:payments:error:code
+                        arguments:
+                          type: object
+                          example: {}
+                      title: Error
+                title: ErrorResponse
+      security:
+      - read:
+        - empresas.btgpactual.com/authorized-direct-debits.readonly
+        - brn:btg:empresas:banking:direct-debit.readonly
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20DDA/get-debits-summary
+      summary: Get debits summary
+      x-summary-source: derived
+components:
+  securitySchemes:
+    read:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+          tokenUrl: https://id.btgpactual.com/oauth2/token
+          scopes:
+            empresas.btgpactual.com/authorized-direct-debits.readonly: Read access
+            brn:btg:empresas:banking:direct-debit.readonly: Read access
+    write:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+          tokenUrl: https://id.btgpactual.com/oauth2/token
+          scopes:
+            brn:btg:empresas:banking:direct-debit: Write access
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/1d4ad3b3.0b915fa9.js
+  - https://developers.empresas.btgpactual.com/assets/js/a110f68a.bc0564dd.js
+  - https://developers.empresas.btgpactual.com/assets/js/9bee9e6c.457d6217.js
+  - https://developers.empresas.btgpactual.com/assets/js/434dcffe.ee50e0ea.js
+  - https://developers.empresas.btgpactual.com/assets/js/5d582711.92bdf26d.js
+  - https://developers.empresas.btgpactual.com/assets/js/5fc596f3.9d417117.js
+  - https://developers.empresas.btgpactual.com/assets/js/39f10b60.4583f0ca.js

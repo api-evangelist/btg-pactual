@@ -1,0 +1,951 @@
+openapi: 3.2.0
+info:
+  title: FIDC Renegotiation API
+  version: '1.0'
+  description: Esta documentação tem a finalidade de instruir parceiros a utilização das APIs de credit as a service. Para autenticação é necessário a utilização do fluxo de client credentials de acordo com o menu `Authentication -> Fluxos de Autenticação -> Client Credentials`
+  termsOfService: https://www.btgpactual.com/empresas/termos-e-politicas/
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com
+  description: Sandbox
+- url: https://api.empresas.btgpactual.com
+  description: Produção
+tags:
+- name: Renegotiation
+paths:
+  /renegotiation/{customer_tax_id}/agreement/{agreement_id}:
+    delete:
+      tags:
+      - Renegotiation
+      description: O objetivo dessa rota é cancelar um acordo de renegociação antes do pagamento da parcela de boa fé
+      parameters:
+      - in: path
+        name: customer_tax_id
+        description: Identificação do cliente
+        required: true
+        schema:
+          type: string
+          example: 99988877766
+          description: Identificador do cliente
+          title: CustomerIdentificationSchema
+      - in: path
+        name: agreement_id
+        description: Identificador do acordo de renegociação
+        required: true
+        schema:
+          type: string
+          example: FDA4162DA3999EB0570307A7356110F5
+          description: Identificador do acordo de renegociação
+          title: AgreementIdentificationSchema
+      responses:
+        '204':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: string
+                example: ''
+                title: RenegotiationDeleteAgreementSchema
+        '401':
+          description: Não autorizado
+        default:
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: Código de erro
+                    example: Unexpected error
+                  message:
+                    type: string
+                    description: Descrição do erro
+                    example: Erro no inesperado no processamento
+                title: ContractPositionErrorSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/renegotiations
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/FIDC%20-%20Renegotiation/cancelar-o-acordo-de-renegociacao-antes-do-pagamento-da-parcela-de-boa-fe
+      summary: Delete renegotiation by customer tax id agreement by agreement id
+      x-summary-source: derived
+      operationId: deleteRenegotiationByCustomerTaxIdAgreementByAgreementId
+      x-operation-id-source: derived
+  /renegotiation/{customer_tax_id}:
+    post:
+      tags:
+      - Renegotiation
+      description: O objetivo dessa rota é confirmar uma renegociação para uma simulação criada
+      parameters:
+      - in: path
+        name: customer_tax_id
+        description: Identificação do cliente
+        required: true
+        schema:
+          type: string
+          example: 99988877766
+          description: Identificador do cliente
+          title: CustomerIdentificationSchema
+      requestBody:
+        description: Informações da confirmação de pré pagamento
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                first_payment_method_id:
+                  type: number
+                  description: Identificador do método de pagamento da parcela de boa fé
+                  example: 1234
+                installments_count:
+                  type: number
+                  description: Quantidade de parcelas
+                  example: 10
+                installments_payment_method_id:
+                  type: number
+                  description: Identificador do método de pagamento das parcelas
+                  example: 1234
+                simulation_id:
+                  type: string
+                  example: 64aedd77-5d5d-455a-879f-da9c250ea381
+                  description: Identificador da simulação
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  agreement_id:
+                    type: string
+                    example: 2ec83742-1ed6-9374-ac14-48f57c5f5ebb
+                  contract:
+                    type: string
+                    example: 0002391480/RMD_TEST_022
+                  due_date:
+                    type: string
+                    example: '2023-08-30T00:00:00'
+                  offer_id:
+                    type: string
+                    example: 6fd12837-42ee-42a0-ab53-e49b42f5236d
+                  serial:
+                    type: string
+                    example: 2800
+                title: RenegotiationConfirmSchema
+        '401':
+          description: Não autorizado
+        default:
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: Código de erro
+                    example: Unexpected error
+                  message:
+                    type: string
+                    description: Descrição do erro
+                    example: Erro no inesperado no processamento
+                title: ContractPositionErrorSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/renegotiations
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/FIDC%20-%20Renegotiation/confirmar-um-acordo-de-renegociacao-para-uma-simulacao-criada
+      summary: Create renegotiation by customer tax id
+      x-summary-source: derived
+      operationId: postRenegotiationByCustomerTaxId
+      x-operation-id-source: derived
+  /renegotiation/{customer_tax_id}/campaigns:
+    get:
+      tags:
+      - Renegotiation
+      description: O objetivo dessa rota é consultar as campanhas ativas do(s) contrato(s).
+      parameters:
+      - in: path
+        name: customer_tax_id
+        description: Identificação do cliente
+        required: true
+        schema:
+          type: string
+          example: 99988877766
+          description: Identificador do cliente
+          title: CustomerIdentificationSchema
+      - in: query
+        name: fund_tax_id
+        description: Identificação do fundo
+        required: true
+        schema:
+          type: string
+          example: '15996430000182'
+          description: CNPJ/CPF
+          title: TaxIdSchema
+      - in: query
+        name: contract[]
+        description: Identificador do(s) contrato(s)
+        required: true
+        schema:
+          type: array
+          items:
+            type: string
+            description: Identificador do contrato
+            example: 6764459321/EP
+          title: ContractIdentificationsSchema
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    affinity_score:
+                      type: number
+                      example: 5
+                    code:
+                      type: string
+                      example: '123456'
+                    first_payment_options:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          description:
+                            type: string
+                            example: Boleto
+                          id:
+                            type: number
+                            example: 1
+                          name:
+                            type: string
+                            example: BANKSLIP
+                    grace_period_flow:
+                      type: object
+                      properties:
+                        max_value:
+                          type: number
+                          example: 0
+                        name:
+                          type: string
+                          example: Carência de Parcelas
+                        type:
+                          type: string
+                          example: Cashflow
+                    guarantor_type:
+                      type: string
+                      example: ORIGINAL
+                    installment_agreement_type:
+                      type: string
+                      enum:
+                      - Disabled
+                      - OnlyVNP
+                      - NotVNP
+                      - All
+                      example: All
+                    installment_ranges:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          discount_fields:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                percent:
+                                  type: number
+                                  example: 0
+                                text:
+                                  type: string
+                                  example: Principal
+                                value:
+                                  type: string
+                                  example: Main
+                          max_installments:
+                            type: number
+                            example: 1
+                          min_installments:
+                            type: number
+                            example: 1
+                    installments_payment_options:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          description:
+                            type: string
+                            example: Boleto
+                          id:
+                            type: number
+                            example: 1
+                          name:
+                            type: string
+                            example: BANKSLIP
+                    interest_payment_type:
+                      type: string
+                      example: Juros Originais
+                    interest_rate:
+                      type: number
+                      example: 0
+                    minimum_installment_amount:
+                      type: number
+                      example: 0.1
+                    minimun_entry_amount:
+                      type: number
+                      example: 155.56
+                    name:
+                      type: string
+                      example: '123456'
+                    payment_dates:
+                      type: array
+                      items:
+                        type: string
+                        example: '2023-08-30'
+                    payment_periodicity:
+                      type: string
+                      example: null
+                  title: RenegotiationCampaignsSchema
+        '401':
+          description: Não autorizado
+        default:
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: Código de erro
+                    example: Unexpected error
+                  message:
+                    type: string
+                    description: Descrição do erro
+                    example: Erro no inesperado no processamento
+                title: ContractPositionErrorSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/renegotiations
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/FIDC%20-%20Renegotiation/consultar-as-campanhas-de-renegociacao-ativas-para-o-s-contrato-s
+      summary: Get renegotiation by customer tax id campaigns
+      x-summary-source: derived
+      operationId: getRenegotiationByCustomerTaxIdCampaigns
+      x-operation-id-source: derived
+  /renegotiation/{customer_tax_id}/agreement/{agreement_id}/installment/{installment_number}/bankslip:
+    get:
+      tags:
+      - Renegotiation
+      description: O objetivo dessa rota é consultar um boleto por parcela de um acordo de renegociação
+      parameters:
+      - in: path
+        name: customer_tax_id
+        description: Identificação do cliente
+        required: true
+        schema:
+          type: string
+          example: 99988877766
+          description: Identificador do cliente
+          title: CustomerIdentificationSchema
+      - in: path
+        name: agreement_id
+        description: Identificador do acordo de renegociação
+        required: true
+        schema:
+          type: string
+          example: FDA4162DA3999EB0570307A7356110F5
+          description: Identificador do acordo de renegociação
+          title: AgreementIdentificationSchema
+      - in: path
+        name: installment_number
+        description: Número da parcela
+        required: true
+        schema:
+          type: number
+          example: 3
+          description: Número da parcela
+          title: InstallmentNumberSchema
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  agreement_id:
+                    type: string
+                    example: 2ec83742-1ed6-9374-ac14-48f57c5f5ebb
+                  bar_code:
+                    type: string
+                    example: '83928394300003234890001010000000003849504938'
+                  base64_representation:
+                    type: string
+                    example: base64
+                  due_date:
+                    type: string
+                    example: '2023-09-14T00:00:00'
+                  installment:
+                    type: number
+                    example: 1
+                  offer_id:
+                    type: string
+                    example: 6fd12837-42ee-42a0-ab53-e49b42f5236d
+                title: RenegotiationAgreementBankslipSchema
+        '401':
+          description: Não autorizado
+        default:
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: Código de erro
+                    example: Unexpected error
+                  message:
+                    type: string
+                    description: Descrição do erro
+                    example: Erro no inesperado no processamento
+                title: ContractPositionErrorSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/renegotiations
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/FIDC%20-%20Renegotiation/consultar-o-boleto-por-parcela-de-um-acordo-de-renegociacao
+      summary: Get renegotiation by customer tax id agreement by agreement id installment by…
+      x-summary-source: derived
+      operationId: getRenegotiationByCustomerTaxIdAgreementByAgreementIdInstallmentByInstallmentNumberBankslip
+      x-operation-id-source: derived
+  /renegotiation/{customer_tax_id}/contracts:
+    get:
+      tags:
+      - Renegotiation
+      description: O objetivo dessa rota é consultar o(s) contrato(s) passivéis de renegociação agrupados por elegibilidade.
+      parameters:
+      - in: path
+        name: customer_tax_id
+        description: Identificação do cliente
+        required: true
+        schema:
+          type: string
+          example: 99988877766
+          description: Identificador do cliente
+          title: CustomerIdentificationSchema
+      - in: query
+        name: fund_tax_id
+        description: Identificação do fundo
+        required: true
+        schema:
+          type: string
+          example: '15996430000182'
+          description: CNPJ/CPF
+          title: TaxIdSchema
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    contracts:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          balance:
+                            type: object
+                            properties:
+                              curve_value:
+                                type: number
+                                example: 3111.1
+                              fixed_interest_value:
+                                type: number
+                                example: 653.51
+                              float_interest_value:
+                                type: number
+                                example: 0
+                              interest_arrears_value:
+                                type: number
+                                example: 3.55
+                              interest_value:
+                                type: number
+                                example: 0
+                              iof_fee_value:
+                                type: number
+                                example: 0.32
+                              late_payment_value:
+                                type: number
+                                example: 0
+                              penalty_fee_value:
+                                type: number
+                                example: 22.47
+                              principal_value:
+                                type: number
+                                example: 2431.25
+                              spread_rate:
+                                type: number
+                                example: 49.190931
+                          contract:
+                            type: string
+                            example: AUX-55335009
+                          cros_contract:
+                            type: string
+                            example: 0002391480/RMD_TEST_022
+                          due_days:
+                            type: number
+                            example: 273
+                          installments:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                curve_value":
+                                  type: number
+                                  example: 164.23
+                                fixed_interest_value":
+                                  type: number
+                                  example: 7.37
+                                float_interest_value":
+                                  type: number
+                                  example: 0
+                                has_processing_payments:
+                                  type: boolean
+                                  example: false
+                                installment_number":
+                                  type: number
+                                  example: 1
+                                interest_arrears_value":
+                                  type: number
+                                  example: 0.96
+                                iof_value":
+                                  type: number
+                                  example: 0.05
+                                is_vnp:
+                                  type: boolean
+                                  example: true
+                                late_payment_value":
+                                  type: number
+                                  example: 0
+                                maturity_date:
+                                  type: string
+                                  example: '2022-11-30T00:00:00'
+                                maturity_value":
+                                  type: number
+                                  example: 160
+                                penalty_fee_value":
+                                  type: number
+                                  example: 3.22
+                                principal_value":
+                                  type: number
+                                  example: 152.63
+                                status:
+                                  type: string
+                                  example: Opened
+                          name:
+                            type: string
+                            example: FIDC MT Auxilio Brasil
+                    description:
+                      type: string
+                      example: Reneg. Simples
+                    id:
+                      type: string
+                      example: COL_RISK_POLICY_TEST
+                    installment_agreement_type:
+                      type: string
+                      enum:
+                      - Disabled
+                      - OnlyVNP
+                      - NotVNP
+                      - All
+                      example: Disabled
+                    type:
+                      type: string
+                      enum:
+                      - TOTAL
+                      - WRAP
+                      example: TOTAL
+                  title: RenegotiationContractsSchema
+        '401':
+          description: Não autorizado
+        default:
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: Código de erro
+                    example: Unexpected error
+                  message:
+                    type: string
+                    description: Descrição do erro
+                    example: Erro no inesperado no processamento
+                title: ContractPositionErrorSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/renegotiations
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/FIDC%20-%20Renegotiation/consultar-o-s-contrato-s-passiveis-de-renegociacao-agrupados-por-elegibilidade
+      summary: Get renegotiation by customer tax id contracts
+      x-summary-source: derived
+      operationId: getRenegotiationByCustomerTaxIdContracts
+      x-operation-id-source: derived
+  /renegotiation/{customer_tax_id}/simulate:
+    post:
+      tags:
+      - Renegotiation
+      description: O objetivo dessa rota é simular uma renegociação para o(s) contrato(s)
+      parameters:
+      - in: path
+        name: customer_tax_id
+        description: Identificação do cliente
+        required: true
+        schema:
+          type: string
+          example: 99988877766
+          description: Identificador do cliente
+          title: CustomerIdentificationSchema
+      requestBody:
+        description: Informações da simulação de renegociação
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                contracts:
+                  type: array
+                  items:
+                    type: string
+                    description: Identificador do contrato
+                    example: 6764459321/EP
+                first_payment_date:
+                  type: string
+                  description: Data de pagamento da primeira parcela
+                  example: '2023-08-03'
+                campaign_code:
+                  type: string
+                  description: Identificador da campanha
+                  example: 4ecf5a25-b0a6-4b08-bf41-4be3c19c61ae
+                installments_count:
+                  type: number
+                  description: Quantidade de parcelas
+                  example: 10
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  contracts:
+                    type: array
+                    items:
+                      type: string
+                      example: CONTRACT-001
+                  cros_contracts:
+                    type: array
+                    items:
+                      type: string
+                      example: 0000000000/CONTRACT_TEST_001
+                  debt_current_values:
+                    type: number
+                    example: 3100
+                  debts:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        channel:
+                          type: string
+                          example: fidc
+                        company:
+                          type: object
+                          properties:
+                            business_name:
+                              type: string
+                              example: BANCO BTG PACTUAL S.A.
+                            id:
+                              type: string
+                              example: '30306294000145'
+                        contract:
+                          type: string
+                          example: CONTRACT-001
+                        cros_contract:
+                          type: string
+                          example: 0000000000/CONTRACT_TEST_001
+                        curve_value:
+                          type: number
+                          example: 3100
+                        due_date:
+                          type: string
+                          example: '2022-10-07T00:00:00'
+                        due_days:
+                          type: number
+                          example: 273
+                        installments:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              curve_value:
+                                type: number
+                                example: 164.23
+                              installment_number:
+                                type: number
+                                example: 1
+                              is_vnp:
+                                type: boolean
+                                example: true
+                              maturity_date:
+                                type: string
+                                example: '2022-11-30T00:00:00'
+                              maturity_value:
+                                type: number
+                                example: 160
+                              principal_value:
+                                type: number
+                                example: 152.63
+                        installments_count:
+                          type: number
+                          example: 24
+                        interest_value:
+                          type: number
+                          example: 653.51
+                        is_late:
+                          type: boolean
+                          example: true
+                        principal_value:
+                          type: number
+                          example: 2431.25
+                        product:
+                          type: string
+                          example: PRODUCT
+                        product_description:
+                          type: string
+                          example: FIDC Product Description
+                        product_type:
+                          type: number
+                          example: 0
+                        spread_rate:
+                          type: number
+                          example: 49.190931
+                        total_balance:
+                          type: number
+                          example: 0
+                        trade_id:
+                          type: string
+                          example: '82743754'
+                        updated_at:
+                          type: string
+                          example: '2023-07-07T00:00:00'
+                  eligibility:
+                    type: string
+                    example: TESTE_FIDC
+                  first_payment_date:
+                    type: string
+                    example: '2023-08-30'
+                  first_payment_options:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        description:
+                          type: string
+                          example: Boleto
+                        id:
+                          type: number
+                          example: 1
+                        name:
+                          type: string
+                          example: BANKSLIP
+                  id:
+                    type: string
+                    example: ef1e7735-de4f-437b-af6c-3fcec6024e4c
+                  input_value:
+                    type: number
+                    example: 0
+                  installment_options:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        annual_interest_rate:
+                          type: number
+                          example: 12059.314432
+                        cet_rate:
+                          type: number
+                          example: 100
+                        current_value_discount_percentage:
+                          type: number
+                          example: 0.45
+                        current_value_discount_value:
+                          type: number
+                          example: 14.15
+                        discount_percentage:
+                          type: number
+                          example: 0.83
+                        installments:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              amortization":
+                                type: number
+                                example: 3122.96727565
+                              balance":
+                                type: number
+                                example: 0
+                              discount":
+                                type: number
+                                example: 26.02
+                              discount_percentage":
+                                type: number
+                                example: 0.8331819613634702
+                              due_date":
+                                type: string
+                                example: '2023-08-30T00:00:00'
+                              end_accrual":
+                                type: string
+                                example: '2023-08-30T00:00:00'
+                              incorporated_days":
+                                type: number
+                                example: 0
+                              incorporation_flag":
+                                type: boolean
+                                example: false
+                              index":
+                                type: number
+                                example: 1
+                              installment_value":
+                                type: number
+                                example: 3122.96727565
+                              installment_value_with_discount":
+                                type: number
+                                example: 3096.94727565
+                              interest_value":
+                                type: number
+                                example: 0
+                              iof_value":
+                                type: number
+                                example: 11.86727565
+                              main_ticket":
+                                type: number
+                                example: 3122.96727565
+                              start_accrual":
+                                type: string
+                                example: '2023-08-30T00:00:00'
+                        installments_count":
+                          type: number
+                          example: 1
+                        monthly_interest_rate":
+                          type: number
+                          example: null
+                        original_interest_rate":
+                          type: number
+                          example: 49.190931
+                        simulation_id":
+                          type: string
+                          example: c9076271-a5d3-482f-83b1-befec70f235f
+                        total_discount_value":
+                          type: number
+                          example: 26.02
+                        total_fee_value":
+                          type: number
+                          example: 0
+                        total_interest_value":
+                          type: number
+                          example: 0
+                        total_iof_value":
+                          type: number
+                          example: 11.86727565
+                        total_value":
+                          type: number
+                          example: 3122.96727565
+                        total_value_with_discount":
+                          type: number
+                          example: 3096.94727565
+                  installments_payment_options:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        description:
+                          type: string
+                          example: Boleto
+                        id:
+                          type: number
+                          example: 1
+                        name:
+                          type: string
+                          example: BANKSLIP
+                  max_installments_count:
+                    type: number
+                    example: 1
+                  requested_installments:
+                    type: array
+                    items:
+                      type: string
+                      example: ''
+                  requested_installments_count:
+                    type: number
+                    example: 1
+                  status:
+                    type: string
+                    example: OPEN
+                title: RenegotiationSimulateSchema
+        '401':
+          description: Não autorizado
+        default:
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: Código de erro
+                    example: Unexpected error
+                  message:
+                    type: string
+                    description: Descrição do erro
+                    example: Erro no inesperado no processamento
+                title: ContractPositionErrorSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/renegotiations
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/FIDC%20-%20Renegotiation/simular-um-acordo-de-renegociacao-para-o-s-contrato-s
+      summary: Create renegotiation by customer tax id simulate
+      x-summary-source: derived
+      operationId: postRenegotiationByCustomerTaxIdSimulate
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+          scopes:
+            empresas.btgpactual.com/renegotiations: Scope to renegociation
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/747250c0.2191ad7e.js
+  - https://developers.empresas.btgpactual.com/assets/js/3f6ab2ba.43ce8002.js
+  - https://developers.empresas.btgpactual.com/assets/js/cf543bd1.a80cee0e.js
+  - https://developers.empresas.btgpactual.com/assets/js/5d5d8fc7.5c84d77e.js
+  - https://developers.empresas.btgpactual.com/assets/js/9a9233ae.7751cddc.js
+  - https://developers.empresas.btgpactual.com/assets/js/eb7fc56f.564f1957.js

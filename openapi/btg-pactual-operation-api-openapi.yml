@@ -1,0 +1,1218 @@
+openapi: 3.2.0
+info:
+  title: Btg Pactual Operation API
+  contact:
+    name: Time BTG Empresas
+    email: ol-it-btgempresas@btgpactual.com
+  version: '1.0'
+  description: 'Operations tagged Operation across 2 of this provider''s published API definitions: btg-pactual-fidc-operation-openapi.yml, btg-pactual-scf-risco-sacado-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com
+  description: Sandbox
+- url: https://api.empresas.btgpactual.com
+  description: Produção
+- url: https://api.sandbox.empresas.btgpactual.com/v1/scf
+  description: SANDBOX URL
+- url: https://api.empresas.btgpactual.com/v1/scf
+  description: PROD URL
+tags:
+- name: Operation
+paths:
+  /fidc-loan/v1/operation:
+    post:
+      tags:
+      - Operation
+      description: Essa rota serve para realizar a cessão de crédito ou emprestimo.
+      operationId: createOperation
+      requestBody:
+        description: Dados da operação
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                AgreementId:
+                  type: string
+                  description: Identificador do convênio
+                  example: XXXXXXXXXXXXXXXXXX
+                ExternalId:
+                  type: string
+                  description: Identificador do parceiro para envios de hooks
+                  example: IDENTIFICADOR_UNICO_PARCEIRO
+                TaxIdCounterparty:
+                  type: string
+                  description: Cnpj/Cpf do tomador do emprestimo
+                  example: XXXXXXXXXXX
+                Term:
+                  type: number
+                  description: Quatidade de parcelas
+                TotalAmount:
+                  deprecated: true
+                  type: number
+                  format: double
+                  description: Valor total do Empréstimo + Juros + Comissao + Impostos. Soma de todas as PMTs
+                  example: 10.01
+                Interest:
+                  type: object
+                  properties:
+                    Index:
+                      type: string
+                      description: Indexador utilizado
+                      default: PRE
+                      enum:
+                      - PRE
+                      - CDIE
+                      - NIPCA
+                    PreIndexRate:
+                      type: number
+                      format: double
+                      description: Taxa Pré Fixada do emprestimo
+                      example: 0.0225
+                    PosIndexPercentage:
+                      type: number
+                      format: double
+                      description: Porcentagem do indexador Pós fixado a ser considerado (1 = 100%, 1.2 = 120%)
+                      example: 1
+                    BaseDayCount:
+                      type: number
+                      description: Base de dias para o calculo da taxa. Ex. 30, 365, 252, 30360
+                      example: 30
+                LatePaymentCharges:
+                  type: object
+                  description: Juros cobrados por atraso
+                  properties:
+                    PosIndexCode:
+                      type: string
+                      description: Indexador pos utilizado
+                      default: PRE
+                      enum:
+                      - PRE
+                      - CDIE
+                      - NIPCA
+                    PreIndexRate:
+                      type: number
+                      format: double
+                      description: Taxa Pré Fixada do emprestimo cobrados por atraso
+                      example: 0.0225
+                    PosIndexPercentage:
+                      type: number
+                      format: double
+                      description: Porcentagem do indexador Pós fixado a ser considerado (1 = 100%, 1.2 = 120%) em cobrança por atraso
+                      example: 1
+                PurchaseInformation:
+                  type: object
+                  properties:
+                    amount:
+                      type:
+                      - number
+                      - 'null'
+                      format: double
+                    interest:
+                      type: object
+                      properties:
+                        index:
+                          enum:
+                          - PRE
+                          - CDIE
+                          - NIPCA
+                          - PTAX
+                          - IGPM
+                          - NIGPM
+                          - SELIC
+                          - TR
+                          type: string
+                        preIndexRate:
+                          type:
+                          - number
+                          - 'null'
+                          format: double
+                        posIndexPercentage:
+                          type:
+                          - number
+                          - 'null'
+                          format: double
+                        baseDayCount:
+                          type:
+                          - integer
+                          - 'null'
+                          format: int32
+                      additionalProperties: false
+                Amount:
+                  type: number
+                  format: double
+                  description: Valor do emprestimo
+                  example: 10.01
+                Rate:
+                  deprecated: true
+                  type: number
+                  format: double
+                  description: Substituido por "Interest"."PreIndexRate"
+                AssignmentRate:
+                  type: number
+                  format: double
+                  description: Taxa da cessão
+                  example: 0.0247
+                Tax:
+                  type: number
+                  format: double
+                  description: Valor de imposto aplicada. IOF
+                  example: 10.01
+                Arrears:
+                  type: number
+                  format: double
+                  description: Mora
+                  example: 0.01
+                Penalty:
+                  type: number
+                  format: double
+                  description: Multa
+                  example: 0.02
+                LatePaymentRate:
+                  deprecated: true
+                  type: number
+                  format: double
+                  description: Substituido por "LatePaymentCharges"."PreIndexRate" Taxa de juros por atraso
+                  example: 0.02
+                Charges:
+                  type: number
+                  format: double
+                  description: Valor dos Encargos. Soma dos FEEs/Ágio/Deságio
+                  example: 10.01
+                Cet:
+                  type: number
+                  format: double
+                  description: Custo Efetivo Total
+                  example: 0.0369
+                BaseDayCount:
+                  type: number
+                  description: Substituido por "Interest"."BaseDayCount"
+                  example: 30
+                  deprecated: true
+                AcquisitionAmount:
+                  type: number
+                  format: double
+                  description: Valor de aquisição da operação. Amount + FEEs + Ágio/Deságio
+                  example: 10.01
+                ClientNetAmount:
+                  type: number
+                  format: double
+                  description: Valor liquido desembolsado para a contraparte do emprestimo
+                  example: 10.01
+                BaseDate:
+                  type: string
+                  format: date
+                  description: Start Accrual da operação
+                SettlementDate:
+                  type: string
+                  format: date
+                  description: Data de vencimento da operação. End Accrual da operação
+                FundingDate:
+                  type: string
+                  format: date
+                  description: Data de Liquidacao para a contraparte
+                FirtsInstallmentDate:
+                  type: string
+                  format: date
+                  description: Data de end accrual da primeira parcela
+                OperationType:
+                  type: string
+                  description: 'Tipo do operação. Ex: NEW, PORTABILITY, REFINANCING.'
+                  example: NEW
+                Settlement:
+                  type: object
+                  properties:
+                    Type:
+                      type: string
+                      description: Tipo da liquidação
+                      enum:
+                      - DebitoEmConta
+                      - Boleto
+                    Account:
+                      type: object
+                      properties:
+                        BankCode:
+                          type: string
+                          description: Código do banco
+                          example: '208'
+                        Agency:
+                          type: string
+                          description: Número da agência
+                          example: '0001'
+                        DigitAgency:
+                          type: string
+                          description: Dígito da agência
+                          example: '2'
+                        Number:
+                          type: string
+                          description: Número da conta
+                          example: '22501'
+                        DigitAccount:
+                          type: string
+                          description: Dígito da conta
+                          example: '3'
+                Disbursement:
+                  type: object
+                  properties:
+                    Type:
+                      type: string
+                      description: Tipo da conta
+                      example: Corrente
+                      enum:
+                      - Corrente
+                      - Poupanca
+                      - Salario
+                    Account:
+                      type: object
+                      properties:
+                        BankCode:
+                          type: string
+                          description: Código do banco
+                          example: '208'
+                        Agency:
+                          type: string
+                          description: Número da agência
+                          example: '0001'
+                        DigitAgency:
+                          type: string
+                          description: Dígito da agência
+                          example: '2'
+                        Number:
+                          type: string
+                          description: Número da conta
+                          example: '22501'
+                        DigitAccount:
+                          type: string
+                          description: Dígito da conta
+                          example: '3'
+                    AdditionalDisbursements:
+                      type: array
+                      items:
+                        type: object
+                        description: Avalistas da operação
+                        properties:
+                          Type:
+                            type: string
+                            description: Tipo da conta
+                            example: SSIS
+                            enum:
+                            - Corrente
+                            - Poupanca
+                            - Salario
+                            - SSIS
+                          TaxId:
+                            type: string
+                            description: Documento Nacional do proprietário da conta
+                            example: XXXXXXXXXXX
+                          Account:
+                            type: object
+                            properties:
+                              BankCode:
+                                type: string
+                                description: Código do banco
+                                example: '208'
+                              Agency:
+                                type: string
+                                description: Número da agência
+                                example: '0001'
+                              DigitAgency:
+                                type: string
+                                description: Dígito da agência
+                                example: '2'
+                              Number:
+                                type: string
+                                description: Número da conta
+                                example: '22501'
+                              DigitAccount:
+                                type: string
+                                description: Dígito da conta
+                                example: '3'
+                Contract:
+                  type: object
+                  properties:
+                    ExternalId:
+                      type: string
+                      description: Identificador do parceiro para envios de hooks
+                      example: IDENTIFICADOR_UNICO_PARCEIRO
+                    Number:
+                      type: string
+                      description: Identificador único do contrato
+                      example: NUMERO_CONTRATO
+                    FormalizationDate:
+                      type: string
+                      format: date
+                      description: Data da formalização do contrato
+                    Guarantees:
+                      type: array
+                      items:
+                        type: object
+                        description: Avalistas da operação
+                        properties:
+                          Name:
+                            type: string
+                            description: Nome do avalista
+                            example: NOME_AVALISTA
+                          TaxId:
+                            type: string
+                            description: Cnpj/Cpf do avalista
+                            example: XXXXXXXXXXX
+                          Amount:
+                            description: Valor Garantido por este Avalista
+                            type: number
+                            format: double
+                            example: 10.01
+                    EmissionType:
+                      type: string
+                      description: Tipo de emissao do contrato
+                      example: CARTULAR
+                      enum:
+                      - NONE
+                      - CARTULAR
+                      - ESCRITURAL
+                      - ELETRONICA
+                Installments:
+                  type: array
+                  items:
+                    type: object
+                    description: Parcelas da operação
+                    properties:
+                      Code:
+                        type: number
+                        description: Numero da parcela
+                        example: 1
+                      Amortization:
+                        type: number
+                        format: double
+                        description: Principal da parcela. Amortização
+                        example: 10.01
+                      Amount:
+                        type: number
+                        format: double
+                        description: Valor da parcela. PMT
+                        example: 10.01
+                      Interest:
+                        type: number
+                        format: double
+                        description: Juros da parcela
+                        example: 10.01
+                      Tax:
+                        type: number
+                        format: double
+                        description: Valor do IOF na parcela
+                        example: 0.63
+                      IsPaid:
+                        type: boolean
+                        description: Indicador se houve pagamento completo anteriormente da parcela
+                        example: false
+                      PaidValue:
+                        type: number
+                        format: double
+                        description: Valor anteriormente pago da parcela
+                        example: 0
+                      StartAccrual:
+                        type: string
+                        format: date
+                        description: Data de inicio de accrual da parcela
+                      EndAccrual:
+                        type: string
+                        format: date
+                        description: Data de termino de accrual da parcela
+                      PaymentDate:
+                        type: string
+                        format: date
+                        description: Data de pagamento da parcela
+                      MaturityDate:
+                        type: string
+                        format: date
+                        description: Data de vencimento da parcela
+                OtherFees:
+                  type: array
+                  description: Taxas adicionais de cessão. Obrigatório se custos por cessão forem aplicáveis.
+                  items:
+                    type: object
+                    properties:
+                      Type:
+                        type: string
+                        description: Tipo do Fee
+                        example: BROKER
+                        enum:
+                        - REGISTRATOR
+                        - BROKER
+                        - RCO
+                        - CIP
+                        - TAC
+                      Value:
+                        type: number
+                        format: double
+                        description: Valor Nominal
+                        example: 10.01
+                Fees:
+                  type: array
+                  description: Taxas adicionais de bancarização. Se aplicável (Obrigatorio se houver Fee)
+                  items:
+                    type: object
+                    properties:
+                      Type:
+                        type: string
+                        description: Tipo do Fee
+                        example: TAC
+                        enum:
+                        - REGISTRATOR
+                        - BROKER
+                        - RCO
+                        - CIP
+                        - TAC
+                      Value:
+                        type: number
+                        format: double
+                        description: Valor Nominal
+                        example: 10.01
+                GenericIdentifiers:
+                  type: array
+                  description: Informações adicionais
+                  items:
+                    type: object
+                    properties:
+                      Type:
+                        type: string
+                        description: Tipo da informação do campo generico
+                        example: IPOC
+                        enum:
+                        - IPOC
+                        - CessionNumber
+                        - EndorsementNumber
+                        - ConciliationIdentifier
+                        - CCIIdentifier
+                        - SNGRegistry
+                        - ConsigCode
+                        - SignatureDate
+                        - FederativeUnit
+                        - RATING
+                        - STORE_ID
+                        - SEGMENT
+                        - ConsignedEntity
+                        - ConsignedEntityPayer
+                      Value:
+                        type: string
+                        description: Valor do campo generico
+                        example: XXXXXXXXXXXXXXXXXX
+                RelatedOperations:
+                  type: array
+                  items:
+                    type: object
+                    description: Parcelas da operação
+                    properties:
+                      PositionAmount:
+                        type: number
+                        description: Valor da posição
+                        example: 100.25
+                      PositionDate:
+                        type: string
+                        format: date
+                        description: Data da posição
+                        example: '2024-01-01'
+                      ContractNumber:
+                        type: string
+                        description: Código do contrato
+                        example: NUMERO_CONTRATO
+                WarrantyIdentification:
+                  type: string
+                  description: Identificador da garantia
+                  example: cfd57a8d-20b6-45d3-8c4e-bd688425e31a
+        required: true
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    description: Mesagem de sucesso
+                    example: Request received
+                title: SucessSchema
+        '401':
+          description: Não autorizado
+        '500':
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                title: ErrorResponseSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/loans
+      callbacks:
+        OperationUpdatedStatus:
+          <webhook-host-http>/:
+            post:
+              summary: Chamada webhook de atualização no status da operação
+              requestBody:
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      properties:
+                        Identification:
+                          description: Identificador do BTG da operação
+                          type: string
+                          example: XXXXXXXXXX
+                        ExternalId:
+                          description: Identificador do parceiro para envios de hooks
+                          type: string
+                          example: IDENTIFICADOR_UNICO_PARCEIRO
+                        Amount:
+                          description: Valor do credito
+                          type: number
+                          format: double
+                          example: 10.01
+                        Status:
+                          description: 'Status do empréstimo. Possiveis: PendenteValidacao, EnvioTrade, TradeEnviado, AguardandoDesembolso, Desembolsado, Liquidado, Invalido, Cancelado.'
+                          type: string
+                          example: Desembolsado
+                        RejectedStatusCodes:
+                          type: array
+                          items:
+                            type: string
+                            description: Lista de motivos de rejeição
+                        PartyTaxId:
+                          type: string
+                          format: string
+                          description: Identificador do fundo
+                          example: '30306294000145'
+                        PublishDate:
+                          description: Data de publicação do evento
+                          type: string
+                          format: date-time
+                          example: '2023-04-14T00:00:01.000Z'
+                        AgreementId:
+                          type: string
+                          description: Identificador do convênio
+                          example: XXXXXXXXXXXXXXXXXX
+                        Disbursement:
+                          description: Informações do desembolso da cessão
+                          type: object
+                          properties:
+                            Amount:
+                              description: Valor total do desembolso na cessão do credito
+                              type: number
+                              format: double
+                              example: 11.02
+                            FeeAmount:
+                              description: Valor discriminado do agio na cessão do credito, caso tenha
+                              type: number
+                              format: double
+                              example: 1.01
+                        Contract:
+                          description: Informações do contrato
+                          type: object
+                          properties:
+                            Number:
+                              description: Identificador único do contrato
+                              type: string
+                              example: NUMERO_CONTRATO
+                      title: OperationWebhookSchema
+              responses:
+                '200':
+                  description: Seu servidor deve retornar 200 caso tenha processado a requisição corretamente
+        Bankslip:
+          <webhook-host-http>/:
+            post:
+              summary: Chamada webhook com os dados do boleto emitido
+              requestBody:
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      properties:
+                        ClientTaxId:
+                          type: string
+                          example: '15996430000182'
+                          description: CNPJ/CPF
+                          title: TaxIdSchema
+                        TradeId:
+                          description: Identificador da operação da API da carteira
+                          type: string
+                          example: '582152'
+                        ValueTitle:
+                          description: Valor do boleto
+                          type: number
+                          format: double
+                        PublishDate:
+                          description: Data de publicação do evento
+                          type: string
+                          format: date-time
+                          example: '2023-04-14T00:00:01.000Z'
+                        BarCodeNumber:
+                          description: Linha digitavel do boleto
+                          type: string
+                          example: '20890001091000000120532016696604192200000161979'
+                        MaturityTitle:
+                          description: Data de maturidade do boleto
+                          type: string
+                          format: date-time
+                          example: '2023-04-14T00:00:01.000Z'
+                        Identification:
+                          description: Identificador unico do boleto
+                          type: string
+                          example: ujhaf09qfqf=1rjf
+                        InstallmentNumber:
+                          description: Numero da parcela
+                          type: string
+                          example: '1'
+                        StatusDescription:
+                          description: 'Descrição do status do boleto. Possiveis: EMITIDO, PAGO, CANCELADO'
+                          type: string
+                          example: EMITIDO
+                        StatusId:
+                          description: 'Codigo do status do boleto. Possiveis: EMITIDO = 4, PAGO = 5, CANCELADO = 7'
+                          type: string
+                          example: '4'
+                        ExternalId:
+                          description: Identificador externo da operação
+                          example: b2eaa18b-985e-473f-92bf-8cf9a407aee1
+                        File:
+                          description: Base64 do arquivo
+                          type: string
+                          example: Base64
+                      title: BankslipWebhookSchema
+              responses:
+                '200':
+                  description: Seu servidor deve retornar 200 caso tenha processado a requisição corretamente
+        DirectDebit:
+          <webhook-host-http>/:
+            post:
+              summary: Chamada webhook com os dados do resultado do débito em conta
+              requestBody:
+                content:
+                  application/json:
+                    schema:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          identification:
+                            type: string
+                            description: Identificador do débito em conta
+                            example: '00000000000000000000'
+                          status:
+                            type: string
+                            description: Status do débito em conta
+                            example: Completed
+                            enum:
+                            - Scheduled
+                            - Completed
+                            - Error
+                            - Cancelled
+                            - WaitingUpdate
+                            - Issued
+                            - Processing
+                            - ReceivedByScheduler
+                            - ScheduleWindowOpened
+                            - ScheduleRequestGenerated
+                            - CancelError
+                          description:
+                            type: string
+                            description: Descrição de status do débito em conta
+                            example: Sucesso do Layout de 150 posições da FEBRABAN - Débito efetuado
+                          contractNumber:
+                            type: string
+                            description: Identificador do contrato
+                            example: 623426236/FTS
+                          installmentNumber:
+                            type: number
+                            description: Numero da parcela
+                            example: 1
+                          executionDate:
+                            type: string
+                            format: date-time
+                            description: Data da operação
+                            example: '2023-04-14T00:00:01.000Z'
+                          fundTaxId:
+                            type: string
+                            format: string
+                            description: Identificador do fundo
+                            example: '15996430000182'
+                          settlementMethod:
+                            type: string
+                            description: Forma de agendamento da liquidação
+                            example: ExternalDebitScheduler
+                            enum:
+                            - ExternalDebitScheduler
+                        title: DirectDebitSchema
+                      title: DirectDebitResponseSchema
+              responses:
+                '200':
+                  description: Seu servidor deve retornar 200 caso tenha processado a requisição corretamente
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/FIDC%20-%20Operation/create-operation
+      summary: Create operation
+      x-summary-source: derived
+    servers:
+    - url: https://api.sandbox.empresas.btgpactual.com
+      description: Sandbox
+    - url: https://api.empresas.btgpactual.com
+      description: Produção
+  /operations:
+    post:
+      tags:
+      - Operation
+      description: Esta rota serve para criar operações de antecipação com os recebíveis selecionados.
+      operationId: postOperations
+      requestBody:
+        description: Dados para criação de operação
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - payerTaxId
+              - payeeTaxId
+              - receivables
+              properties:
+                payerTaxId:
+                  description: Documento do sacado
+                  type: string
+                payeeTaxId:
+                  description: Documento do fornecedor
+                  type: string
+                receivables:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - identification
+                    - maturityDate
+                    properties:
+                      identification:
+                        type: string
+                        description: 'Identificação do recebível (ex: Nº da NF)'
+                        example: '5120070562'
+                        title: ReceivableIdentificationSchema
+                      maturityDate:
+                        description: Data de vencimento
+                        type: string
+                        format: date
+                      disbursementAmount:
+                        description: Valor de desembolso
+                        type: number
+                        format: double
+                      repository:
+                        description: Registradora
+                        type: string
+                        enum:
+                        - CERC
+                        - CIP
+                        - ADIQ
+                        - CIELO
+                      registerNumber:
+                        description: Número de registro na registradora
+                        type: string
+                      pixEmv:
+                        description: Pix copia e cola
+                        type: string
+                      bankSlipBarCode:
+                        description: Número de código de barras do boleto
+                        type: string
+                    title: ReceivableOperationSchema
+                account:
+                  type: object
+                  description: Dados da conta bancária
+                  properties:
+                    bank:
+                      description: Código do banco
+                      type: string
+                    agency:
+                      description: Agência da conta bancária
+                      type: string
+                    number:
+                      description: Número da conta bancária
+                      type: string
+                    digit:
+                      description: Dígito da conta bancária
+                      type: string
+                  title: AccountSchema
+                files:
+                  type: array
+                  items:
+                    description: Arquivos necessários serão alinhados de acordo com a especificação do negócio
+                    type: object
+                    properties:
+                      url:
+                        description: URL do arquivo
+                        type: string
+                      type:
+                        description: Tipo do arquivo
+                        type: string
+                        enum:
+                        - Nota
+                        - Contrato
+                        - Garantia
+                        - Adesao
+                        - Auxiliar
+                        - Duplicata
+                        - Canhoto
+                        example: Nota
+                      extension:
+                        description: Extensão do arquivo
+                        type: string
+                        example: PDF
+                    title: FileSchema
+                fees:
+                  type: array
+                  items:
+                    description: Valores de FEEs que serão alinhados de acordo com a especificação do negócio
+                    type: object
+                    properties:
+                      value:
+                        description: Valor do FEE
+                        type: number
+                        format: double
+                      type:
+                        description: Tipo de FEE
+                        type: string
+                        example: CASHBACK
+                      receiverTaxId:
+                        description: Identificador (CPF/CNPJ) do recebedor do Fee
+                        type: string
+                        example: '15996430000182'
+                    title: FeesSchema
+        required: true
+      responses:
+        '201':
+          description: Sucesso
+          headers:
+            Location:
+              schema:
+                description: Path para o GET da Operation
+                type: string
+                example: /operations/11
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  operationId:
+                    description: Id da Operação
+                    type: integer
+                  receivableErrors:
+                    description: Recebíveis com erro
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        receivable:
+                          type: object
+                          required:
+                          - identification
+                          - maturityDate
+                          properties:
+                            identification:
+                              type: string
+                              description: 'Identificação do recebível (ex: Nº da NF)'
+                              example: '5120070562'
+                              title: ReceivableIdentificationSchema
+                            maturityDate:
+                              description: Data de vencimento
+                              type: string
+                              format: date
+                            disbursementAmount:
+                              description: Valor de desembolso
+                              type: number
+                              format: double
+                            repository:
+                              description: Registradora
+                              type: string
+                              enum:
+                              - CERC
+                              - CIP
+                              - ADIQ
+                              - CIELO
+                            registerNumber:
+                              description: Número de registro na registradora
+                              type: string
+                            pixEmv:
+                              description: Pix copia e cola
+                              type: string
+                            bankSlipBarCode:
+                              description: Número de código de barras do boleto
+                              type: string
+                          title: ReceivableOperationSchema
+                        errorMessages:
+                          description: Mensagens de erro
+                          type: array
+                          items:
+                            type: string
+                            enum:
+                            - OPQF0001
+                            - OPQF0002
+                            - OPQF0003
+                            - OPQF0004
+                            - OPQF0005
+                            - OPQF0006
+                            - OPQF0007
+                            - OPQF0008
+                            - OPQF0009
+                            - OPQF0010
+                            - OPQF0011
+                            - OPQF0012
+                            - OPQF0013
+                            - OPQF0014
+                            - OPQF0015
+                            - OPQF0016
+                            - OPQF0017
+                            - OPQF0018
+                            - OPQF0019
+                            - OPQF0020
+                            - OPQF0021
+                            - OPQF0022
+                            - OPQF0023
+                            - OPQF0024
+                            - OPQF0025
+                            - OPQF0026
+                            - OPQF0027
+                            - OPQF0028
+                            - OPQF0029
+                            - OPQF0030
+                            - OPQF0031
+                            - OPQF0032
+                            - OPQF0033
+                            - OPQF0034
+                            - OPQF0035
+                            - OPQF0036
+                            description: "___\nErrors:\n * OPQF0001 - Identificação do Sacado necessária\n * OPQF0002 - Sacado não existente\n * OPQF0003 - Relacionamento Sacado/Fornecedor não existente\n * OPQF0004 - Identificação do Fornecedor necessária\n * OPQF0005 - Fornecedor não existente\n * OPQF0006 - Conta bancária necessária\n * OPQF0007 - Código do banco necessário\n * OPQF0008 - Agência necessária\n * OPQF0009 - Número da conta necessário\n * OPQF0010 - Dígito da conta necessário\n * OPQF0011 - Recebíveis necessários\n * OPQF0012 - Recebíveis duplicados na lista\n * OPQF0013 - Identificação do recebível necessária\n * OPQF0014 - Data de vencimento necessária\n * OPQF0015 - Valor de vencimento necessário\n * OPQF0016 - Recebível não existe\n * OPQF0017 - Recebível com status inválido\n * OPQF0018 - Recebível já está em outra operação\n * OPQF0019 - Estratégia do recebível nula\n * OPQF0020 - Date de desembolso do recebível não é hoje\n * OPQF0021 - Horário limite de operação atingido\n * OPQF0022 - Não há taxa cadastrada para o recebível\n * OPQF0023 - Valor de desembolso inválido\n * OPQF0024 - Arquivos necessários\n * OPQF0025 - URL do arquivo necessário\n * OPQF0026 - URL do arquivo inválido\n * OPQF0027 - Tipo de arquivo necessário\n * OPQF0028 - Tipo de arquivo inválido\n * OPQF0029 - Agência inválida\n * OPQF0030 - Dígito da conta inválido\n * OPQF0031 - Valor de fee necessário\n * OPQF0032 - Valor de fee menor ou igual a zero\n * OPQF0033 - Identificador do recebedor da fee necessário\n * OPQF0034 - Tipo de fee necessário\n * OPQF0035 - Extensão de arquivo necessário\n * OPQF0036 - Extensão de arquivo inválido\n"
+                            title: ValidationErrorsOperationEnumSchema
+        '400':
+          description: Erro de validação
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                  errorDetails:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        target:
+                          type: string
+                        code:
+                          type: string
+                          enum:
+                          - OPQF0001
+                          - OPQF0002
+                          - OPQF0003
+                          - OPQF0004
+                          - OPQF0005
+                          - OPQF0006
+                          - OPQF0007
+                          - OPQF0008
+                          - OPQF0009
+                          - OPQF0010
+                          - OPQF0011
+                          - OPQF0012
+                          - OPQF0013
+                          - OPQF0014
+                          - OPQF0015
+                          - OPQF0016
+                          - OPQF0017
+                          - OPQF0018
+                          - OPQF0019
+                          - OPQF0020
+                          - OPQF0021
+                          - OPQF0022
+                          - OPQF0023
+                          - OPQF0024
+                          - OPQF0025
+                          - OPQF0026
+                          - OPQF0027
+                          - OPQF0028
+                          - OPQF0029
+                          - OPQF0030
+                          - OPQF0031
+                          - OPQF0032
+                          - OPQF0033
+                          - OPQF0034
+                          - OPQF0035
+                          - OPQF0036
+                          description: "___\nErrors:\n * OPQF0001 - Identificação do Sacado necessária\n * OPQF0002 - Sacado não existente\n * OPQF0003 - Relacionamento Sacado/Fornecedor não existente\n * OPQF0004 - Identificação do Fornecedor necessária\n * OPQF0005 - Fornecedor não existente\n * OPQF0006 - Conta bancária necessária\n * OPQF0007 - Código do banco necessário\n * OPQF0008 - Agência necessária\n * OPQF0009 - Número da conta necessário\n * OPQF0010 - Dígito da conta necessário\n * OPQF0011 - Recebíveis necessários\n * OPQF0012 - Recebíveis duplicados na lista\n * OPQF0013 - Identificação do recebível necessária\n * OPQF0014 - Data de vencimento necessária\n * OPQF0015 - Valor de vencimento necessário\n * OPQF0016 - Recebível não existe\n * OPQF0017 - Recebível com status inválido\n * OPQF0018 - Recebível já está em outra operação\n * OPQF0019 - Estratégia do recebível nula\n * OPQF0020 - Date de desembolso do recebível não é hoje\n * OPQF0021 - Horário limite de operação atingido\n * OPQF0022 - Não há taxa cadastrada para o recebível\n * OPQF0023 - Valor de desembolso inválido\n * OPQF0024 - Arquivos necessários\n * OPQF0025 - URL do arquivo necessário\n * OPQF0026 - URL do arquivo inválido\n * OPQF0027 - Tipo de arquivo necessário\n * OPQF0028 - Tipo de arquivo inválido\n * OPQF0029 - Agência inválida\n * OPQF0030 - Dígito da conta inválido\n * OPQF0031 - Valor de fee necessário\n * OPQF0032 - Valor de fee menor ou igual a zero\n * OPQF0033 - Identificador do recebedor da fee necessário\n * OPQF0034 - Tipo de fee necessário\n * OPQF0035 - Extensão de arquivo necessário\n * OPQF0036 - Extensão de arquivo inválido\n"
+                          title: ValidationErrorsOperationEnumSchema
+                title: OperationBadRequestResponseSchema
+        '401':
+          description: Não autorizado
+        default:
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                title: ErrorResponseSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/scf/operations
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/SCF%20-%20Risco%20Sacado/create-operation
+      summary: Create operation
+      x-summary-source: derived
+      x-operation-id-source: normalized
+      x-operation-id-original: createOperation
+    servers:
+    - url: https://api.sandbox.empresas.btgpactual.com/v1/scf
+      description: SANDBOX URL
+    - url: https://api.empresas.btgpactual.com/v1/scf
+      description: PROD URL
+  /operations/{operationId}:
+    get:
+      tags:
+      - Operation
+      description: Esta rota serve para consultar uma operação utilizando o 'operationId' retornado na sua criação.
+      operationId: getOperationById
+      parameters:
+      - in: path
+        name: operationId
+        description: Id da operação
+        schema:
+          description: Id da operação
+          type: integer
+        required: true
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    description: Id da operação
+                    type: integer
+                  companyIdentification:
+                    description: CNPJ/CPF da empresa com quem foi realizada a operação
+                    type: string
+                  companyName:
+                    description: Nome da empresa com quem foi realizada a operação
+                    type: string
+                  createdAt:
+                    description: Data de criação da operação
+                    type: string
+                    format: date-time
+                  totalMaturityAmount:
+                    description: Valor de vencimento total da operação
+                    type: number
+                  totalDisbursementAmount:
+                    description: Valor de desembolso total da operação
+                    type: number
+                  operationStatus:
+                    enum:
+                    - Pending
+                    - PartiallyCanceled
+                    - Canceled
+                    - WaitingContractSignature
+                    - PartiallySigned
+                    - WaitingSolicitation
+                    - InDisbursement
+                    - PartiallyDisbursed
+                    - PartiallyDisbursedWithSomeCancels
+                    - DisbursedWithSomeCancels
+                    - Completed
+                    - PartiallySettled
+                    - PartiallySettledWithSomeCancels
+                    - Settled
+                    - Unsettled
+                    - UnsettledWithSomeCancels
+                    type: string
+                    example: Pending
+                    description: "Status da operação\n___\nDefinições:\n  * Pending - Operação pendente de processamento (status transitório)\n  * PartiallyCanceled - Operação parcialmente cancelada (status transitório)\n  * Canceled - Operação cancelada\n  * WaitingContractSignature - Operação aguardando assinatura do contrato\n  * PartiallySigned - Operação parcialmente assinada (status transitório)\n  * WaitingSolicitation - Operação em processamento (status transitório)\n  * InDisbursement - Operação em desembolso (status transitório)\n  * PartiallyDisbursed - Operação parcialmente desembolsada (status transitório)\n  * PartiallyDisbursedWithSomeCancels - Operação parcialmente desembolsada com alguns cancelamentos (status transitório)\n  * DisbursedWithSomeCancels - Operação desembolsada com alguns cancelamentos\n  * Completed - Operação desembolsada\n  * PartiallySettled - Operação parcialmente liquidada\n  * PartiallySettledWithSomeCancels - Operação parcialmente liquidada com alguns cancelamentos\n  * Settled - Operação liquidada\n  * Unsettled - Operação com liquidação em atraso\n  * UnsettledWithSomeCancels - Operação com liquidação em atraso e alguns cancelamentos\n"
+                    title: OperationStatus
+                  account:
+                    type: object
+                    description: Dados da conta bancária
+                    properties:
+                      bank:
+                        description: Código do banco
+                        type: string
+                      agency:
+                        description: Agência da conta bancária
+                        type: string
+                      number:
+                        description: Número da conta bancária
+                        type: string
+                      digit:
+                        description: Dígito da conta bancária
+                        type: string
+                    title: AccountSchema
+                title: OperationSchema
+        '401':
+          description: Não autorizado
+        '404':
+          description: Operação com esse 'operationId' não encontrada.
+        default:
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                title: ErrorResponseSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/scf/operations
+        - empresas.btgpactual.com/scf/operations.readonly
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/SCF%20-%20Risco%20Sacado/get-operation-by-id
+      summary: Get operation by id
+      x-summary-source: derived
+    servers:
+    - url: https://api.sandbox.empresas.btgpactual.com/v1/scf
+      description: SANDBOX URL
+    - url: https://api.empresas.btgpactual.com/v1/scf
+      description: PROD URL
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+          scopes:
+            empresas.btgpactual.com/loans: Scope to loans
+x-refined-from:
+- btg-pactual-fidc-operation-openapi.yml
+- btg-pactual-scf-risco-sacado-openapi.yml
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/66bbeaf4.e1267188.js
+  - https://developers.empresas.btgpactual.com/assets/js/ee91baf3.f5fa59a4.js
+  - https://developers.empresas.btgpactual.com/assets/js/5b9166bb.fb76cf6e.js
+  - https://developers.empresas.btgpactual.com/assets/js/74bdf491.2915eb4f.js
+  - https://developers.empresas.btgpactual.com/assets/js/509b1fa3.2bc06a36.js

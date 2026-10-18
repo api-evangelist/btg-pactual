@@ -1,0 +1,1758 @@
+# x-archived-from: btg-pactual-solar-workflow-openapi.yml
+# x-archived-on: 2026-10-18
+openapi: 3.0.3
+info:
+  title: Solar-Workflow
+  version: 1.0.0
+  description: Api Developers Solar
+servers:
+- url: https://api.empresas.btgpactual.com/solar
+  description: ''
+paths:
+  /form/solar/proposals/accept:
+    post:
+      tags:
+      - Workflow de crédito solar
+      description: Aceite da proposta
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              required:
+              - workflowLeadCanonical
+              type: object
+              properties:
+                workflowLeadCanonical:
+                  description: Propriedade base
+                  required:
+                  - operatorIdentification
+                  - customerIdentification
+                  - externalIdentification
+                  - desiredAmount
+                  - projectTotalAmount
+                  - upfrontPaymentAmount
+                  type: object
+                  properties:
+                    operatorIdentification:
+                      description: CPF do operador
+                      type: string
+                    customerIdentification:
+                      description: CNPJ do cliente
+                      type: string
+                    externalIdentification:
+                      description: Identificador único fornecido pelo parceiro. Será utilizado para identificar o cliente
+                      type: string
+                    desiredAmount:
+                      description: Valor financiado
+                      type: number
+                    projectTotalAmount:
+                      description: Valor total do projeto
+                      type: number
+                    upfrontPaymentAmount:
+                      description: Valor da entrada
+                      type: number
+                  example:
+                    operatorIdentification: '11111111111'
+                    customerIdentification: '11111111111111'
+                    externalIdentification: GUID
+                    desiredAmount: 155700
+                    projectTotalAmount: 155700
+                    upfrontPaymentAmount: 0
+                  title: acceptProposal
+              title: acceptProposalCanonical
+            examples:
+              Exemplo:
+                value:
+                  workflowLeadCanonical:
+                    operatorIdentification: '11111111111'
+                    customerIdentification: '11111111111111'
+                    externalIdentification: GUID
+                    desiredAmount: 155700
+                    projectTotalAmount: 155700
+                    upfrontPaymentAmount: 0
+        required: true
+      responses:
+        '200':
+          description: Requisição recebida
+        '500':
+          content:
+            application/json:
+              schema:
+                title: Root Type for internalServerErrorResponse
+                description: ''
+                type: object
+                properties:
+                  brn:
+                    type: string
+                  name:
+                    type: string
+                  invalidParams:
+                    type: array
+                    items: {}
+                example:
+                  brn: brn:empresas:credit-manager:errors:internal-server-error
+                  name: ServerInternalError
+                  invalidParams: []
+              examples:
+                ' ':
+                  value:
+                    brn: brn:empresas:credit-manager:errors:internal-server-error
+                    name: ServerInternalError
+                    invalidParams: []
+          description: Erro interno
+      security:
+      - oauth2:
+        - brn:btg:empresas:solar:workflow
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Solar-Workflow/aceite-da-proposta
+  /customers/{customerIdentification}/operators/{operatorIdentification}/documents/{externalIdentification}:
+    get:
+      tags:
+      - Workflow de crédito solar
+      description: Api para consultar documentos enviados
+      parameters:
+      - name: customerIdentification
+        description: CNPJ do cliente
+        schema:
+          type: string
+        in: path
+        required: true
+      - name: operatorIdentification
+        description: CPF do operador
+        schema:
+          type: string
+        in: path
+        required: true
+      - name: externalIdentification
+        description: Identificação do cliente gerada pelo parceiro
+        schema:
+          type: string
+        in: path
+        required: true
+      - name: type
+        description: Tipo do documento
+        schema:
+          type: string
+        in: query
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  title: Root Type for documentPresignedResponse
+                  description: Resposta para busca de documentos vinculado ao cliente
+                  type: object
+                  properties:
+                    type:
+                      description: Tipo do documento
+                      type: string
+                    pendencies:
+                      description: Pendências
+                      type: array
+                      items:
+                        title: Root Type for pendencyResponse
+                        description: Response para pendencia
+                        type: object
+                        properties:
+                          type:
+                            description: Tipo da pendência
+                            type: string
+                          status:
+                            description: Status da pendência
+                            type: string
+                          reason:
+                            description: Motivo da pendência
+                            type: string
+                        example:
+                          type: DOCUMENT
+                          status: PENDING
+                          reason: Motivo da pendência
+                    presignedFiles:
+                      description: Arquivos pré-assinados
+                      type: array
+                      items:
+                        type: string
+                  example:
+                    type: ASSOCIATES_IR
+                    pendencies: []
+                    presignedFiles:
+                    - PRE_SIGNED_URL
+              examples:
+                Exemplo:
+                  value:
+                  - type: ENERGY_BILL
+                    pendencies: []
+                    presignedFiles:
+                    - PRE_SIGNED_URL
+                  - type: SOCIAL_CONTRACT
+                    pendencies: []
+                    presignedFiles:
+                    - PRE_SIGNED_URL
+                  - type: BILLING_STATEMENT
+                    pendencies: []
+                    presignedFiles:
+                    - PRE_SIGNED_URL
+                  - type: ASSOCIATES_IR
+                    pendencies: []
+                    presignedFiles:
+                    - PRE_SIGNED_URL
+          description: Ok
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Solar-Workflow/api-para-consultar-documentos-enviados
+  /form/solar/income-auth-cards:
+    post:
+      tags:
+      - Workflow de crédito solar
+      description: Carta autorização de faturamento dos equipamentos
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              required:
+              - workflowLeadCanonical
+              type: object
+              properties:
+                workflowLeadCanonical:
+                  description: propriedade base
+                  type: object
+                  allOf:
+                  - required:
+                    - externalIdentification
+                    - customerIdentification
+                    - operatorIdentification
+                    type: object
+                    properties:
+                      externalIdentification:
+                        description: Identificador único fornecido pelo parceiro. Será utilizado para identificar o cliente
+                        type: string
+                      customerIdentification:
+                        description: CNPJ/CPF do cliente
+                        type: string
+                      operatorIdentification:
+                        description: CPF do operador
+                        type: string
+                  title: requestFileRender
+              title: requestFileRenderCanonical
+            examples:
+              Exemplo:
+                value:
+                  workflowLeadCanonical:
+                    operatorIdentification: '11111111111'
+                    customerIdentification: '11111111111111'
+                    externalIdentification: GUID
+        required: true
+      responses:
+        '200':
+          description: A carta de autorização será enviada através de um link pré-assinado via webhook
+      security:
+      - oauth2:
+        - brn:btg:empresas:solar:workflow
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Solar-Workflow/carta-autorizacao-de-faturamento-dos-equipamentos
+  /form/solar/render-proposals:
+    post:
+      tags:
+      - Workflow de crédito solar
+      description: 'Download da proposta indicativa de Solar
+
+
+        *Disponível durante etapa do aceite da proposta'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              required:
+              - workflowLeadCanonical
+              type: object
+              properties:
+                workflowLeadCanonical:
+                  description: propriedade base
+                  type: object
+                  allOf:
+                  - required:
+                    - externalIdentification
+                    - customerIdentification
+                    - operatorIdentification
+                    type: object
+                    properties:
+                      externalIdentification:
+                        description: Identificador único fornecido pelo parceiro. Será utilizado para identificar o cliente
+                        type: string
+                      customerIdentification:
+                        description: CNPJ/CPF do cliente
+                        type: string
+                      operatorIdentification:
+                        description: CPF do operador
+                        type: string
+                  title: requestFileRender
+              title: requestFileRenderCanonical
+            examples:
+              Exemplo:
+                value:
+                  workflowLeadCanonical:
+                    operatorIdentification: '11111111111'
+                    customerIdentification: '11111111111111'
+                    externalIdentification: GUID
+        required: true
+      responses:
+        '200':
+          description: A proposta indicativa será enviada em um link pré-assinado via webhook
+      security:
+      - oauth2:
+        - brn:btg:empresas:solar:workflow
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Solar-Workflow/download-da-proposta-indicativa-de-solar
+  /form/solar/disbursement-receipts:
+    post:
+      tags:
+      - Workflow de crédito solar
+      description: 'Comprovante de desembolso.
+
+
+        *Disponível após contratação do crédito no portal do cliente'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              required:
+              - workflowLeadCanonical
+              type: object
+              properties:
+                workflowLeadCanonical:
+                  description: propriedade base
+                  type: object
+                  allOf:
+                  - required:
+                    - externalIdentification
+                    - customerIdentification
+                    - operatorIdentification
+                    type: object
+                    properties:
+                      externalIdentification:
+                        description: Identificador único fornecido pelo parceiro. Será utilizado para identificar o cliente
+                        type: string
+                      customerIdentification:
+                        description: CNPJ/CPF do cliente
+                        type: string
+                      operatorIdentification:
+                        description: CPF do operador
+                        type: string
+                  title: requestFileRender
+              title: requestFileRenderCanonical
+            examples:
+              Exemplo:
+                value:
+                  workflowLeadCanonical:
+                    operatorIdentification: '11111111111'
+                    customerIdentification: '11111111111111'
+                    externalIdentification: GUID
+        required: true
+      responses:
+        '200':
+          description: O comprovante de desembolso será enviado através de um link pré-assinado via webhook
+      security:
+      - oauth2:
+        - brn:btg:empresas:solar:workflow
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Solar-Workflow/download-do-comprovante-de-desembolso
+  /form/solar/notify-email-proposals:
+    post:
+      tags:
+      - Workflow de crédito solar
+      description: Envia proposta indicativa por e-mail
+      requestBody:
+        description: Enviar o payload dentro do objecto workflowLeadCanonical
+        content:
+          application/json:
+            schema:
+              description: Solicitação do envio da proposta indicativa por e-mail
+              required:
+              - workflowLeadCanonical
+              type: object
+              properties:
+                workflowLeadCanonical:
+                  description: propriedade base
+                  type: object
+                  allOf:
+                  - required:
+                    - email
+                    - externalIdentification
+                    - customerIdentification
+                    - operatorIdentification
+                    type: object
+                    properties:
+                      email:
+                        description: E-mail do destinatário
+                        type: string
+                      externalIdentification:
+                        description: Identificação do cliente gerada pelo parceiro
+                        type: string
+                      customerIdentification:
+                        description: CNPJ do cliente
+                        type: string
+                      operatorIdentification:
+                        description: cpf do operador
+                        type: string
+                  title: sendProposalByEmail
+              title: sendProposalByEmailCanonical
+            examples:
+              Exemplo:
+                value:
+                  workflowLeadCanonical:
+                    email: teste@teste.com
+                    externalIdentification: GUID
+                    customerIdentification: '11111111111111'
+                    operatorIdentification: '11111111111111'
+        required: true
+      responses:
+        '200':
+          description: Proposta enviada por e-mail
+      security:
+      - oauth2:
+        - brn:btg:empresas:solar:workflow
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Solar-Workflow/envia-proposta-indicativa-por-e-mail
+  /form/solar/invoices:
+    post:
+      tags:
+      - Workflow de crédito solar
+      description: Envio das notas fiscais
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              required:
+              - workflowLeadCanonical
+              type: object
+              properties:
+                workflowLeadCanonical:
+                  description: propriedade base
+                  required:
+                  - operatorIdentification
+                  - customerIdentification
+                  - externalIdentification
+                  - upfrontPaymentAmount
+                  - invoices
+                  type: object
+                  properties:
+                    operatorIdentification:
+                      description: CPF do operador
+                      type: string
+                    customerIdentification:
+                      description: CNPJ do cliente
+                      type: string
+                    externalIdentification:
+                      description: Identificador único fornecido pelo parceiro. Será utilizado para identificar o cliente
+                      type: string
+                    upfrontPaymentAmount:
+                      description: Valor de entrada
+                      type: number
+                    invoices:
+                      description: Notas fiscais
+                      type: array
+                      items:
+                        description: Nota fiscal
+                        required:
+                        - invoiceType
+                        - payeeTaxId
+                        type: object
+                        properties:
+                          amount:
+                            description: Valor da nota fiscal
+                            type: number
+                          isAlienatedToBtg:
+                            description: Nota fiscal alienada ao BTG. *Obrigatório envio na nota fiscal de equipamentos
+                            type: boolean
+                          preSignedURL:
+                            description: Link pre-assinado da nota fiscal
+                            type: string
+                          invoiceAccessKey:
+                            description: Chave de acesso da nota fiscal
+                            type: string
+                          payeeTaxId:
+                            description: CNPJ/CPF do beneficiário.
+                            type: string
+                          payerTaxId:
+                            description: CNPJ/CPF do pagador. *Obrigatório envio na nota fiscal de equipamentos
+                            type: string
+                          invoiceType:
+                            description: Tipo da nota fiscal
+                            enum:
+                            - SERVICES
+                            - EQUIPMENTS
+                            type: string
+                          invoiceProducts:
+                            description: Produtos da nota fiscal de equipamentos. *Obrigatório envio na nota fiscal de equipamentos
+                            type: array
+                            items:
+                              description: Produtos da nota fiscal de equipamentos
+                              required:
+                              - Code
+                              - Manufacturer
+                              - Description
+                              - Quantity
+                              - UnitPrice
+                              - Amount
+                              type: object
+                              properties:
+                                Code:
+                                  description: Código
+                                  type: string
+                                Manufacturer:
+                                  description: Fabricante
+                                  type: string
+                                Description:
+                                  description: Descrição da nota
+                                  type: string
+                                Quantity:
+                                  description: Quantidade
+                                  type: number
+                                UnitPrice:
+                                  description: Preço unitário
+                                  type: number
+                                Amount:
+                                  description: 'Valor total: UnitPrice * Quantity'
+                                  type: number
+                              title: invoiceProducts
+                          fileName:
+                            description: 'Nome do arquivo da nota fiscal + extensão. Obrigatório caso seja enviado o link pre-assinado. Ex: servico.pdf'
+                            type: string
+                        example:
+                          amount: 20000
+                          PreSignedURL: ''
+                          fileName: ''
+                          invoiceAccessKey: '1111111111111111111111111111111111111111111'
+                          payeeTaxId: '11111111111111'
+                          payerTaxId: '11111111111'
+                          invoiceType: EQUIPMENTS
+                          isAlienatedToBtg: true
+                        title: invoice
+                  example:
+                    operatorIdentification: '11111111111'
+                    customerIdentification: '11111111111111'
+                    externalIdentification: GUID
+                    upfrontPaymentAmount: 0
+                    invoices:
+                    - amount: 20000
+                      PreSignedURL: ''
+                      invoiceAccessKey: '11111111111111111111111111111111111111111111'
+                      payeeTaxId: '11111111111111'
+                      payerTaxId: '11111111111'
+                      invoiceType: EQUIPMENTS
+                      isAlienatedToBtg: true
+                    - PreSignedURL: ''
+                      payeeTaxId: '11111111111111'
+                      invoiceType: SERVICES
+                  title: sendInvoices
+              title: sendInvoicesCanonical
+            examples:
+              Exemplo:
+                value:
+                  workflowLeadCanonical:
+                    operatorIdentification: '11111111111'
+                    customerIdentification: '11111111111'
+                    externalIdentification: GUID
+                    upfrontPaymentAmount: 5000
+                    invoices:
+                    - amount: 20000
+                      preSignedFileKey: ''
+                      invoiceAccessKey: '11111111111111111111111111111111111111111111'
+                      invoiceDataOrigin: FORM
+                      payeeTaxId: '11111111111111'
+                      payerTaxId: '11111111111'
+                      invoiceType: EQUIPMENTS
+                      isAlienatedToBtg: true
+                    - preSignedFileKey: ''
+                      payeeTaxId: '11111111111111'
+                      invoiceType: SERVICES
+        required: true
+      responses:
+        '200':
+          description: Requisição recebida
+        '500':
+          content:
+            application/json:
+              schema:
+                title: Root Type for internalServerErrorResponse
+                description: ''
+                type: object
+                properties:
+                  brn:
+                    type: string
+                  name:
+                    type: string
+                  invalidParams:
+                    type: array
+                    items: {}
+                example:
+                  brn: brn:empresas:credit-manager:errors:internal-server-error
+                  name: ServerInternalError
+                  invalidParams: []
+              examples:
+                ' ':
+                  value:
+                    brn: brn:empresas:credit-manager:errors:internal-server-error
+                    name: ServerInternalError
+                    invalidParams: []
+          description: Erro interno
+      security:
+      - oauth2:
+        - brn:btg:empresas:solar:workflow
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Solar-Workflow/envio-das-notas-fiscais
+  /form/solar/invoices/pendencies:
+    post:
+      tags:
+      - Workflow de crédito solar
+      description: Envio das notas fiscais pendênciadas
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              required:
+              - workflowLeadCanonical
+              type: object
+              properties:
+                workflowLeadCanonical:
+                  description: propriedade base
+                  required:
+                  - operatorIdentification
+                  - customerIdentification
+                  - externalIdentification
+                  - upfrontPaymentAmount
+                  - invoices
+                  type: object
+                  properties:
+                    operatorIdentification:
+                      description: CPF do operador
+                      type: string
+                    customerIdentification:
+                      description: CNPJ do cliente
+                      type: string
+                    externalIdentification:
+                      description: Identificador único fornecido pelo parceiro. Será utilizado para identificar o cliente
+                      type: string
+                    upfrontPaymentAmount:
+                      description: Valor de entrada
+                      type: number
+                    invoices:
+                      description: Notas fiscais
+                      type: array
+                      items:
+                        description: Nota fiscal
+                        required:
+                        - invoiceType
+                        - payeeTaxId
+                        type: object
+                        properties:
+                          amount:
+                            description: Valor da nota fiscal
+                            type: number
+                          isAlienatedToBtg:
+                            description: Nota fiscal alienada ao BTG. *Obrigatório envio na nota fiscal de equipamentos
+                            type: boolean
+                          preSignedURL:
+                            description: Link pre-assinado da nota fiscal
+                            type: string
+                          invoiceAccessKey:
+                            description: Chave de acesso da nota fiscal
+                            type: string
+                          payeeTaxId:
+                            description: CNPJ/CPF do beneficiário.
+                            type: string
+                          payerTaxId:
+                            description: CNPJ/CPF do pagador. *Obrigatório envio na nota fiscal de equipamentos
+                            type: string
+                          invoiceType:
+                            description: Tipo da nota fiscal
+                            enum:
+                            - SERVICES
+                            - EQUIPMENTS
+                            type: string
+                          invoiceProducts:
+                            description: Produtos da nota fiscal de equipamentos. *Obrigatório envio na nota fiscal de equipamentos
+                            type: array
+                            items:
+                              description: Produtos da nota fiscal de equipamentos
+                              required:
+                              - Code
+                              - Manufacturer
+                              - Description
+                              - Quantity
+                              - UnitPrice
+                              - Amount
+                              type: object
+                              properties:
+                                Code:
+                                  description: Código
+                                  type: string
+                                Manufacturer:
+                                  description: Fabricante
+                                  type: string
+                                Description:
+                                  description: Descrição da nota
+                                  type: string
+                                Quantity:
+                                  description: Quantidade
+                                  type: number
+                                UnitPrice:
+                                  description: Preço unitário
+                                  type: number
+                                Amount:
+                                  description: 'Valor total: UnitPrice * Quantity'
+                                  type: number
+                              title: invoiceProducts
+                          fileName:
+                            description: 'Nome do arquivo da nota fiscal + extensão. Obrigatório caso seja enviado o link pre-assinado. Ex: servico.pdf'
+                            type: string
+                        example:
+                          amount: 20000
+                          PreSignedURL: ''
+                          fileName: ''
+                          invoiceAccessKey: '1111111111111111111111111111111111111111111'
+                          payeeTaxId: '11111111111111'
+                          payerTaxId: '11111111111'
+                          invoiceType: EQUIPMENTS
+                          isAlienatedToBtg: true
+                        title: invoice
+                  example:
+                    operatorIdentification: '11111111111'
+                    customerIdentification: '11111111111111'
+                    externalIdentification: GUID
+                    upfrontPaymentAmount: 0
+                    invoices:
+                    - amount: 20000
+                      PreSignedURL: ''
+                      invoiceAccessKey: '11111111111111111111111111111111111111111111'
+                      payeeTaxId: '11111111111111'
+                      payerTaxId: '11111111111'
+                      invoiceType: EQUIPMENTS
+                      isAlienatedToBtg: true
+                    - PreSignedURL: ''
+                      payeeTaxId: '11111111111111'
+                      invoiceType: SERVICES
+                  title: sendInvoices
+              title: sendInvoicesCanonical
+            examples:
+              Exemplo:
+                value:
+                  workflowLeadCanonical:
+                    operatorIdentification: '11111111111'
+                    customerIdentification: '11111111111'
+                    externalIdentification: GUID
+                    upfrontPaymentAmount: 5000
+                    invoices:
+                    - amount: 20000
+                      preSignedFileKey: ''
+                      invoiceAccessKey: '11111111111111111111111111111111111111111111'
+                      invoiceDataOrigin: FORM
+                      payeeTaxId: '11111111111111'
+                      payerTaxId: '11111111111'
+                      invoiceType: EQUIPMENTS
+                      isAlienatedToBtg: true
+                    - preSignedFileKey: ''
+                      payeeTaxId: '11111111111111'
+                      invoiceType: SERVICES
+        required: true
+      responses:
+        '200':
+          description: Requisição recebida
+        '500':
+          content:
+            application/json:
+              schema:
+                title: Root Type for internalServerErrorResponse
+                description: ''
+                type: object
+                properties:
+                  brn:
+                    type: string
+                  name:
+                    type: string
+                  invalidParams:
+                    type: array
+                    items: {}
+                example:
+                  brn: brn:empresas:credit-manager:errors:internal-server-error
+                  name: ServerInternalError
+                  invalidParams: []
+              examples:
+                ' ':
+                  value:
+                    brn: brn:empresas:credit-manager:errors:internal-server-error
+                    name: ServerInternalError
+                    invalidParams: []
+          description: Erro interno
+      security:
+      - oauth2:
+        - brn:btg:empresas:solar:workflow
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Solar-Workflow/envio-das-notas-fiscais-pendenciadas
+  /form/solar/receipts/installation:
+    post:
+      tags:
+      - Workflow de crédito solar
+      description: Envio do comprovante de instalação
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              required:
+              - workflowLeadCanonical
+              type: object
+              properties:
+                workflowLeadCanonical:
+                  description: Propriedade base
+                  required:
+                  - operatorIdentification
+                  - customerIdentification
+                  - externalIdentification
+                  - installationReceipt
+                  type: object
+                  properties:
+                    operatorIdentification:
+                      description: CPF do operador
+                      type: string
+                    customerIdentification:
+                      description: CNPJ do cliente
+                      type: string
+                    externalIdentification:
+                      description: Identificador único fornecido pelo parceiro. Será utilizado para identificar o cliente
+                      type: string
+                    installationReceipt:
+                      description: Comprovante de instalação
+                      required:
+                      - externalIdentification
+                      type: object
+                      properties:
+                        receiptAccessKey:
+                          description: Chave de acesso do comprovante
+                          type: string
+                        preSignedFileURL:
+                          description: Link pré-assinado do arquivo de comprovação de instalação
+                          type: string
+                        externalIdentification:
+                          description: Identificação única fornecida da conta de luz no qual será relacionado o comprovante da instalação
+                          type: string
+                        fileName:
+                          description: 'Nome do arquivo do comprovante de instalação + extensão. Obrigatório caso seja enviado link pre-assinado. Ex: instalacao.pdf'
+                          type: string
+                      title: installationReceipt
+                  example:
+                    operatorIdentification: '11111111111'
+                    customerIdentification: '11111111111'
+                    externalIdentification: GUID
+                    installationReceipt:
+                      externalIdentification: GUID
+                      receiptAccessKey: '111111111111111111111111111111111111'
+                  title: sendInstallationReceipt
+              title: sendInstallationReceiptCanonical
+            examples:
+              Exemplo:
+                value:
+                  workflowLeadCanonical:
+                    operatorIdentification: '11111111111'
+                    customerIdentification: '11111111111'
+                    externalIdentification: GUID
+                    installationReceipt:
+                      externalIdentification: GUID
+                      receiptAccessKey: '111111111111111111111111111111111111'
+        required: true
+      responses:
+        '200':
+          description: Requisição recebida
+        '500':
+          content:
+            application/json:
+              schema:
+                title: Root Type for internalServerErrorResponse
+                description: ''
+                type: object
+                properties:
+                  brn:
+                    type: string
+                  name:
+                    type: string
+                  invalidParams:
+                    type: array
+                    items: {}
+                example:
+                  brn: brn:empresas:credit-manager:errors:internal-server-error
+                  name: ServerInternalError
+                  invalidParams: []
+              examples:
+                ' ':
+                  value:
+                    brn: brn:empresas:credit-manager:errors:internal-server-error
+                    name: ServerInternalError
+                    invalidParams: []
+          description: Erro interno
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Solar-Workflow/envio-do-comprovante-de-instalacao
+  /form/solar/start:
+    post:
+      tags:
+      - Workflow de crédito solar
+      description: Envio dos dados iniciais
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              required:
+              - workflowLeadCanonical
+              type: object
+              properties:
+                workflowLeadCanonical:
+                  description: propriedade base
+                  required:
+                  - operatorIdentification
+                  - customerIdentification
+                  - externalIdentification
+                  - revenue
+                  - averageEnergyInvoiceAmount
+                  - desiredAmount
+                  - projectTotalAmount
+                  - upfrontPaymentAmount
+                  - hasOptin
+                  - addresses
+                  - partners
+                  type: object
+                  properties:
+                    operatorIdentification:
+                      description: CPF do operador
+                      type: string
+                    customerIdentification:
+                      description: CNPJ/CPF do cliente
+                      type: string
+                    externalIdentification:
+                      description: Identificador único fornecido pelo parceiro. Será utilizado para identificar o cliente
+                      type: string
+                    revenue:
+                      description: Faturamento médio mensal
+                      type: number
+                    averageEnergyInvoiceAmount:
+                      description: Valor médio da fatura de energia.
+                      type: number
+                    desiredAmount:
+                      description: Valor financiado
+                      type: number
+                    projectTotalAmount:
+                      description: Valor total do projeto.
+                      type: number
+                    upfrontPaymentAmount:
+                      description: Valor da entrada
+                      type: number
+                    hasOptin:
+                      description: Possui aceite SRC Optin
+                      type: boolean
+                    addresses:
+                      description: Endereço
+                      type: array
+                      items:
+                        description: Endereço de instalação
+                        required:
+                        - addressStreet
+                        - buildingNumber
+                        - district
+                        - city
+                        - state
+                        - zipCode
+                        - type
+                        type: object
+                        properties:
+                          addressStreet:
+                            description: Rua
+                            type: string
+                          buildingNumber:
+                            description: Número. Caso não houver, enviar "S/N"
+                            type: string
+                          zipCode:
+                            description: CEP de instalação
+                            type: string
+                          complement:
+                            description: Complemento
+                            type: string
+                          district:
+                            description: Bairro
+                            type: string
+                          city:
+                            description: Cidade
+                            type: string
+                          state:
+                            description: 'Estado abreviado, ex: SP'
+                            type: string
+                          type:
+                            description: Tipo do endereço
+                            enum:
+                            - INSTALL_LOCATION
+                            type: string
+                        example:
+                          addressStreet: Avenida Paulista
+                          buildingNumber: '900'
+                          city: São Paulo
+                          complement: ''
+                          district: Bela Vista
+                          state: SP
+                          zipCode: '01310100'
+                          type: INSTALL_LOCATION
+                        title: address
+                    partners:
+                      description: Dados do Integrador e distribuidor
+                      type: array
+                      items:
+                        title: Root Type for partners
+                        description: Relação de integrador e distribuidor.
+                        required:
+                        - taxId
+                        - partnerRelationshipType
+                        type: object
+                        properties:
+                          taxId:
+                            description: CNPJ
+                            type: string
+                          partnerRelationshipType:
+                            description: Refere-se a Integrador ou distribuidor
+                            enum:
+                            - INTEGRATOR
+                            - DISTRIBUTOR
+                            type: string
+                        example:
+                          taxId: '11111111111111'
+                          partnerRelationshipType: DISTRIBUTOR
+                  example:
+                    operatorIdentification: '11111111111'
+                    customerIdentification: '11111111111'
+                    externalIdentification: GUID
+                    revenue: 4000
+                    averageEnergyInvoiceAmount: 841
+                    desiredAmount: 22590
+                    projectTotalAmount: 23590
+                    upfrontPaymentAmount: 1000
+                    hasOptin: true
+                    addresses:
+                    - addressStreet: Rua Gomes de Carvalho
+                      buildingNumber: '900'
+                      city: São Paulo
+                      complement: ''
+                      district: Vila Olímpia
+                      state: SP
+                      zipCode: '04547004'
+                      type: INSTALL_LOCATION
+                    partners:
+                    - taxId: '11111111111'
+                      partnerRelationshipType: DISTRIBUTOR
+                    - taxId: '11111111111'
+                      partnerRelationshipType: INTEGRATOR
+                  title: initialForm
+              title: initialFormCanonical
+            examples:
+              Exemplo:
+                value:
+                  workflowLeadCanonical:
+                    operatorIdentification: '11111111111'
+                    customerIdentification: '11111111111'
+                    externalIdentification: GUID
+                    revenue: 4000
+                    averageEnergyInvoiceAmount: 841
+                    desiredAmount: 22590
+                    projectTotalAmount: 23590
+                    upfrontPaymentAmount: 1000
+                    hasOptin: true
+                    addresses:
+                    - addressStreet: Rua Gomes de Carvalho
+                      buildingNumber: '900'
+                      city: São Paulo
+                      complement: ''
+                      district: Vila Olímpia
+                      state: SP
+                      zipCode: '04547004'
+                      type: INSTALL_LOCATION
+                    partners:
+                    - taxId: '11111111111'
+                      partnerRelationshipType: DISTRIBUTOR
+                    - taxId: '11111111111'
+                      partnerRelationshipType: INTEGRATOR
+        required: true
+      responses:
+        '200':
+          description: Requisição recebida
+        '500':
+          content:
+            application/json:
+              schema:
+                title: Root Type for internalServerErrorResponse
+                description: ''
+                type: object
+                properties:
+                  brn:
+                    type: string
+                  name:
+                    type: string
+                  invalidParams:
+                    type: array
+                    items: {}
+                example:
+                  brn: brn:empresas:credit-manager:errors:internal-server-error
+                  name: ServerInternalError
+                  invalidParams: []
+              examples:
+                ' ':
+                  value:
+                    brn: brn:empresas:credit-manager:errors:internal-server-error
+                    name: ServerInternalError
+                    invalidParams: []
+          description: Erro interno
+      security:
+      - oauth2:
+        - brn:btg:empresas:solar:workflow
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Solar-Workflow/envio-dos-dados-iniciais
+  /form/solar/documents:
+    post:
+      tags:
+      - Workflow de crédito solar
+      description: Envio dos documentos
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              required:
+              - workflowLeadCanonical
+              type: object
+              properties:
+                workflowLeadCanonical:
+                  description: propriedade base
+                  required:
+                  - operatorIdentification
+                  - customerIdentification
+                  - externalIdentification
+                  - leadIdentification
+                  - energyBillReceipts
+                  - leadIncomeStatement
+                  type: object
+                  properties:
+                    operatorIdentification:
+                      description: CPF do operador
+                      type: string
+                    customerIdentification:
+                      description: CNPJ do cliente
+                      type: string
+                    externalIdentification:
+                      description: Identificador único fornecido pelo parceiro. Será utilizado para identificar o cliente
+                      type: string
+                    leadIdentification:
+                      description: Documentos de identificação
+                      required:
+                      - documentType
+                      - preSignedURLs
+                      - fileName
+                      type: object
+                      properties:
+                        documentType:
+                          description: Tipo do documento de identificação
+                          enum:
+                          - RG
+                          - CNH
+                          - SOCIAL_CONTRACT
+                          type: string
+                        preSignedURLs:
+                          description: Link pré-assinado do documento de identificação
+                          type: array
+                          items:
+                            type: string
+                        fileName:
+                          description: 'Nome do arquivo de identificação + extensão. Ex: rg.pdf'
+                          type: string
+                      example:
+                        preSignedURLs:
+                        - my_presigned_url
+                        documentType: RG
+                        fileName: rg.pdf
+                      title: leadIdentification
+                    energyBillReceipts:
+                      description: Faturas de energia
+                      type: array
+                      items:
+                        description: 'Comprovante de conta de luz.
+
+
+                          - receiptPreSignedURL é obrigatório caso receiptAccessKey não seja informado ou ocorra erro na leitura via RPA
+
+                          - kinshipPreSignedURL é obrigatório caso kinshipDegree seja diferente de ''OWNER'''
+                        required:
+                        - amount
+                        - externalIdentification
+                        type: object
+                        properties:
+                          receiptAccessKey:
+                            description: Chave de acesso da conta de luz. Se chave de acesso não informado será necessário enviar documento da conta de luz
+                            type: string
+                          receiptPreSignedURL:
+                            description: Link pre-assinado da nota de luz
+                            type: string
+                          amount:
+                            description: Valor da nota fiscal
+                            type: number
+                          kinshipDegree:
+                            description: 'Grau de parentesco. Se opção selecionada for diferente de ''OWNER'', será necessário enviar comprovante de residência.
+
+
+                              *Obrigatório para cliente PF'
+                            enum:
+                            - OWNER
+                            - OTHERS
+                            type: string
+                          kinshipPreSignedURL:
+                            description: Link pre-assinado do comprovante de residência, caso grau de parentesco seja diferente de 'OWNER'
+                            type: string
+                          externalIdentification:
+                            description: Identificação única da conta de luz, utilizada para realizar o vínculo do comprovante de instalação posteriormente
+                            type: string
+                          receiptFileName:
+                            description: 'Nome do arquivo da fatura de energia. Obrigatório caso link pre-assinado do comprovante de grau de parentesco for enviado, ex: fatura_energia.pdf'
+                            type: string
+                          kinshipFileName:
+                            description: 'Nome do comprovante de parentesco + extensão, ex: comprovante_parentesco.pdf'
+                        example:
+                          amount: 841
+                          externalIdentification: GUID
+                          kinshipDegree: OTHERS
+                          kinshipPreSignedURL: ''
+                          kinshipFileName: ''
+                          receiptAccessKey: '11111111111111111111111111111111111111111111'
+                          receiptPreSignedURL: ''
+                          receiptFileName: ''
+                        title: energyBillReceipt
+                    leadIncomeStatement:
+                      description: Documento de comprovação de renda
+                      required:
+                      - documentType
+                      - preSignedURLs
+                      - fileName
+                      type: object
+                      properties:
+                        documentType:
+                          description: Documento que comprove o faturamento
+                          enum:
+                          - STATEMENT
+                          - INCOME_TAX
+                          - PAY_STUB
+                          - BILLING_STATEMENT
+                          - RESULT_STATEMENT
+                          type: string
+                        preSignedURLs:
+                          description: Link pre-assinado
+                          type: array
+                          items:
+                            type: string
+                        fileName:
+                          description: 'Nome do arquivo do comprovante de faturamento + extensão. Ex: faturamento.pdf'
+                          type: string
+                      example:
+                        documentType: STATEMENT
+                        fileName: faturamento.pdf
+                        preSignedURLs:
+                        - pre_signed_url
+                      title: leadIncomeStatement
+                    documents:
+                      description: Documento de imposto de renda dos sócios. Obrigatório para solicitação de PJ
+                      type: array
+                      items:
+                        description: Documento
+                        required:
+                        - type
+                        - preSignedURLs
+                        - fileName
+                        type: object
+                        properties:
+                          type:
+                            description: Tipo do documento a ser enviado
+                            type: string
+                          preSignedURLs:
+                            description: Lista de link pré-assinado
+                            type: array
+                            items:
+                              type: string
+                          fileName:
+                            description: 'Nome do arquivo + extensão, ex: meu_arquivo.pdf'
+                            type: string
+                        title: document
+                  example:
+                    operatorIdentification: '11111111111'
+                    customerIdentification: '11111111111111'
+                    externalIdentification: GUID
+                    leadIdentification:
+                      preSignedURLs:
+                      - pre_signed_url
+                      documentType: SOCIAL_CONTRACT
+                      fileName: contrato_social.pdf
+                    energyBillReceipts:
+                    - amount: 3500
+                      externalIdentification: GUID
+                      kinshipDegree: OWNER
+                      kinshipPreSignedURL: ''
+                      receiptAccessKey: '111111111111111111111111111111111111111111'
+                      receiptPreSignedURL: ''
+                      fileName: ''
+                      receiptType: ENERGY_BILL
+                    - amount: 2700
+                      externalIdentification: GUID
+                      kinshipDegree: OWNER
+                      kinshipPreSignedURL: ''
+                      receiptAccessKey: ''
+                      receiptPreSignedURL: pre_signed_url
+                      fileName: fatura_energia.pdf
+                      receiptType: ENERGY_BILL
+                    leadIncomeStatement:
+                      documentType: BILLING_STATEMENT
+                      fileName: comprovante_faturamento.pdf
+                      preSignedURLs:
+                      - pre_signed_url
+                    documents:
+                    - preSignedURLs:
+                      - pre_signed_url
+                      fileName: comprovante_socios.pdf
+                      type: ASSOCIATES_IR
+                  title: sendDocuments
+              title: sendDocumentsCanonical
+            examples:
+              Exemplo PJ:
+                value:
+                  workflowLeadCanonical:
+                    operatorIdentification: '11111111111'
+                    customerIdentification: '11111111111111'
+                    externalIdentification: GUID
+                    leadIdentification:
+                      preSignedURLs:
+                      - pre_signed_url
+                      fileName: contrato_social.pdf
+                      documentType: SOCIAL_CONTRACT
+                    energyBillReceipts:
+                    - amount: 3500
+                      externalIdentification: GUID
+                      kinshipPreSignedURL: ''
+                      receiptAccessKey: '111111111111111111111111111111111111111111'
+                      receiptPreSignedURL: ''
+                      receiptType: ENERGY_BILL
+                    - amount: 2700
+                      externalIdentification: GUID
+                      kinshipPreSignedURL: ''
+                      receiptAccessKey: ''
+                      receiptPreSignedURL: pre_signed_url
+                      receiptFileName: fatura_energia.pdf
+                      receiptType: ENERGY_BILL
+                    leadIncomeStatement:
+                      documentType: BILLING_STATEMENT
+                      fileName: comprovante.pdf
+                      preSignedURLs:
+                      - pre_signed_url
+                    documents:
+                    - preSignedURLs:
+                      - pre_signed_url
+                      fileName: imposto_renda.pdf
+                      type: ASSOCIATES_IR
+              Exemplo PF:
+                value:
+                  workflowLeadCanonical:
+                    operatorIdentification: '11111111111'
+                    customerIdentification: '11111111111111'
+                    externalIdentification: GUID
+                    leadIdentification:
+                      preSignedURLs:
+                      - pre_signed_url
+                      fileName: rg.pdf
+                      documentType: RG
+                    energyBillReceipts:
+                    - amount: 3500
+                      externalIdentification: GUID
+                      kinshipDegree: OWNER
+                      kinshipPreSignedURL: ''
+                      receiptAccessKey: '111111111111111111111111111111111111111111'
+                      receiptPreSignedURL: ''
+                      receiptType: ENERGY_BILL
+                    - amount: 2700
+                      externalIdentification: GUID
+                      kinshipDegree: OWNER
+                      kinshipPreSignedURL: ''
+                      receiptAccessKey: ''
+                      receiptPreSignedURL: pre_signed_url
+                      fileName: fatura_energia.pdf
+                      receiptType: ENERGY_BILL
+                    leadIncomeStatement:
+                      documentType: PAY_STUB
+                      fileName: comprovante.pdf
+                      preSignedURLs:
+                      - pre_signed_url
+        required: true
+      responses:
+        '200':
+          description: Requisição recebida
+        '500':
+          content:
+            application/json:
+              schema:
+                title: Root Type for internalServerErrorResponse
+                description: ''
+                type: object
+                properties:
+                  brn:
+                    type: string
+                  name:
+                    type: string
+                  invalidParams:
+                    type: array
+                    items: {}
+                example:
+                  brn: brn:empresas:credit-manager:errors:internal-server-error
+                  name: ServerInternalError
+                  invalidParams: []
+              examples:
+                ' ':
+                  value:
+                    brn: brn:empresas:credit-manager:errors:internal-server-error
+                    name: ServerInternalError
+                    invalidParams: []
+          description: Erro interno
+      security:
+      - oauth2:
+        - brn:btg:empresas:solar:workflow
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Solar-Workflow/envio-dos-documentos
+  /form/solar/documents/pendencies:
+    post:
+      tags:
+      - Workflow de crédito solar
+      description: Envio dos documentos pendênciados
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              required:
+              - workflowLeadCanonical
+              type: object
+              properties:
+                workflowLeadCanonical:
+                  description: propriedade base
+                  required:
+                  - operatorIdentification
+                  - customerIdentification
+                  - externalIdentification
+                  - leadIdentification
+                  - energyBillReceipts
+                  - leadIncomeStatement
+                  type: object
+                  properties:
+                    operatorIdentification:
+                      description: CPF do operador
+                      type: string
+                    customerIdentification:
+                      description: CNPJ do cliente
+                      type: string
+                    externalIdentification:
+                      description: Identificador único fornecido pelo parceiro. Será utilizado para identificar o cliente
+                      type: string
+                    leadIdentification:
+                      description: Documentos de identificação
+                      required:
+                      - documentType
+                      - preSignedURLs
+                      - fileName
+                      type: object
+                      properties:
+                        documentType:
+                          description: Tipo do documento de identificação
+                          enum:
+                          - RG
+                          - CNH
+                          - SOCIAL_CONTRACT
+                          type: string
+                        preSignedURLs:
+                          description: Link pré-assinado do documento de identificação
+                          type: array
+                          items:
+                            type: string
+                        fileName:
+                          description: 'Nome do arquivo de identificação + extensão. Ex: rg.pdf'
+                          type: string
+                      example:
+                        preSignedURLs:
+                        - my_presigned_url
+                        documentType: RG
+                        fileName: rg.pdf
+                      title: leadIdentification
+                    energyBillReceipts:
+                      description: Faturas de energia
+                      type: array
+                      items:
+                        description: 'Comprovante de conta de luz.
+
+
+                          - receiptPreSignedURL é obrigatório caso receiptAccessKey não seja informado ou ocorra erro na leitura via RPA
+
+                          - kinshipPreSignedURL é obrigatório caso kinshipDegree seja diferente de ''OWNER'''
+                        required:
+                        - amount
+                        - externalIdentification
+                        type: object
+                        properties:
+                          receiptAccessKey:
+                            description: Chave de acesso da conta de luz. Se chave de acesso não informado será necessário enviar documento da conta de luz
+                            type: string
+                          receiptPreSignedURL:
+                            description: Link pre-assinado da nota de luz
+                            type: string
+                          amount:
+                            description: Valor da nota fiscal
+                            type: number
+                          kinshipDegree:
+                            description: 'Grau de parentesco. Se opção selecionada for diferente de ''OWNER'', será necessário enviar comprovante de residência.
+
+
+                              *Obrigatório para cliente PF'
+                            enum:
+                            - OWNER
+                            - OTHERS
+                            type: string
+                          kinshipPreSignedURL:
+                            description: Link pre-assinado do comprovante de residência, caso grau de parentesco seja diferente de 'OWNER'
+                            type: string
+                          externalIdentification:
+                            description: Identificação única da conta de luz, utilizada para realizar o vínculo do comprovante de instalação posteriormente
+                            type: string
+                          receiptFileName:
+                            description: 'Nome do arquivo da fatura de energia. Obrigatório caso link pre-assinado do comprovante de grau de parentesco for enviado, ex: fatura_energia.pdf'
+                            type: string
+                          kinshipFileName:
+                            description: 'Nome do comprovante de parentesco + extensão, ex: comprovante_parentesco.pdf'
+                        example:
+                          amount: 841
+                          externalIdentification: GUID
+                          kinshipDegree: OTHERS
+                          kinshipPreSignedURL: ''
+                          kinshipFileName: ''
+                          receiptAccessKey: '11111111111111111111111111111111111111111111'
+                          receiptPreSignedURL: ''
+                          receiptFileName: ''
+                        title: energyBillReceipt
+                    leadIncomeStatement:
+                      description: Documento de comprovação de renda
+                      required:
+                      - documentType
+                      - preSignedURLs
+                      - fileName
+                      type: object
+                      properties:
+                        documentType:
+                          description: Documento que comprove o faturamento
+                          enum:
+                          - STATEMENT
+                          - INCOME_TAX
+                          - PAY_STUB
+                          - BILLING_STATEMENT
+                          - RESULT_STATEMENT
+                          type: string
+                        preSignedURLs:
+                          description: Link pre-assinado
+                          type: array
+                          items:
+                            type: string
+                        fileName:
+                          description: 'Nome do arquivo do comprovante de faturamento + extensão. Ex: faturamento.pdf'
+                          type: string
+                      example:
+                        documentType: STATEMENT
+                        fileName: faturamento.pdf
+                        preSignedURLs:
+                        - pre_signed_url
+                      title: leadIncomeStatement
+                    documents:
+                      description: Documento de imposto de renda dos sócios. Obrigatório para solicitação de PJ
+                      type: array
+                      items:
+                        description: Documento
+                        required:
+                        - type
+                        - preSignedURLs
+                        - fileName
+                        type: object
+                        properties:
+                          type:
+                            description: Tipo do documento a ser enviado
+                            type: string
+                          preSignedURLs:
+                            description: Lista de link pré-assinado
+                            type: array
+                            items:
+                              type: string
+                          fileName:
+                            description: 'Nome do arquivo + extensão, ex: meu_arquivo.pdf'
+                            type: string
+                        title: document
+                  example:
+                    operatorIdentification: '11111111111'
+                    customerIdentification: '11111111111111'
+                    externalIdentification: GUID
+                    leadIdentification:
+                      preSignedURLs:
+                      - pre_signed_url
+                      documentType: SOCIAL_CONTRACT
+                      fileName: contrato_social.pdf
+                    energyBillReceipts:
+                    - amount: 3500
+                      externalIdentification: GUID
+                      kinshipDegree: OWNER
+                      kinshipPreSignedURL: ''
+                      receiptAccessKey: '111111111111111111111111111111111111111111'
+                      receiptPreSignedURL: ''
+                      fileName: ''
+                      receiptType: ENERGY_BILL
+                    - amount: 2700
+                      externalIdentification: GUID
+                      kinshipDegree: OWNER
+                      kinshipPreSignedURL: ''
+                      receiptAccessKey: ''
+                      receiptPreSignedURL: pre_signed_url
+                      fileName: fatura_energia.pdf
+                      receiptType: ENERGY_BILL
+                    leadIncomeStatement:
+                      documentType: BILLING_STATEMENT
+                      fileName: comprovante_faturamento.pdf
+                      preSignedURLs:
+                      - pre_signed_url
+                    documents:
+                    - preSignedURLs:
+                      - pre_signed_url
+                      fileName: comprovante_socios.pdf
+                      type: ASSOCIATES_IR
+                  title: sendDocuments
+              title: sendDocumentsCanonical
+            examples:
+              Exemplo PJ:
+                value:
+                  workflowLeadCanonical:
+                    operatorIdentification: '11111111111'
+                    customerIdentification: '11111111111111'
+                    externalIdentification: GUID
+                    leadIdentification:
+                      preSignedURLs:
+                      - pre_signed_url
+                      fileName: contrato_social.pdf
+                      documentType: SOCIAL_CONTRACT
+                    energyBillReceipts:
+                    - amount: 3500
+                      externalIdentification: GUID
+                      kinshipDegree: OWNER
+                      kinshipPreSignedURL: ''
+                      receiptAccessKey: '111111111111111111111111111111111111111111'
+                      receiptPreSignedURL: ''
+                      receiptType: ENERGY_BILL
+                    - amount: 2700
+                      externalIdentification: GUID
+                      kinshipDegree: OWNER
+                      kinshipPreSignedURL: ''
+                      receiptAccessKey: ''
+                      receiptPreSignedURL: pre_signed_url
+                      fileName: fatura_energia.pdf
+                      receiptType: ENERGY_BILL
+                    leadIncomeStatement:
+                      documentType: BILLING_STATEMENT
+                      fileName: comprovante_renda.pdf
+                      preSignedURLs:
+                      - pre_signed_url
+                    documents:
+                    - preSignedURLs:
+                      - pre_signed_url
+                      fileName: imposto_renda.pdf
+                      type: ASSOCIATES_IR
+              Exemplo PF:
+                value:
+                  workflowLeadCanonical:
+                    operatorIdentification: '11111111111'
+                    customerIdentification: '11111111111111'
+                    externalIdentification: GUID
+                    leadIdentification:
+                      preSignedURLs:
+                      - pre_signed_url
+                      fileName: rg.pdf
+                      documentType: RG
+                    energyBillReceipts:
+                    - amount: 3500
+                      externalIdentification: GUID
+                      kinshipDegree: OWNER
+                      kinshipPreSignedURL: ''
+                      receiptAccessKey: '111111111111111111111111111111111111111111'
+                      receiptPreSignedURL: ''
+                      receiptType: ENERGY_BILL
+                    - amount: 2700
+                      externalIdentification: GUID
+                      kinshipDegree: OWNER
+                      kinshipPreSignedURL: ''
+                      receiptAccessKey: ''
+                      receiptPreSignedURL: pre_signed_url
+                      fileName: fatura_energia.pdf
+                      receiptType: ENERGY_BILL
+                    leadIncomeStatement:
+                      documentType: PAY_STUB
+                      fileName: comprovante.pdf
+                      preSignedURLs:
+                      - pre_signed_url
+        required: true
+      responses:
+        '200':
+          description: Requisição recebida
+        '500':
+          content:
+            application/json:
+              schema:
+                title: Root Type for internalServerErrorResponse
+                description: ''
+                type: object
+                properties:
+                  brn:
+                    type: string
+                  name:
+                    type: string
+                  invalidParams:
+                    type: array
+                    items: {}
+                example:
+                  brn: brn:empresas:credit-manager:errors:internal-server-error
+                  name: ServerInternalError
+                  invalidParams: []
+              examples:
+                ' ':
+                  value:
+                    brn: brn:empresas:credit-manager:errors:internal-server-error
+                    name: ServerInternalError
+                    invalidParams: []
+          description: Erro interno
+      security:
+      - oauth2:
+        - brn:btg:empresas:solar:workflow
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Solar-Workflow/envio-dos-documentos-pendenciados
+components:
+  securitySchemes:
+    oauth2:
+      flows:
+        clientCredentials:
+          tokenUrl: https://id.btgpactual.com/oauth2/token
+          scopes:
+            brn:btg:empresas:solar:workflow: Scope solar wf
+      type: oauth2
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/6294d693.7d408e34.js
+  - https://developers.empresas.btgpactual.com/assets/js/2ef410e8.3577b367.js
+  - https://developers.empresas.btgpactual.com/assets/js/0076a809.13896420.js
+  - https://developers.empresas.btgpactual.com/assets/js/ccf85588.e2d0c22a.js
+  - https://developers.empresas.btgpactual.com/assets/js/7a8f500c.035a6960.js
+  - https://developers.empresas.btgpactual.com/assets/js/05e419af.8bb3411a.js
+  - https://developers.empresas.btgpactual.com/assets/js/870ede9b.2bb7104c.js
+  - https://developers.empresas.btgpactual.com/assets/js/56bf4dd6.5b117371.js
+  - https://developers.empresas.btgpactual.com/assets/js/1e93696a.05fbecf4.js
+  - https://developers.empresas.btgpactual.com/assets/js/4c2761e1.59d9ed46.js
+  - https://developers.empresas.btgpactual.com/assets/js/fc43bcce.76d2cf01.js
+  - https://developers.empresas.btgpactual.com/assets/js/d947da05.2e3cb97d.js

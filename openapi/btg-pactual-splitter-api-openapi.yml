@@ -1,0 +1,1958 @@
+openapi: 3.2.0
+info:
+  description: API responsável por gestão de splitters e consulta de splits de cobranças
+  version: 1.1.0
+  title: Banking - Split Splitter API
+  contact:
+    name: Contas a Receber
+    email: OL-IT-BtgEmpresas-ContasAReceber@btgpactual.com
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com
+  description: Sandbox
+- url: https://api.empresas.btgpactual.com
+  description: Produção
+tags:
+- name: Splitter
+paths:
+  /{companyId}/banking/splitter:
+    post:
+      tags:
+      - Splitter
+      description: 'Cria um splitter para o beneficiário. Se já existir um splitter com o mesmo `taxId` e ele estiver `DELETED`, o registro existente é reativado (mesmo id, `status` volta para `ACTIVE`) com os novos dados ao invés de criar um novo. Se já existir e estiver `ACTIVE`, retorna `409 Conflict`.
+
+
+        ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o Wiremock
+
+
+        > No sandbox este endpoint requer a utilização de Sandbox Headers
+
+
+        | Header | Descrição | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - taxId
+              - personType
+              - name
+              - account
+              - configuration
+              properties:
+                taxId:
+                  type: string
+                  description: CNPJ do splitter (apenas pessoa jurídica é permitida)
+                  example: '37297902000141'
+                personType:
+                  type: string
+                  enum:
+                  - F
+                  - J
+                  description: Tipo de pessoa (F = Física, J = Jurídica). Apenas J é aceito para splitters.
+                  example: J
+                name:
+                  type: string
+                  maxLength: 50
+                  description: Nome/razão social do splitter
+                  example: Empresa Exemplo LTDA
+                nickname:
+                  type: string
+                  maxLength: 100
+                  description: Apelido do splitter (opcional)
+                  example: Empresa Exemplo
+                account:
+                  type: object
+                  required:
+                  - number
+                  - branch
+                  properties:
+                    number:
+                      type: string
+                      maxLength: 9
+                      description: Número da conta (incluindo o dígito verificador)
+                      example: 012345678
+                    branch:
+                      type: string
+                      maxLength: 4
+                      description: Agência bancária
+                      example: '0001'
+                    bankCode:
+                      type: string
+                      description: Código do banco (default "208" = BTG Pactual)
+                      example: '208'
+                  title: AccountInput
+                configuration:
+                  type: object
+                  required:
+                  - splitType
+                  - divisionAmount
+                  properties:
+                    splitType:
+                      type: string
+                      enum:
+                      - PERCENT
+                      - VALUE
+                      description: 'Tipo de divisão:
+
+                        - `PERCENT`: valor fracionário entre 0 (exclusivo) e 1 (exclusivo), ex: 0.30 = 30%
+
+                        - `VALUE`: valor absoluto em reais, deve ser positivo
+
+                        '
+                      example: PERCENT
+                    divisionAmount:
+                      type: number
+                      description: 'Valor da divisão (deve ser positivo).
+
+                        Para PERCENT: valor entre 0 e 1 (ex: 0.30 representa 30%).
+
+                        Para VALUE: valor absoluto em reais (ex: 100.50).
+
+                        '
+                      example: 0.3
+                      exclusiveMinimum: 0
+                  title: ConfigurationInput
+              title: CreateSplitterRequest
+      responses:
+        '201':
+          description: Splitter criado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - id
+                - taxId
+                - personType
+                - name
+                - status
+                - account
+                - createdAt
+                - updatedAt
+                - configuration
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    description: Identificador único do splitter
+                    example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+                  taxId:
+                    type: string
+                    description: CNPJ do splitter
+                    example: '37297902000141'
+                  personType:
+                    type: string
+                    enum:
+                    - F
+                    - J
+                    description: Tipo de pessoa
+                    example: J
+                  name:
+                    type: string
+                    description: Nome/razão social do splitter
+                    example: Empresa Exemplo LTDA
+                  status:
+                    type: string
+                    enum:
+                    - ACTIVE
+                    - INVALID_ACCOUNT
+                    - DELETED
+                    description: Status do splitter
+                    example: ACTIVE
+                  nickname:
+                    type:
+                    - string
+                    - 'null'
+                    description: Apelido do splitter (ausente quando não definido)
+                    example: Empresa Exemplo
+                  account:
+                    type: object
+                    required:
+                    - branch
+                    - number
+                    properties:
+                      branch:
+                        type: string
+                        description: Agência bancária
+                        example: '0001'
+                      number:
+                        type: string
+                        description: Número da conta
+                        example: '1234567'
+                      bankCode:
+                        type:
+                        - string
+                        - 'null'
+                        description: Código do banco
+                        example: '208'
+                    title: AccountResponse
+                  configuration:
+                    type: object
+                    required:
+                    - splitType
+                    - divisionAmount
+                    - isDefault
+                    properties:
+                      splitType:
+                        type: string
+                        enum:
+                        - PERCENT
+                        - VALUE
+                        description: Tipo de divisão configurada
+                        example: PERCENT
+                      divisionAmount:
+                        type: number
+                        description: 'Valor da divisão.
+
+                          Para PERCENT: valor fracionário (ex: 0.30 = 30%).
+
+                          Para VALUE: valor absoluto em reais.
+
+                          '
+                        example: 0.3
+                      isDefault:
+                        type: boolean
+                        description: Indica se é a configuração padrão do splitter
+                        example: true
+                    title: ConfigurationResponse
+                  createdAt:
+                    type: string
+                    format: date-time
+                    description: Data de criação
+                    example: '2024-01-15T10:30:00.000Z'
+                  updatedAt:
+                    type: string
+                    format: date-time
+                    description: Data de última atualização
+                    example: '2024-01-15T10:30:00.000Z'
+                  deletedAt:
+                    type:
+                    - string
+                    - 'null'
+                    format: date-time
+                    description: Data de exclusão (ausente quando splitter está ativo)
+                    example: '2024-06-01T12:00:00.000Z'
+                title: SplitterResponse
+        '202':
+          description: Operação em análise (aguardando aprovação)
+          headers:
+            x-task-type:
+              description: 'Tipo de tarefa de aprovação pendente:
+
+                - `ciba`: Client-Initiated Backchannel Authentication (push notification)
+
+                - `corban-approval`: Aguarda aprovação do correspondente bancário
+
+                '
+              required: false
+              schema:
+                type: string
+                enum:
+                - ciba
+                - corban-approval
+          content:
+            application/json:
+              schema:
+                type: object
+                description: 'Retornado quando a operação requer aprovação.
+
+                  O cliente deve monitorar o status da operação via callback.
+
+                  '
+                properties:
+                  statusCode:
+                    type: integer
+                    description: Código de status da operação
+                    example: 202
+                  transactionId:
+                    type: string
+                    description: ID da transação no sistema de aprovação
+                    example: 6d5as4d8w4ae561sda6a8we5a4w
+                  externalId:
+                    type: string
+                    description: ID externo da operação para correlação
+                    example: 56489562-1254-84ab-9c3e-e6e468e006f5
+                  state:
+                    type: string
+                    enum:
+                    - AUTHENTICATION
+                    - WAITING_CORRESPONDENT_BANK_APPROVAL
+                    - AUTHORIZED
+                    description: Estado atual da operação de aprovação
+                  operationNeedsApproval:
+                    type: boolean
+                    description: Indica se a operação requer aprovação adicional
+                  contractGuid:
+                    type: string
+                    description: GUID do contrato associado
+                  operationUUID:
+                    type: string
+                    description: UUID da operação no sistema de aprovação
+                title: OperationResponse
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  required:
+                  - brn
+                  - name
+                  - reason
+                  properties:
+                    brn:
+                      type: string
+                      description: Business Resource Name do erro
+                      example: brn:empresas:banking:errors:not-found-error
+                    name:
+                      type: string
+                      description: Nome do tipo de erro
+                      example: NotFoundError
+                    reason:
+                      type: string
+                      description: Mensagem descritiva do erro
+                      example: Splitter not found
+                  title: ErrorResponse
+                - type: object
+                  properties:
+                    invalidParams:
+                      type: array
+                      description: Lista de parâmetros inválidos
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            description: Nome do campo inválido
+                            example: taxId
+                          value:
+                            type: string
+                            description: Valor recebido
+                            example: ''
+                          reason:
+                            type: string
+                            description: Motivo da invalidação
+                            example: '"taxId" is required'
+                title: ValidationErrorResponse
+        '409':
+          description: Conflito — splitter com o mesmo taxId já existe e está ACTIVE
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                - reason
+                properties:
+                  brn:
+                    type: string
+                    description: Business Resource Name do erro
+                    example: brn:empresas:banking:errors:not-found-error
+                  name:
+                    type: string
+                    description: Nome do tipo de erro
+                    example: NotFoundError
+                  reason:
+                    type: string
+                    description: Mensagem descritiva do erro
+                    example: Splitter not found
+                title: ErrorResponse
+        '422':
+          description: Erro de validação de regras de negócio
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  required:
+                  - brn
+                  - name
+                  - reason
+                  properties:
+                    brn:
+                      type: string
+                      description: Business Resource Name do erro
+                      example: brn:empresas:banking:errors:not-found-error
+                    name:
+                      type: string
+                      description: Nome do tipo de erro
+                      example: NotFoundError
+                    reason:
+                      type: string
+                      description: Mensagem descritiva do erro
+                      example: Splitter not found
+                  title: ErrorResponse
+                - type: object
+                  properties:
+                    invalidParams:
+                      type: array
+                      description: Lista de parâmetros inválidos
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            description: Nome do campo inválido
+                            example: taxId
+                          value:
+                            type: string
+                            description: Valor recebido
+                            example: ''
+                          reason:
+                            type: string
+                            description: Motivo da invalidação
+                            example: '"taxId" is required'
+                title: ValidationErrorResponse
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                - reason
+                properties:
+                  brn:
+                    type: string
+                    description: Business Resource Name do erro
+                    example: brn:empresas:banking:errors:not-found-error
+                  name:
+                    type: string
+                    description: Nome do tipo de erro
+                    example: NotFoundError
+                  reason:
+                    type: string
+                    description: Mensagem descritiva do erro
+                    example: Splitter not found
+                title: ErrorResponse
+      security:
+      - write:
+        - brn:btg:empresas:banking:collections
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Split/criar-splitter
+      summary: Create by company id banking splitter
+      x-summary-source: derived
+      operationId: postByCompanyIdBankingSplitter
+      x-operation-id-source: derived
+    get:
+      tags:
+      - Splitter
+      description: '## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o Wiremock
+
+
+        > No sandbox este endpoint requer a utilização de Sandbox Headers
+
+
+        | Header | Descrição | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      operationId: listSplitters
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      - name: pageSize
+        in: query
+        required: true
+        description: Tamanho da página
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 1000
+          example: 10
+      - name: pageNumber
+        in: query
+        required: true
+        description: Número da página
+        schema:
+          type: integer
+          minimum: 1
+          example: 1
+      - name: name
+        in: query
+        required: false
+        description: Filtro por nome ou apelido (nickname) do splitter
+        schema:
+          type: string
+          example: Empresa Exemplo
+      - name: taxId
+        in: query
+        required: false
+        description: Filtro por CNPJ do splitter
+        schema:
+          type: string
+          example: '12345678000195'
+      - name: status
+        in: query
+        required: false
+        description: 'Filtro por status do splitter. Aceita múltiplos valores separados por vírgula (ex.: `ACTIVE,DELETED`).'
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - ACTIVE
+            - INVALID_ACCOUNT
+            - DELETED
+          example:
+          - ACTIVE
+      - name: splitType
+        in: query
+        required: false
+        description: Filtro por tipo de divisão configurado no splitter
+        schema:
+          type: string
+          enum:
+          - PERCENT
+          - VALUE
+          example: PERCENT
+      - name: cursor
+        in: query
+        required: false
+        description: Cursor de paginação (base64-encoded JSON)
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Lista de splitters retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                - _links
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - id
+                      - taxId
+                      - personType
+                      - name
+                      - status
+                      - account
+                      - createdAt
+                      - updatedAt
+                      - configuration
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                          description: Identificador único do splitter
+                          example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+                        taxId:
+                          type: string
+                          description: CNPJ do splitter
+                          example: '37297902000141'
+                        personType:
+                          type: string
+                          enum:
+                          - F
+                          - J
+                          description: Tipo de pessoa
+                          example: J
+                        name:
+                          type: string
+                          description: Nome/razão social do splitter
+                          example: Empresa Exemplo LTDA
+                        status:
+                          type: string
+                          enum:
+                          - ACTIVE
+                          - INVALID_ACCOUNT
+                          - DELETED
+                          description: Status do splitter
+                          example: ACTIVE
+                        nickname:
+                          type:
+                          - string
+                          - 'null'
+                          description: Apelido do splitter (ausente quando não definido)
+                          example: Empresa Exemplo
+                        account:
+                          type: object
+                          required:
+                          - branch
+                          - number
+                          properties:
+                            branch:
+                              type: string
+                              description: Agência bancária
+                              example: '0001'
+                            number:
+                              type: string
+                              description: Número da conta
+                              example: '1234567'
+                            bankCode:
+                              type:
+                              - string
+                              - 'null'
+                              description: Código do banco
+                              example: '208'
+                          title: AccountResponse
+                        configuration:
+                          type: object
+                          required:
+                          - splitType
+                          - divisionAmount
+                          - isDefault
+                          properties:
+                            splitType:
+                              type: string
+                              enum:
+                              - PERCENT
+                              - VALUE
+                              description: Tipo de divisão configurada
+                              example: PERCENT
+                            divisionAmount:
+                              type: number
+                              description: 'Valor da divisão.
+
+                                Para PERCENT: valor fracionário (ex: 0.30 = 30%).
+
+                                Para VALUE: valor absoluto em reais.
+
+                                '
+                              example: 0.3
+                            isDefault:
+                              type: boolean
+                              description: Indica se é a configuração padrão do splitter
+                              example: true
+                          title: ConfigurationResponse
+                        createdAt:
+                          type: string
+                          format: date-time
+                          description: Data de criação
+                          example: '2024-01-15T10:30:00.000Z'
+                        updatedAt:
+                          type: string
+                          format: date-time
+                          description: Data de última atualização
+                          example: '2024-01-15T10:30:00.000Z'
+                        deletedAt:
+                          type:
+                          - string
+                          - 'null'
+                          format: date-time
+                          description: Data de exclusão (ausente quando splitter está ativo)
+                          example: '2024-06-01T12:00:00.000Z'
+                      title: SplitterResponse
+                  _links:
+                    type: object
+                    description: Links de paginação (cursor-based)
+                    properties:
+                      next:
+                        type: object
+                        required:
+                        - href
+                        - method
+                        - type
+                        - rel
+                        properties:
+                          href:
+                            type: string
+                            description: URL com cursor para a próxima/anterior página
+                            example: ?cursor=eyJwYWdlU2l6ZSI6MTAsInBhZ2VOdW1iZXIiOiIyIn0=
+                          method:
+                            type: string
+                            description: Método HTTP
+                            example: GET
+                          type:
+                            type: string
+                            description: Content-Type da resposta
+                            example: application/json
+                          rel:
+                            type: string
+                            description: Relação do link
+                            example: self
+                        title: CursorLink
+                      previous:
+                        type: object
+                        required:
+                        - href
+                        - method
+                        - type
+                        - rel
+                        properties:
+                          href:
+                            type: string
+                            description: URL com cursor para a próxima/anterior página
+                            example: ?cursor=eyJwYWdlU2l6ZSI6MTAsInBhZ2VOdW1iZXIiOiIyIn0=
+                          method:
+                            type: string
+                            description: Método HTTP
+                            example: GET
+                          type:
+                            type: string
+                            description: Content-Type da resposta
+                            example: application/json
+                          rel:
+                            type: string
+                            description: Relação do link
+                            example: self
+                        title: CursorLink
+                title: SplittersResponse
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  required:
+                  - brn
+                  - name
+                  - reason
+                  properties:
+                    brn:
+                      type: string
+                      description: Business Resource Name do erro
+                      example: brn:empresas:banking:errors:not-found-error
+                    name:
+                      type: string
+                      description: Nome do tipo de erro
+                      example: NotFoundError
+                    reason:
+                      type: string
+                      description: Mensagem descritiva do erro
+                      example: Splitter not found
+                  title: ErrorResponse
+                - type: object
+                  properties:
+                    invalidParams:
+                      type: array
+                      description: Lista de parâmetros inválidos
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            description: Nome do campo inválido
+                            example: taxId
+                          value:
+                            type: string
+                            description: Valor recebido
+                            example: ''
+                          reason:
+                            type: string
+                            description: Motivo da invalidação
+                            example: '"taxId" is required'
+                title: ValidationErrorResponse
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                - reason
+                properties:
+                  brn:
+                    type: string
+                    description: Business Resource Name do erro
+                    example: brn:empresas:banking:errors:not-found-error
+                  name:
+                    type: string
+                    description: Nome do tipo de erro
+                    example: NotFoundError
+                  reason:
+                    type: string
+                    description: Mensagem descritiva do erro
+                    example: Splitter not found
+                title: ErrorResponse
+      security:
+      - read:
+        - brn:btg:empresas:banking:collections
+        - brn:btg:empresas:banking:collections.read-only
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Split/list-splitters
+      summary: List splitters
+      x-summary-source: derived
+  /{companyId}/banking/splitter/{splitterId}:
+    delete:
+      tags:
+      - Splitter
+      description: 'Realiza um soft-delete do splitter. O registro é marcado como `DELETED` e pode ser reativado em uma criação futura com o mesmo `taxId`.
+
+
+        ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o Wiremock
+
+
+        > No sandbox este endpoint requer a utilização de Sandbox Headers
+
+
+        | Header | Descrição | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      operationId: deleteSplitter
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      - name: splitterId
+        in: path
+        required: true
+        description: Identificador UUID do splitter
+        schema:
+          type: string
+          format: uuid
+          example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+      responses:
+        '202':
+          description: Operação em análise (aguardando aprovação)
+          headers:
+            x-task-type:
+              description: 'Tipo de tarefa de aprovação pendente:
+
+                - `ciba`: Client-Initiated Backchannel Authentication (push notification)
+
+                - `corban-approval`: Aguarda aprovação do correspondente bancário
+
+                '
+              required: false
+              schema:
+                type: string
+                enum:
+                - ciba
+                - corban-approval
+          content:
+            application/json:
+              schema:
+                type: object
+                description: 'Retornado quando a operação requer aprovação.
+
+                  O cliente deve monitorar o status da operação via callback.
+
+                  '
+                properties:
+                  statusCode:
+                    type: integer
+                    description: Código de status da operação
+                    example: 202
+                  transactionId:
+                    type: string
+                    description: ID da transação no sistema de aprovação
+                    example: 6d5as4d8w4ae561sda6a8we5a4w
+                  externalId:
+                    type: string
+                    description: ID externo da operação para correlação
+                    example: 56489562-1254-84ab-9c3e-e6e468e006f5
+                  state:
+                    type: string
+                    enum:
+                    - AUTHENTICATION
+                    - WAITING_CORRESPONDENT_BANK_APPROVAL
+                    - AUTHORIZED
+                    description: Estado atual da operação de aprovação
+                  operationNeedsApproval:
+                    type: boolean
+                    description: Indica se a operação requer aprovação adicional
+                  contractGuid:
+                    type: string
+                    description: GUID do contrato associado
+                  operationUUID:
+                    type: string
+                    description: UUID da operação no sistema de aprovação
+                title: OperationResponse
+        '204':
+          description: Splitter deletado com sucesso
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  required:
+                  - brn
+                  - name
+                  - reason
+                  properties:
+                    brn:
+                      type: string
+                      description: Business Resource Name do erro
+                      example: brn:empresas:banking:errors:not-found-error
+                    name:
+                      type: string
+                      description: Nome do tipo de erro
+                      example: NotFoundError
+                    reason:
+                      type: string
+                      description: Mensagem descritiva do erro
+                      example: Splitter not found
+                  title: ErrorResponse
+                - type: object
+                  properties:
+                    invalidParams:
+                      type: array
+                      description: Lista de parâmetros inválidos
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            description: Nome do campo inválido
+                            example: taxId
+                          value:
+                            type: string
+                            description: Valor recebido
+                            example: ''
+                          reason:
+                            type: string
+                            description: Motivo da invalidação
+                            example: '"taxId" is required'
+                title: ValidationErrorResponse
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                - reason
+                properties:
+                  brn:
+                    type: string
+                    description: Business Resource Name do erro
+                    example: brn:empresas:banking:errors:not-found-error
+                  name:
+                    type: string
+                    description: Nome do tipo de erro
+                    example: NotFoundError
+                  reason:
+                    type: string
+                    description: Mensagem descritiva do erro
+                    example: Splitter not found
+                title: ErrorResponse
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                - reason
+                properties:
+                  brn:
+                    type: string
+                    description: Business Resource Name do erro
+                    example: brn:empresas:banking:errors:not-found-error
+                  name:
+                    type: string
+                    description: Nome do tipo de erro
+                    example: NotFoundError
+                  reason:
+                    type: string
+                    description: Mensagem descritiva do erro
+                    example: Splitter not found
+                title: ErrorResponse
+      security:
+      - write:
+        - brn:btg:empresas:banking:collections
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Split/delete-splitter
+      summary: Delete splitter
+      x-summary-source: derived
+    get:
+      tags:
+      - Splitter
+      description: '## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o Wiremock
+
+
+        > No sandbox este endpoint requer a utilização de Sandbox Headers
+
+
+        | Header | Descrição | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      operationId: findSplitterById
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      - name: splitterId
+        in: path
+        required: true
+        description: Identificador UUID do splitter
+        schema:
+          type: string
+          format: uuid
+          example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+      responses:
+        '200':
+          description: Splitter encontrado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - id
+                - taxId
+                - personType
+                - name
+                - status
+                - account
+                - createdAt
+                - updatedAt
+                - configuration
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    description: Identificador único do splitter
+                    example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+                  taxId:
+                    type: string
+                    description: CNPJ do splitter
+                    example: '37297902000141'
+                  personType:
+                    type: string
+                    enum:
+                    - F
+                    - J
+                    description: Tipo de pessoa
+                    example: J
+                  name:
+                    type: string
+                    description: Nome/razão social do splitter
+                    example: Empresa Exemplo LTDA
+                  status:
+                    type: string
+                    enum:
+                    - ACTIVE
+                    - INVALID_ACCOUNT
+                    - DELETED
+                    description: Status do splitter
+                    example: ACTIVE
+                  nickname:
+                    type:
+                    - string
+                    - 'null'
+                    description: Apelido do splitter (ausente quando não definido)
+                    example: Empresa Exemplo
+                  account:
+                    type: object
+                    required:
+                    - branch
+                    - number
+                    properties:
+                      branch:
+                        type: string
+                        description: Agência bancária
+                        example: '0001'
+                      number:
+                        type: string
+                        description: Número da conta
+                        example: '1234567'
+                      bankCode:
+                        type:
+                        - string
+                        - 'null'
+                        description: Código do banco
+                        example: '208'
+                    title: AccountResponse
+                  configuration:
+                    type: object
+                    required:
+                    - splitType
+                    - divisionAmount
+                    - isDefault
+                    properties:
+                      splitType:
+                        type: string
+                        enum:
+                        - PERCENT
+                        - VALUE
+                        description: Tipo de divisão configurada
+                        example: PERCENT
+                      divisionAmount:
+                        type: number
+                        description: 'Valor da divisão.
+
+                          Para PERCENT: valor fracionário (ex: 0.30 = 30%).
+
+                          Para VALUE: valor absoluto em reais.
+
+                          '
+                        example: 0.3
+                      isDefault:
+                        type: boolean
+                        description: Indica se é a configuração padrão do splitter
+                        example: true
+                    title: ConfigurationResponse
+                  createdAt:
+                    type: string
+                    format: date-time
+                    description: Data de criação
+                    example: '2024-01-15T10:30:00.000Z'
+                  updatedAt:
+                    type: string
+                    format: date-time
+                    description: Data de última atualização
+                    example: '2024-01-15T10:30:00.000Z'
+                  deletedAt:
+                    type:
+                    - string
+                    - 'null'
+                    format: date-time
+                    description: Data de exclusão (ausente quando splitter está ativo)
+                    example: '2024-06-01T12:00:00.000Z'
+                title: SplitterResponse
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  required:
+                  - brn
+                  - name
+                  - reason
+                  properties:
+                    brn:
+                      type: string
+                      description: Business Resource Name do erro
+                      example: brn:empresas:banking:errors:not-found-error
+                    name:
+                      type: string
+                      description: Nome do tipo de erro
+                      example: NotFoundError
+                    reason:
+                      type: string
+                      description: Mensagem descritiva do erro
+                      example: Splitter not found
+                  title: ErrorResponse
+                - type: object
+                  properties:
+                    invalidParams:
+                      type: array
+                      description: Lista de parâmetros inválidos
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            description: Nome do campo inválido
+                            example: taxId
+                          value:
+                            type: string
+                            description: Valor recebido
+                            example: ''
+                          reason:
+                            type: string
+                            description: Motivo da invalidação
+                            example: '"taxId" is required'
+                title: ValidationErrorResponse
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                - reason
+                properties:
+                  brn:
+                    type: string
+                    description: Business Resource Name do erro
+                    example: brn:empresas:banking:errors:not-found-error
+                  name:
+                    type: string
+                    description: Nome do tipo de erro
+                    example: NotFoundError
+                  reason:
+                    type: string
+                    description: Mensagem descritiva do erro
+                    example: Splitter not found
+                title: ErrorResponse
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                - reason
+                properties:
+                  brn:
+                    type: string
+                    description: Business Resource Name do erro
+                    example: brn:empresas:banking:errors:not-found-error
+                  name:
+                    type: string
+                    description: Nome do tipo de erro
+                    example: NotFoundError
+                  reason:
+                    type: string
+                    description: Mensagem descritiva do erro
+                    example: Splitter not found
+                title: ErrorResponse
+      security:
+      - read:
+        - brn:btg:empresas:banking:collections
+        - brn:btg:empresas:banking:collections.read-only
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Split/find-splitter-by-id
+      summary: Find splitter by id
+      x-summary-source: derived
+    patch:
+      tags:
+      - Splitter
+      description: 'Atualiza um splitter existente. Pelo menos um campo deve ser informado (`name`, `nickname`, `account` ou `configuration`).
+
+
+        ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o Wiremock
+
+
+        > No sandbox este endpoint requer a utilização de Sandbox Headers
+
+
+        | Header | Descrição | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      operationId: updateSplitter
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      - name: splitterId
+        in: path
+        required: true
+        description: Identificador UUID do splitter
+        schema:
+          type: string
+          format: uuid
+          example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Pelo menos um campo deve ser informado (name, nickname, account ou configuration)
+              properties:
+                name:
+                  type: string
+                  maxLength: 50
+                  description: Nome/razão social do splitter
+                  example: Empresa Atualizada LTDA
+                nickname:
+                  type: string
+                  maxLength: 100
+                  description: Apelido do splitter (envie string vazia "" para remover)
+                  example: Empresa Atualizada
+                account:
+                  type: object
+                  properties:
+                    number:
+                      type: string
+                      maxLength: 9
+                      description: Número da conta (incluindo o dígito verificador)
+                      example: 012345678
+                    branch:
+                      type: string
+                      maxLength: 4
+                      description: Agência bancária
+                      example: '0001'
+                configuration:
+                  type: object
+                  required:
+                  - splitType
+                  - divisionAmount
+                  properties:
+                    splitType:
+                      type: string
+                      enum:
+                      - PERCENT
+                      - VALUE
+                      description: 'Tipo de divisão:
+
+                        - `PERCENT`: valor fracionário entre 0 (exclusivo) e 1 (exclusivo), ex: 0.30 = 30%
+
+                        - `VALUE`: valor absoluto em reais, deve ser positivo
+
+                        '
+                      example: PERCENT
+                    divisionAmount:
+                      type: number
+                      description: 'Valor da divisão (deve ser positivo).
+
+                        Para PERCENT: valor entre 0 e 1 (ex: 0.30 representa 30%).
+
+                        Para VALUE: valor absoluto em reais (ex: 100.50).
+
+                        '
+                      example: 0.3
+                      exclusiveMinimum: 0
+                  title: ConfigurationInput
+              title: UpdateSplitterRequest
+      responses:
+        '200':
+          description: Splitter atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - id
+                - taxId
+                - personType
+                - name
+                - status
+                - account
+                - createdAt
+                - updatedAt
+                - configuration
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    description: Identificador único do splitter
+                    example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+                  taxId:
+                    type: string
+                    description: CNPJ do splitter
+                    example: '37297902000141'
+                  personType:
+                    type: string
+                    enum:
+                    - F
+                    - J
+                    description: Tipo de pessoa
+                    example: J
+                  name:
+                    type: string
+                    description: Nome/razão social do splitter
+                    example: Empresa Exemplo LTDA
+                  status:
+                    type: string
+                    enum:
+                    - ACTIVE
+                    - INVALID_ACCOUNT
+                    - DELETED
+                    description: Status do splitter
+                    example: ACTIVE
+                  nickname:
+                    type:
+                    - string
+                    - 'null'
+                    description: Apelido do splitter (ausente quando não definido)
+                    example: Empresa Exemplo
+                  account:
+                    type: object
+                    required:
+                    - branch
+                    - number
+                    properties:
+                      branch:
+                        type: string
+                        description: Agência bancária
+                        example: '0001'
+                      number:
+                        type: string
+                        description: Número da conta
+                        example: '1234567'
+                      bankCode:
+                        type:
+                        - string
+                        - 'null'
+                        description: Código do banco
+                        example: '208'
+                    title: AccountResponse
+                  configuration:
+                    type: object
+                    required:
+                    - splitType
+                    - divisionAmount
+                    - isDefault
+                    properties:
+                      splitType:
+                        type: string
+                        enum:
+                        - PERCENT
+                        - VALUE
+                        description: Tipo de divisão configurada
+                        example: PERCENT
+                      divisionAmount:
+                        type: number
+                        description: 'Valor da divisão.
+
+                          Para PERCENT: valor fracionário (ex: 0.30 = 30%).
+
+                          Para VALUE: valor absoluto em reais.
+
+                          '
+                        example: 0.3
+                      isDefault:
+                        type: boolean
+                        description: Indica se é a configuração padrão do splitter
+                        example: true
+                    title: ConfigurationResponse
+                  createdAt:
+                    type: string
+                    format: date-time
+                    description: Data de criação
+                    example: '2024-01-15T10:30:00.000Z'
+                  updatedAt:
+                    type: string
+                    format: date-time
+                    description: Data de última atualização
+                    example: '2024-01-15T10:30:00.000Z'
+                  deletedAt:
+                    type:
+                    - string
+                    - 'null'
+                    format: date-time
+                    description: Data de exclusão (ausente quando splitter está ativo)
+                    example: '2024-06-01T12:00:00.000Z'
+                title: SplitterResponse
+        '202':
+          description: Operação em análise (aguardando aprovação)
+          headers:
+            x-task-type:
+              description: 'Tipo de tarefa de aprovação pendente:
+
+                - `ciba`: Client-Initiated Backchannel Authentication (push notification)
+
+                - `corban-approval`: Aguarda aprovação do correspondente bancário
+
+                '
+              required: false
+              schema:
+                type: string
+                enum:
+                - ciba
+                - corban-approval
+          content:
+            application/json:
+              schema:
+                type: object
+                description: 'Retornado quando a operação requer aprovação.
+
+                  O cliente deve monitorar o status da operação via callback.
+
+                  '
+                properties:
+                  statusCode:
+                    type: integer
+                    description: Código de status da operação
+                    example: 202
+                  transactionId:
+                    type: string
+                    description: ID da transação no sistema de aprovação
+                    example: 6d5as4d8w4ae561sda6a8we5a4w
+                  externalId:
+                    type: string
+                    description: ID externo da operação para correlação
+                    example: 56489562-1254-84ab-9c3e-e6e468e006f5
+                  state:
+                    type: string
+                    enum:
+                    - AUTHENTICATION
+                    - WAITING_CORRESPONDENT_BANK_APPROVAL
+                    - AUTHORIZED
+                    description: Estado atual da operação de aprovação
+                  operationNeedsApproval:
+                    type: boolean
+                    description: Indica se a operação requer aprovação adicional
+                  contractGuid:
+                    type: string
+                    description: GUID do contrato associado
+                  operationUUID:
+                    type: string
+                    description: UUID da operação no sistema de aprovação
+                title: OperationResponse
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  required:
+                  - brn
+                  - name
+                  - reason
+                  properties:
+                    brn:
+                      type: string
+                      description: Business Resource Name do erro
+                      example: brn:empresas:banking:errors:not-found-error
+                    name:
+                      type: string
+                      description: Nome do tipo de erro
+                      example: NotFoundError
+                    reason:
+                      type: string
+                      description: Mensagem descritiva do erro
+                      example: Splitter not found
+                  title: ErrorResponse
+                - type: object
+                  properties:
+                    invalidParams:
+                      type: array
+                      description: Lista de parâmetros inválidos
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            description: Nome do campo inválido
+                            example: taxId
+                          value:
+                            type: string
+                            description: Valor recebido
+                            example: ''
+                          reason:
+                            type: string
+                            description: Motivo da invalidação
+                            example: '"taxId" is required'
+                title: ValidationErrorResponse
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                - reason
+                properties:
+                  brn:
+                    type: string
+                    description: Business Resource Name do erro
+                    example: brn:empresas:banking:errors:not-found-error
+                  name:
+                    type: string
+                    description: Nome do tipo de erro
+                    example: NotFoundError
+                  reason:
+                    type: string
+                    description: Mensagem descritiva do erro
+                    example: Splitter not found
+                title: ErrorResponse
+        '422':
+          description: Erro de validação de regras de negócio
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  required:
+                  - brn
+                  - name
+                  - reason
+                  properties:
+                    brn:
+                      type: string
+                      description: Business Resource Name do erro
+                      example: brn:empresas:banking:errors:not-found-error
+                    name:
+                      type: string
+                      description: Nome do tipo de erro
+                      example: NotFoundError
+                    reason:
+                      type: string
+                      description: Mensagem descritiva do erro
+                      example: Splitter not found
+                  title: ErrorResponse
+                - type: object
+                  properties:
+                    invalidParams:
+                      type: array
+                      description: Lista de parâmetros inválidos
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            description: Nome do campo inválido
+                            example: taxId
+                          value:
+                            type: string
+                            description: Valor recebido
+                            example: ''
+                          reason:
+                            type: string
+                            description: Motivo da invalidação
+                            example: '"taxId" is required'
+                title: ValidationErrorResponse
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                - reason
+                properties:
+                  brn:
+                    type: string
+                    description: Business Resource Name do erro
+                    example: brn:empresas:banking:errors:not-found-error
+                  name:
+                    type: string
+                    description: Nome do tipo de erro
+                    example: NotFoundError
+                  reason:
+                    type: string
+                    description: Mensagem descritiva do erro
+                    example: Splitter not found
+                title: ErrorResponse
+      security:
+      - write:
+        - brn:btg:empresas:banking:collections
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Split/update-splitter
+      summary: Update splitter
+      x-summary-source: derived
+  /{companyId}/banking/splitter/tax-id/{taxId}:
+    get:
+      tags:
+      - Splitter
+      description: '## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o Wiremock
+
+
+        > No sandbox este endpoint requer a utilização de Sandbox Headers
+
+
+        | Header | Descrição | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      operationId: findSplitterByTaxId
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      - name: taxId
+        in: path
+        required: true
+        description: CNPJ do splitter
+        schema:
+          type: string
+          example: '37297902000141'
+      responses:
+        '200':
+          description: Splitter encontrado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - id
+                - taxId
+                - personType
+                - name
+                - status
+                - account
+                - createdAt
+                - updatedAt
+                - configuration
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    description: Identificador único do splitter
+                    example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+                  taxId:
+                    type: string
+                    description: CNPJ do splitter
+                    example: '37297902000141'
+                  personType:
+                    type: string
+                    enum:
+                    - F
+                    - J
+                    description: Tipo de pessoa
+                    example: J
+                  name:
+                    type: string
+                    description: Nome/razão social do splitter
+                    example: Empresa Exemplo LTDA
+                  status:
+                    type: string
+                    enum:
+                    - ACTIVE
+                    - INVALID_ACCOUNT
+                    - DELETED
+                    description: Status do splitter
+                    example: ACTIVE
+                  nickname:
+                    type:
+                    - string
+                    - 'null'
+                    description: Apelido do splitter (ausente quando não definido)
+                    example: Empresa Exemplo
+                  account:
+                    type: object
+                    required:
+                    - branch
+                    - number
+                    properties:
+                      branch:
+                        type: string
+                        description: Agência bancária
+                        example: '0001'
+                      number:
+                        type: string
+                        description: Número da conta
+                        example: '1234567'
+                      bankCode:
+                        type:
+                        - string
+                        - 'null'
+                        description: Código do banco
+                        example: '208'
+                    title: AccountResponse
+                  configuration:
+                    type: object
+                    required:
+                    - splitType
+                    - divisionAmount
+                    - isDefault
+                    properties:
+                      splitType:
+                        type: string
+                        enum:
+                        - PERCENT
+                        - VALUE
+                        description: Tipo de divisão configurada
+                        example: PERCENT
+                      divisionAmount:
+                        type: number
+                        description: 'Valor da divisão.
+
+                          Para PERCENT: valor fracionário (ex: 0.30 = 30%).
+
+                          Para VALUE: valor absoluto em reais.
+
+                          '
+                        example: 0.3
+                      isDefault:
+                        type: boolean
+                        description: Indica se é a configuração padrão do splitter
+                        example: true
+                    title: ConfigurationResponse
+                  createdAt:
+                    type: string
+                    format: date-time
+                    description: Data de criação
+                    example: '2024-01-15T10:30:00.000Z'
+                  updatedAt:
+                    type: string
+                    format: date-time
+                    description: Data de última atualização
+                    example: '2024-01-15T10:30:00.000Z'
+                  deletedAt:
+                    type:
+                    - string
+                    - 'null'
+                    format: date-time
+                    description: Data de exclusão (ausente quando splitter está ativo)
+                    example: '2024-06-01T12:00:00.000Z'
+                title: SplitterResponse
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  required:
+                  - brn
+                  - name
+                  - reason
+                  properties:
+                    brn:
+                      type: string
+                      description: Business Resource Name do erro
+                      example: brn:empresas:banking:errors:not-found-error
+                    name:
+                      type: string
+                      description: Nome do tipo de erro
+                      example: NotFoundError
+                    reason:
+                      type: string
+                      description: Mensagem descritiva do erro
+                      example: Splitter not found
+                  title: ErrorResponse
+                - type: object
+                  properties:
+                    invalidParams:
+                      type: array
+                      description: Lista de parâmetros inválidos
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            description: Nome do campo inválido
+                            example: taxId
+                          value:
+                            type: string
+                            description: Valor recebido
+                            example: ''
+                          reason:
+                            type: string
+                            description: Motivo da invalidação
+                            example: '"taxId" is required'
+                title: ValidationErrorResponse
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                - reason
+                properties:
+                  brn:
+                    type: string
+                    description: Business Resource Name do erro
+                    example: brn:empresas:banking:errors:not-found-error
+                  name:
+                    type: string
+                    description: Nome do tipo de erro
+                    example: NotFoundError
+                  reason:
+                    type: string
+                    description: Mensagem descritiva do erro
+                    example: Splitter not found
+                title: ErrorResponse
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                - reason
+                properties:
+                  brn:
+                    type: string
+                    description: Business Resource Name do erro
+                    example: brn:empresas:banking:errors:not-found-error
+                  name:
+                    type: string
+                    description: Nome do tipo de erro
+                    example: NotFoundError
+                  reason:
+                    type: string
+                    description: Mensagem descritiva do erro
+                    example: Splitter not found
+                title: ErrorResponse
+      security:
+      - read:
+        - brn:btg:empresas:banking:collections
+        - brn:btg:empresas:banking:collections.read-only
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Split/find-splitter-by-tax-id
+      summary: Find splitter by tax id
+      x-summary-source: derived
+components:
+  securitySchemes:
+    write:
+      type: oauth2
+      flows:
+        authorizationCode:
+          tokenUrl: https://id.btgpactual.com/oauth2/token
+          authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+          scopes:
+            brn:btg:empresas:banking:collections: Emitir, consultar e alterar cobranças
+    read:
+      type: oauth2
+      flows:
+        authorizationCode:
+          tokenUrl: https://id.btgpactual.com/oauth2/token
+          authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+          scopes:
+            brn:btg:empresas:banking:collections: Emitir, consultar e alterar cobranças
+            brn:btg:empresas:banking:collections.read-only: Consultar cobranças
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/f6737176.762483d7.js
+  - https://developers.empresas.btgpactual.com/assets/js/492dec70.3c8c9ef6.js
+  - https://developers.empresas.btgpactual.com/assets/js/cc040b89.9e194504.js
+  - https://developers.empresas.btgpactual.com/assets/js/5a1707d9.b4231246.js
+  - https://developers.empresas.btgpactual.com/assets/js/51ade508.4acc3ff1.js
+  - https://developers.empresas.btgpactual.com/assets/js/0547d520.beaf6688.js
+  - https://developers.empresas.btgpactual.com/assets/js/3d193fae.1236f18c.js

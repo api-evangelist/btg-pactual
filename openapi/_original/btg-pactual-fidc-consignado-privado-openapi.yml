@@ -1,0 +1,214 @@
+# x-archived-from: btg-pactual-fidc-consignado-privado-openapi.yml
+# x-archived-on: 2026-10-18
+openapi: 3.0.3
+info:
+  title: FIDC - Consignado Privado
+  version: v1.2.1
+  description: Orchestrator for Fidc Financing
+  termsOfService: https://www.btgpactual.com/empresas/termos-e-politicas/
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com
+  description: Sandbox
+- url: https://api.empresas.btgpactual.com
+  description: Produção
+paths:
+  /v1/fidc/credit/averbation/{FundTaxId}:
+    post:
+      tags:
+      - Averbação
+      description: Envio do Arquivo de Averbação
+      parameters:
+      - name: FundTaxId
+        in: path
+        required: true
+        style: simple
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        description: Token de autenticacao
+        required: true
+        style: simple
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                s3Url:
+                  type: string
+                  nullable: true
+              additionalProperties: false
+              title: PartnerFileParams
+        required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  correlationId:
+                    type: string
+                    format: uuid
+                  status:
+                    enum:
+                    - Validating
+                    - WaitingCreditEngine
+                    - WaitingCros
+                    - Processed
+                    - Invalid
+                    type: string
+                    title: PartnerFileStatus
+                additionalProperties: false
+                title: PartnerFileResponseDto
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - readWrite:
+        - empresas.btgpactual.com/loans
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/FIDC%20-%20Consignado%20Privado/envio-do-arquivo-de-averbacao
+  /v1/fidc/credit/offboarding/{fundTaxId}:
+    post:
+      tags:
+      - Desligamento
+      description: Envio do arquivo de Desligamento dos Funcionários
+      parameters:
+      - name: fundTaxId
+        in: path
+        required: true
+        style: simple
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        description: Token de autenticacao
+        required: true
+        style: simple
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                s3Url:
+                  type: string
+                  nullable: true
+              additionalProperties: false
+              title: PartnerFileParams
+        required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  correlationId:
+                    type: string
+                    format: uuid
+                  status:
+                    enum:
+                    - Validating
+                    - WaitingCreditEngine
+                    - WaitingCros
+                    - Processed
+                    - Invalid
+                    type: string
+                    title: PartnerFileStatus
+                additionalProperties: false
+                title: PartnerFileResponseDto
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - readWrite:
+        - empresas.btgpactual.com/loans
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/FIDC%20-%20Consignado%20Privado/envio-do-arquivo-de-desligamento-dos-funcionarios
+  /v1/fidc/credit/bookkeeping/{fundTaxId}:
+    post:
+      tags:
+      - Escrituração
+      description: Envio do Arquivo de Escrituração
+      parameters:
+      - name: fundTaxId
+        in: path
+        required: true
+        style: simple
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        description: Token de autenticacao
+        required: true
+        style: simple
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                s3Url:
+                  type: string
+                  nullable: true
+              additionalProperties: false
+              title: PartnerFileParams
+        required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  correlationId:
+                    type: string
+                    format: uuid
+                  status:
+                    enum:
+                    - Validating
+                    - WaitingCreditEngine
+                    - WaitingCros
+                    - Processed
+                    - Invalid
+                    type: string
+                    title: PartnerFileStatus
+                additionalProperties: false
+                title: PartnerFileResponseDto
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - readWrite:
+        - empresas.btgpactual.com/loans
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/FIDC%20-%20Consignado%20Privado/envio-do-arquivo-de-escrituracao
+components:
+  securitySchemes:
+    readWrite:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://id.sandbox.btgpactual.com/oauth2/authorize
+          tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+          scopes:
+            empresas.btgpactual.com/loans: Criar Empréstimos
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/adf8fc0e.a5de043a.js
+  - https://developers.empresas.btgpactual.com/assets/js/ee6c04b2.14d8a61e.js
+  - https://developers.empresas.btgpactual.com/assets/js/6e2a4321.a5b513a7.js

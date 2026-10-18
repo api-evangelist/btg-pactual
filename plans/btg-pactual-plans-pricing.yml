@@ -1,0 +1,13 @@
+generated: '2026-10-18'
+method: searched
+source: https://developers.empresas.btgpactual.com
+name: BTG Pactual pricing
+audience: business-product
+pricing_basis: negotiated
+published: false
+delivery:
+  delivery: managed
+  evidence: APIs are provided as a managed service through the BTG Pactual Empresas platform
+plan_count: 0
+plans: []
+note: No public pricing information found for BTG Pactual Empresas APIs. The service appears to be offered as part of business banking relationships with negotiated pricing.

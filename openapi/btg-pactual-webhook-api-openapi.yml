@@ -1,0 +1,551 @@
+openapi: 3.2.0
+info:
+  title: Webhooks Webhook API
+  version: 1.0.0
+servers:
+- url: https://api.empresas.btgpactual.com
+  description: Produção
+- url: https://api.sandbox.empresas.btgpactual.com
+  description: Sandbox
+tags:
+- name: Webhook
+paths:
+  /{companyId}/apps/{appId}/webhooks/{webhookId}/secret:
+    post:
+      tags:
+      - Webhook
+      description: Alterar a secret de um webhook
+      parameters:
+      - name: companyId
+        schema:
+          type: string
+          description: CNPJ da empresa
+          example: '1234124210002'
+          title: CompanyId
+        in: path
+        required: true
+      - name: appId
+        schema:
+          type: string
+          description: Assume o valor do seu Client Id
+          example: 1111111111-a78c-447b-b5fe-1111111111
+          title: appId
+        in: path
+        required: true
+      - name: webhookId
+        schema:
+          type: string
+          description: Id único de um webhook cadastrado
+          example: 1111111-b11f-48c3-9a0e-11111111111
+          title: webhookId
+        in: path
+        required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                value:
+                  type: string
+                  description: Valor utilizado para gerar a secret
+                  example: my-example-key
+              title: webhookSecretBody
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  webhookId:
+                    type: string
+                    description: Id único de um webhook cadastrado
+                    example: 1111111-b11f-48c3-9a0e-11111111111
+                    title: webhookId
+                  idAlias:
+                    type: string
+                    description: Alias que pode ser atribuido ao webhook
+                    example: alias
+                    title: idAlias
+                  appId:
+                    type: string
+                    description: Assume o valor do seu Client Id
+                    example: 1111111111-a78c-447b-b5fe-1111111111
+                    title: appId
+                  endpoint:
+                    type: string
+                    description: URL que deseja cadastrar no webhook
+                    example: https://localhost.com/test
+                    title: endpoint
+                  description:
+                    type: string
+                    description: Descrição do webhook
+                    example: exemplo de descrição
+                    title: description
+                  tags:
+                    type: string
+                    description: Tag do webhook
+                    example: exemplo
+                    title: tags
+                  disabled:
+                    type: boolean
+                    description: Campo referente ao status de funcionamento do webhook
+                    example: false
+                    title: disabled
+                  secret:
+                    type: string
+                    description: secret key do webhook
+                    example: 1111111111-1a15-4aea-8d06-111111111
+                    title: secret
+                  key:
+                    type: string
+                    example: 11111111111-4ba6-b69e-11111111111
+                    title: key
+                  events:
+                    type: array
+                    description: Eventos que deseja assinar no webhook
+                    items:
+                      type: string
+                      example: bank-slips.*
+                    title: events
+                title: PostSecretResponse
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Webhooks/alterar-a-secret-de-um-webhook
+      summary: Create by company id apps by app id webhooks by webhook id secret
+      x-summary-source: derived
+      operationId: postByCompanyIdAppsByAppIdWebhooksByWebhookIdSecret
+      x-operation-id-source: derived
+  /{companyId}/apps/{appId}/webhooks/{webhookId}:
+    patch:
+      tags:
+      - Webhook
+      description: Atualizar parcialmente um webhook
+      parameters:
+      - name: companyId
+        schema:
+          type: string
+          description: CNPJ da empresa
+          example: '1234124210002'
+          title: CompanyId
+        in: path
+        required: true
+      - name: appId
+        schema:
+          type: string
+          description: Assume o valor do seu Client Id
+          example: 1111111111-a78c-447b-b5fe-1111111111
+          title: appId
+        in: path
+        required: true
+      - name: webhookId
+        schema:
+          type: string
+          description: Id único de um webhook cadastrado
+          example: 1111111-b11f-48c3-9a0e-11111111111
+          title: webhookId
+        in: path
+        required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Todos os campos são opcionais. Apenas os campos enviados serão alterados.
+              properties:
+                endpoint:
+                  type: string
+                  description: Novo endpoint do webhook
+                  example: https://localhost.com/test
+                events:
+                  type: array
+                  description: Nova lista de eventos a assinar. Substitui a lista existente.
+                  items:
+                    type: string
+                    example: bank-slips.*
+                  minItems: 1
+                tags:
+                  type: object
+                  description: Tags do webhook
+                  additionalProperties: true
+                description:
+                  type:
+                  - string
+                  - 'null'
+                  description: Descrição do webhook
+                  example: exemplo de descrição
+              title: PatchWebhookBody
+      responses:
+        '204':
+          description: No Content
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Webhooks/atualizar-parcialmente-um-webhook
+      summary: Update by company id apps by app id webhooks by webhook id
+      x-summary-source: derived
+      operationId: patchByCompanyIdAppsByAppIdWebhooksByWebhookId
+      x-operation-id-source: derived
+    get:
+      tags:
+      - Webhook
+      description: Listar o webhook especificado
+      parameters:
+      - name: companyId
+        schema:
+          type: string
+          description: CNPJ da empresa
+          example: '1234124210002'
+          title: CompanyId
+        in: path
+        required: true
+      - name: appId
+        schema:
+          type: string
+          description: Assume o valor do seu Client Id
+          example: 1111111111-a78c-447b-b5fe-1111111111
+          title: appId
+        in: path
+        required: true
+      - name: webhookId
+        schema:
+          type: string
+          description: Id único de um webhook cadastrado
+          example: 1111111-b11f-48c3-9a0e-11111111111
+          title: webhookId
+        in: path
+        required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        webhookId:
+                          type: string
+                          description: Id único de um webhook cadastrado
+                          example: 1111111-b11f-48c3-9a0e-11111111111
+                          title: webhookId
+                        idAlias:
+                          type: string
+                          description: Alias que pode ser atribuido ao webhook
+                          example: alias
+                          title: idAlias
+                        appId:
+                          type: string
+                          description: Assume o valor do seu Client Id
+                          example: 1111111111-a78c-447b-b5fe-1111111111
+                          title: appId
+                        endpoint:
+                          type: string
+                          description: URL que deseja cadastrar no webhook
+                          example: https://localhost.com/test
+                          title: endpoint
+                        description:
+                          type: string
+                          description: Descrição do webhook
+                          example: exemplo de descrição
+                          title: description
+                        tags:
+                          type: string
+                          description: Tag do webhook
+                          example: exemplo
+                          title: tags
+                        disabled:
+                          type: boolean
+                          description: Campo referente ao status de funcionamento do webhook
+                          example: false
+                          title: disabled
+                        secret:
+                          type: string
+                          description: secret key do webhook
+                          example: 1111111111-1a15-4aea-8d06-111111111
+                          title: secret
+                        key:
+                          type: string
+                          example: 11111111111-4ba6-b69e-11111111111
+                          title: key
+                        events:
+                          type: array
+                          description: Eventos que deseja assinar no webhook
+                          items:
+                            type: string
+                            example: bank-slips.*
+                          title: events
+                        hasReprocessingPendingJob:
+                          type: boolean
+                          description: Campo que indica a presença de reprocessamento
+                          example: false
+                          title: hasReprocessingPendingJob
+                      title: getArrayObj
+                title: GetResponse
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Webhooks/listar-o-webhook-especificado
+      summary: Get by company id apps by app id webhooks by webhook id
+      x-summary-source: derived
+      operationId: getByCompanyIdAppsByAppIdWebhooksByWebhookId
+      x-operation-id-source: derived
+    delete:
+      tags:
+      - Webhook
+      description: Remover um webhook
+      parameters:
+      - name: companyId
+        schema:
+          type: string
+          description: CNPJ da empresa
+          example: '1234124210002'
+          title: CompanyId
+        in: path
+        required: true
+      - name: appId
+        schema:
+          type: string
+          description: Assume o valor do seu Client Id
+          example: 1111111111-a78c-447b-b5fe-1111111111
+          title: appId
+        in: path
+        required: true
+      - name: webhookId
+        schema:
+          type: string
+          description: Id único de um webhook cadastrado
+          example: 1111111-b11f-48c3-9a0e-11111111111
+          title: webhookId
+        in: path
+        required: true
+      responses:
+        '204':
+          description: No Content
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Webhooks/remover-um-webhook
+      summary: Delete by company id apps by app id webhooks by webhook id
+      x-summary-source: derived
+      operationId: deleteByCompanyIdAppsByAppIdWebhooksByWebhookId
+      x-operation-id-source: derived
+  /{companyId}/apps/{appId}/webhooks:
+    post:
+      tags:
+      - Webhook
+      description: Criar um webhook
+      parameters:
+      - name: companyId
+        schema:
+          type: string
+          description: CNPJ da empresa
+          example: '1234124210002'
+          title: CompanyId
+        in: path
+        required: true
+      - name: appId
+        schema:
+          type: string
+          description: Assume o valor do seu Client Id
+          example: 1111111111-a78c-447b-b5fe-1111111111
+          title: appId
+        in: path
+        required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - appId
+              - endpoint
+              - events
+              properties:
+                appId:
+                  type: string
+                  description: clientId
+                endpoint:
+                  type: string
+                  description: Endpoint do webhook a ser criado
+                description:
+                  type: string
+                  description: Descrição do webhook
+                events:
+                  type: array
+                  description: eventos dos produtos que deseja receber
+                  items:
+                    type: string
+                  minItems: 1
+                messageFilter:
+                  type: object
+                  description: Opção para filtrar mensagem de webhook com base em um valor da mensagem recebida
+                  additionalProperties: true
+                tags:
+                  type: object
+                  description: tags do webhook
+                  additionalProperties: true
+                idAlias:
+                  type: string
+                secret:
+                  type: string
+              title: webhookBody
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  webhookId:
+                    type: string
+                    description: Id único de um webhook cadastrado
+                    example: 1111111-b11f-48c3-9a0e-11111111111
+                    title: webhookId
+                  appId:
+                    type: string
+                    description: Assume o valor do seu Client Id
+                    example: 1111111111-a78c-447b-b5fe-1111111111
+                    title: appId
+                  endpoint:
+                    type: string
+                    description: URL que deseja cadastrar no webhook
+                    example: https://localhost.com/test
+                    title: endpoint
+                  key:
+                    type: string
+                    example: 11111111111-4ba6-b69e-11111111111
+                    title: key
+                  events:
+                    type: array
+                    description: Eventos que deseja assinar no webhook
+                    items:
+                      type: string
+                      example: bank-slips.*
+                    title: events
+                  secret:
+                    type: string
+                    description: secret key do webhook
+                    example: 1111111111-1a15-4aea-8d06-111111111
+                    title: secret
+                title: PostResponse
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Webhooks/criar-um-webhook
+      summary: Create by company id apps by app id webhooks
+      x-summary-source: derived
+      operationId: postByCompanyIdAppsByAppIdWebhooks
+      x-operation-id-source: derived
+    get:
+      tags:
+      - Webhook
+      description: Listar todos os webhooks de um app
+      parameters:
+      - name: companyId
+        schema:
+          type: string
+          description: CNPJ da empresa
+          example: '1234124210002'
+          title: CompanyId
+        in: path
+        required: true
+      - name: appId
+        schema:
+          type: string
+          description: Assume o valor do seu Client Id
+          example: 1111111111-a78c-447b-b5fe-1111111111
+          title: appId
+        in: path
+        required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: Id único de um webhook cadastrado
+                          example: 1111111-b11f-48c3-9a0e-11111111111
+                          title: webhookId
+                        idAlias:
+                          type: string
+                          description: Alias que pode ser atribuido ao webhook
+                          example: alias
+                          title: idAlias
+                        appId:
+                          type: string
+                          description: Assume o valor do seu Client Id
+                          example: 1111111111-a78c-447b-b5fe-1111111111
+                          title: appId
+                        endpoint:
+                          type: string
+                          description: URL que deseja cadastrar no webhook
+                          example: https://localhost.com/test
+                          title: endpoint
+                        key:
+                          type: string
+                          example: 11111111111-4ba6-b69e-11111111111
+                          title: key
+                        disabled:
+                          type: boolean
+                          description: Campo referente ao status de funcionamento do webhook
+                          example: false
+                          title: disabled
+                        tenantId:
+                          type: string
+                          description: CNPJ da empresa
+                          example: '1234124210002'
+                          title: CompanyId
+                        tags:
+                          type: string
+                          description: Tag do webhook
+                          example: exemplo
+                          title: tags
+                        description:
+                          type: string
+                          description: Descrição do webhook
+                          example: exemplo de descrição
+                          title: description
+                        secret:
+                          type: string
+                          description: secret key do webhook
+                          example: 1111111111-1a15-4aea-8d06-111111111
+                          title: secret
+                        events:
+                          type: array
+                          description: Eventos que deseja assinar no webhook
+                          items:
+                            type: string
+                            example: bank-slips.*
+                          title: events
+                        hasReprocessingPendingJob:
+                          type: boolean
+                          description: Campo que indica a presença de reprocessamento
+                          example: false
+                          title: hasReprocessingPendingJob
+                        messageFilter:
+                          type: object
+                          description: Filtro de mensagens do webhook
+                          additionalProperties: true
+                      title: webhookItem
+                title: GetWebhooksResponse
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Webhooks/listar-todos-os-webhooks-de-um-app
+      summary: Get by company id apps by app id webhooks
+      x-summary-source: derived
+      operationId: getByCompanyIdAppsByAppIdWebhooks
+      x-operation-id-source: derived
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/e168c415.61f96e3d.js
+  - https://developers.empresas.btgpactual.com/assets/js/56833d64.8cd70507.js
+  - https://developers.empresas.btgpactual.com/assets/js/c18645d8.2bd442ce.js
+  - https://developers.empresas.btgpactual.com/assets/js/d824adb9.5c3af728.js
+  - https://developers.empresas.btgpactual.com/assets/js/347956b3.afd06789.js
+  - https://developers.empresas.btgpactual.com/assets/js/7d336481.726037af.js

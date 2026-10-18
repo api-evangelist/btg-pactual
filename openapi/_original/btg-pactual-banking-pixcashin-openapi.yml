@@ -1,0 +1,482 @@
+# x-archived-from: btg-pactual-banking-pixcashin-openapi.yml
+# x-archived-on: 2026-10-18
+openapi: 3.0.3
+info:
+  title: Banking - PixCashin
+  version: '1'
+  description: Endpoints das APIs de Pix Cash-In (Pix Cobrança) do BTG PACTUAL Empresas
+  termsOfService: https://www.btgpactual.com/empresas/termos-e-politicas/
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com/v1
+  description: Sandbox
+- url: https://api.empresas.btgpactual.com/v1
+  description: Produção
+paths:
+  /companies/{companyId}/pix-cash-in/instant-collections:
+    post:
+      tags:
+      - Pix Cobrança
+      description: Cria uma nova cobrança instantânea
+      operationId: CreateInstantCollection
+      parameters:
+      - name: companyId
+        schema:
+          description: CNPJ da empresa realizando a requisição.
+          type: string
+          example: '30306294000145'
+          title: CompanyId
+        in: path
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+              - amount
+              - pixKey
+              type: object
+              properties:
+                pixKey:
+                  description: Chave pix
+                  type: string
+                  example: 13a066bc-1d02-464a-bed9-c98211a00934
+                locationId:
+                  type: string
+                  example: b226b648-9410-42d3-88f3-497c23608a3d
+                  title: LocationId
+                  description: Id de um QR code já existente
+                expiresIn:
+                  description: Tempo para expiração
+                  default: 86400
+                  type: number
+                amount:
+                  description: Espificações de valor da cobrança
+                  type: object
+                  properties:
+                    original:
+                      type: number
+                      example: 12.45
+                    allowCustomerChangeValue:
+                      type: boolean
+                displayText:
+                  description: Texto de display
+                  type: string
+                  example: Pix de Teste
+                payer:
+                  description: Dados do pagador
+                  type: object
+                  properties:
+                    name:
+                      description: Nome do pagador
+                      type: string
+                      example: Fulano de Tal
+                    taxId:
+                      description: CPF/CNPJ do pagador
+                      type: string
+                      example: 11111111111
+                  title: PayerPix
+                tags:
+                  description: Tag de identificação para a transação
+                  type: object
+                  additionalProperties:
+                    type: string
+                  example:
+                    id: 9ee39748ab664c1390e004470e19facf
+                    order: 123456
+                    customerId: 9482392
+              title: PostInstantCollections
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: 40cf72f6-2d21-4894-bed6-ac123412432134
+                  txId:
+                    type: string
+                    example: 1854785e7c5a12341243213404d9735e
+                  taxId:
+                    type: string
+                    example: '221342342145'
+                  status:
+                    type: string
+                    example: ACTIVE
+                  pixKey:
+                    type: string
+                    example: '2123412421345'
+                  displayText:
+                    type: string
+                    example: ''
+                  amount:
+                    type: object
+                    properties:
+                      value:
+                        type: number
+                        example: 1.1
+                      allowCustomerChangeValue:
+                        type: boolean
+                        example: false
+                  emv:
+                    type: string
+                    example: 00022342342346910014br.gov.bcb.pix2569api.developer.btgpactual.com/v1/p/v2/97af8952d010409eb71ef7bdac06815d2134234214214802BR5924NOMEFICTICIO6009SAO PAULO61080293000062070503***63045937
+                  location:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: fdb111111-8046-4e06-bb63-ed11111b651
+                      integrationId:
+                        type: string
+                        example: '12878318123421342434324'
+                      type:
+                        type: string
+                        example: cob
+                      path:
+                        type: string
+                        example: 28123421421435/fd1234214324-8046-4e06-bb63-ed257511b651.png
+                      description:
+                        type: string
+                        example: ''
+                      url:
+                        type: string
+                        example: https://static.empresas.btgpactual.com/pix/dynamic/qrcode/12341234123446-4e06-bb63-e12431234412.png
+                      integrationUrl:
+                        type: string
+                        example: url-mockada
+                title: PostInstantCollectionResponse
+          description: Instant Collection Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - oauth2:
+        - openid empresas.btgpactual.com/pix-cash-in
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20PixCashin/create-instant-collection
+    get:
+      tags:
+      - Pix Cobrança
+      description: Obtém a lista de cobranças instantâneas
+      operationId: GetInstantCollections
+      parameters:
+      - name: companyId
+        schema:
+          description: CNPJ da empresa realizando a requisição.
+          type: string
+          example: '30306294000145'
+          title: CompanyId
+        in: path
+        required: true
+      - name: locationId
+        schema:
+          type: string
+          example: b226b648-9410-42d3-88f3-497c23608a3d
+          title: LocationId
+        in: query
+        required: false
+      - name: initialDate
+        schema:
+          type: string
+          description: Data inicial para a listagem
+          example: '2024-10-23'
+          title: initialDate
+        in: query
+        required: false
+      - name: finalDate
+        schema:
+          type: string
+          description: Data final para a listagem
+          example: '2024-10-24'
+          title: finalDate
+        in: query
+        required: false
+      - name: onlyActive
+        schema:
+          type: string
+          description: Mostrar apenas as cobranças ativas. Não aceita o valor como false
+          example: true
+          title: onlyActive
+        in: query
+        required: false
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: 5d4b6d6f-2912-420d-8914-bec4a28dd959
+                        txId:
+                          type: string
+                          example: 58816103c8b44bafbd751c2d679bdad1
+                        taxId:
+                          type: string
+                          example: 9944559933311
+                        status:
+                          type: string
+                          example: PAID
+                        displayText:
+                          type: string
+                          example: Pix de Teste
+                        pixKey:
+                          type: string
+                          example: 13a066bc-1d02-464a-bed9-c98211a00934
+                        paymentInfo:
+                          type: object
+                          properties:
+                            endToEndId:
+                              type: string
+                              example: E123412343245345s1242
+                            paymentDate:
+                              type: string
+                              example: '2024-04-22T21:54:46.3877001Z'
+                            paidAmount:
+                              type: number
+                              example: 1.1
+                        amount:
+                          type: object
+                          properties:
+                            value:
+                              type: number
+                              example: 1.1
+                            allowCustomerChangeValue:
+                              default: true
+                              type: boolean
+                        location:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: 6fe0cd21-2a47-4b82-9188-b4dbfc271e89
+                            type:
+                              type: string
+                              example: cob
+                            taxId:
+                              type: string
+                              example: 37297902000141
+                            url:
+                              type: string
+                              example: https://static.uat.com/pix/dynamic/qrcode/37297902000141/4c972de4-3842-4b89-a2de-99f749a78950.png
+                              title: URL
+                            description:
+                              type: string
+                              example: null
+                            path:
+                              type: string
+                              example: 123454797000125/a1129999-6b6f-4a82-8371-302d2fd4e2fb.png
+                            integrationUrl:
+                              type: string
+                              example: api.developer.btgpactual.com/v1/p/v2/exemplo_de_integration
+                      title: InstantCollection
+                title: GetInstantCollectionsResponse
+          description: Instant Collections
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - oauth2:
+        - openid empresas.btgpactual.com/pix-cash-in
+        - openid empresas.btgpactual.com/pix-cash-in.readonly
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20PixCashin/get-instant-collections
+  /companies/{companyId}/pix-cash-in/locations:
+    post:
+      tags:
+      - Pix Cobrança
+      description: Cria um novo QR Code (location)
+      operationId: CreateLocation
+      parameters:
+      - name: companyId
+        schema:
+          description: CNPJ da empresa realizando a requisição.
+          type: string
+          example: '30306294000145'
+          title: CompanyId
+        in: path
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+              - type
+              type: object
+              properties:
+                type:
+                  type: string
+                  example: cob
+                description:
+                  type: string
+                  example: descrição de exemplo
+              title: PostLocationRequest
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: b226b648-9410-42d3-88f3-497c23608a3d
+                    title: LocationId
+                  type:
+                    type: string
+                    example: cob
+                  taxId:
+                    type: string
+                    example: '30306294000145'
+                  url:
+                    type: string
+                    example: https://static.uat.com/pix/dynamic/qrcode/37297902000141/4c972de4-3842-4b89-a2de-99f749a78950.png
+                    title: URL
+                  description:
+                    type: string
+                    example: descrição de exemplo
+                  image:
+                    format: byte
+                    type: string
+                    example: iVBORw0KGgoAAAANSUhE...
+                title: PostLocationResponse
+          description: Location Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - oauth2:
+        - openid empresas.btgpactual.com/pix-cash-in
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20PixCashin/create-location
+    get:
+      tags:
+      - Pix Cobrança
+      description: Obtém a lista de locations
+      operationId: GetLocations
+      parameters:
+      - name: companyId
+        schema:
+          description: CNPJ da empresa realizando a requisição.
+          type: string
+          example: '30306294000145'
+          title: CompanyId
+        in: path
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: b226b648-9410-42d3-88f3-497c23608a3d
+                          title: LocationId
+                        type:
+                          type: string
+                          example: cob
+                        taxId:
+                          type: string
+                          example: '30306294000145'
+                        url:
+                          type: string
+                          example: https://static.uat.com/pix/dynamic/qrcode/37297902000141/4c972de4-3842-4b89-a2de-99f749a78950.png
+                          title: URL
+                      title: Location
+                title: LocationsCollection
+          description: Locations
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - oauth2:
+        - openid empresas.btgpactual.com/pix-cash-in
+        - openid empresas.btgpactual.com/pix-cash-in.readonly
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20PixCashin/get-locations
+  /companies/{companyId}/pix-cash-in/locations/{locationId}:
+    delete:
+      tags:
+      - Pix Cobrança
+      description: Desvincula um QR Code (location) de uma cobrança
+      operationId: UnlinkLocation
+      parameters:
+      - name: companyId
+        schema:
+          description: CNPJ da empresa realizando a requisição.
+          type: string
+          example: '30306294000145'
+          title: CompanyId
+        in: path
+        required: true
+      - name: locationId
+        schema:
+          type: string
+          example: b226b648-9410-42d3-88f3-497c23608a3d
+          title: LocationId
+        in: path
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: b226b648-9410-42d3-88f3-497c23608a3d
+                    title: LocationId
+                  type:
+                    type: string
+                    example: cob
+                  taxId:
+                    type: string
+                    example: '30306294000145'
+                title: DeleteLocationResponse
+          description: Location Unlinked
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - oauth2:
+        - openid empresas.btgpactual.com/pix-cash-in
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20PixCashin/unlink-location
+components:
+  securitySchemes:
+    oauth2:
+      flows:
+        authorizationCode:
+          authorizationUrl: https://id.btgpactual.com/auth
+          tokenUrl: https://id.btgpactual.com/token
+          scopes:
+            openid empresas.btgpactual.com/pix-cash-in: Acesso completo ao Pix Cash-In
+            openid empresas.btgpactual.com/pix-cash-in.readonly: Acesso somente leitura ao Pix Cash-In
+      type: oauth2
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/5701e4b6.4ca6da4c.js
+  - https://developers.empresas.btgpactual.com/assets/js/0d50e509.6d9ed53e.js
+  - https://developers.empresas.btgpactual.com/assets/js/39f44e7e.91f8a521.js
+  - https://developers.empresas.btgpactual.com/assets/js/2090b2b3.7694e863.js
+  - https://developers.empresas.btgpactual.com/assets/js/86366fc1.c87d23be.js

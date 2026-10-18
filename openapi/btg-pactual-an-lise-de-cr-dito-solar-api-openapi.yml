@@ -1,0 +1,332 @@
+openapi: 3.2.0
+info:
+  version: 1.0.0
+  description: Solar-CreditAnalysis
+  title: Solar-CreditAnalysis Análise de Crédito Solar API
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com/v1/wf-solar
+  description: Sandbox
+- url: https://api.empresas.btgpactual.com/v1/wf-solar
+  description: Produção
+tags:
+- name: Análise de Crédito Solar
+paths:
+  /credit-analysis:
+    post:
+      tags:
+      - Análise de Crédito Solar
+      description: Gerar uma análise de crédito
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+              - customerIdentification
+              - primaryOriginatorAs
+              - customerName
+              - customerEmail
+              - distributorCnpj
+              - integratorCnpj
+              - monthlyBilling
+              - electricBillAverage
+              - projectValue
+              - cep
+              - address
+              - number
+              - district
+              - city
+              - state
+              type: object
+              properties:
+                primaryOriginatorAs:
+                  description: Tipo do originador primário.
+                  enum:
+                  - INTEGRATOR
+                  - DISTRIBUTOR
+                  type: string
+                  example: DISTRIBUTOR
+                customerIdentification:
+                  description: CPF ou CNPJ do cliente.
+                  type: string
+                  example: '00000000000'
+                customerName:
+                  description: Nome do cliente.
+                  type: string
+                  example: NOME CLIENTE
+                customerEmail:
+                  description: E-mail do cliente.
+                  type: string
+                  example: example@example.com
+                distributorCnpj:
+                  description: CNPJ do distribuidor.
+                  type: string
+                  example: '00000000000000'
+                integratorCnpj:
+                  description: CNPJ do integrador.
+                  type: string
+                  example: '00000000000000'
+                marketPlaceCnpj:
+                  description: CNPJ do market place.
+                  type: string
+                  example: '00000000000000'
+                operatorCpf:
+                  description: CPF do operador a ser atrelado à operação.
+                  type: string
+                  example: '00000000000'
+                monthlyBilling:
+                  format: decimal
+                  description: Declaração de renda ou faturamento mensal do cliente (em reais).
+                  type: number
+                  example: '50000.00'
+                electricBillAverage:
+                  format: decimal
+                  description: Valor médio da conta de luz dos últimos 12 meses.
+                  type: number
+                  example: '10000.00'
+                projectValue:
+                  format: decimal
+                  description: Valor do projeto (em reais).
+                  type: number
+                  example: '30000.00'
+                cep:
+                  description: CEP do local de instalação.
+                  type: string
+                  example: '00000000'
+                address:
+                  description: Endereço do local de instalação.
+                  type: string
+                  example: Rua exemplo
+                number:
+                  description: Número do local de instalação.
+                  type: string
+                  example: '123'
+                complement:
+                  description: Complemento do local de instalação.
+                  type: string
+                  example: APTO 0
+                district:
+                  description: Bairro do local de instalação.
+                  type: string
+                  example: BAIRRO EXEMPLO
+                city:
+                  description: Cidade do local de instalação.
+                  type: string
+                  example: SAO PAULO
+                state:
+                  description: Estado do local de instalação.
+                  type: string
+                  example: SP
+              title: CreatePreAnalysis
+            examples:
+              Análise de solar:
+                value:
+                  primaryOriginatorAs: INTEGRATOR
+                  customerIdentification: '00000000000'
+                  customerName: NOME CLIENTE
+                  customerEmail: example@example.com
+                  distributorCnpj: '00000000000000'
+                  integratorCnpj: '00000000000000'
+                  marketPlaceCnpj: '00000000000000'
+                  operatorCpf: '00000000000'
+                  monthlyBilling: 50000
+                  electricBillAverage: 10000
+                  projectValue: 50000
+                  cep: '00000000'
+                  address: RUA EXEMPLO
+                  number: '123'
+                  complement: APTO 0
+                  district: BAIRRO EXEMPLO
+                  city: SAO PAULO
+                  state: SP
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                title: Root Type for SuccessResponse
+                description: ''
+                type: object
+                properties:
+                  originId:
+                    description: Identificação da análise. Usado para identificar as análises nos eventos dos webhooks.
+                    type: string
+                    example: 6ea7c852-c8a7-4a53-95f8-3eac34c530ff
+                example:
+                  originId: 6ea7c852-c8a7-4a53-95f8-3eac34c530ff
+              examples:
+                Sucesso:
+                  value:
+                    originId: 6ea7c852-c8a7-4a53-95f8-3eac34c530ff
+          description: Dados da análise foram validados e em breve será retornada a análise pelo motor de crédito
+        '400':
+          content:
+            application/json:
+              schema:
+                title: Root Type for InvalidParametersErrorResponse
+                description: ''
+                type: object
+                properties:
+                  brn:
+                    description: Identificação do erro
+                    type: string
+                    example: brn:empresas:credit-manager:errors:invalid-input
+                  name:
+                    description: Nome do erro
+                    type: string
+                    example: InvalidParams
+                  invalidParams:
+                    description: Parâmetros inválidos da requisição
+                    type: array
+                    items:
+                      title: Root Type for InvalidParams
+                      description: Parâmetros inválidos
+                      type: object
+                      properties:
+                        name:
+                          description: Nome do campo com erro
+                          type: string
+                          example: customerIdentification
+                        value:
+                          description: Valor que foi preenchido no campo
+                          type: string
+                        reason:
+                          description: Motivo do erro
+                          type: string
+                          example: Campo obrigatório
+                      example:
+                        name: customerIdentification
+                        value: ''
+                        reason: Campo obrigatório
+                example:
+                  brn: brn:empresas:credit-manager:errors:invalid-input
+                  name: InvalidParams
+                  invalidParams:
+                  - name: customerIdentification
+                    value: ''
+                    reason: Campo obrigatório
+              examples:
+                Campos obrigatórios não preenchidos:
+                  value:
+                    brn: brn:empresas:credit-manager:errors:invalid-input
+                    name: InvalidParams
+                    invalidParams:
+                    - name: customerIdentification
+                      value: ''
+                      reason: Campo obrigatório
+          description: Parâmetros da requidição inválidos.
+        '403':
+          content:
+            application/json:
+              schema:
+                title: Root Type for ForbidenErrorResponse
+                description: Não é possível seguir, pois a análise para o cliente em questão parou em alguma validação.
+                type: object
+                properties:
+                  brn:
+                    description: Identificação do erro
+                    type: string
+                    example: brn:empresas:credit-manager:errors:forbidden
+                  name:
+                    description: Nome do erro
+                    type: string
+                    example: UnavailableProductForOriginatorAndClient
+                example:
+                  brn: brn:empresas:credit-manager:errors:forbidden
+                  name: UnavailableProductForOriginatorAndClient
+              examples:
+                Cliente já opera o produto com outro originador.:
+                  value:
+                    brn: brn:empresas:credit-manager:errors:forbidden
+                    name: UnavailableProductForOriginatorAndClient
+                Cliente já possui outra análise de financiamento solar em andamento.:
+                  value:
+                    brn: brn:empresas:credit-manager:errors:forbidden
+                    name: ClientHasLeadAlreadyInProgress
+          description: Não é possível seguir, pois a análise para o cliente em questão parou em alguma validação.
+        '500':
+          content:
+            application/json:
+              schema:
+                title: Root Type for UnexpectedErrorResponse
+                description: Erro interno não mapeado, tentar novamente mais tarde. Caso o erro persista, contatar o atendimento.
+                type: object
+                properties:
+                  brn:
+                    description: Identificação do erro
+                    type: string
+                    example: brn:empresas:credit-manager:errors:internal-server-error
+                  name:
+                    description: Nome do erro
+                    type: string
+                    example: LeadCreationUnexpectedError
+                example:
+                  brn: brn:empresas:credit-manager:errors:internal-server-error
+                  name: LeadCreationUnexpectedError
+              examples:
+                Erro inteno:
+                  value:
+                    brn: brn:empresas:credit-manager:errors:internal-server-error
+                    name: LeadCreationUnexpectedError
+          description: Erro interno não mapeado, tentar novamente mais tarde. Caso o erro persista, contatar o atendimento.
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/solar-credit
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Solar-CreditAnalysis/gerar-uma-analise-de-credito
+      summary: Create credit analysis
+      x-summary-source: derived
+      operationId: postCreditAnalysis
+      x-operation-id-source: derived
+  /originators:
+    get:
+      tags:
+      - Análise de Crédito Solar
+      description: Verificar se uma determinada empresa está apta a operar o fluxo solar
+      parameters:
+      - name: cnpj
+        description: CNPJ da empresa
+        schema:
+          type: string
+        in: query
+        required: true
+      - name: type
+        description: Tipo da empresa
+        schema:
+          enum:
+          - Integrator
+          - Distributor
+          - MarketPlace
+          type: string
+        in: query
+        required: true
+      responses:
+        '201':
+          description: Batch Recebido
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/solar-credit
+        - empresas.btgpactual.com/solar-credit.readonly
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Solar-CreditAnalysis/verificar-se-uma-determinada-empresa-esta-apta-a-operar-o-fluxo-solar
+      summary: Get originators
+      x-summary-source: derived
+      operationId: getOriginators
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    oauth2:
+      flows:
+        authorizationCode:
+          authorizationUrl: https://id.uat.btgmaisbusiness.com/oauth2/authorize
+          tokenUrl: https://id.uat.btgmaisbusiness.com/oauth2/token
+          scopes:
+            openid: Perfil público BTG+ Business
+            bank-slips: Consentimento para selecionar quais contas de beneficiario
+            bank-slips:write: Criar e atualizar boletos
+            bank-slips:read: Consultar boletos
+      type: oauth2
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/539b66de.aa586bf3.js
+  - https://developers.empresas.btgpactual.com/assets/js/a5d07f1d.ed80b1e0.js

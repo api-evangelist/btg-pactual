@@ -1,0 +1,71 @@
+name: BTG Pactual agent skills
+generated: '2026-10-18'
+method: generated
+source: openapi/ (BTG Pactual Empresas contracts); no provider-published skills or
+  AGENTS.md found (AGENTS.md 404 on developers.empresas.btgpactual.com)
+skills:
+- file: btg-pactual-run-payroll-batch.md
+  name: run-payroll-batch
+  api: openapi/btg-pactual-banking-payroll-openapi.yml
+  operations:
+  - listIssuers
+  - submitOnboardingEmployees
+  - listEmployees
+  - getEmployeeAccount
+  - submitPaymentBatch
+  - getPaymentBatch
+  - cancelPaymentBatch
+- file: btg-pactual-collect-with-pix-cash-in.md
+  name: collect-with-pix-cash-in
+  api: openapi/btg-pactual-banking-pixcashin-openapi.yml
+  operations:
+  - CreateLocation
+  - CreateInstantCollection
+  - GetInstantCollections
+  - GetLocations
+  - UnlinkLocation
+- file: btg-pactual-protest-a-bill.md
+  name: protest-a-bill
+  api: openapi/btg-pactual-banking-protest-openapi.yml
+  operations:
+  - createProtestSchedule
+  - createProtestScheduleBatch
+  - findProtest
+  - getProtestDocument
+  - cancelProtest
+  - cancelProtestBatch
+- file: btg-pactual-manage-payment-splitters.md
+  name: manage-payment-splitters
+  api: openapi/btg-pactual-banking-split-openapi.yml
+  operations:
+  - listSplitters
+  - findSplitterByTaxId
+  - findSplitterById
+  - updateSplitter
+  - findSplitById
+  - deleteSplitter
+- file: btg-pactual-anticipate-card-receivables.md
+  name: anticipate-card-receivables
+  api: openapi/btg-pactual-antecred-subcredenciadores-openapi.yml
+  operations:
+  - getCreditCardReceivablesCedente
+  - getReceivablesQuote
+  - createReceivablesAnticipation
+- file: btg-pactual-submit-supply-chain-bordero.md
+  name: submit-supply-chain-bordero
+  api: openapi/btg-pactual-scf-risco-sacado-openapi.yml
+  operations:
+  - createCompany
+  - createBordero
+  - getReceivablesFromBordero
+  - cancelReceivablesFromBordero
+  - getOperationById
+  - getTrades
+  - getTradeById
+- file: btg-pactual-fidc-loan-portability.md
+  name: fidc-loan-portability
+  api: openapi/btg-pactual-fidc-portability-openapi.yml
+  operations:
+  - createPortability
+  - confirmPortability
+  - cancelPortability

@@ -1,0 +1,144 @@
+# x-archived-from: btg-pactual-fidc-eligibility-openapi.yml
+# x-archived-on: 2026-10-18
+openapi: 3.0.3
+info:
+  title: FIDC - Eligibility
+  version: 1.0.0
+  description: Esta API tem a finalidade de contratar e simular empréstimos, realizar cessão de direitos creditórios e consulta de carteira.
+  termsOfService: https://www.btgpactual.com/empresas/termos-e-politicas/
+  contact:
+    name: Time BTG Empresas
+    email: ol-it-btgempresas@btgpactual.com
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com
+  description: Sandbox
+- url: https://api.empresas.btgpactual.com
+  description: Produção
+paths:
+  /fidc-loan/v1/eligibility:
+    post:
+      tags:
+      - Eligibility
+      description: Esta rota serve para realizar a pré elegibilidade de um credito.
+      operationId: createEligibility
+      requestBody:
+        description: Dados de elegibilidade do contrato
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                externalAssetId:
+                  description: Identificador do parceiro para envios de hooks
+                  type: string
+                  example: hjsdgnkndg=!i3
+                buyerTaxId:
+                  type: string
+                  example: '15996430000182'
+                  description: CNPJ/CPF
+                  title: TaxIdSchema
+                value:
+                  description: Valor da operação
+                  type: number
+                  format: double
+                settlementDate:
+                  description: Data de vencimento da operação
+                  type: string
+                  format: date
+                contractNumber:
+                  description: Identificador do contrato
+                  type: string
+                  format: string
+                  example: 623426236/FTS
+                fund:
+                  description: Identificador do fundo
+                  type: string
+                  format: string
+                  example: MT_FGTS
+                rate:
+                  description: Valor da taxa
+                  type: number
+                  format: double
+                maturityValue:
+                  description: Valor da operação no vencimento
+                  type: number
+                  format: double
+                contractDate:
+                  description: Data de originação da operação
+                  type: string
+                  format: date
+        required: true
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    description: Mesagem de sucesso
+                    example: Request received
+                title: SucessSchema
+        '401':
+          description: Não autorizado
+        '500':
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                title: ErrorResponseSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/loans
+      callbacks:
+        EligibilityResult:
+          <webhook-host-http>/:
+            post:
+              summary: Chamada webhook informando o resposta da elegibilidade
+              requestBody:
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      properties:
+                        ExternalAssetId:
+                          description: Identificador do parceiro para envios de hooks
+                          type: string
+                          example: XXXXXXXXXX
+                        IsValid:
+                          description: Indicador de aceitação da operação pela elegibilidade
+                          type: boolean
+                        Errors:
+                          type: array
+                          items:
+                            type: string
+                            description: Valor do boleto
+                      title: EligibilityWebhookSchema
+              responses:
+                '200':
+                  description: Seu servidor deve retornar 200 caso tenha processado a requisição corretamente
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/FIDC%20-%20Eligibility/create-eligibility
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+          scopes:
+            empresas.btgpactual.com/loans: Scope to loans
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/42b6105e.bf8ed5f5.js

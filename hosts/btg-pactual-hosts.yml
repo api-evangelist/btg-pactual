@@ -1,0 +1,143 @@
+generated: '2026-10-18'
+method: derived
+source: the pre-flight dossier, apis.yml pointers, spec servers, well-known, vendors -- nothing fetched here
+generator: derive-hosts.py
+summary:
+  hosts: 10
+  own: 8
+  other_domain: 0
+  platform: 2
+  roles:
+  - api
+  - collections
+  - marketing
+  - portal
+  - source
+  - status
+  - website
+hosts:
+- host: api.abs.btgpactual.com
+  found_by:
+  - apis[]
+  types: []
+  serves:
+  - api
+  registrable_domain: btgpactual.com
+  role: api
+  relation: own
+- host: api.btgpactual.com
+  found_by:
+  - contract-discovery
+  types: []
+  serves: []
+  registrable_domain: btgpactual.com
+  role: api
+  relation: own
+- host: api.empresas.btgpactual.com
+  found_by:
+  - apis[]
+  types: []
+  serves:
+  - api
+  registrable_domain: btgpactual.com
+  role: api
+  relation: own
+- host: carreiras.btgpactual.com
+  found_by:
+  - pointer
+  - probed
+  - contract-discovery
+  - well-known
+  types:
+  - Careers
+  serves: []
+  registrable_domain: btgpactual.com
+  role: marketing
+  relation: own
+- host: developer.btgpactual.com
+  found_by:
+  - probed
+  - site-links
+  - docs-index
+  - well-known
+  types: []
+  serves:
+  - docs
+  registrable_domain: btgpactual.com
+  role: portal
+  relation: own
+- host: developers.empresas.btgpactual.com
+  found_by:
+  - pointer
+  - apis[]
+  - probed
+  - docs-index
+  - contract-discovery
+  - well-known
+  - vendor-detect
+  types:
+  - DeveloperPortal
+  - Documentation
+  - GettingStarted
+  - APIReference
+  - Sandbox
+  - Login
+  - Support
+  - Community
+  - Blog
+  - ChangeLog
+  serves:
+  - docs
+  - documentation
+  vendor: docusaurus
+  registrable_domain: btgpactual.com
+  role: portal
+  relation: own
+- host: github.com
+  found_by:
+  - pointer
+  types:
+  - GitHubOrganization
+  serves: []
+  registrable_domain: github.com
+  role: source
+  relation: platform
+- host: status.empresas.btgpactual.com
+  found_by:
+  - pointer
+  - probed
+  - contract-discovery
+  - well-known
+  types:
+  - StatusPage
+  serves: []
+  registrable_domain: btgpactual.com
+  role: status
+  relation: own
+- host: www.btgpactual.com
+  found_by:
+  - pointer
+  - probed
+  - contract-discovery
+  - well-known
+  - vendor-detect
+  types:
+  - Website
+  serves:
+  - cdn
+  vendor: akamai
+  registrable_domain: btgpactual.com
+  role: website
+  relation: own
+- host: www.postman.com
+  found_by:
+  - pointer
+  - vendor-detect
+  types:
+  - Postman
+  serves:
+  - api-collections
+  vendor: postman
+  registrable_domain: postman.com
+  role: collections
+  relation: platform

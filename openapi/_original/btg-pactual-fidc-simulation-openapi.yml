@@ -1,0 +1,274 @@
+# x-archived-from: btg-pactual-fidc-simulation-openapi.yml
+# x-archived-on: 2026-10-18
+openapi: 3.0.3
+info:
+  title: FIDC - Simulation
+  version: 1.0.0
+  description: Esta API tem a finalidade de contratar e simular empréstimos, realizar cessão de direitos creditórios e consulta de carteira.
+  termsOfService: https://www.btgpactual.com/empresas/termos-e-politicas/
+  contact:
+    name: Time BTG Empresas
+    email: ol-it-btgempresas@btgpactual.com
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com
+  description: Sandbox
+- url: https://api.empresas.btgpactual.com
+  description: Produção
+paths:
+  /fidc-loan/v1/simulation:
+    post:
+      tags:
+      - Simulation
+      description: Criação de uma simulação usando o simulador com configurações pré estabelecidas via identificador do convênio
+      operationId: createSimulation
+      requestBody:
+        description: Dados para simulação
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - agreementId
+              - amount
+              properties:
+                agreementId:
+                  type: string
+                  example: e83fb70e-b7d6-40c1-9c44-9c63c0a3150d
+                  description: Identificador do convênio
+                amount:
+                  type: number
+                  example: 125.32
+                  description: Valor do desembolso para simulação
+                interestRate:
+                  type: number
+                  example: 0.12
+                  description: Percentual da taxa aplicada no Empréstimo para simulação
+                startDate:
+                  type: string
+                  format: date
+                  example: '2023-08-03 00:00:00'
+                  description: Data inicial do contrato
+                minimumInstallmentAmount:
+                  type: number
+                  example: 100
+                  description: Valor mínimo de parcela para simulação
+                maximumInstallmentAmount:
+                  type: number
+                  example: 200.5
+                  description: Valor máximo de parcela para simulação
+                minimumInstallments:
+                  type: number
+                  example: 1
+                  description: Quantidade de parcelas mínima para simulação
+                maximumInstallments:
+                  type: number
+                  example: 12
+                  description: Quantidade de parcelas máxima para simulação
+                firstPaymentDate:
+                  type: string
+                  format: date
+                  example: '2023-08-03 00:00:00'
+                  description: Data de vencimento da primeira parcela
+                paymentDay:
+                  type: number
+                  example: 12
+                  description: Dia do vencimento das parcelas (Primeira parcela irá ter a data enviada no campo firstPaymentDate, caso o mesmo seja enviado)
+                fees:
+                  type: array
+                  description: Taxas adicionais de bancarização. Se aplicável.
+                  items:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        description: Tipo do Fee
+                        example: TAC
+                        enum:
+                        - REGISTRATOR
+                        - BROKER
+                        - RCO
+                        - CIP
+                        - TAC
+                      percentage:
+                        type: number
+                        format: double
+                        description: Percentual do crédito
+                        example: 10.01
+        required: true
+      responses:
+        '201':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    executionId:
+                      type: string
+                      description: Identificador de excecução da simulação
+                      example: b2eaa18b-985e-473f-92bf-8cf9a407aee1
+                    dayCountCode:
+                      type: number
+                      description: Código de aplicação de dias de cálculo
+                      example: 303601
+                    firtsInstallmentDate:
+                      type: string
+                      format: date
+                      description: Data do primeiro pagamento
+                      example: '2024-05-06'
+                    monthlyInterestRate:
+                      type: string
+                      description: Taxa mensal
+                      example: '0.0099'
+                    annualInterestRate:
+                      type: string
+                      description: Taxa anual
+                      example: '0.1254'
+                    operations:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          operationId:
+                            type: string
+                            description: Id da operação de simulação
+                            example: 067bbc5e36984331ba72e14c1700fae4
+                          term:
+                            type: number
+                            description: Quantidade de parcelas referente a essa simulação
+                            example: 1
+                          totalAmount:
+                            type: string
+                            description: Valor total com o juros acruado (soma das PMTs)
+                            example: '36954.35'
+                          amount:
+                            type: string
+                            description: Valor total do principal (financiado)
+                            example: '30887.96'
+                          clientNetAmount:
+                            type: string
+                            description: valor do desembolso
+                            example: '30000.00'
+                          cetRate:
+                            type: string
+                            description: Taxa de Custo Efetivo Total (CET)
+                            example: '0.1475'
+                          tax:
+                            type: string
+                            description: Valor total de IOF
+                            example: '887.96'
+                          fees:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                code:
+                                  type: string
+                                  description: Código da taxa
+                                  example: CMPA
+                                isFinanciable:
+                                  type: boolean
+                                  description: Permite financiamento
+                                  example: true
+                                isGrossupable:
+                                  type: boolean
+                                  description: Indica que qualquer imposto deve implicar no valor bruto na hora do pagamento
+                                  example: true
+                                isDebitable:
+                                  type: boolean
+                                  description: Permite débito da taxa
+                                  example: true
+                                amount:
+                                  type: string
+                                  description: Valor total do fee
+                                  example: '2692.84'
+                                percentage:
+                                  type: string
+                                  description: Taxa do fee
+                                  example: '0.08'
+                                pmt:
+                                  type: string
+                                  description: Tipo de valorização
+                                  example: '92.00'
+                                pprFee:
+                                  type: string
+                                  description: Percentual por Fee relativo ao valor principal do contrato
+                                  example: '0.0800'
+                                grossValue:
+                                  type: string
+                                  description: Valor bruto do fee
+                                  example: '2692.84'
+                          cashFlows:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                code:
+                                  type: number
+                                  description: Número da parcela
+                                  example: 1
+                                amortization:
+                                  type: string
+                                  description: Valor de amortização da parcela
+                                  example: '1014.11'
+                                interest:
+                                  type: string
+                                  description: Valor de juros da parcela
+                                  example: '12.39'
+                                tax:
+                                  type: string
+                                  description: Valor de IOF da parcela
+                                  example: '7.09'
+                                amount:
+                                  type: string
+                                  description: Valor total da parcela (PMT)
+                                  example: '1026.50'
+                                maturityDate:
+                                  type: string
+                                  description: Data do pagamento da parcela
+                                  example: '2024-05-06T00:00:00'
+                                startAccrual:
+                                  type: string
+                                  description: Data de inicio de accrual da parcela
+                                  example: '2024-05-06T00:00:00'
+                                endAccrual:
+                                  type: string
+                                  description: Data de termino de accrual da parcela
+                                  example: '2024-05-06T00:00:00'
+        '400':
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                title: ErrorResponseSchema
+        '401':
+          description: Não autorizado
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/loans
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/FIDC%20-%20Simulation/create-simulation
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+          scopes:
+            empresas.btgpactual.com/loans: Scope to loans
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/84581d62.1f5cdb4f.js

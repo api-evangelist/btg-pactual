@@ -1,0 +1,17 @@
+generated: '2026-10-18'
+method: searched
+generator: extract-docs-artifacts.py (deepseek)
+source: https://developers.empresas.btgpactual.com/docs/starting-doc/Integrando/Webhooks/utilize-webhooks-para-receber-atualiza%C3%A7%C3%B5es-sobre-produtos-conectados
+sources:
+- https://developers.empresas.btgpactual.com/docs/starting-doc/Integrando/Webhooks/utilize-webhooks-para-receber-atualiza%C3%A7%C3%B5es-sobre-produtos-conectados
+- https://developers.empresas.btgpactual.com/docs/tecspecs/Webhook%20-%20tec
+description: Webhooks for receiving updates about connected products
+events:
+- event: transactions.debit
+  description: Indicates a debit in the digital account
+delivery:
+  retries: three times within 10 minutes
+  content_type: application/json
+  auth: Bearer token with webhook secret in Authorization header
+note: Webhook sandbox functionality is currently under development and not available to all users
+docs: https://developers.empresas.btgpactual.com/docs/starting-doc/Integrando/Webhooks/utilize-webhooks-para-receber-atualizações-sobre-produtos-conectados

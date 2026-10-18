@@ -1,0 +1,543 @@
+openapi: 3.2.0
+info:
+  title: FIDC Wallet API
+  version: 1.0.0
+  description: Esta API tem a finalidade de contratar e simular empréstimos, realizar cessão de direitos creditórios e consulta de carteira.
+  termsOfService: https://www.btgpactual.com/empresas/termos-e-politicas/
+  contact:
+    name: Time BTG Empresas
+    email: ol-it-btgempresas@btgpactual.com
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com
+  description: Sandbox
+- url: https://api.empresas.btgpactual.com
+  description: Produção
+tags:
+- name: Wallet
+paths:
+  /fidc-loan/v1/wallet:
+    get:
+      tags:
+      - Wallet
+      description: O objetivo dessa rota é pesquisar uma carteira de operações por fundo especifico.
+      operationId: getWallet
+      parameters:
+      - in: query
+        name: pag
+        description: Numero da pagina da consulta
+        schema:
+          description: Numero da pagina da consulta
+          type: integer
+      - in: query
+        name: fundName
+        description: Identificação do fundo
+        schema:
+          type: string
+          example: MT_FGTS
+          description: Identificador do fundo
+          title: FundNameSchema
+      responses:
+        '200':
+          description: Informações encontradas.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  numberOfPages:
+                    type: number
+                    description: Número máximo de páginas
+                  pageNumber:
+                    type: number
+                    description: Número da página atual
+                  clientInformation:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        overallStatus:
+                          description: Informações da contraparte em geral
+                          type: object
+                          properties:
+                            client:
+                              type: object
+                              properties:
+                                name:
+                                  type: string
+                                  description: Nome da contraparte
+                                  example: NOME DO CLIENTE
+                                taxId:
+                                  type: string
+                                  description: CPF/CNPJ da contraparte
+                                  example: TAXID DO CLIENTE
+                            financialState:
+                              type: number
+                              description: 'Status da contraparte. Possíveis: 0 - SETTLED (Pago), 1 - COMPLIANT (Adimplente), 2 - OVERDUE (Inadimplente), 3 - RENEGOTIATED (Renegociado), 4 - NORMAL (Adimplente/normal).'
+                            tradesAmount:
+                              type: number
+                              description: Numero de operações associadas a contraparte
+                            loanedValue:
+                              type: number
+                              format: double
+                              description: Valor total da soma das operações da contraparte
+                            dueValue:
+                              type: number
+                              format: double
+                              description: Valor total da soma das posições atuais das operações da contraparte
+                        trades:
+                          type: array
+                          description: Operações relacionadas a contraparte
+                          items:
+                            type: object
+                            properties:
+                              externalId:
+                                type: string
+                                description: Identificador externo da operação
+                                example: b2eaa18b-985e-473f-92bf-8cf9a407aee1
+                              contractNumber:
+                                type: string
+                                description: Identificador do contrato da operação
+                                example: 1247244/HYD
+                              fund:
+                                type: string
+                                description: Identificador do fundo relacionado a operação
+                              lastBalanceDate:
+                                type: string
+                                format: date
+                                description: Data da ultima posição processada
+                              tradeId:
+                                type: string
+                                description: Identificador da operação
+                                example: '712124'
+                              loanValue:
+                                type: number
+                                format: double
+                                description: Valor da operação
+                              dueValue:
+                                type: number
+                                format: double
+                                description: Valor da posição da operação
+                              paidValue:
+                                type: number
+                                format: double
+                                description: Valor pago na operação
+                              rate:
+                                type: number
+                                format: double
+                                description: Taxa da operação
+                              cet:
+                                type: number
+                                format: double
+                                description: Custo efetivo total da operação
+                              paymentIsDue:
+                                type: boolean
+                                description: Boleano identificando se o cliente está inadimplente
+                              type:
+                                type: string
+                                description: Tipo da operação
+                                example: CCB
+                              status:
+                                type: string
+                                description: 'Status da operação. Possíveis: 0 - SETTLED (Pago), 1 - COMPLIANT (Adimplente), 2 - OVERDUE (Inadimplente), 3 - RENEGOTIATED (Renegociado), 4 - NORMAL (Adimplente)'
+                                example: COMPLIANT
+                              startDate:
+                                type: string
+                                format: date
+                                description: Data de inicio da operação
+                              maturityDate:
+                                type: string
+                                format: date
+                                description: Data de vencimento da operação
+                              activeContract:
+                                type: string
+                                description: Identificador do contrato ativo
+                                example: CONTRATO_ATIVO
+                              linkedTrades:
+                                type: array
+                                items:
+                                  type: string
+                                  description: Identificadores das operações relacionados a essa operação
+                                  example: '111110'
+                              contracts:
+                                type: array
+                                items:
+                                  type: string
+                                  description: Identificadores de contratos relacionados com a operação
+                                  example: CONTRATO_X
+                              charges:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    installmentNumber:
+                                      type: number
+                                      description: Numero da parcela
+                                    paid:
+                                      type: boolean
+                                      description: Boleano identificando se a parcela foi paga
+                                    dueDate:
+                                      type: string
+                                      format: date
+                                      description: Data de vencimento da parcela
+                                    value:
+                                      type: number
+                                      format: double
+                                      description: Valor da parcela
+                                    paidValue:
+                                      type: number
+                                      format: double
+                                      description: Valor pago na parcela
+                                    paidDate:
+                                      type: string
+                                      format: date
+                                      description: Data de pagamento da parcela
+                                    bankSlipId:
+                                      type: string
+                                      description: Identificador unico do boleto
+                                      example: ea95965a-f45a-4c35-b624-e91788a50ce7
+                                    status:
+                                      type: string
+                                      description: 'Status da parcela. Possíveis: 0 - PAID (pago), 1 - OPEN (em aberto), 2 - OVERDUE (inadimplente), 3 - RENEGOTIATED (renegociado).'
+                                      example: OPEN
+                                    interestArrearsValue:
+                                      type: number
+                                      format: double
+                                      description: Mora da parcela
+                                    latePaymentValue:
+                                      type: number
+                                      format: double
+                                      description: Juros sobre atraso
+                                    penaltyFeeValue:
+                                      type: number
+                                      format: double
+                                      description: Multa da parcela
+                                    principalValue:
+                                      type: number
+                                      format: double
+                                      description: Valor do principal da parcela
+                                    paymentHistory:
+                                      type: array
+                                      items:
+                                        type: object
+                                        properties:
+                                          status:
+                                            type: string
+                                            description: 'Status do pagamento realizado. Possiveis: Confirming, Confirmed, Cancelling, Cancelled, WaitingRelease, ConfirmedPreImpact, ConfirmingPreImpact, WaitingApproval, Error, ScheduledPayment, SentToProcess'
+                                            example: Confirmed
+                                          latePaymentValue:
+                                            type: number
+                                            format: double
+                                            description: Juros sobre atraso do pagamento
+                                          penaltyFeeValue:
+                                            type: number
+                                            format: double
+                                            description: Multa da parcela do pagamento
+                                          interestArrearsValue:
+                                            type: number
+                                            format: double
+                                            description: Mora da parcela do pagamento
+                                          paidValue:
+                                            type: number
+                                            format: double
+                                            description: Valor total pago do pagamento
+                                          paidDate:
+                                            type: string
+                                            format: date
+                                            description: Data de pagamento
+                                          principalValue:
+                                            type: number
+                                            format: double
+                                            description: Valor pago do principal
+                                          discontValue:
+                                            type: number
+                                            format: double
+                                            description: Valor de disconto aplicado no pagamento
+                                          fixedInterestValue:
+                                            type: number
+                                            format: double
+                                            description: Juros Pre do pagamento
+                                          floatInterestValue:
+                                            type: number
+                                            format: double
+                                            description: Juros Pos do pagamento
+                                          paymentTotal:
+                                            type: boolean
+                                            description: Indicador do pagamento ser total
+                                          iOFValue:
+                                            type: number
+                                            format: double
+                                            description: IOF do pagamento
+                            title: ContractSchema
+                title: WalletSchema
+        '401':
+          description: Não autorizado
+        '500':
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                title: ErrorResponseSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/wallet.readonly
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/FIDC%20-%20Wallet/get-wallet
+      summary: Get wallet
+      x-summary-source: derived
+  /fidc-loan/v1/contract-wallet:
+    get:
+      tags:
+      - Wallet
+      description: O objetivo dessa rota é pesquisar a carteira de algum contrato ou contraparte especifica.
+      operationId: getWalletContract
+      parameters:
+      - in: query
+        name: taxId
+        description: Identificação da contraparte
+        schema:
+          type: string
+          example: '15996430000182'
+          description: CNPJ/CPF
+          title: TaxIdSchema
+      - in: query
+        name: identification
+        description: Identificação do contrato
+        schema:
+          type: string
+          description: Identificador do contrato
+          example: 6764459321/EP
+          title: ContractIdentificationSchema
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    externalId:
+                      type: string
+                      description: Identificador externo da operação
+                      example: b2eaa18b-985e-473f-92bf-8cf9a407aee1
+                    contractNumber:
+                      type: string
+                      description: Identificador do contrato da operação
+                      example: 1247244/HYD
+                    fund:
+                      type: string
+                      description: Identificador do fundo relacionado a operação
+                    lastBalanceDate:
+                      type: string
+                      format: date
+                      description: Data da ultima posição processada
+                    tradeId:
+                      type: string
+                      description: Identificador da operação
+                      example: '712124'
+                    loanValue:
+                      type: number
+                      format: double
+                      description: Valor da operação
+                    dueValue:
+                      type: number
+                      format: double
+                      description: Valor da posição da operação
+                    paidValue:
+                      type: number
+                      format: double
+                      description: Valor pago na operação
+                    rate:
+                      type: number
+                      format: double
+                      description: Taxa da operação
+                    cet:
+                      type: number
+                      format: double
+                      description: Custo efetivo total da operação
+                    paymentIsDue:
+                      type: boolean
+                      description: Boleano identificando se o cliente está inadimplente
+                    type:
+                      type: string
+                      description: Tipo da operação
+                      example: CCB
+                    status:
+                      type: string
+                      description: 'Status da operação. Possíveis: 0 - SETTLED (Pago), 1 - COMPLIANT (Adimplente), 2 - OVERDUE (Inadimplente), 3 - RENEGOTIATED (Renegociado), 4 - NORMAL (Adimplente)'
+                      example: COMPLIANT
+                    startDate:
+                      type: string
+                      format: date
+                      description: Data de inicio da operação
+                    maturityDate:
+                      type: string
+                      format: date
+                      description: Data de vencimento da operação
+                    activeContract:
+                      type: string
+                      description: Identificador do contrato ativo
+                      example: CONTRATO_ATIVO
+                    linkedTrades:
+                      type: array
+                      items:
+                        type: string
+                        description: Identificadores das operações relacionados a essa operação
+                        example: '111110'
+                    contracts:
+                      type: array
+                      items:
+                        type: string
+                        description: Identificadores de contratos relacionados com a operação
+                        example: CONTRATO_X
+                    charges:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          installmentNumber:
+                            type: number
+                            description: Numero da parcela
+                          paid:
+                            type: boolean
+                            description: Boleano identificando se a parcela foi paga
+                          dueDate:
+                            type: string
+                            format: date
+                            description: Data de vencimento da parcela
+                          value:
+                            type: number
+                            format: double
+                            description: Valor da parcela
+                          paidValue:
+                            type: number
+                            format: double
+                            description: Valor pago na parcela
+                          paidDate:
+                            type: string
+                            format: date
+                            description: Data de pagamento da parcela
+                          bankSlipId:
+                            type: string
+                            description: Identificador unico do boleto
+                            example: ea95965a-f45a-4c35-b624-e91788a50ce7
+                          status:
+                            type: string
+                            description: 'Status da parcela. Possíveis: 0 - PAID (pago), 1 - OPEN (em aberto), 2 - OVERDUE (inadimplente), 3 - RENEGOTIATED (renegociado).'
+                            example: OPEN
+                          interestArrearsValue:
+                            type: number
+                            format: double
+                            description: Mora da parcela
+                          latePaymentValue:
+                            type: number
+                            format: double
+                            description: Juros sobre atraso
+                          penaltyFeeValue:
+                            type: number
+                            format: double
+                            description: Multa da parcela
+                          principalValue:
+                            type: number
+                            format: double
+                            description: Valor do principal da parcela
+                          paymentHistory:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                status:
+                                  type: string
+                                  description: 'Status do pagamento realizado. Possiveis: Confirming, Confirmed, Cancelling, Cancelled, WaitingRelease, ConfirmedPreImpact, ConfirmingPreImpact, WaitingApproval, Error, ScheduledPayment, SentToProcess'
+                                  example: Confirmed
+                                latePaymentValue:
+                                  type: number
+                                  format: double
+                                  description: Juros sobre atraso do pagamento
+                                penaltyFeeValue:
+                                  type: number
+                                  format: double
+                                  description: Multa da parcela do pagamento
+                                interestArrearsValue:
+                                  type: number
+                                  format: double
+                                  description: Mora da parcela do pagamento
+                                paidValue:
+                                  type: number
+                                  format: double
+                                  description: Valor total pago do pagamento
+                                paidDate:
+                                  type: string
+                                  format: date
+                                  description: Data de pagamento
+                                principalValue:
+                                  type: number
+                                  format: double
+                                  description: Valor pago do principal
+                                discontValue:
+                                  type: number
+                                  format: double
+                                  description: Valor de disconto aplicado no pagamento
+                                fixedInterestValue:
+                                  type: number
+                                  format: double
+                                  description: Juros Pre do pagamento
+                                floatInterestValue:
+                                  type: number
+                                  format: double
+                                  description: Juros Pos do pagamento
+                                paymentTotal:
+                                  type: boolean
+                                  description: Indicador do pagamento ser total
+                                iOFValue:
+                                  type: number
+                                  format: double
+                                  description: IOF do pagamento
+                  title: ContractSchema
+        '401':
+          description: Não autorizado
+        '500':
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                title: ErrorResponseSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/wallet.readonly
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/FIDC%20-%20Wallet/get-wallet-contract
+      summary: Get wallet contract
+      x-summary-source: derived
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+          scopes:
+            empresas.btgpactual.com/wallet.readonly: Scope to wallet read only
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/24b4150c.a231216e.js
+  - https://developers.empresas.btgpactual.com/assets/js/8231dcbe.e11672d0.js

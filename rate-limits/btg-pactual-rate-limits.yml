@@ -1,0 +1,20 @@
+generated: '2026-10-18'
+method: searched
+generator: extract-docs-artifacts.py (deepseek)
+source: https://developers.empresas.btgpactual.com/docs/starting-doc/Integrando/APIs/rate-limit
+sources:
+- https://developers.empresas.btgpactual.com/docs/starting-doc/Integrando/APIs/rate-limit
+name: BTG Pactual rate limits
+limits:
+- name: per-minute limit
+  limit_text: Limite de requisição por minuto
+  window: minute
+  scope: clientId
+headers:
+- X-RateLimit-Limit
+- X-RateLimit-Remaining
+- X-RateLimit-Reset
+exhaustion_status: 429
+note: The consumption is calculated per clientId making the request. Consumption occurs regardless of whether the API response returns success
+  or error.
+docs: https://developers.empresas.btgpactual.com/docs/starting-doc/Integrando/APIs/rate-limit

@@ -1,0 +1,9 @@
+generated: '2026-10-18'
+method: searched
+source: https://developers.empresas.btgpactual.com/changelog
+name: BTG Pactual lifecycle
+versioning: undocumented
+deprecation: undocumented
+status_page: https://status.empresas.btgpactual.com
+sla: undocumented
+note: Status page available for service health monitoring. Changelog available for update notes but no formal versioning or deprecation policy documented.

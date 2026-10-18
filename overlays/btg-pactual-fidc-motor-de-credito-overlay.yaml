@@ -1,0 +1,27 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist overlay for FIDC - Motor de Credito
+  version: 1.0.0
+extends: ../openapi/_original/btg-pactual-fidc-motor-de-credito-openapi.yml
+x-generated: '2026-10-18'
+x-method: generated
+x-source: openapi/btg-pactual-fidc-motor-de-credito-openapi.yml
+x-rationale: Adds provenance metadata and, where the BTG Pactual contract omits them, derived operationIds (method + path) so MCP candidate tools can bind to stable names. The original OpenAPI is not mutated.
+actions:
+- target: $.info
+  description: Record API Evangelist provenance for this BTG Pactual Empresas contract.
+  update:
+    x-apievangelist-provider: btg-pactual
+    x-apievangelist-source: openapi/btg-pactual-fidc-motor-de-credito-openapi.yml
+- target: $.paths['/v1/fidc/credit/creditengine/{fundTaxId}/customer/evaluation'].post
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: postCreditengineCustomerEvaluationByFundTaxId
+- target: $.paths['/v1/fidc/credit/creditengine/{fundTaxId}/customers/evaluation'].post
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: postCreditengineCustomersEvaluationByFundTaxId
+- target: $.paths['/v1/fidc/credit/creditengine/{fundTaxId}/customers/evaluation/{correlationId}'].get
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: getCreditengineCustomersEvaluationByCorrelationId

@@ -1,0 +1,1091 @@
+openapi: 3.2.0
+info:
+  description: API responsável por gerenciar protestos de cobranças
+  version: 1.0.0
+  title: Banking Protest API
+  contact:
+    name: Contas a Receber
+    email: OL-IT-BtgEmpresas-ContasAReceber@btgpactual.com
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com
+  description: Sandbox
+- url: https://api.empresas.btgpactual.com
+  description: Produção
+tags:
+- name: Protest
+paths:
+  /{companyId}/banking/protest/{id}:
+    delete:
+      tags:
+      - Protest
+      description: 'Cancela um protesto individualmente. O protesto deve estar em um estado que permita cancelamento (`SCHEDULED` ou `PROCESSING`).
+
+
+        ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o Wiremock
+
+
+        > No sandbox este endpoint requer a utilização de Sandbox Headers
+
+
+        | Header | Descrição | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :--------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      operationId: cancelProtest
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      - name: id
+        in: path
+        required: true
+        description: Identificador UUID do protesto
+        schema:
+          type: string
+          format: uuid
+          example: 0436436c-77a3-45c7-94af-527cb4dc80e2
+      - name: feesResponsible
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - PAYER
+          - PAYEE
+          example: PAYEE
+        description: Responsável pelas custas do cancelamento do protesto
+      responses:
+        '204':
+          description: Protesto cancelado com sucesso
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: InvalidInputError
+                    description: Nome do erro.
+                title: ValidationErrorResponse
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:not-found-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: NotFoundError
+                    description: Nome do erro.
+                title: ErrorResponse
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:not-found-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: NotFoundError
+                    description: Nome do erro.
+                title: ErrorResponse
+      security:
+      - write:
+        - brn:btg:empresas:banking:collections
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Protest/cancel-protest
+      summary: Cancel protest
+      x-summary-source: derived
+    get:
+      tags:
+      - Protest
+      description: 'Retorna os detalhes de um protesto pelo seu UUID.
+
+
+        ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o Wiremock
+
+
+        > No sandbox este endpoint requer a utilização de Sandbox Headers
+
+
+        | Header | Descrição | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :--------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      operationId: findProtest
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      - name: id
+        in: path
+        required: true
+        description: Identificador UUID do protesto
+        schema:
+          type: string
+          format: uuid
+          example: 0436436c-77a3-45c7-94af-527cb4dc80e2
+      responses:
+        '200':
+          description: Detalhes do protesto
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    example: 0436436c-77a3-45c7-94af-527cb4dc80e2
+                    description: ID do protesto
+                  collectionId:
+                    type: string
+                    format: uuid
+                    example: 1e5d83c8-92b5-4f39-827c-8c3d45a2b9f1
+                    description: ID da cobrança vinculada ao protesto
+                  status:
+                    type: string
+                    enum:
+                    - SCHEDULED
+                    - PROCESSING
+                    - CANCELED
+                    - SENT
+                    - CONFIRMED
+                    - FAILED
+                    - PAID
+                    - REMOVED
+                    - PROTESTED
+                    - SETTLED
+                    - FORFEITED
+                    - FORFEITING
+                    - REMOVING
+                    - REMOVE_FAILED
+                    - FORFEIT_FAILED
+                    example: SCHEDULED
+                    description: Status do protesto
+                  issueDate:
+                    type: string
+                    format: date
+                    example: '2026-03-17'
+                    description: Data de emissão do protesto
+                  collectionDueDate:
+                    type: string
+                    format: date
+                    example: '2026-04-17'
+                    description: Data de vencimento da cobrança
+                  collectionIssueDate:
+                    type: string
+                    format: date
+                    example: '2026-03-01'
+                    description: Data de emissão da cobrança
+                  origin:
+                    type: string
+                    enum:
+                    - APP
+                    - WEB
+                    - CNAB
+                    - AUTOMATION
+                    - AUTOMATION_RULE
+                    - DEVELOPERS
+                    example: DEVELOPERS
+                    description: Origem do protesto
+                  creditor:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: Empresa XYZ Ltda
+                        description: Nome do credor
+                      fantasyName:
+                        type: string
+                        example: XYZ Pagamentos
+                        description: Nome fantasia do credor
+                      taxId:
+                        type: string
+                        example: '37297902000141'
+                        description: CNPJ/CPF do credor
+                      personType:
+                        type: string
+                        enum:
+                        - PF
+                        - PJ
+                        example: PJ
+                        description: Tipo de pessoa do credor
+                      address:
+                        type: object
+                        properties:
+                          state:
+                            type: string
+                            example: SP
+                            description: Estado
+                          city:
+                            type: string
+                            example: São Paulo
+                            description: Cidade
+                          street:
+                            type: string
+                            example: Av. Brigadeiro Faria Lima
+                            description: Rua/Logradouro
+                          zipCode:
+                            type: string
+                            example: 04538-132
+                            description: CEP
+                          number:
+                            type: string
+                            example: '3477'
+                            description: Número
+                        title: Address
+                    title: Creditor
+                  debtor:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: João da Silva
+                        description: Nome do devedor
+                      taxId:
+                        type: string
+                        example: '12345678901'
+                        description: CNPJ/CPF do devedor
+                      personType:
+                        type: string
+                        enum:
+                        - PF
+                        - PJ
+                        example: PF
+                        description: Tipo de pessoa do devedor
+                      email:
+                        type: string
+                        example: joao@email.com
+                        description: E-mail do devedor
+                      phoneNumber:
+                        type: string
+                        example: '5511999999999'
+                        description: Telefone do devedor
+                      address:
+                        type: object
+                        properties:
+                          state:
+                            type: string
+                            example: SP
+                            description: Estado
+                          city:
+                            type: string
+                            example: São Paulo
+                            description: Cidade
+                          street:
+                            type: string
+                            example: Av. Brigadeiro Faria Lima
+                            description: Rua/Logradouro
+                          zipCode:
+                            type: string
+                            example: 04538-132
+                            description: CEP
+                          number:
+                            type: string
+                            example: '3477'
+                            description: Número
+                        title: Address
+                    title: Debtor
+                  documents:
+                    type: object
+                    properties:
+                      isCancellationDocumentAvailable:
+                        type: boolean
+                        example: false
+                        description: Indica se o documento de cancelamento está disponível
+                      isProtestDocumentAvailable:
+                        type: boolean
+                        example: true
+                        description: Indica se o documento de protesto está disponível
+                    title: ProtestDocuments
+                  correlationId:
+                    type: string
+                    example: abc123
+                    description: ID de correlação do protesto
+                  createdAt:
+                    type: string
+                    format: date-time
+                    example: '2026-03-17T10:00:00.000Z'
+                    description: Data de criação do protesto
+                  updatedAt:
+                    type: string
+                    format: date-time
+                    example: '2026-03-17T10:00:00.000Z'
+                    description: Data da última atualização do protesto
+                  paidAt:
+                    type:
+                    - string
+                    - 'null'
+                    format: date-time
+                    example: '2026-03-20T10:00:00.000Z'
+                    description: Data em que o protesto foi pago
+                  settledAt:
+                    type:
+                    - string
+                    - 'null'
+                    format: date-time
+                    example: '2026-03-25T10:00:00.000Z'
+                    description: Data em que o protesto foi baixado/liquidado
+                  canceledAt:
+                    type:
+                    - string
+                    - 'null'
+                    format: date-time
+                    example: '2026-03-18T10:00:00.000Z'
+                    description: Data em que o protesto foi cancelado
+                title: ProtestResponse
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: InvalidInputError
+                    description: Nome do erro.
+                title: ValidationErrorResponse
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:not-found-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: NotFoundError
+                    description: Nome do erro.
+                title: ErrorResponse
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:not-found-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: NotFoundError
+                    description: Nome do erro.
+                title: ErrorResponse
+      security:
+      - read:
+        - brn:btg:empresas:banking:collections
+        - brn:btg:empresas:banking:collections.read-only
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Protest/find-protest
+      summary: Find protest
+      x-summary-source: derived
+  /{companyId}/banking/protest/batch:
+    delete:
+      tags:
+      - Protest
+      description: 'Cancela o protesto de várias cobranças em lote. O processamento é assíncrono — a API retorna `202 Accepted` imediatamente e processa cada cancelamento individualmente.
+
+
+        ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o Wiremock
+
+
+        > No sandbox este endpoint requer a utilização de Sandbox Headers
+
+
+        | Header | Descrição | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :--------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      operationId: cancelProtestBatch
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - protests
+              properties:
+                protests:
+                  type: array
+                  minItems: 1
+                  description: Lista de protestos a serem cancelados
+                  items:
+                    type: object
+                    required:
+                    - protestId
+                    properties:
+                      protestId:
+                        type: string
+                        format: uuid
+                        example: 0436436c-77a3-45c7-94af-527cb4dc80e2
+                        description: ID do protesto a ser cancelado
+                      feesResponsible:
+                        type: string
+                        enum:
+                        - PAYER
+                        - PAYEE
+                        example: PAYEE
+                        description: Responsável pelas custas do cancelamento
+                    title: CancelProtestBatchItem
+              title: CancelProtestBatchRequest
+      responses:
+        '202':
+          description: Solicitação de cancelamento de protestos em lote aceita para processamento
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: InvalidInputError
+                    description: Nome do erro.
+                title: ValidationErrorResponse
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:not-found-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: NotFoundError
+                    description: Nome do erro.
+                title: ErrorResponse
+      security:
+      - write:
+        - brn:btg:empresas:banking:collections
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Protest/cancel-protest-batch
+      summary: Cancel protest batch
+      x-summary-source: derived
+    post:
+      tags:
+      - Protest
+      description: 'Agenda o protesto de várias cobranças em lote. O processamento é assíncrono — a API retorna `202 Accepted` imediatamente e processa cada cobrança individualmente.
+
+
+        ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o Wiremock
+
+
+        > No sandbox este endpoint requer a utilização de Sandbox Headers
+
+
+        | Header | Descrição | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :--------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      operationId: createProtestScheduleBatch
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - collectionIds
+              properties:
+                collectionIds:
+                  type: array
+                  minItems: 1
+                  description: Lista de IDs das cobranças a serem protestadas
+                  items:
+                    type: string
+                    format: uuid
+                    example: 0436436c-77a3-45c7-94af-527cb4dc80e2
+              title: CreateProtestScheduleBatchRequest
+      responses:
+        '202':
+          description: Solicitação de agendamento de protestos em lote aceita para processamento
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: InvalidInputError
+                    description: Nome do erro.
+                title: ValidationErrorResponse
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:not-found-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: NotFoundError
+                    description: Nome do erro.
+                title: ErrorResponse
+      security:
+      - write:
+        - brn:btg:empresas:banking:collections
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Protest/create-protest-schedule-batch
+      summary: Create protest schedule batch
+      x-summary-source: derived
+  /{companyId}/banking/protest:
+    post:
+      tags:
+      - Protest
+      description: 'Agenda o protesto de uma cobrança. O protesto será iniciado na data de vencimento configurada na cobrança. A cobrança referenciada deve ser do tipo `BANKSLIP` e estar em um estado que permita protesto.
+
+
+        ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o Wiremock
+
+
+        > No sandbox este endpoint requer a utilização de Sandbox Headers
+
+
+        | Header | Descrição | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :--------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      operationId: createProtestSchedule
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - collectionId
+              properties:
+                collectionId:
+                  type: string
+                  format: uuid
+                  description: ID da cobrança a ser protestada
+                  example: 0436436c-77a3-45c7-94af-527cb4dc80e2
+              title: CreateProtestScheduleRequest
+      responses:
+        '201':
+          description: Protesto agendado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    example: 0436436c-77a3-45c7-94af-527cb4dc80e2
+                    description: ID do protesto
+                  collectionId:
+                    type: string
+                    format: uuid
+                    example: 1e5d83c8-92b5-4f39-827c-8c3d45a2b9f1
+                    description: ID da cobrança vinculada ao protesto
+                  status:
+                    type: string
+                    enum:
+                    - SCHEDULED
+                    - PROCESSING
+                    - CANCELED
+                    - SENT
+                    - CONFIRMED
+                    - FAILED
+                    - PAID
+                    - REMOVED
+                    - PROTESTED
+                    - SETTLED
+                    - FORFEITED
+                    - FORFEITING
+                    - REMOVING
+                    - REMOVE_FAILED
+                    - FORFEIT_FAILED
+                    example: SCHEDULED
+                    description: Status do protesto
+                  issueDate:
+                    type: string
+                    format: date
+                    example: '2026-03-17'
+                    description: Data de emissão do protesto
+                  collectionDueDate:
+                    type: string
+                    format: date
+                    example: '2026-04-17'
+                    description: Data de vencimento da cobrança
+                  collectionIssueDate:
+                    type: string
+                    format: date
+                    example: '2026-03-01'
+                    description: Data de emissão da cobrança
+                  origin:
+                    type: string
+                    enum:
+                    - APP
+                    - WEB
+                    - CNAB
+                    - AUTOMATION
+                    - AUTOMATION_RULE
+                    - DEVELOPERS
+                    example: DEVELOPERS
+                    description: Origem do protesto
+                  creditor:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: Empresa XYZ Ltda
+                        description: Nome do credor
+                      fantasyName:
+                        type: string
+                        example: XYZ Pagamentos
+                        description: Nome fantasia do credor
+                      taxId:
+                        type: string
+                        example: '37297902000141'
+                        description: CNPJ/CPF do credor
+                      personType:
+                        type: string
+                        enum:
+                        - PF
+                        - PJ
+                        example: PJ
+                        description: Tipo de pessoa do credor
+                      address:
+                        type: object
+                        properties:
+                          state:
+                            type: string
+                            example: SP
+                            description: Estado
+                          city:
+                            type: string
+                            example: São Paulo
+                            description: Cidade
+                          street:
+                            type: string
+                            example: Av. Brigadeiro Faria Lima
+                            description: Rua/Logradouro
+                          zipCode:
+                            type: string
+                            example: 04538-132
+                            description: CEP
+                          number:
+                            type: string
+                            example: '3477'
+                            description: Número
+                        title: Address
+                    title: Creditor
+                  debtor:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: João da Silva
+                        description: Nome do devedor
+                      taxId:
+                        type: string
+                        example: '12345678901'
+                        description: CNPJ/CPF do devedor
+                      personType:
+                        type: string
+                        enum:
+                        - PF
+                        - PJ
+                        example: PF
+                        description: Tipo de pessoa do devedor
+                      email:
+                        type: string
+                        example: joao@email.com
+                        description: E-mail do devedor
+                      phoneNumber:
+                        type: string
+                        example: '5511999999999'
+                        description: Telefone do devedor
+                      address:
+                        type: object
+                        properties:
+                          state:
+                            type: string
+                            example: SP
+                            description: Estado
+                          city:
+                            type: string
+                            example: São Paulo
+                            description: Cidade
+                          street:
+                            type: string
+                            example: Av. Brigadeiro Faria Lima
+                            description: Rua/Logradouro
+                          zipCode:
+                            type: string
+                            example: 04538-132
+                            description: CEP
+                          number:
+                            type: string
+                            example: '3477'
+                            description: Número
+                        title: Address
+                    title: Debtor
+                  documents:
+                    type: object
+                    properties:
+                      isCancellationDocumentAvailable:
+                        type: boolean
+                        example: false
+                        description: Indica se o documento de cancelamento está disponível
+                      isProtestDocumentAvailable:
+                        type: boolean
+                        example: true
+                        description: Indica se o documento de protesto está disponível
+                    title: ProtestDocuments
+                  correlationId:
+                    type: string
+                    example: abc123
+                    description: ID de correlação do protesto
+                  createdAt:
+                    type: string
+                    format: date-time
+                    example: '2026-03-17T10:00:00.000Z'
+                    description: Data de criação do protesto
+                  updatedAt:
+                    type: string
+                    format: date-time
+                    example: '2026-03-17T10:00:00.000Z'
+                    description: Data da última atualização do protesto
+                  paidAt:
+                    type:
+                    - string
+                    - 'null'
+                    format: date-time
+                    example: '2026-03-20T10:00:00.000Z'
+                    description: Data em que o protesto foi pago
+                  settledAt:
+                    type:
+                    - string
+                    - 'null'
+                    format: date-time
+                    example: '2026-03-25T10:00:00.000Z'
+                    description: Data em que o protesto foi baixado/liquidado
+                  canceledAt:
+                    type:
+                    - string
+                    - 'null'
+                    format: date-time
+                    example: '2026-03-18T10:00:00.000Z'
+                    description: Data em que o protesto foi cancelado
+                title: ProtestResponse
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: InvalidInputError
+                    description: Nome do erro.
+                title: ValidationErrorResponse
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:not-found-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: NotFoundError
+                    description: Nome do erro.
+                title: ErrorResponse
+      security:
+      - write:
+        - brn:btg:empresas:banking:collections
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Protest/create-protest-schedule
+      summary: Create protest schedule
+      x-summary-source: derived
+  /{companyId}/banking/protest/{id}/document:
+    get:
+      tags:
+      - Protest
+      description: 'Retorna o documento de protesto ou de cancelamento em base64. O documento é gerado pelo cartório e fica disponível após o protesto ser confirmado ou cancelado.
+
+
+        ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o Wiremock
+
+
+        > No sandbox este endpoint requer a utilização de Sandbox Headers
+
+
+        | Header | Descrição | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :--------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      operationId: getProtestDocument
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      - name: id
+        in: path
+        required: true
+        description: Identificador UUID do protesto
+        schema:
+          type: string
+          format: uuid
+          example: 0436436c-77a3-45c7-94af-527cb4dc80e2
+      - name: type
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - PROTEST
+          - CANCELLATION
+          example: PROTEST
+        description: Tipo do documento a ser obtido
+      responses:
+        '200':
+          description: Documento do protesto em base64
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  base64:
+                    type: string
+                    example: JVBERi0xLjQKMSAwIG9iago8PC...
+                    description: Conteúdo do documento em base64
+                title: ProtestDocumentResponse
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: InvalidInputError
+                    description: Nome do erro.
+                title: ValidationErrorResponse
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:not-found-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: NotFoundError
+                    description: Nome do erro.
+                title: ErrorResponse
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:not-found-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: NotFoundError
+                    description: Nome do erro.
+                title: ErrorResponse
+      security:
+      - read:
+        - brn:btg:empresas:banking:collections
+        - brn:btg:empresas:banking:collections.read-only
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Protest/get-protest-document
+      summary: Get protest document
+      x-summary-source: derived
+components:
+  securitySchemes:
+    write:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+          tokenUrl: https://id.btgpactual.com/oauth2/token
+          scopes:
+            brn:btg:empresas:banking:collections: Permite emitir, consultar e alterar cobranças e protestos
+    read:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+          tokenUrl: https://id.btgpactual.com/oauth2/token
+          scopes:
+            brn:btg:empresas:banking:collections: Permite emitir, consultar e alterar cobranças e protestos
+            brn:btg:empresas:banking:collections.read-only: Permite apenas consultar cobranças e protestos
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/1a0e8101.57739733.js
+  - https://developers.empresas.btgpactual.com/assets/js/8491f5a8.9b54ca32.js
+  - https://developers.empresas.btgpactual.com/assets/js/ada2621d.25bc1eed.js
+  - https://developers.empresas.btgpactual.com/assets/js/2f36e81f.7be58cd7.js
+  - https://developers.empresas.btgpactual.com/assets/js/c910bcfa.878af32f.js
+  - https://developers.empresas.btgpactual.com/assets/js/d3ad1727.72646d82.js

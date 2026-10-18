@@ -1,0 +1,4054 @@
+# x-archived-from: btg-pactual-banking-payroll-openapi.yml
+# x-archived-on: 2026-10-18
+openapi: 3.0.3
+info:
+  title: Banking - Payroll
+  version: v1
+  description: API para gestão de folha de pagamentos
+  termsOfService: https://www.btgpactual.com/empresas/termos-e-politicas/
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com
+  description: Sandbox
+- url: https://api.empresas.btgpactual.com
+  description: Produção
+paths:
+  /{companyId}/banking/payroll/payments/{requestId}/cancel:
+    post:
+      tags:
+      - Pagamentos
+      description: 'Cancela um lote de pagamento identificado pelo `requestId`. Somente lotes nos status `submitted` ou `pending_approval` podem ser cancelados.
+
+
+        ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o [Wiremock](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-com-wiremock-v2)
+
+
+        > No sandbox este endpoint requer a utilização de [Sandbox Headers](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-headers)
+
+
+        | Header     | Descrição                            | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      operationId: cancelPaymentBatch
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: requestId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+                  nullable: true
+              additionalProperties: false
+              title: CancelPaymentRequest
+          text/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+                  nullable: true
+              additionalProperties: false
+              title: CancelPaymentRequest
+          application/*+json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+                  nullable: true
+              additionalProperties: false
+              title: CancelPaymentRequest
+      responses:
+        '200':
+          description: OK
+      security:
+      - write:
+        - brn:btg:empresas:banking:payroll
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Payroll/cancel-payment-batch
+  /{companyId}/banking/payroll/employees/{employeeTaxId}/deactivate:
+    post:
+      tags:
+      - Colaboradores
+      description: 'Desliga (inativa) um colaborador ativo. Somente colaboradores com status `active` podem ser desligados. Após o desligamento o colaborador passa para o status `inactive`.
+
+
+        ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o [Wiremock](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-com-wiremock-v2)
+
+
+        > No sandbox este endpoint requer a utilização de [Sandbox Headers](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-headers)
+
+
+        | Header     | Descrição                            | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      operationId: deactivateEmployee
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: employeeTaxId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                terminationDate:
+                  type: string
+                  nullable: true
+                reason:
+                  type: string
+                  nullable: true
+              additionalProperties: false
+              title: DeactivateRequestDto
+          text/json:
+            schema:
+              type: object
+              properties:
+                terminationDate:
+                  type: string
+                  nullable: true
+                reason:
+                  type: string
+                  nullable: true
+              additionalProperties: false
+              title: DeactivateRequestDto
+          application/*+json:
+            schema:
+              type: object
+              properties:
+                terminationDate:
+                  type: string
+                  nullable: true
+                reason:
+                  type: string
+                  nullable: true
+              additionalProperties: false
+              title: DeactivateRequestDto
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: object
+                properties:
+                  employeeId:
+                    type: string
+                    nullable: true
+                  status:
+                    type: string
+                    nullable: true
+                  terminationDate:
+                    type: string
+                    nullable: true
+                  requestedAt:
+                    type: string
+                    format: date-time
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            nullable: true
+                          method:
+                            type: string
+                            nullable: true
+                          rel:
+                            type: string
+                            nullable: true
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                      reactivate:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            nullable: true
+                          method:
+                            type: string
+                            nullable: true
+                          rel:
+                            type: string
+                            nullable: true
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                    additionalProperties: false
+                    title: DeactivateResponseLinksDto
+                additionalProperties: false
+                title: DeactivateResponseDto
+            application/json:
+              schema:
+                type: object
+                properties:
+                  employeeId:
+                    type: string
+                    nullable: true
+                  status:
+                    type: string
+                    nullable: true
+                  terminationDate:
+                    type: string
+                    nullable: true
+                  requestedAt:
+                    type: string
+                    format: date-time
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            nullable: true
+                          method:
+                            type: string
+                            nullable: true
+                          rel:
+                            type: string
+                            nullable: true
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                      reactivate:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            nullable: true
+                          method:
+                            type: string
+                            nullable: true
+                          rel:
+                            type: string
+                            nullable: true
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                    additionalProperties: false
+                    title: DeactivateResponseLinksDto
+                additionalProperties: false
+                title: DeactivateResponseDto
+            text/json:
+              schema:
+                type: object
+                properties:
+                  employeeId:
+                    type: string
+                    nullable: true
+                  status:
+                    type: string
+                    nullable: true
+                  terminationDate:
+                    type: string
+                    nullable: true
+                  requestedAt:
+                    type: string
+                    format: date-time
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            nullable: true
+                          method:
+                            type: string
+                            nullable: true
+                          rel:
+                            type: string
+                            nullable: true
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                      reactivate:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            nullable: true
+                          method:
+                            type: string
+                            nullable: true
+                          rel:
+                            type: string
+                            nullable: true
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                    additionalProperties: false
+                    title: DeactivateResponseLinksDto
+                additionalProperties: false
+                title: DeactivateResponseDto
+      security:
+      - write:
+        - brn:btg:empresas:banking:payroll
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Payroll/deactivate-employee
+  /{companyId}/banking/payroll/employees/{employeeTaxId}:
+    get:
+      tags:
+      - Colaboradores
+      description: 'Retorna o detalhe completo de um colaborador da empresa identificado pelo CPF, incluindo dados cadastrais, status, tipo de contrato e informações de conta bancária.
+
+
+        ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o [Wiremock](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-com-wiremock-v2)
+
+
+        > No sandbox este endpoint requer a utilização de [Sandbox Headers](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-headers)
+
+
+        | Header     | Descrição                            | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      operationId: getEmployee
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: employeeTaxId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: object
+                properties:
+                  employeeId:
+                    type: string
+                    nullable: true
+                  name:
+                    type: string
+                    nullable: true
+                  taxId:
+                    type: string
+                    nullable: true
+                  status:
+                    type: string
+                    nullable: true
+                  contractType:
+                    type: string
+                    nullable: true
+                  portability:
+                    type: boolean
+                    nullable: true
+                  admissionDate:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  terminationDate:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  suspended:
+                    type: boolean
+                  suspensionEndDate:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  accounts:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          nullable: true
+                        status:
+                          type: string
+                          nullable: true
+                        agency:
+                          type: string
+                          nullable: true
+                        number:
+                          type: string
+                          nullable: true
+                      additionalProperties: false
+                      title: PayrollEmployeeDetailAccountDto
+                    nullable: true
+                  company:
+                    type: object
+                    properties:
+                      cnpj:
+                        type: string
+                        nullable: true
+                      name:
+                        type: string
+                        nullable: true
+                    additionalProperties: false
+                    title: PayrollEmployeeDetailCompanyDto
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            nullable: true
+                          method:
+                            type: string
+                            nullable: true
+                          rel:
+                            type: string
+                            nullable: true
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                      deactivate:
+                        nullable: true
+                        allOf:
+                        - type: object
+                          properties:
+                            href:
+                              type: string
+                              nullable: true
+                            method:
+                              type: string
+                              nullable: true
+                            rel:
+                              type: string
+                              nullable: true
+                          additionalProperties: false
+                          title: PayrollEmployeeLinkDto
+                      reactivate:
+                        nullable: true
+                        allOf:
+                        - type: object
+                          properties:
+                            href:
+                              type: string
+                              nullable: true
+                            method:
+                              type: string
+                              nullable: true
+                            rel:
+                              type: string
+                              nullable: true
+                          additionalProperties: false
+                          title: PayrollEmployeeLinkDto
+                    additionalProperties: false
+                    title: PayrollEmployeeDetailLinksDto
+                additionalProperties: false
+                title: PayrollEmployeeDetailResponseDto
+            application/json:
+              schema:
+                type: object
+                properties:
+                  employeeId:
+                    type: string
+                    nullable: true
+                  name:
+                    type: string
+                    nullable: true
+                  taxId:
+                    type: string
+                    nullable: true
+                  status:
+                    type: string
+                    nullable: true
+                  contractType:
+                    type: string
+                    nullable: true
+                  portability:
+                    type: boolean
+                    nullable: true
+                  admissionDate:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  terminationDate:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  suspended:
+                    type: boolean
+                  suspensionEndDate:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  accounts:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          nullable: true
+                        status:
+                          type: string
+                          nullable: true
+                        agency:
+                          type: string
+                          nullable: true
+                        number:
+                          type: string
+                          nullable: true
+                      additionalProperties: false
+                      title: PayrollEmployeeDetailAccountDto
+                    nullable: true
+                  company:
+                    type: object
+                    properties:
+                      cnpj:
+                        type: string
+                        nullable: true
+                      name:
+                        type: string
+                        nullable: true
+                    additionalProperties: false
+                    title: PayrollEmployeeDetailCompanyDto
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            nullable: true
+                          method:
+                            type: string
+                            nullable: true
+                          rel:
+                            type: string
+                            nullable: true
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                      deactivate:
+                        nullable: true
+                        allOf:
+                        - type: object
+                          properties:
+                            href:
+                              type: string
+                              nullable: true
+                            method:
+                              type: string
+                              nullable: true
+                            rel:
+                              type: string
+                              nullable: true
+                          additionalProperties: false
+                          title: PayrollEmployeeLinkDto
+                      reactivate:
+                        nullable: true
+                        allOf:
+                        - type: object
+                          properties:
+                            href:
+                              type: string
+                              nullable: true
+                            method:
+                              type: string
+                              nullable: true
+                            rel:
+                              type: string
+                              nullable: true
+                          additionalProperties: false
+                          title: PayrollEmployeeLinkDto
+                    additionalProperties: false
+                    title: PayrollEmployeeDetailLinksDto
+                additionalProperties: false
+                title: PayrollEmployeeDetailResponseDto
+            text/json:
+              schema:
+                type: object
+                properties:
+                  employeeId:
+                    type: string
+                    nullable: true
+                  name:
+                    type: string
+                    nullable: true
+                  taxId:
+                    type: string
+                    nullable: true
+                  status:
+                    type: string
+                    nullable: true
+                  contractType:
+                    type: string
+                    nullable: true
+                  portability:
+                    type: boolean
+                    nullable: true
+                  admissionDate:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  terminationDate:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  suspended:
+                    type: boolean
+                  suspensionEndDate:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  accounts:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          nullable: true
+                        status:
+                          type: string
+                          nullable: true
+                        agency:
+                          type: string
+                          nullable: true
+                        number:
+                          type: string
+                          nullable: true
+                      additionalProperties: false
+                      title: PayrollEmployeeDetailAccountDto
+                    nullable: true
+                  company:
+                    type: object
+                    properties:
+                      cnpj:
+                        type: string
+                        nullable: true
+                      name:
+                        type: string
+                        nullable: true
+                    additionalProperties: false
+                    title: PayrollEmployeeDetailCompanyDto
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            nullable: true
+                          method:
+                            type: string
+                            nullable: true
+                          rel:
+                            type: string
+                            nullable: true
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                      deactivate:
+                        nullable: true
+                        allOf:
+                        - type: object
+                          properties:
+                            href:
+                              type: string
+                              nullable: true
+                            method:
+                              type: string
+                              nullable: true
+                            rel:
+                              type: string
+                              nullable: true
+                          additionalProperties: false
+                          title: PayrollEmployeeLinkDto
+                      reactivate:
+                        nullable: true
+                        allOf:
+                        - type: object
+                          properties:
+                            href:
+                              type: string
+                              nullable: true
+                            method:
+                              type: string
+                              nullable: true
+                            rel:
+                              type: string
+                              nullable: true
+                          additionalProperties: false
+                          title: PayrollEmployeeLinkDto
+                    additionalProperties: false
+                    title: PayrollEmployeeDetailLinksDto
+                additionalProperties: false
+                title: PayrollEmployeeDetailResponseDto
+      security:
+      - read:
+        - brn:btg:empresas:banking:payroll
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Payroll/get-employee
+  /{companyId}/banking/payroll/employees/{employeeTaxId}/account:
+    get:
+      tags:
+      - Colaboradores
+      description: 'Retorna o estado da conta bancária de um colaborador identificado pelo CPF.
+
+
+        **Parâmetro `bank`:**
+
+
+        | Valor | Comportamento |
+
+        |---|---|
+
+        | `BTG` (padrão) | Consulta a conta BTG do colaborador |
+
+        | `PAN` | Fallback para colaboradores sem conta BTG ativa |
+
+
+        Se a requisição sem `bank` retornar `404`, tente com `?bank=PAN`. Colaboradores no início do onboarding podem ainda não ter conta BTG ativa.
+
+
+        ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o [Wiremock](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-com-wiremock-v2)
+
+
+        > No sandbox este endpoint requer a utilização de [Sandbox Headers](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-headers)
+
+
+        | Header     | Descrição                            | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      operationId: getEmployeeAccount
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: employeeTaxId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: bank
+        in: query
+        schema:
+          type: string
+          default: BTG
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: object
+                properties:
+                  employeeId:
+                    type: string
+                    nullable: true
+                  accountType:
+                    type: string
+                    nullable: true
+                  status:
+                    type: string
+                    nullable: true
+                  errors:
+                    type: string
+                    nullable: true
+                  onboardingFinalizado:
+                    type: boolean
+                  onboardingFinishedAt:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  bank:
+                    type: string
+                    nullable: true
+                  agency:
+                    type: string
+                    nullable: true
+                  number:
+                    type: string
+                    nullable: true
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            nullable: true
+                          method:
+                            type: string
+                            nullable: true
+                          rel:
+                            type: string
+                            nullable: true
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                      employee:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            nullable: true
+                          method:
+                            type: string
+                            nullable: true
+                          rel:
+                            type: string
+                            nullable: true
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                    additionalProperties: false
+                    title: PayrollEmployeeAccountDetailLinksDto
+                additionalProperties: false
+                title: PayrollEmployeeAccountDetailResponseDto
+            application/json:
+              schema:
+                type: object
+                properties:
+                  employeeId:
+                    type: string
+                    nullable: true
+                  accountType:
+                    type: string
+                    nullable: true
+                  status:
+                    type: string
+                    nullable: true
+                  errors:
+                    type: string
+                    nullable: true
+                  onboardingFinalizado:
+                    type: boolean
+                  onboardingFinishedAt:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  bank:
+                    type: string
+                    nullable: true
+                  agency:
+                    type: string
+                    nullable: true
+                  number:
+                    type: string
+                    nullable: true
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            nullable: true
+                          method:
+                            type: string
+                            nullable: true
+                          rel:
+                            type: string
+                            nullable: true
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                      employee:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            nullable: true
+                          method:
+                            type: string
+                            nullable: true
+                          rel:
+                            type: string
+                            nullable: true
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                    additionalProperties: false
+                    title: PayrollEmployeeAccountDetailLinksDto
+                additionalProperties: false
+                title: PayrollEmployeeAccountDetailResponseDto
+            text/json:
+              schema:
+                type: object
+                properties:
+                  employeeId:
+                    type: string
+                    nullable: true
+                  accountType:
+                    type: string
+                    nullable: true
+                  status:
+                    type: string
+                    nullable: true
+                  errors:
+                    type: string
+                    nullable: true
+                  onboardingFinalizado:
+                    type: boolean
+                  onboardingFinishedAt:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  bank:
+                    type: string
+                    nullable: true
+                  agency:
+                    type: string
+                    nullable: true
+                  number:
+                    type: string
+                    nullable: true
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            nullable: true
+                          method:
+                            type: string
+                            nullable: true
+                          rel:
+                            type: string
+                            nullable: true
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                      employee:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            nullable: true
+                          method:
+                            type: string
+                            nullable: true
+                          rel:
+                            type: string
+                            nullable: true
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                    additionalProperties: false
+                    title: PayrollEmployeeAccountDetailLinksDto
+                additionalProperties: false
+                title: PayrollEmployeeAccountDetailResponseDto
+      security:
+      - read:
+        - brn:btg:empresas:banking:payroll
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Payroll/get-employee-account
+  /{companyId}/banking/payroll/payments/{paymentId}:
+    get:
+      tags:
+      - Pagamentos
+      description: 'Retorna o detalhe completo de um lote de pagamento, incluindo status individual de cada item.
+
+
+        **Estados terminais:** `settled` · `failed` · `cancelled`
+
+
+        ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o [Wiremock](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-com-wiremock-v2)
+
+
+        > No sandbox este endpoint requer a utilização de [Sandbox Headers](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-headers)
+
+
+        | Header     | Descrição                            | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      operationId: getPaymentBatch
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: paymentId
+        in: path
+        description: Identificador único do lote de pagamento
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: companyTaxIds
+        in: query
+        description: CNPJs das empresas (14 dígitos, sem formatação). Aceita múltiplos valores.
+        schema:
+          type: array
+          items:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: object
+                properties:
+                  paymentId:
+                    type: integer
+                    format: int32
+                  description:
+                    type: string
+                    nullable: true
+                  status:
+                    type: string
+                    nullable: true
+                  debitParty:
+                    type: object
+                    properties:
+                      branchCode:
+                        type: string
+                        nullable: true
+                      number:
+                        type: string
+                        nullable: true
+                    additionalProperties: false
+                    title: PayrollBatchDetailDebitPartyDto
+                  submittedAt:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  approvedAt:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  settledAt:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  cancelledAt:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  scheduledDate:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  totalEmployees:
+                    type: integer
+                    format: int32
+                  totalAmount:
+                    type: number
+                    format: double
+                  settledCount:
+                    type: integer
+                    format: int32
+                  failedCount:
+                    type: integer
+                    format: int32
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        employeeId:
+                          type: string
+                          nullable: true
+                        name:
+                          type: string
+                          nullable: true
+                        taxId:
+                          type: string
+                          nullable: true
+                        line:
+                          type: integer
+                          format: int32
+                          nullable: true
+                        cnab240SegmentATransactionId:
+                          type: integer
+                          format: int32
+                          nullable: true
+                        paymentType:
+                          type: string
+                          nullable: true
+                        netAmount:
+                          type: number
+                          format: double
+                        status:
+                          type: string
+                          nullable: true
+                        transactionStatus:
+                          type: string
+                          nullable: true
+                        transactionError:
+                          type: string
+                          nullable: true
+                        settledAt:
+                          type: string
+                          format: date-time
+                          nullable: true
+                        failureReason:
+                          type: string
+                          nullable: true
+                      additionalProperties: false
+                      title: PayrollBatchDetailItemDto
+                    nullable: true
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            nullable: true
+                        additionalProperties: false
+                        title: PayrollLinkDto
+                      cancel:
+                        nullable: true
+                        allOf:
+                        - type: object
+                          properties:
+                            href:
+                              type: string
+                              nullable: true
+                          additionalProperties: false
+                          title: PayrollLinkDto
+                    additionalProperties: false
+                    title: PayrollBatchDetailLinksDto
+                additionalProperties: false
+                title: PayrollBatchDetailDto
+            application/json:
+              schema:
+                type: object
+                properties:
+                  paymentId:
+                    type: integer
+                    format: int32
+                  description:
+                    type: string
+                    nullable: true
+                  status:
+                    type: string
+                    nullable: true
+                  debitParty:
+                    type: object
+                    properties:
+                      branchCode:
+                        type: string
+                        nullable: true
+                      number:
+                        type: string
+                        nullable: true
+                    additionalProperties: false
+                    title: PayrollBatchDetailDebitPartyDto
+                  submittedAt:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  approvedAt:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  settledAt:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  cancelledAt:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  scheduledDate:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  totalEmployees:
+                    type: integer
+                    format: int32
+                  totalAmount:
+                    type: number
+                    format: double
+                  settledCount:
+                    type: integer
+                    format: int32
+                  failedCount:
+                    type: integer
+                    format: int32
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        employeeId:
+                          type: string
+                          nullable: true
+                        name:
+                          type: string
+                          nullable: true
+                        taxId:
+                          type: string
+                          nullable: true
+                        line:
+                          type: integer
+                          format: int32
+                          nullable: true
+                        cnab240SegmentATransactionId:
+                          type: integer
+                          format: int32
+                          nullable: true
+                        paymentType:
+                          type: string
+                          nullable: true
+                        netAmount:
+                          type: number
+                          format: double
+                        status:
+                          type: string
+                          nullable: true
+                        transactionStatus:
+                          type: string
+                          nullable: true
+                        transactionError:
+                          type: string
+                          nullable: true
+                        settledAt:
+                          type: string
+                          format: date-time
+                          nullable: true
+                        failureReason:
+                          type: string
+                          nullable: true
+                      additionalProperties: false
+                      title: PayrollBatchDetailItemDto
+                    nullable: true
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            nullable: true
+                        additionalProperties: false
+                        title: PayrollLinkDto
+                      cancel:
+                        nullable: true
+                        allOf:
+                        - type: object
+                          properties:
+                            href:
+                              type: string
+                              nullable: true
+                          additionalProperties: false
+                          title: PayrollLinkDto
+                    additionalProperties: false
+                    title: PayrollBatchDetailLinksDto
+                additionalProperties: false
+                title: PayrollBatchDetailDto
+            text/json:
+              schema:
+                type: object
+                properties:
+                  paymentId:
+                    type: integer
+                    format: int32
+                  description:
+                    type: string
+                    nullable: true
+                  status:
+                    type: string
+                    nullable: true
+                  debitParty:
+                    type: object
+                    properties:
+                      branchCode:
+                        type: string
+                        nullable: true
+                      number:
+                        type: string
+                        nullable: true
+                    additionalProperties: false
+                    title: PayrollBatchDetailDebitPartyDto
+                  submittedAt:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  approvedAt:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  settledAt:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  cancelledAt:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  scheduledDate:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  totalEmployees:
+                    type: integer
+                    format: int32
+                  totalAmount:
+                    type: number
+                    format: double
+                  settledCount:
+                    type: integer
+                    format: int32
+                  failedCount:
+                    type: integer
+                    format: int32
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        employeeId:
+                          type: string
+                          nullable: true
+                        name:
+                          type: string
+                          nullable: true
+                        taxId:
+                          type: string
+                          nullable: true
+                        line:
+                          type: integer
+                          format: int32
+                          nullable: true
+                        cnab240SegmentATransactionId:
+                          type: integer
+                          format: int32
+                          nullable: true
+                        paymentType:
+                          type: string
+                          nullable: true
+                        netAmount:
+                          type: number
+                          format: double
+                        status:
+                          type: string
+                          nullable: true
+                        transactionStatus:
+                          type: string
+                          nullable: true
+                        transactionError:
+                          type: string
+                          nullable: true
+                        settledAt:
+                          type: string
+                          format: date-time
+                          nullable: true
+                        failureReason:
+                          type: string
+                          nullable: true
+                      additionalProperties: false
+                      title: PayrollBatchDetailItemDto
+                    nullable: true
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            nullable: true
+                        additionalProperties: false
+                        title: PayrollLinkDto
+                      cancel:
+                        nullable: true
+                        allOf:
+                        - type: object
+                          properties:
+                            href:
+                              type: string
+                              nullable: true
+                          additionalProperties: false
+                          title: PayrollLinkDto
+                    additionalProperties: false
+                    title: PayrollBatchDetailLinksDto
+                additionalProperties: false
+                title: PayrollBatchDetailDto
+      security:
+      - read:
+        - brn:btg:empresas:banking:payroll
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Payroll/get-payment-batch
+  /{companyId}/banking/payroll/employees:
+    get:
+      tags:
+      - Colaboradores
+      description: 'Retorna lista paginada de colaboradores das empresas informadas com filtros opcionais. Paginação por cursor: use o valor de `_links.next.href` para navegar entre páginas.
+
+
+        **Status do colaborador:**
+
+
+        | Status | Significado |
+
+        |---|---|
+
+        | `active` | Colaborador ativo com conta BTG |
+
+        | `pending` | Onboarding em andamento, conta ainda não ativada |
+
+        | `suspended` | Conta suspensa |
+
+        | `inactive` | Colaborador desligado |
+
+
+        ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o [Wiremock](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-com-wiremock-v2)
+
+
+        > No sandbox este endpoint requer a utilização de [Sandbox Headers](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-headers)
+
+
+        | Header     | Descrição                            | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      operationId: listEmployees
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: companyTaxIds
+        in: query
+        schema:
+          type: array
+          items:
+            type: string
+      - name: pageSize
+        in: query
+        schema:
+          type: integer
+          format: int32
+          default: 20
+      - name: cursor
+        in: query
+        schema:
+          type: string
+      - name: status
+        in: query
+        schema:
+          type: string
+      - name: accountType
+        in: query
+        schema:
+          type: string
+      - name: name
+        in: query
+        schema:
+          type: string
+      - name: employeeTaxId
+        in: query
+        schema:
+          type: string
+      - name: branch
+        in: query
+        schema:
+          type: string
+      - name: accountNumber
+        in: query
+        schema:
+          type: string
+      - name: portability
+        in: query
+        schema:
+          type: boolean
+      - name: contractType
+        in: query
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          nullable: true
+                        taxId:
+                          type: string
+                          nullable: true
+                        personType:
+                          type: string
+                          nullable: true
+                        status:
+                          type: string
+                          nullable: true
+                        isActive:
+                          type: boolean
+                        onboardingCompleted:
+                          type: string
+                          nullable: true
+                        isSuspended:
+                          type: boolean
+                        portability:
+                          type: boolean
+                          nullable: true
+                        admissionDate:
+                          type: string
+                          format: date-time
+                          nullable: true
+                        terminationDate:
+                          type: string
+                          format: date-time
+                          nullable: true
+                        company:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              nullable: true
+                            taxId:
+                              type: string
+                              nullable: true
+                          additionalProperties: false
+                          title: PayrollEmployeeListCompanyDto
+                        accounts:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              type:
+                                type: string
+                                nullable: true
+                              status:
+                                type: string
+                                nullable: true
+                              bankCode:
+                                type: string
+                                nullable: true
+                              branch:
+                                type: string
+                                nullable: true
+                              number:
+                                type: string
+                                nullable: true
+                            additionalProperties: false
+                            title: PayrollEmployeeListAccountDto
+                          nullable: true
+                        links:
+                          type: object
+                          properties:
+                            self:
+                              type: object
+                              properties:
+                                href:
+                                  type: string
+                                  nullable: true
+                                method:
+                                  type: string
+                                  nullable: true
+                                rel:
+                                  type: string
+                                  nullable: true
+                              additionalProperties: false
+                              title: PayrollEmployeeLinkDto
+                          additionalProperties: false
+                          title: PayrollEmployeeListItemLinksDto
+                      additionalProperties: false
+                      title: PayrollEmployeeListItemDto
+                    nullable: true
+                  links:
+                    type: object
+                    properties:
+                      next:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            nullable: true
+                          method:
+                            type: string
+                            nullable: true
+                          rel:
+                            type: string
+                            nullable: true
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                        nullable: true
+                      previous:
+                        nullable: true
+                        allOf:
+                        - type: object
+                          properties:
+                            href:
+                              type: string
+                              nullable: true
+                            method:
+                              type: string
+                              nullable: true
+                            rel:
+                              type: string
+                              nullable: true
+                          additionalProperties: false
+                          title: PayrollEmployeeLinkDto
+                    additionalProperties: false
+                    title: PayrollEmployeeListPaginationLinksDto
+                additionalProperties: false
+                title: PayrollEmployeeListResponseDto
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          nullable: true
+                        taxId:
+                          type: string
+                          nullable: true
+                        personType:
+                          type: string
+                          nullable: true
+                        status:
+                          type: string
+                          nullable: true
+                        isActive:
+                          type: boolean
+                        onboardingCompleted:
+                          type: string
+                          nullable: true
+                        isSuspended:
+                          type: boolean
+                        portability:
+                          type: boolean
+                          nullable: true
+                        admissionDate:
+                          type: string
+                          format: date-time
+                          nullable: true
+                        terminationDate:
+                          type: string
+                          format: date-time
+                          nullable: true
+                        company:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              nullable: true
+                            taxId:
+                              type: string
+                              nullable: true
+                          additionalProperties: false
+                          title: PayrollEmployeeListCompanyDto
+                        accounts:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              type:
+                                type: string
+                                nullable: true
+                              status:
+                                type: string
+                                nullable: true
+                              bankCode:
+                                type: string
+                                nullable: true
+                              branch:
+                                type: string
+                                nullable: true
+                              number:
+                                type: string
+                                nullable: true
+                            additionalProperties: false
+                            title: PayrollEmployeeListAccountDto
+                          nullable: true
+                        links:
+                          type: object
+                          properties:
+                            self:
+                              type: object
+                              properties:
+                                href:
+                                  type: string
+                                  nullable: true
+                                method:
+                                  type: string
+                                  nullable: true
+                                rel:
+                                  type: string
+                                  nullable: true
+                              additionalProperties: false
+                              title: PayrollEmployeeLinkDto
+                          additionalProperties: false
+                          title: PayrollEmployeeListItemLinksDto
+                      additionalProperties: false
+                      title: PayrollEmployeeListItemDto
+                    nullable: true
+                  links:
+                    type: object
+                    properties:
+                      next:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            nullable: true
+                          method:
+                            type: string
+                            nullable: true
+                          rel:
+                            type: string
+                            nullable: true
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                        nullable: true
+                      previous:
+                        nullable: true
+                        allOf:
+                        - type: object
+                          properties:
+                            href:
+                              type: string
+                              nullable: true
+                            method:
+                              type: string
+                              nullable: true
+                            rel:
+                              type: string
+                              nullable: true
+                          additionalProperties: false
+                          title: PayrollEmployeeLinkDto
+                    additionalProperties: false
+                    title: PayrollEmployeeListPaginationLinksDto
+                additionalProperties: false
+                title: PayrollEmployeeListResponseDto
+            text/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          nullable: true
+                        taxId:
+                          type: string
+                          nullable: true
+                        personType:
+                          type: string
+                          nullable: true
+                        status:
+                          type: string
+                          nullable: true
+                        isActive:
+                          type: boolean
+                        onboardingCompleted:
+                          type: string
+                          nullable: true
+                        isSuspended:
+                          type: boolean
+                        portability:
+                          type: boolean
+                          nullable: true
+                        admissionDate:
+                          type: string
+                          format: date-time
+                          nullable: true
+                        terminationDate:
+                          type: string
+                          format: date-time
+                          nullable: true
+                        company:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              nullable: true
+                            taxId:
+                              type: string
+                              nullable: true
+                          additionalProperties: false
+                          title: PayrollEmployeeListCompanyDto
+                        accounts:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              type:
+                                type: string
+                                nullable: true
+                              status:
+                                type: string
+                                nullable: true
+                              bankCode:
+                                type: string
+                                nullable: true
+                              branch:
+                                type: string
+                                nullable: true
+                              number:
+                                type: string
+                                nullable: true
+                            additionalProperties: false
+                            title: PayrollEmployeeListAccountDto
+                          nullable: true
+                        links:
+                          type: object
+                          properties:
+                            self:
+                              type: object
+                              properties:
+                                href:
+                                  type: string
+                                  nullable: true
+                                method:
+                                  type: string
+                                  nullable: true
+                                rel:
+                                  type: string
+                                  nullable: true
+                              additionalProperties: false
+                              title: PayrollEmployeeLinkDto
+                          additionalProperties: false
+                          title: PayrollEmployeeListItemLinksDto
+                      additionalProperties: false
+                      title: PayrollEmployeeListItemDto
+                    nullable: true
+                  links:
+                    type: object
+                    properties:
+                      next:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            nullable: true
+                          method:
+                            type: string
+                            nullable: true
+                          rel:
+                            type: string
+                            nullable: true
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                        nullable: true
+                      previous:
+                        nullable: true
+                        allOf:
+                        - type: object
+                          properties:
+                            href:
+                              type: string
+                              nullable: true
+                            method:
+                              type: string
+                              nullable: true
+                            rel:
+                              type: string
+                              nullable: true
+                          additionalProperties: false
+                          title: PayrollEmployeeLinkDto
+                    additionalProperties: false
+                    title: PayrollEmployeeListPaginationLinksDto
+                additionalProperties: false
+                title: PayrollEmployeeListResponseDto
+      security:
+      - read:
+        - brn:btg:empresas:banking:payroll
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Payroll/list-employees
+  /{companyId}/banking/payroll/onboarding/issuers:
+    get:
+      tags:
+      - Onboarding
+      description: 'Retorna a lista de emissores de documento de identidade disponíveis para onboarding. Use o campo `id` de cada emissor como valor de `issuingAuthority` ao cadastrar colaboradores via `POST /{companyId}/banking/payroll/onboarding/employees`.
+
+
+        ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o [Wiremock](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-com-wiremock-v2)
+
+
+        > No sandbox este endpoint requer a utilização de [Sandbox Headers](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-headers)
+
+
+        | Header     | Descrição                            | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      operationId: listIssuers
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      nullable: true
+                    name:
+                      type: string
+                      nullable: true
+                  additionalProperties: false
+                  title: IssuerResponse
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      nullable: true
+                    name:
+                      type: string
+                      nullable: true
+                  additionalProperties: false
+                  title: IssuerResponse
+            text/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      nullable: true
+                    name:
+                      type: string
+                      nullable: true
+                  additionalProperties: false
+                  title: IssuerResponse
+        '500':
+          description: Server Error
+          content:
+            text/plain:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    nullable: true
+                  title:
+                    type: string
+                    nullable: true
+                  status:
+                    type: integer
+                    format: int32
+                  detail:
+                    type: string
+                    nullable: true
+                  invalidParams:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          nullable: true
+                        reason:
+                          type: string
+                          nullable: true
+                        value:
+                          type: string
+                          nullable: true
+                      additionalProperties: false
+                      title: PayrollInvalidParam
+                    nullable: true
+                additionalProperties: false
+                title: PayrollProblemDetails
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    nullable: true
+                  title:
+                    type: string
+                    nullable: true
+                  status:
+                    type: integer
+                    format: int32
+                  detail:
+                    type: string
+                    nullable: true
+                  invalidParams:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          nullable: true
+                        reason:
+                          type: string
+                          nullable: true
+                        value:
+                          type: string
+                          nullable: true
+                      additionalProperties: false
+                      title: PayrollInvalidParam
+                    nullable: true
+                additionalProperties: false
+                title: PayrollProblemDetails
+            text/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    nullable: true
+                  title:
+                    type: string
+                    nullable: true
+                  status:
+                    type: integer
+                    format: int32
+                  detail:
+                    type: string
+                    nullable: true
+                  invalidParams:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          nullable: true
+                        reason:
+                          type: string
+                          nullable: true
+                        value:
+                          type: string
+                          nullable: true
+                      additionalProperties: false
+                      title: PayrollInvalidParam
+                    nullable: true
+                additionalProperties: false
+                title: PayrollProblemDetails
+      security:
+      - read:
+        - brn:btg:empresas:banking:payroll
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Payroll/list-issuers
+  /{companyId}/banking/payroll/payments:
+    get:
+      tags:
+      - Pagamentos
+      description: 'Retorna lista paginada dos lotes de pagamento da empresa com filtros opcionais. Paginação por cursor: use o valor de `_links.next.href` para navegar entre páginas.
+
+
+        **Nota:** A listagem aplica filtro implícito por janela de tempo. Pagamentos fora da janela padrão podem não aparecer mesmo após liquidação. Use `startDate` e `endDate` para ampliar o período de busca.
+
+
+        ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o [Wiremock](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-com-wiremock-v2)
+
+
+        > No sandbox este endpoint requer a utilização de [Sandbox Headers](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-headers)
+
+
+        | Header     | Descrição                            | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      operationId: listPayments
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: companyTaxIds
+        in: query
+        description: CNPJs das empresas (14 dígitos, sem formatação). Aceita múltiplos valores.
+        schema:
+          type: array
+          items:
+            type: string
+      - name: pageSize
+        in: query
+        description: Quantidade de itens por página (default 20, máximo 50)
+        schema:
+          type: integer
+          format: int32
+          default: 20
+      - name: cursor
+        in: query
+        description: Token opaco de cursor para paginação. Ausente na primeira requisição. Extrair de _links.next.href. Não construir manualmente.
+        schema:
+          type: string
+      - name: startDate
+        in: query
+        description: Data de início do filtro (YYYY-MM-DD)
+        schema:
+          type: string
+          format: date-time
+      - name: endDate
+        in: query
+        description: Data de fim do filtro (YYYY-MM-DD)
+        schema:
+          type: string
+          format: date-time
+      - name: reference
+        in: query
+        description: Filtrar por referência/nome do lote
+        schema:
+          type: string
+      - name: status
+        in: query
+        description: Filtrar por status do lote de pagamento
+        schema:
+          type: array
+          items:
+            type: integer
+            format: int32
+      - name: unitPayment
+        in: query
+        description: Filtrar por pagamento individual (true) ou lote (false)
+        schema:
+          type: boolean
+          default: false
+      - name: recurrenceId
+        in: query
+        description: Filtrar por ID de recorrência
+        schema:
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: object
+                properties:
+                  links:
+                    type: object
+                    properties:
+                      next:
+                        nullable: true
+                        allOf:
+                        - type: object
+                          properties:
+                            href:
+                              type: string
+                              nullable: true
+                          additionalProperties: false
+                          title: PayrollLinkDto
+                      prev:
+                        nullable: true
+                        allOf:
+                        - type: object
+                          properties:
+                            href:
+                              type: string
+                              nullable: true
+                          additionalProperties: false
+                          title: PayrollLinkDto
+                    additionalProperties: false
+                    title: PayrollLinksDto
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        requestId:
+                          type: string
+                          nullable: true
+                        requester:
+                          type: string
+                          nullable: true
+                        paymentId:
+                          type: integer
+                          format: int32
+                        paymentTypeId:
+                          type: integer
+                          format: int32
+                        reference:
+                          type: string
+                          nullable: true
+                        scheduledDate:
+                          type: string
+                          nullable: true
+                        debitDate:
+                          type: string
+                          nullable: true
+                        receiptDate:
+                          type: string
+                          nullable: true
+                        validatedAmount:
+                          type: number
+                          format: double
+                        status:
+                          type: string
+                          nullable: true
+                        paymentType:
+                          type: string
+                          nullable: true
+                        errorMessage:
+                          type: string
+                          nullable: true
+                        cancellationMessage:
+                          type: string
+                          nullable: true
+                        originalAmount:
+                          type: number
+                          format: double
+                        paidAmount:
+                          type: number
+                          format: double
+                        errorTransferCount:
+                          type: integer
+                          format: int32
+                        company:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              nullable: true
+                            taxId:
+                              type: string
+                              nullable: true
+                            account:
+                              type: object
+                              properties:
+                                branch:
+                                  type: string
+                                  nullable: true
+                                number:
+                                  type: string
+                                  nullable: true
+                              additionalProperties: false
+                              title: PayrollAccountDto
+                          additionalProperties: false
+                          title: PayrollCompanyDto
+                        links:
+                          type: object
+                          properties:
+                            self:
+                              type: object
+                              properties:
+                                href:
+                                  type: string
+                                  nullable: true
+                              additionalProperties: false
+                              title: PayrollLinkDto
+                          additionalProperties: false
+                          title: PayrollItemLinksDto
+                      additionalProperties: false
+                      title: PayrollListItemDto
+                    nullable: true
+                additionalProperties: false
+                title: PayrollListResponseDto
+            application/json:
+              schema:
+                type: object
+                properties:
+                  links:
+                    type: object
+                    properties:
+                      next:
+                        nullable: true
+                        allOf:
+                        - type: object
+                          properties:
+                            href:
+                              type: string
+                              nullable: true
+                          additionalProperties: false
+                          title: PayrollLinkDto
+                      prev:
+                        nullable: true
+                        allOf:
+                        - type: object
+                          properties:
+                            href:
+                              type: string
+                              nullable: true
+                          additionalProperties: false
+                          title: PayrollLinkDto
+                    additionalProperties: false
+                    title: PayrollLinksDto
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        requestId:
+                          type: string
+                          nullable: true
+                        requester:
+                          type: string
+                          nullable: true
+                        paymentId:
+                          type: integer
+                          format: int32
+                        paymentTypeId:
+                          type: integer
+                          format: int32
+                        reference:
+                          type: string
+                          nullable: true
+                        scheduledDate:
+                          type: string
+                          nullable: true
+                        debitDate:
+                          type: string
+                          nullable: true
+                        receiptDate:
+                          type: string
+                          nullable: true
+                        validatedAmount:
+                          type: number
+                          format: double
+                        status:
+                          type: string
+                          nullable: true
+                        paymentType:
+                          type: string
+                          nullable: true
+                        errorMessage:
+                          type: string
+                          nullable: true
+                        cancellationMessage:
+                          type: string
+                          nullable: true
+                        originalAmount:
+                          type: number
+                          format: double
+                        paidAmount:
+                          type: number
+                          format: double
+                        errorTransferCount:
+                          type: integer
+                          format: int32
+                        company:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              nullable: true
+                            taxId:
+                              type: string
+                              nullable: true
+                            account:
+                              type: object
+                              properties:
+                                branch:
+                                  type: string
+                                  nullable: true
+                                number:
+                                  type: string
+                                  nullable: true
+                              additionalProperties: false
+                              title: PayrollAccountDto
+                          additionalProperties: false
+                          title: PayrollCompanyDto
+                        links:
+                          type: object
+                          properties:
+                            self:
+                              type: object
+                              properties:
+                                href:
+                                  type: string
+                                  nullable: true
+                              additionalProperties: false
+                              title: PayrollLinkDto
+                          additionalProperties: false
+                          title: PayrollItemLinksDto
+                      additionalProperties: false
+                      title: PayrollListItemDto
+                    nullable: true
+                additionalProperties: false
+                title: PayrollListResponseDto
+            text/json:
+              schema:
+                type: object
+                properties:
+                  links:
+                    type: object
+                    properties:
+                      next:
+                        nullable: true
+                        allOf:
+                        - type: object
+                          properties:
+                            href:
+                              type: string
+                              nullable: true
+                          additionalProperties: false
+                          title: PayrollLinkDto
+                      prev:
+                        nullable: true
+                        allOf:
+                        - type: object
+                          properties:
+                            href:
+                              type: string
+                              nullable: true
+                          additionalProperties: false
+                          title: PayrollLinkDto
+                    additionalProperties: false
+                    title: PayrollLinksDto
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        requestId:
+                          type: string
+                          nullable: true
+                        requester:
+                          type: string
+                          nullable: true
+                        paymentId:
+                          type: integer
+                          format: int32
+                        paymentTypeId:
+                          type: integer
+                          format: int32
+                        reference:
+                          type: string
+                          nullable: true
+                        scheduledDate:
+                          type: string
+                          nullable: true
+                        debitDate:
+                          type: string
+                          nullable: true
+                        receiptDate:
+                          type: string
+                          nullable: true
+                        validatedAmount:
+                          type: number
+                          format: double
+                        status:
+                          type: string
+                          nullable: true
+                        paymentType:
+                          type: string
+                          nullable: true
+                        errorMessage:
+                          type: string
+                          nullable: true
+                        cancellationMessage:
+                          type: string
+                          nullable: true
+                        originalAmount:
+                          type: number
+                          format: double
+                        paidAmount:
+                          type: number
+                          format: double
+                        errorTransferCount:
+                          type: integer
+                          format: int32
+                        company:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              nullable: true
+                            taxId:
+                              type: string
+                              nullable: true
+                            account:
+                              type: object
+                              properties:
+                                branch:
+                                  type: string
+                                  nullable: true
+                                number:
+                                  type: string
+                                  nullable: true
+                              additionalProperties: false
+                              title: PayrollAccountDto
+                          additionalProperties: false
+                          title: PayrollCompanyDto
+                        links:
+                          type: object
+                          properties:
+                            self:
+                              type: object
+                              properties:
+                                href:
+                                  type: string
+                                  nullable: true
+                              additionalProperties: false
+                              title: PayrollLinkDto
+                          additionalProperties: false
+                          title: PayrollItemLinksDto
+                      additionalProperties: false
+                      title: PayrollListItemDto
+                    nullable: true
+                additionalProperties: false
+                title: PayrollListResponseDto
+      security:
+      - read:
+        - brn:btg:empresas:banking:payroll
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Payroll/list-payments
+    post:
+      tags:
+      - Pagamentos
+      description: 'Submete um lote de pagamentos para processamento assíncrono. Retorna `202 Accepted` com o identificador do lote (`paymentId` e `requestId`).
+
+
+        O header `X-Idempotency-Key` (UUID v4) é obrigatório para evitar processamento duplicado em caso de retentativa.
+
+
+        ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o [Wiremock](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-com-wiremock-v2)
+
+
+        > No sandbox este endpoint requer a utilização de [Sandbox Headers](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-headers)
+
+
+        | Header     | Descrição                            | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      operationId: submitPaymentBatch
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: X-Idempotency-Key
+        in: header
+        description: Chave de idempotência (UUID v4). Evita processamento duplicado de requisições.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+                  nullable: true
+                scheduledDate:
+                  type: string
+                  format: date-time
+                paymentType:
+                  type: integer
+                  format: int32
+                  enum:
+                  - 2
+                  - 5
+                  - 9
+                  - 10
+                  - 11
+                  - 12
+                  - 13
+                  - 14
+                  - 15
+                  - 17
+                  - 18
+                  - 19
+                  - 20
+                  - 21
+                  - 22
+                  - 24
+                  description: 'Tipo de operação de pagamento. Valores aceitos:
+
+                    - `2` = Salário (`PAG_SALARIO`)
+
+                    - `5` = PLR (Participação nos Lucros e Resultados) (`PAG_PLR`)
+
+                    - `9` = Férias (`PAG_FERIAS`)
+
+                    - `10` = Décimo Terceiro (`PAG_DEC_TERCEIRO`)
+
+                    - `11` = Rescisão (`PAG_RESCISAO`)
+
+                    - `12` = Prêmio / Bonificação (`PAG_PREMIO`)
+
+                    - `13` = Pagamento Genérico (Crédito em Conta) (`PAG_CREDITO_EM_CONTA`)
+
+                    - `14` = Distribuição de Dividendos (`PAG_DIST_DIVIDENDOS`)
+
+                    - `15` = Pagamento de Fornecedor (`PAG_FORNECEDOR`)
+
+                    - `17` = Adiantamento (`PAG_ADIANTAMENTO`)
+
+                    - `18` = Pró-labore (`PAG_PROLABORE`)
+
+                    - `19` = Bolsa Estágio (`PAG_BOLSA_ESTAGIO`)
+
+                    - `20` = Benefício (`PAG_BENEFICIO`)
+
+                    - `21` = Remuneração (`PAG_REMUNERACAO`)
+
+                    - `22` = Reembolso (`PAG_REEMBOLSO`)
+
+                    - `24` = Comissão (`PAG_COMISSAO`)'
+                companies:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      taxId:
+                        type: string
+                        nullable: true
+                      debitParty:
+                        type: object
+                        properties:
+                          branchCode:
+                            type: string
+                            nullable: true
+                            description: 'Agência da conta débito. Aceita com ou sem zeros à esquerda (ex.: "50" e "0050" são equivalentes, o valor é normalizado internamente).'
+                          number:
+                            type: string
+                            nullable: true
+                        additionalProperties: false
+                        title: PaymentDebitPartyRequest
+                      items:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            taxId:
+                              type: string
+                              nullable: true
+                            bankCode:
+                              type: string
+                              nullable: true
+                            branchCode:
+                              type: string
+                              nullable: true
+                            accountNumber:
+                              type: string
+                              nullable: true
+                            netAmount:
+                              type: number
+                              format: double
+                            reference:
+                              type: string
+                              nullable: true
+                          additionalProperties: false
+                          title: PaymentItemRequest
+                        nullable: true
+                    additionalProperties: false
+                    title: PaymentCompanyRequest
+                  nullable: true
+              additionalProperties: false
+              title: SubmitPaymentBatchRequest
+          text/json:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+                  nullable: true
+                scheduledDate:
+                  type: string
+                  format: date-time
+                paymentType:
+                  type: integer
+                  format: int32
+                  enum:
+                  - 2
+                  - 5
+                  - 9
+                  - 10
+                  - 11
+                  - 12
+                  - 13
+                  - 14
+                  - 15
+                  - 17
+                  - 18
+                  - 19
+                  - 20
+                  - 21
+                  - 22
+                  - 24
+                  description: 'Tipo de operação de pagamento. Valores aceitos:
+
+                    - `2` = Salário (`PAG_SALARIO`)
+
+                    - `5` = PLR (Participação nos Lucros e Resultados) (`PAG_PLR`)
+
+                    - `9` = Férias (`PAG_FERIAS`)
+
+                    - `10` = Décimo Terceiro (`PAG_DEC_TERCEIRO`)
+
+                    - `11` = Rescisão (`PAG_RESCISAO`)
+
+                    - `12` = Prêmio / Bonificação (`PAG_PREMIO`)
+
+                    - `13` = Pagamento Genérico (Crédito em Conta) (`PAG_CREDITO_EM_CONTA`)
+
+                    - `14` = Distribuição de Dividendos (`PAG_DIST_DIVIDENDOS`)
+
+                    - `15` = Pagamento de Fornecedor (`PAG_FORNECEDOR`)
+
+                    - `17` = Adiantamento (`PAG_ADIANTAMENTO`)
+
+                    - `18` = Pró-labore (`PAG_PROLABORE`)
+
+                    - `19` = Bolsa Estágio (`PAG_BOLSA_ESTAGIO`)
+
+                    - `20` = Benefício (`PAG_BENEFICIO`)
+
+                    - `21` = Remuneração (`PAG_REMUNERACAO`)
+
+                    - `22` = Reembolso (`PAG_REEMBOLSO`)
+
+                    - `24` = Comissão (`PAG_COMISSAO`)'
+                companies:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      taxId:
+                        type: string
+                        nullable: true
+                      debitParty:
+                        type: object
+                        properties:
+                          branchCode:
+                            type: string
+                            nullable: true
+                            description: 'Agência da conta débito. Aceita com ou sem zeros à esquerda (ex.: "50" e "0050" são equivalentes, o valor é normalizado internamente).'
+                          number:
+                            type: string
+                            nullable: true
+                        additionalProperties: false
+                        title: PaymentDebitPartyRequest
+                      items:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            taxId:
+                              type: string
+                              nullable: true
+                            bankCode:
+                              type: string
+                              nullable: true
+                            branchCode:
+                              type: string
+                              nullable: true
+                            accountNumber:
+                              type: string
+                              nullable: true
+                            netAmount:
+                              type: number
+                              format: double
+                            reference:
+                              type: string
+                              nullable: true
+                          additionalProperties: false
+                          title: PaymentItemRequest
+                        nullable: true
+                    additionalProperties: false
+                    title: PaymentCompanyRequest
+                  nullable: true
+              additionalProperties: false
+              title: SubmitPaymentBatchRequest
+          application/*+json:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+                  nullable: true
+                scheduledDate:
+                  type: string
+                  format: date-time
+                paymentType:
+                  type: integer
+                  format: int32
+                  enum:
+                  - 2
+                  - 5
+                  - 9
+                  - 10
+                  - 11
+                  - 12
+                  - 13
+                  - 14
+                  - 15
+                  - 17
+                  - 18
+                  - 19
+                  - 20
+                  - 21
+                  - 22
+                  - 24
+                  description: 'Tipo de operação de pagamento. Valores aceitos:
+
+                    - `2` = Salário (`PAG_SALARIO`)
+
+                    - `5` = PLR (Participação nos Lucros e Resultados) (`PAG_PLR`)
+
+                    - `9` = Férias (`PAG_FERIAS`)
+
+                    - `10` = Décimo Terceiro (`PAG_DEC_TERCEIRO`)
+
+                    - `11` = Rescisão (`PAG_RESCISAO`)
+
+                    - `12` = Prêmio / Bonificação (`PAG_PREMIO`)
+
+                    - `13` = Pagamento Genérico (Crédito em Conta) (`PAG_CREDITO_EM_CONTA`)
+
+                    - `14` = Distribuição de Dividendos (`PAG_DIST_DIVIDENDOS`)
+
+                    - `15` = Pagamento de Fornecedor (`PAG_FORNECEDOR`)
+
+                    - `17` = Adiantamento (`PAG_ADIANTAMENTO`)
+
+                    - `18` = Pró-labore (`PAG_PROLABORE`)
+
+                    - `19` = Bolsa Estágio (`PAG_BOLSA_ESTAGIO`)
+
+                    - `20` = Benefício (`PAG_BENEFICIO`)
+
+                    - `21` = Remuneração (`PAG_REMUNERACAO`)
+
+                    - `22` = Reembolso (`PAG_REEMBOLSO`)
+
+                    - `24` = Comissão (`PAG_COMISSAO`)'
+                companies:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      taxId:
+                        type: string
+                        nullable: true
+                      debitParty:
+                        type: object
+                        properties:
+                          branchCode:
+                            type: string
+                            nullable: true
+                            description: 'Agência da conta débito. Aceita com ou sem zeros à esquerda (ex.: "50" e "0050" são equivalentes, o valor é normalizado internamente).'
+                          number:
+                            type: string
+                            nullable: true
+                        additionalProperties: false
+                        title: PaymentDebitPartyRequest
+                      items:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            taxId:
+                              type: string
+                              nullable: true
+                            bankCode:
+                              type: string
+                              nullable: true
+                            branchCode:
+                              type: string
+                              nullable: true
+                            accountNumber:
+                              type: string
+                              nullable: true
+                            netAmount:
+                              type: number
+                              format: double
+                            reference:
+                              type: string
+                              nullable: true
+                          additionalProperties: false
+                          title: PaymentItemRequest
+                        nullable: true
+                    additionalProperties: false
+                    title: PaymentCompanyRequest
+                  nullable: true
+              additionalProperties: false
+              title: SubmitPaymentBatchRequest
+      responses:
+        '202':
+          description: Accepted
+          content:
+            text/plain:
+              schema:
+                type: object
+                properties:
+                  requestId:
+                    type: string
+                    nullable: true
+                  paymentId:
+                    type: integer
+                    format: int32
+                  status:
+                    type: string
+                    nullable: true
+                  submittedAt:
+                    type: string
+                    format: date-time
+                  totalEmployees:
+                    type: integer
+                    format: int32
+                  totalAmount:
+                    type: number
+                    format: double
+                  scheduledDate:
+                    type: string
+                    format: date-time
+                additionalProperties: false
+                title: SubmitPaymentBatchResponse
+            application/json:
+              schema:
+                type: object
+                properties:
+                  requestId:
+                    type: string
+                    nullable: true
+                  paymentId:
+                    type: integer
+                    format: int32
+                  status:
+                    type: string
+                    nullable: true
+                  submittedAt:
+                    type: string
+                    format: date-time
+                  totalEmployees:
+                    type: integer
+                    format: int32
+                  totalAmount:
+                    type: number
+                    format: double
+                  scheduledDate:
+                    type: string
+                    format: date-time
+                additionalProperties: false
+                title: SubmitPaymentBatchResponse
+            text/json:
+              schema:
+                type: object
+                properties:
+                  requestId:
+                    type: string
+                    nullable: true
+                  paymentId:
+                    type: integer
+                    format: int32
+                  status:
+                    type: string
+                    nullable: true
+                  submittedAt:
+                    type: string
+                    format: date-time
+                  totalEmployees:
+                    type: integer
+                    format: int32
+                  totalAmount:
+                    type: number
+                    format: double
+                  scheduledDate:
+                    type: string
+                    format: date-time
+                additionalProperties: false
+                title: SubmitPaymentBatchResponse
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    nullable: true
+                  title:
+                    type: string
+                    nullable: true
+                  status:
+                    type: integer
+                    format: int32
+                  detail:
+                    type: string
+                    nullable: true
+                  invalidParams:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          nullable: true
+                        reason:
+                          type: string
+                          nullable: true
+                        value:
+                          type: string
+                          nullable: true
+                      additionalProperties: false
+                      title: PayrollInvalidParam
+                    nullable: true
+                additionalProperties: false
+                title: PayrollProblemDetails
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    nullable: true
+                  title:
+                    type: string
+                    nullable: true
+                  status:
+                    type: integer
+                    format: int32
+                  detail:
+                    type: string
+                    nullable: true
+                  invalidParams:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          nullable: true
+                        reason:
+                          type: string
+                          nullable: true
+                        value:
+                          type: string
+                          nullable: true
+                      additionalProperties: false
+                      title: PayrollInvalidParam
+                    nullable: true
+                additionalProperties: false
+                title: PayrollProblemDetails
+            text/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    nullable: true
+                  title:
+                    type: string
+                    nullable: true
+                  status:
+                    type: integer
+                    format: int32
+                  detail:
+                    type: string
+                    nullable: true
+                  invalidParams:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          nullable: true
+                        reason:
+                          type: string
+                          nullable: true
+                        value:
+                          type: string
+                          nullable: true
+                      additionalProperties: false
+                      title: PayrollInvalidParam
+                    nullable: true
+                additionalProperties: false
+                title: PayrollProblemDetails
+      security:
+      - write:
+        - brn:btg:empresas:banking:payroll
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Payroll/submit-payment-batch
+  /{companyId}/banking/payroll/employees/{employeeTaxId}/reactivate:
+    post:
+      tags:
+      - Colaboradores
+      description: 'Reativa um colaborador inativo. Somente colaboradores com status `inactive` podem ser reativados. Após a reativação o colaborador retorna ao status `active`.
+
+
+        ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o [Wiremock](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-com-wiremock-v2)
+
+
+        > No sandbox este endpoint requer a utilização de [Sandbox Headers](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-headers)
+
+
+        | Header     | Descrição                            | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      operationId: reactivateEmployee
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: employeeTaxId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: object
+                properties:
+                  employeeId:
+                    type: string
+                    nullable: true
+                  status:
+                    type: string
+                    nullable: true
+                  reactivatedAt:
+                    type: string
+                    format: date-time
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            nullable: true
+                          method:
+                            type: string
+                            nullable: true
+                          rel:
+                            type: string
+                            nullable: true
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                      deactivate:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            nullable: true
+                          method:
+                            type: string
+                            nullable: true
+                          rel:
+                            type: string
+                            nullable: true
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                    additionalProperties: false
+                    title: ReactivateResponseLinksDto
+                additionalProperties: false
+                title: ReactivateResponseDto
+            application/json:
+              schema:
+                type: object
+                properties:
+                  employeeId:
+                    type: string
+                    nullable: true
+                  status:
+                    type: string
+                    nullable: true
+                  reactivatedAt:
+                    type: string
+                    format: date-time
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            nullable: true
+                          method:
+                            type: string
+                            nullable: true
+                          rel:
+                            type: string
+                            nullable: true
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                      deactivate:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            nullable: true
+                          method:
+                            type: string
+                            nullable: true
+                          rel:
+                            type: string
+                            nullable: true
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                    additionalProperties: false
+                    title: ReactivateResponseLinksDto
+                additionalProperties: false
+                title: ReactivateResponseDto
+            text/json:
+              schema:
+                type: object
+                properties:
+                  employeeId:
+                    type: string
+                    nullable: true
+                  status:
+                    type: string
+                    nullable: true
+                  reactivatedAt:
+                    type: string
+                    format: date-time
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            nullable: true
+                          method:
+                            type: string
+                            nullable: true
+                          rel:
+                            type: string
+                            nullable: true
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                      deactivate:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            nullable: true
+                          method:
+                            type: string
+                            nullable: true
+                          rel:
+                            type: string
+                            nullable: true
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                    additionalProperties: false
+                    title: ReactivateResponseLinksDto
+                additionalProperties: false
+                title: ReactivateResponseDto
+      security:
+      - write:
+        - brn:btg:empresas:banking:payroll
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Payroll/reactivate-employee
+  /{companyId}/banking/payroll/onboarding/employees:
+    post:
+      tags:
+      - Onboarding
+      description: 'Submete um ou mais colaboradores para abertura de conta BTG. O processamento é assíncrono e retorna `202 Accepted` imediatamente.
+
+
+        O campo `issuingAuthority` aceita apenas os códigos retornados por `GET /{companyId}/banking/payroll/onboarding/issuers`.
+
+
+        ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o [Wiremock](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-com-wiremock-v2)
+
+
+        > No sandbox este endpoint requer a utilização de [Sandbox Headers](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-headers)
+
+
+        | Header     | Descrição                            | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      operationId: submitOnboardingEmployees
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: X-Idempotency-Key
+        in: header
+        description: Chave de idempotência (UUID v4). Evita reprocessamento em caso de retentativa.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json-patch+json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  companyTaxId:
+                    type: string
+                    nullable: true
+                  name:
+                    type: string
+                    nullable: true
+                  taxId:
+                    type: string
+                    nullable: true
+                  email:
+                    type: string
+                    nullable: true
+                  phone:
+                    type: string
+                    nullable: true
+                  admissionDate:
+                    type: string
+                    nullable: true
+                  grossMonthlySalary:
+                    type: number
+                    format: double
+                  accountType:
+                    type: string
+                    nullable: true
+                  idNumber:
+                    type: string
+                    nullable: true
+                  issuingAuthority:
+                    type: string
+                    nullable: true
+                    description: Código do emissor do documento de identidade. Deve ser um dos valores retornados por GET /payroll/issuers. Valores arbitrários são rejeitados com 400.
+                  address:
+                    type: object
+                    properties:
+                      street:
+                        type: string
+                        nullable: true
+                      number:
+                        type: string
+                        nullable: true
+                      neighborhood:
+                        type: string
+                        nullable: true
+                      zipCode:
+                        type: string
+                        nullable: true
+                    additionalProperties: false
+                    title: AddressRequest
+                  isUnderage:
+                    type: boolean
+                  representative:
+                    type: object
+                    properties:
+                      taxId:
+                        type: string
+                        nullable: true
+                      phone:
+                        type: string
+                        nullable: true
+                      email:
+                        type: string
+                        nullable: true
+                      idNumber:
+                        type: string
+                        nullable: true
+                      issuingAuthority:
+                        type: string
+                        nullable: true
+                    additionalProperties: false
+                    title: LegalRepresentativeRequest
+                additionalProperties: false
+                title: EmployeeRequest
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  companyTaxId:
+                    type: string
+                    nullable: true
+                  name:
+                    type: string
+                    nullable: true
+                  taxId:
+                    type: string
+                    nullable: true
+                  email:
+                    type: string
+                    nullable: true
+                  phone:
+                    type: string
+                    nullable: true
+                  admissionDate:
+                    type: string
+                    nullable: true
+                  grossMonthlySalary:
+                    type: number
+                    format: double
+                  accountType:
+                    type: string
+                    nullable: true
+                  idNumber:
+                    type: string
+                    nullable: true
+                  issuingAuthority:
+                    type: string
+                    nullable: true
+                    description: Código do emissor do documento de identidade. Deve ser um dos valores retornados por GET /payroll/issuers. Valores arbitrários são rejeitados com 400.
+                  address:
+                    type: object
+                    properties:
+                      street:
+                        type: string
+                        nullable: true
+                      number:
+                        type: string
+                        nullable: true
+                      neighborhood:
+                        type: string
+                        nullable: true
+                      zipCode:
+                        type: string
+                        nullable: true
+                    additionalProperties: false
+                    title: AddressRequest
+                  isUnderage:
+                    type: boolean
+                  representative:
+                    type: object
+                    properties:
+                      taxId:
+                        type: string
+                        nullable: true
+                      phone:
+                        type: string
+                        nullable: true
+                      email:
+                        type: string
+                        nullable: true
+                      idNumber:
+                        type: string
+                        nullable: true
+                      issuingAuthority:
+                        type: string
+                        nullable: true
+                    additionalProperties: false
+                    title: LegalRepresentativeRequest
+                additionalProperties: false
+                title: EmployeeRequest
+          text/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  companyTaxId:
+                    type: string
+                    nullable: true
+                  name:
+                    type: string
+                    nullable: true
+                  taxId:
+                    type: string
+                    nullable: true
+                  email:
+                    type: string
+                    nullable: true
+                  phone:
+                    type: string
+                    nullable: true
+                  admissionDate:
+                    type: string
+                    nullable: true
+                  grossMonthlySalary:
+                    type: number
+                    format: double
+                  accountType:
+                    type: string
+                    nullable: true
+                  idNumber:
+                    type: string
+                    nullable: true
+                  issuingAuthority:
+                    type: string
+                    nullable: true
+                    description: Código do emissor do documento de identidade. Deve ser um dos valores retornados por GET /payroll/issuers. Valores arbitrários são rejeitados com 400.
+                  address:
+                    type: object
+                    properties:
+                      street:
+                        type: string
+                        nullable: true
+                      number:
+                        type: string
+                        nullable: true
+                      neighborhood:
+                        type: string
+                        nullable: true
+                      zipCode:
+                        type: string
+                        nullable: true
+                    additionalProperties: false
+                    title: AddressRequest
+                  isUnderage:
+                    type: boolean
+                  representative:
+                    type: object
+                    properties:
+                      taxId:
+                        type: string
+                        nullable: true
+                      phone:
+                        type: string
+                        nullable: true
+                      email:
+                        type: string
+                        nullable: true
+                      idNumber:
+                        type: string
+                        nullable: true
+                      issuingAuthority:
+                        type: string
+                        nullable: true
+                    additionalProperties: false
+                    title: LegalRepresentativeRequest
+                additionalProperties: false
+                title: EmployeeRequest
+          application/*+json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  companyTaxId:
+                    type: string
+                    nullable: true
+                  name:
+                    type: string
+                    nullable: true
+                  taxId:
+                    type: string
+                    nullable: true
+                  email:
+                    type: string
+                    nullable: true
+                  phone:
+                    type: string
+                    nullable: true
+                  admissionDate:
+                    type: string
+                    nullable: true
+                  grossMonthlySalary:
+                    type: number
+                    format: double
+                  accountType:
+                    type: string
+                    nullable: true
+                  idNumber:
+                    type: string
+                    nullable: true
+                  issuingAuthority:
+                    type: string
+                    nullable: true
+                    description: Código do emissor do documento de identidade. Deve ser um dos valores retornados por GET /payroll/issuers. Valores arbitrários são rejeitados com 400.
+                  address:
+                    type: object
+                    properties:
+                      street:
+                        type: string
+                        nullable: true
+                      number:
+                        type: string
+                        nullable: true
+                      neighborhood:
+                        type: string
+                        nullable: true
+                      zipCode:
+                        type: string
+                        nullable: true
+                    additionalProperties: false
+                    title: AddressRequest
+                  isUnderage:
+                    type: boolean
+                  representative:
+                    type: object
+                    properties:
+                      taxId:
+                        type: string
+                        nullable: true
+                      phone:
+                        type: string
+                        nullable: true
+                      email:
+                        type: string
+                        nullable: true
+                      idNumber:
+                        type: string
+                        nullable: true
+                      issuingAuthority:
+                        type: string
+                        nullable: true
+                    additionalProperties: false
+                    title: LegalRepresentativeRequest
+                additionalProperties: false
+                title: EmployeeRequest
+      responses:
+        '202':
+          description: Accepted
+          content:
+            text/plain:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    nullable: true
+                additionalProperties: false
+                title: SubmitEmployeesResponse
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    nullable: true
+                additionalProperties: false
+                title: SubmitEmployeesResponse
+            text/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    nullable: true
+                additionalProperties: false
+                title: SubmitEmployeesResponse
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    nullable: true
+                  title:
+                    type: string
+                    nullable: true
+                  status:
+                    type: integer
+                    format: int32
+                  detail:
+                    type: string
+                    nullable: true
+                  invalidParams:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          nullable: true
+                        reason:
+                          type: string
+                          nullable: true
+                        value:
+                          type: string
+                          nullable: true
+                      additionalProperties: false
+                      title: PayrollInvalidParam
+                    nullable: true
+                additionalProperties: false
+                title: PayrollProblemDetails
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    nullable: true
+                  title:
+                    type: string
+                    nullable: true
+                  status:
+                    type: integer
+                    format: int32
+                  detail:
+                    type: string
+                    nullable: true
+                  invalidParams:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          nullable: true
+                        reason:
+                          type: string
+                          nullable: true
+                        value:
+                          type: string
+                          nullable: true
+                      additionalProperties: false
+                      title: PayrollInvalidParam
+                    nullable: true
+                additionalProperties: false
+                title: PayrollProblemDetails
+            text/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    nullable: true
+                  title:
+                    type: string
+                    nullable: true
+                  status:
+                    type: integer
+                    format: int32
+                  detail:
+                    type: string
+                    nullable: true
+                  invalidParams:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          nullable: true
+                        reason:
+                          type: string
+                          nullable: true
+                        value:
+                          type: string
+                          nullable: true
+                      additionalProperties: false
+                      title: PayrollInvalidParam
+                    nullable: true
+                additionalProperties: false
+                title: PayrollProblemDetails
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    nullable: true
+                  title:
+                    type: string
+                    nullable: true
+                  status:
+                    type: integer
+                    format: int32
+                  detail:
+                    type: string
+                    nullable: true
+                  invalidParams:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          nullable: true
+                        reason:
+                          type: string
+                          nullable: true
+                        value:
+                          type: string
+                          nullable: true
+                      additionalProperties: false
+                      title: PayrollInvalidParam
+                    nullable: true
+                additionalProperties: false
+                title: PayrollProblemDetails
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    nullable: true
+                  title:
+                    type: string
+                    nullable: true
+                  status:
+                    type: integer
+                    format: int32
+                  detail:
+                    type: string
+                    nullable: true
+                  invalidParams:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          nullable: true
+                        reason:
+                          type: string
+                          nullable: true
+                        value:
+                          type: string
+                          nullable: true
+                      additionalProperties: false
+                      title: PayrollInvalidParam
+                    nullable: true
+                additionalProperties: false
+                title: PayrollProblemDetails
+            text/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    nullable: true
+                  title:
+                    type: string
+                    nullable: true
+                  status:
+                    type: integer
+                    format: int32
+                  detail:
+                    type: string
+                    nullable: true
+                  invalidParams:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          nullable: true
+                        reason:
+                          type: string
+                          nullable: true
+                        value:
+                          type: string
+                          nullable: true
+                      additionalProperties: false
+                      title: PayrollInvalidParam
+                    nullable: true
+                additionalProperties: false
+                title: PayrollProblemDetails
+        '500':
+          description: Server Error
+          content:
+            text/plain:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    nullable: true
+                  title:
+                    type: string
+                    nullable: true
+                  status:
+                    type: integer
+                    format: int32
+                  detail:
+                    type: string
+                    nullable: true
+                  invalidParams:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          nullable: true
+                        reason:
+                          type: string
+                          nullable: true
+                        value:
+                          type: string
+                          nullable: true
+                      additionalProperties: false
+                      title: PayrollInvalidParam
+                    nullable: true
+                additionalProperties: false
+                title: PayrollProblemDetails
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    nullable: true
+                  title:
+                    type: string
+                    nullable: true
+                  status:
+                    type: integer
+                    format: int32
+                  detail:
+                    type: string
+                    nullable: true
+                  invalidParams:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          nullable: true
+                        reason:
+                          type: string
+                          nullable: true
+                        value:
+                          type: string
+                          nullable: true
+                      additionalProperties: false
+                      title: PayrollInvalidParam
+                    nullable: true
+                additionalProperties: false
+                title: PayrollProblemDetails
+            text/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    nullable: true
+                  title:
+                    type: string
+                    nullable: true
+                  status:
+                    type: integer
+                    format: int32
+                  detail:
+                    type: string
+                    nullable: true
+                  invalidParams:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          nullable: true
+                        reason:
+                          type: string
+                          nullable: true
+                        value:
+                          type: string
+                          nullable: true
+                      additionalProperties: false
+                      title: PayrollInvalidParam
+                    nullable: true
+                additionalProperties: false
+                title: PayrollProblemDetails
+      security:
+      - write:
+        - brn:btg:empresas:banking:payroll
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Payroll/submit-onboarding-employees
+components:
+  securitySchemes:
+    write:
+      type: oauth2
+      flows:
+        authorizationCode:
+          tokenUrl: https://id.btgpactual.com/oauth2/token
+          authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+          scopes:
+            brn:btg:empresas:banking:payroll: Emitir, consultar e alterar cobranças
+    read:
+      type: oauth2
+      flows:
+        authorizationCode:
+          tokenUrl: https://id.btgpactual.com/oauth2/token
+          authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+          scopes:
+            brn:btg:empresas:banking:payroll: Emitir, consultar e alterar cobranças
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/38973012.25b9cd62.js
+  - https://developers.empresas.btgpactual.com/assets/js/598e9e63.fdb89eb4.js
+  - https://developers.empresas.btgpactual.com/assets/js/e5ef9134.b4bf3d3f.js
+  - https://developers.empresas.btgpactual.com/assets/js/ea18104e.f75d22d9.js
+  - https://developers.empresas.btgpactual.com/assets/js/bf74b837.41bd2ccb.js
+  - https://developers.empresas.btgpactual.com/assets/js/745fa7a1.f45788f8.js
+  - https://developers.empresas.btgpactual.com/assets/js/30b2326e.452872ce.js
+  - https://developers.empresas.btgpactual.com/assets/js/b01372b5.ce38ba89.js
+  - https://developers.empresas.btgpactual.com/assets/js/6941d395.dbdd8453.js
+  - https://developers.empresas.btgpactual.com/assets/js/0162b3af.a9ab753d.js
+  - https://developers.empresas.btgpactual.com/assets/js/8e23139e.8abcd350.js

@@ -1,0 +1,33 @@
+generated: '2026-10-18'
+method: searched
+source: https://developers.empresas.btgpactual.com/changelog
+name: BTG Pactual changelog
+scheme: date-based
+current_version: undocumented
+entries:
+- date: '2026-09-18'
+  version: null
+  breaking: false
+  highlights:
+  - Portal em espanhol
+- date: '2026-09-04'
+  version: null
+  breaking: false
+  highlights:
+  - Botão de busca
+- date: '2026-09-01'
+  version: null
+  breaking: false
+  highlights:
+  - Reorganização da documentação e nova página de limite de consumo
+- date: '2026-08-10'
+  version: null
+  breaking: false
+  highlights:
+  - Novidades
+- date: '2026-08-05'
+  version: null
+  breaking: false
+  highlights:
+  - Novidades
+note: Changelog available with date-based entries but no version numbers specified. Updates focus on documentation improvements and portal features.

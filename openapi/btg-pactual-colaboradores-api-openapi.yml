@@ -1,0 +1,1874 @@
+openapi: 3.2.0
+info:
+  title: Banking - Payroll Colaboradores API
+  version: v1
+  description: API para gestão de folha de pagamentos
+  termsOfService: https://www.btgpactual.com/empresas/termos-e-politicas/
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com
+  description: Sandbox
+- url: https://api.empresas.btgpactual.com
+  description: Produção
+tags:
+- name: Colaboradores
+paths:
+  /{companyId}/banking/payroll/employees/{employeeTaxId}/deactivate:
+    post:
+      tags:
+      - Colaboradores
+      description: 'Desliga (inativa) um colaborador ativo. Somente colaboradores com status `active` podem ser desligados. Após o desligamento o colaborador passa para o status `inactive`.
+
+
+        ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o Wiremock
+
+
+        > No sandbox este endpoint requer a utilização de Sandbox Headers
+
+
+        | Header | Descrição | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      operationId: deactivateEmployee
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: employeeTaxId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                terminationDate:
+                  type:
+                  - string
+                  - 'null'
+                reason:
+                  type:
+                  - string
+                  - 'null'
+              additionalProperties: false
+              title: DeactivateRequestDto
+          text/json:
+            schema:
+              type: object
+              properties:
+                terminationDate:
+                  type:
+                  - string
+                  - 'null'
+                reason:
+                  type:
+                  - string
+                  - 'null'
+              additionalProperties: false
+              title: DeactivateRequestDto
+          application/*+json:
+            schema:
+              type: object
+              properties:
+                terminationDate:
+                  type:
+                  - string
+                  - 'null'
+                reason:
+                  type:
+                  - string
+                  - 'null'
+              additionalProperties: false
+              title: DeactivateRequestDto
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: object
+                properties:
+                  employeeId:
+                    type:
+                    - string
+                    - 'null'
+                  status:
+                    type:
+                    - string
+                    - 'null'
+                  terminationDate:
+                    type:
+                    - string
+                    - 'null'
+                  requestedAt:
+                    type: string
+                    format: date-time
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: object
+                        properties:
+                          href:
+                            type:
+                            - string
+                            - 'null'
+                          method:
+                            type:
+                            - string
+                            - 'null'
+                          rel:
+                            type:
+                            - string
+                            - 'null'
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                      reactivate:
+                        type: object
+                        properties:
+                          href:
+                            type:
+                            - string
+                            - 'null'
+                          method:
+                            type:
+                            - string
+                            - 'null'
+                          rel:
+                            type:
+                            - string
+                            - 'null'
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                    additionalProperties: false
+                    title: DeactivateResponseLinksDto
+                additionalProperties: false
+                title: DeactivateResponseDto
+            application/json:
+              schema:
+                type: object
+                properties:
+                  employeeId:
+                    type:
+                    - string
+                    - 'null'
+                  status:
+                    type:
+                    - string
+                    - 'null'
+                  terminationDate:
+                    type:
+                    - string
+                    - 'null'
+                  requestedAt:
+                    type: string
+                    format: date-time
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: object
+                        properties:
+                          href:
+                            type:
+                            - string
+                            - 'null'
+                          method:
+                            type:
+                            - string
+                            - 'null'
+                          rel:
+                            type:
+                            - string
+                            - 'null'
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                      reactivate:
+                        type: object
+                        properties:
+                          href:
+                            type:
+                            - string
+                            - 'null'
+                          method:
+                            type:
+                            - string
+                            - 'null'
+                          rel:
+                            type:
+                            - string
+                            - 'null'
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                    additionalProperties: false
+                    title: DeactivateResponseLinksDto
+                additionalProperties: false
+                title: DeactivateResponseDto
+            text/json:
+              schema:
+                type: object
+                properties:
+                  employeeId:
+                    type:
+                    - string
+                    - 'null'
+                  status:
+                    type:
+                    - string
+                    - 'null'
+                  terminationDate:
+                    type:
+                    - string
+                    - 'null'
+                  requestedAt:
+                    type: string
+                    format: date-time
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: object
+                        properties:
+                          href:
+                            type:
+                            - string
+                            - 'null'
+                          method:
+                            type:
+                            - string
+                            - 'null'
+                          rel:
+                            type:
+                            - string
+                            - 'null'
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                      reactivate:
+                        type: object
+                        properties:
+                          href:
+                            type:
+                            - string
+                            - 'null'
+                          method:
+                            type:
+                            - string
+                            - 'null'
+                          rel:
+                            type:
+                            - string
+                            - 'null'
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                    additionalProperties: false
+                    title: DeactivateResponseLinksDto
+                additionalProperties: false
+                title: DeactivateResponseDto
+      security:
+      - write:
+        - brn:btg:empresas:banking:payroll
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Payroll/deactivate-employee
+      summary: Deactivate employee
+      x-summary-source: derived
+  /{companyId}/banking/payroll/employees/{employeeTaxId}:
+    get:
+      tags:
+      - Colaboradores
+      description: 'Retorna o detalhe completo de um colaborador da empresa identificado pelo CPF, incluindo dados cadastrais, status, tipo de contrato e informações de conta bancária.
+
+
+        ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o Wiremock
+
+
+        > No sandbox este endpoint requer a utilização de Sandbox Headers
+
+
+        | Header | Descrição | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      operationId: getEmployee
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: employeeTaxId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: object
+                properties:
+                  employeeId:
+                    type:
+                    - string
+                    - 'null'
+                  name:
+                    type:
+                    - string
+                    - 'null'
+                  taxId:
+                    type:
+                    - string
+                    - 'null'
+                  status:
+                    type:
+                    - string
+                    - 'null'
+                  contractType:
+                    type:
+                    - string
+                    - 'null'
+                  portability:
+                    type:
+                    - boolean
+                    - 'null'
+                  admissionDate:
+                    type:
+                    - string
+                    - 'null'
+                    format: date-time
+                  terminationDate:
+                    type:
+                    - string
+                    - 'null'
+                    format: date-time
+                  suspended:
+                    type: boolean
+                  suspensionEndDate:
+                    type:
+                    - string
+                    - 'null'
+                    format: date-time
+                  accounts:
+                    type:
+                    - array
+                    - 'null'
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type:
+                          - string
+                          - 'null'
+                        status:
+                          type:
+                          - string
+                          - 'null'
+                        agency:
+                          type:
+                          - string
+                          - 'null'
+                        number:
+                          type:
+                          - string
+                          - 'null'
+                      additionalProperties: false
+                      title: PayrollEmployeeDetailAccountDto
+                  company:
+                    type: object
+                    properties:
+                      cnpj:
+                        type:
+                        - string
+                        - 'null'
+                      name:
+                        type:
+                        - string
+                        - 'null'
+                    additionalProperties: false
+                    title: PayrollEmployeeDetailCompanyDto
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: object
+                        properties:
+                          href:
+                            type:
+                            - string
+                            - 'null'
+                          method:
+                            type:
+                            - string
+                            - 'null'
+                          rel:
+                            type:
+                            - string
+                            - 'null'
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                      deactivate:
+                        allOf:
+                        - type: object
+                          properties:
+                            href:
+                              type:
+                              - string
+                              - 'null'
+                            method:
+                              type:
+                              - string
+                              - 'null'
+                            rel:
+                              type:
+                              - string
+                              - 'null'
+                          additionalProperties: false
+                          title: PayrollEmployeeLinkDto
+                      reactivate:
+                        allOf:
+                        - type: object
+                          properties:
+                            href:
+                              type:
+                              - string
+                              - 'null'
+                            method:
+                              type:
+                              - string
+                              - 'null'
+                            rel:
+                              type:
+                              - string
+                              - 'null'
+                          additionalProperties: false
+                          title: PayrollEmployeeLinkDto
+                    additionalProperties: false
+                    title: PayrollEmployeeDetailLinksDto
+                additionalProperties: false
+                title: PayrollEmployeeDetailResponseDto
+            application/json:
+              schema:
+                type: object
+                properties:
+                  employeeId:
+                    type:
+                    - string
+                    - 'null'
+                  name:
+                    type:
+                    - string
+                    - 'null'
+                  taxId:
+                    type:
+                    - string
+                    - 'null'
+                  status:
+                    type:
+                    - string
+                    - 'null'
+                  contractType:
+                    type:
+                    - string
+                    - 'null'
+                  portability:
+                    type:
+                    - boolean
+                    - 'null'
+                  admissionDate:
+                    type:
+                    - string
+                    - 'null'
+                    format: date-time
+                  terminationDate:
+                    type:
+                    - string
+                    - 'null'
+                    format: date-time
+                  suspended:
+                    type: boolean
+                  suspensionEndDate:
+                    type:
+                    - string
+                    - 'null'
+                    format: date-time
+                  accounts:
+                    type:
+                    - array
+                    - 'null'
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type:
+                          - string
+                          - 'null'
+                        status:
+                          type:
+                          - string
+                          - 'null'
+                        agency:
+                          type:
+                          - string
+                          - 'null'
+                        number:
+                          type:
+                          - string
+                          - 'null'
+                      additionalProperties: false
+                      title: PayrollEmployeeDetailAccountDto
+                  company:
+                    type: object
+                    properties:
+                      cnpj:
+                        type:
+                        - string
+                        - 'null'
+                      name:
+                        type:
+                        - string
+                        - 'null'
+                    additionalProperties: false
+                    title: PayrollEmployeeDetailCompanyDto
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: object
+                        properties:
+                          href:
+                            type:
+                            - string
+                            - 'null'
+                          method:
+                            type:
+                            - string
+                            - 'null'
+                          rel:
+                            type:
+                            - string
+                            - 'null'
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                      deactivate:
+                        allOf:
+                        - type: object
+                          properties:
+                            href:
+                              type:
+                              - string
+                              - 'null'
+                            method:
+                              type:
+                              - string
+                              - 'null'
+                            rel:
+                              type:
+                              - string
+                              - 'null'
+                          additionalProperties: false
+                          title: PayrollEmployeeLinkDto
+                      reactivate:
+                        allOf:
+                        - type: object
+                          properties:
+                            href:
+                              type:
+                              - string
+                              - 'null'
+                            method:
+                              type:
+                              - string
+                              - 'null'
+                            rel:
+                              type:
+                              - string
+                              - 'null'
+                          additionalProperties: false
+                          title: PayrollEmployeeLinkDto
+                    additionalProperties: false
+                    title: PayrollEmployeeDetailLinksDto
+                additionalProperties: false
+                title: PayrollEmployeeDetailResponseDto
+            text/json:
+              schema:
+                type: object
+                properties:
+                  employeeId:
+                    type:
+                    - string
+                    - 'null'
+                  name:
+                    type:
+                    - string
+                    - 'null'
+                  taxId:
+                    type:
+                    - string
+                    - 'null'
+                  status:
+                    type:
+                    - string
+                    - 'null'
+                  contractType:
+                    type:
+                    - string
+                    - 'null'
+                  portability:
+                    type:
+                    - boolean
+                    - 'null'
+                  admissionDate:
+                    type:
+                    - string
+                    - 'null'
+                    format: date-time
+                  terminationDate:
+                    type:
+                    - string
+                    - 'null'
+                    format: date-time
+                  suspended:
+                    type: boolean
+                  suspensionEndDate:
+                    type:
+                    - string
+                    - 'null'
+                    format: date-time
+                  accounts:
+                    type:
+                    - array
+                    - 'null'
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type:
+                          - string
+                          - 'null'
+                        status:
+                          type:
+                          - string
+                          - 'null'
+                        agency:
+                          type:
+                          - string
+                          - 'null'
+                        number:
+                          type:
+                          - string
+                          - 'null'
+                      additionalProperties: false
+                      title: PayrollEmployeeDetailAccountDto
+                  company:
+                    type: object
+                    properties:
+                      cnpj:
+                        type:
+                        - string
+                        - 'null'
+                      name:
+                        type:
+                        - string
+                        - 'null'
+                    additionalProperties: false
+                    title: PayrollEmployeeDetailCompanyDto
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: object
+                        properties:
+                          href:
+                            type:
+                            - string
+                            - 'null'
+                          method:
+                            type:
+                            - string
+                            - 'null'
+                          rel:
+                            type:
+                            - string
+                            - 'null'
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                      deactivate:
+                        allOf:
+                        - type: object
+                          properties:
+                            href:
+                              type:
+                              - string
+                              - 'null'
+                            method:
+                              type:
+                              - string
+                              - 'null'
+                            rel:
+                              type:
+                              - string
+                              - 'null'
+                          additionalProperties: false
+                          title: PayrollEmployeeLinkDto
+                      reactivate:
+                        allOf:
+                        - type: object
+                          properties:
+                            href:
+                              type:
+                              - string
+                              - 'null'
+                            method:
+                              type:
+                              - string
+                              - 'null'
+                            rel:
+                              type:
+                              - string
+                              - 'null'
+                          additionalProperties: false
+                          title: PayrollEmployeeLinkDto
+                    additionalProperties: false
+                    title: PayrollEmployeeDetailLinksDto
+                additionalProperties: false
+                title: PayrollEmployeeDetailResponseDto
+      security:
+      - read:
+        - brn:btg:empresas:banking:payroll
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Payroll/get-employee
+      summary: Get employee
+      x-summary-source: derived
+  /{companyId}/banking/payroll/employees/{employeeTaxId}/account:
+    get:
+      tags:
+      - Colaboradores
+      description: 'Retorna o estado da conta bancária de um colaborador identificado pelo CPF.
+
+
+        **Parâmetro `bank`:**
+
+
+        | Valor | Comportamento |
+
+        |---|---|
+
+        | `BTG` (padrão) | Consulta a conta BTG do colaborador |
+
+        | `PAN` | Fallback para colaboradores sem conta BTG ativa |
+
+
+        Se a requisição sem `bank` retornar `404`, tente com `?bank=PAN`. Colaboradores no início do onboarding podem ainda não ter conta BTG ativa.
+
+
+        ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o Wiremock
+
+
+        > No sandbox este endpoint requer a utilização de Sandbox Headers
+
+
+        | Header | Descrição | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      operationId: getEmployeeAccount
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: employeeTaxId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: bank
+        in: query
+        schema:
+          type: string
+          default: BTG
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: object
+                properties:
+                  employeeId:
+                    type:
+                    - string
+                    - 'null'
+                  accountType:
+                    type:
+                    - string
+                    - 'null'
+                  status:
+                    type:
+                    - string
+                    - 'null'
+                  errors:
+                    type:
+                    - string
+                    - 'null'
+                  onboardingFinalizado:
+                    type: boolean
+                  onboardingFinishedAt:
+                    type:
+                    - string
+                    - 'null'
+                    format: date-time
+                  bank:
+                    type:
+                    - string
+                    - 'null'
+                  agency:
+                    type:
+                    - string
+                    - 'null'
+                  number:
+                    type:
+                    - string
+                    - 'null'
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: object
+                        properties:
+                          href:
+                            type:
+                            - string
+                            - 'null'
+                          method:
+                            type:
+                            - string
+                            - 'null'
+                          rel:
+                            type:
+                            - string
+                            - 'null'
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                      employee:
+                        type: object
+                        properties:
+                          href:
+                            type:
+                            - string
+                            - 'null'
+                          method:
+                            type:
+                            - string
+                            - 'null'
+                          rel:
+                            type:
+                            - string
+                            - 'null'
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                    additionalProperties: false
+                    title: PayrollEmployeeAccountDetailLinksDto
+                additionalProperties: false
+                title: PayrollEmployeeAccountDetailResponseDto
+            application/json:
+              schema:
+                type: object
+                properties:
+                  employeeId:
+                    type:
+                    - string
+                    - 'null'
+                  accountType:
+                    type:
+                    - string
+                    - 'null'
+                  status:
+                    type:
+                    - string
+                    - 'null'
+                  errors:
+                    type:
+                    - string
+                    - 'null'
+                  onboardingFinalizado:
+                    type: boolean
+                  onboardingFinishedAt:
+                    type:
+                    - string
+                    - 'null'
+                    format: date-time
+                  bank:
+                    type:
+                    - string
+                    - 'null'
+                  agency:
+                    type:
+                    - string
+                    - 'null'
+                  number:
+                    type:
+                    - string
+                    - 'null'
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: object
+                        properties:
+                          href:
+                            type:
+                            - string
+                            - 'null'
+                          method:
+                            type:
+                            - string
+                            - 'null'
+                          rel:
+                            type:
+                            - string
+                            - 'null'
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                      employee:
+                        type: object
+                        properties:
+                          href:
+                            type:
+                            - string
+                            - 'null'
+                          method:
+                            type:
+                            - string
+                            - 'null'
+                          rel:
+                            type:
+                            - string
+                            - 'null'
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                    additionalProperties: false
+                    title: PayrollEmployeeAccountDetailLinksDto
+                additionalProperties: false
+                title: PayrollEmployeeAccountDetailResponseDto
+            text/json:
+              schema:
+                type: object
+                properties:
+                  employeeId:
+                    type:
+                    - string
+                    - 'null'
+                  accountType:
+                    type:
+                    - string
+                    - 'null'
+                  status:
+                    type:
+                    - string
+                    - 'null'
+                  errors:
+                    type:
+                    - string
+                    - 'null'
+                  onboardingFinalizado:
+                    type: boolean
+                  onboardingFinishedAt:
+                    type:
+                    - string
+                    - 'null'
+                    format: date-time
+                  bank:
+                    type:
+                    - string
+                    - 'null'
+                  agency:
+                    type:
+                    - string
+                    - 'null'
+                  number:
+                    type:
+                    - string
+                    - 'null'
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: object
+                        properties:
+                          href:
+                            type:
+                            - string
+                            - 'null'
+                          method:
+                            type:
+                            - string
+                            - 'null'
+                          rel:
+                            type:
+                            - string
+                            - 'null'
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                      employee:
+                        type: object
+                        properties:
+                          href:
+                            type:
+                            - string
+                            - 'null'
+                          method:
+                            type:
+                            - string
+                            - 'null'
+                          rel:
+                            type:
+                            - string
+                            - 'null'
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                    additionalProperties: false
+                    title: PayrollEmployeeAccountDetailLinksDto
+                additionalProperties: false
+                title: PayrollEmployeeAccountDetailResponseDto
+      security:
+      - read:
+        - brn:btg:empresas:banking:payroll
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Payroll/get-employee-account
+      summary: Get employee account
+      x-summary-source: derived
+  /{companyId}/banking/payroll/employees:
+    get:
+      tags:
+      - Colaboradores
+      description: 'Retorna lista paginada de colaboradores das empresas informadas com filtros opcionais. Paginação por cursor: use o valor de `_links.next.href` para navegar entre páginas.
+
+
+        **Status do colaborador:**
+
+
+        | Status | Significado |
+
+        |---|---|
+
+        | `active` | Colaborador ativo com conta BTG |
+
+        | `pending` | Onboarding em andamento, conta ainda não ativada |
+
+        | `suspended` | Conta suspensa |
+
+        | `inactive` | Colaborador desligado |
+
+
+        ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o Wiremock
+
+
+        > No sandbox este endpoint requer a utilização de Sandbox Headers
+
+
+        | Header | Descrição | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      operationId: listEmployees
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: companyTaxIds
+        in: query
+        schema:
+          type: array
+          items:
+            type: string
+      - name: pageSize
+        in: query
+        schema:
+          type: integer
+          format: int32
+          default: 20
+      - name: cursor
+        in: query
+        schema:
+          type: string
+      - name: status
+        in: query
+        schema:
+          type: string
+      - name: accountType
+        in: query
+        schema:
+          type: string
+      - name: name
+        in: query
+        schema:
+          type: string
+      - name: employeeTaxId
+        in: query
+        schema:
+          type: string
+      - name: branch
+        in: query
+        schema:
+          type: string
+      - name: accountNumber
+        in: query
+        schema:
+          type: string
+      - name: portability
+        in: query
+        schema:
+          type: boolean
+      - name: contractType
+        in: query
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type:
+                    - array
+                    - 'null'
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type:
+                          - string
+                          - 'null'
+                        taxId:
+                          type:
+                          - string
+                          - 'null'
+                        personType:
+                          type:
+                          - string
+                          - 'null'
+                        status:
+                          type:
+                          - string
+                          - 'null'
+                        isActive:
+                          type: boolean
+                        onboardingCompleted:
+                          type:
+                          - string
+                          - 'null'
+                        isSuspended:
+                          type: boolean
+                        portability:
+                          type:
+                          - boolean
+                          - 'null'
+                        admissionDate:
+                          type:
+                          - string
+                          - 'null'
+                          format: date-time
+                        terminationDate:
+                          type:
+                          - string
+                          - 'null'
+                          format: date-time
+                        company:
+                          type: object
+                          properties:
+                            name:
+                              type:
+                              - string
+                              - 'null'
+                            taxId:
+                              type:
+                              - string
+                              - 'null'
+                          additionalProperties: false
+                          title: PayrollEmployeeListCompanyDto
+                        accounts:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type: object
+                            properties:
+                              type:
+                                type:
+                                - string
+                                - 'null'
+                              status:
+                                type:
+                                - string
+                                - 'null'
+                              bankCode:
+                                type:
+                                - string
+                                - 'null'
+                              branch:
+                                type:
+                                - string
+                                - 'null'
+                              number:
+                                type:
+                                - string
+                                - 'null'
+                            additionalProperties: false
+                            title: PayrollEmployeeListAccountDto
+                        links:
+                          type: object
+                          properties:
+                            self:
+                              type: object
+                              properties:
+                                href:
+                                  type:
+                                  - string
+                                  - 'null'
+                                method:
+                                  type:
+                                  - string
+                                  - 'null'
+                                rel:
+                                  type:
+                                  - string
+                                  - 'null'
+                              additionalProperties: false
+                              title: PayrollEmployeeLinkDto
+                          additionalProperties: false
+                          title: PayrollEmployeeListItemLinksDto
+                      additionalProperties: false
+                      title: PayrollEmployeeListItemDto
+                  links:
+                    type: object
+                    properties:
+                      next:
+                        type:
+                        - object
+                        - 'null'
+                        properties:
+                          href:
+                            type:
+                            - string
+                            - 'null'
+                          method:
+                            type:
+                            - string
+                            - 'null'
+                          rel:
+                            type:
+                            - string
+                            - 'null'
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                      previous:
+                        allOf:
+                        - type: object
+                          properties:
+                            href:
+                              type:
+                              - string
+                              - 'null'
+                            method:
+                              type:
+                              - string
+                              - 'null'
+                            rel:
+                              type:
+                              - string
+                              - 'null'
+                          additionalProperties: false
+                          title: PayrollEmployeeLinkDto
+                    additionalProperties: false
+                    title: PayrollEmployeeListPaginationLinksDto
+                additionalProperties: false
+                title: PayrollEmployeeListResponseDto
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type:
+                    - array
+                    - 'null'
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type:
+                          - string
+                          - 'null'
+                        taxId:
+                          type:
+                          - string
+                          - 'null'
+                        personType:
+                          type:
+                          - string
+                          - 'null'
+                        status:
+                          type:
+                          - string
+                          - 'null'
+                        isActive:
+                          type: boolean
+                        onboardingCompleted:
+                          type:
+                          - string
+                          - 'null'
+                        isSuspended:
+                          type: boolean
+                        portability:
+                          type:
+                          - boolean
+                          - 'null'
+                        admissionDate:
+                          type:
+                          - string
+                          - 'null'
+                          format: date-time
+                        terminationDate:
+                          type:
+                          - string
+                          - 'null'
+                          format: date-time
+                        company:
+                          type: object
+                          properties:
+                            name:
+                              type:
+                              - string
+                              - 'null'
+                            taxId:
+                              type:
+                              - string
+                              - 'null'
+                          additionalProperties: false
+                          title: PayrollEmployeeListCompanyDto
+                        accounts:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type: object
+                            properties:
+                              type:
+                                type:
+                                - string
+                                - 'null'
+                              status:
+                                type:
+                                - string
+                                - 'null'
+                              bankCode:
+                                type:
+                                - string
+                                - 'null'
+                              branch:
+                                type:
+                                - string
+                                - 'null'
+                              number:
+                                type:
+                                - string
+                                - 'null'
+                            additionalProperties: false
+                            title: PayrollEmployeeListAccountDto
+                        links:
+                          type: object
+                          properties:
+                            self:
+                              type: object
+                              properties:
+                                href:
+                                  type:
+                                  - string
+                                  - 'null'
+                                method:
+                                  type:
+                                  - string
+                                  - 'null'
+                                rel:
+                                  type:
+                                  - string
+                                  - 'null'
+                              additionalProperties: false
+                              title: PayrollEmployeeLinkDto
+                          additionalProperties: false
+                          title: PayrollEmployeeListItemLinksDto
+                      additionalProperties: false
+                      title: PayrollEmployeeListItemDto
+                  links:
+                    type: object
+                    properties:
+                      next:
+                        type:
+                        - object
+                        - 'null'
+                        properties:
+                          href:
+                            type:
+                            - string
+                            - 'null'
+                          method:
+                            type:
+                            - string
+                            - 'null'
+                          rel:
+                            type:
+                            - string
+                            - 'null'
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                      previous:
+                        allOf:
+                        - type: object
+                          properties:
+                            href:
+                              type:
+                              - string
+                              - 'null'
+                            method:
+                              type:
+                              - string
+                              - 'null'
+                            rel:
+                              type:
+                              - string
+                              - 'null'
+                          additionalProperties: false
+                          title: PayrollEmployeeLinkDto
+                    additionalProperties: false
+                    title: PayrollEmployeeListPaginationLinksDto
+                additionalProperties: false
+                title: PayrollEmployeeListResponseDto
+            text/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type:
+                    - array
+                    - 'null'
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type:
+                          - string
+                          - 'null'
+                        taxId:
+                          type:
+                          - string
+                          - 'null'
+                        personType:
+                          type:
+                          - string
+                          - 'null'
+                        status:
+                          type:
+                          - string
+                          - 'null'
+                        isActive:
+                          type: boolean
+                        onboardingCompleted:
+                          type:
+                          - string
+                          - 'null'
+                        isSuspended:
+                          type: boolean
+                        portability:
+                          type:
+                          - boolean
+                          - 'null'
+                        admissionDate:
+                          type:
+                          - string
+                          - 'null'
+                          format: date-time
+                        terminationDate:
+                          type:
+                          - string
+                          - 'null'
+                          format: date-time
+                        company:
+                          type: object
+                          properties:
+                            name:
+                              type:
+                              - string
+                              - 'null'
+                            taxId:
+                              type:
+                              - string
+                              - 'null'
+                          additionalProperties: false
+                          title: PayrollEmployeeListCompanyDto
+                        accounts:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type: object
+                            properties:
+                              type:
+                                type:
+                                - string
+                                - 'null'
+                              status:
+                                type:
+                                - string
+                                - 'null'
+                              bankCode:
+                                type:
+                                - string
+                                - 'null'
+                              branch:
+                                type:
+                                - string
+                                - 'null'
+                              number:
+                                type:
+                                - string
+                                - 'null'
+                            additionalProperties: false
+                            title: PayrollEmployeeListAccountDto
+                        links:
+                          type: object
+                          properties:
+                            self:
+                              type: object
+                              properties:
+                                href:
+                                  type:
+                                  - string
+                                  - 'null'
+                                method:
+                                  type:
+                                  - string
+                                  - 'null'
+                                rel:
+                                  type:
+                                  - string
+                                  - 'null'
+                              additionalProperties: false
+                              title: PayrollEmployeeLinkDto
+                          additionalProperties: false
+                          title: PayrollEmployeeListItemLinksDto
+                      additionalProperties: false
+                      title: PayrollEmployeeListItemDto
+                  links:
+                    type: object
+                    properties:
+                      next:
+                        type:
+                        - object
+                        - 'null'
+                        properties:
+                          href:
+                            type:
+                            - string
+                            - 'null'
+                          method:
+                            type:
+                            - string
+                            - 'null'
+                          rel:
+                            type:
+                            - string
+                            - 'null'
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                      previous:
+                        allOf:
+                        - type: object
+                          properties:
+                            href:
+                              type:
+                              - string
+                              - 'null'
+                            method:
+                              type:
+                              - string
+                              - 'null'
+                            rel:
+                              type:
+                              - string
+                              - 'null'
+                          additionalProperties: false
+                          title: PayrollEmployeeLinkDto
+                    additionalProperties: false
+                    title: PayrollEmployeeListPaginationLinksDto
+                additionalProperties: false
+                title: PayrollEmployeeListResponseDto
+      security:
+      - read:
+        - brn:btg:empresas:banking:payroll
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Payroll/list-employees
+      summary: List employees
+      x-summary-source: derived
+  /{companyId}/banking/payroll/employees/{employeeTaxId}/reactivate:
+    post:
+      tags:
+      - Colaboradores
+      description: 'Reativa um colaborador inativo. Somente colaboradores com status `inactive` podem ser reativados. Após a reativação o colaborador retorna ao status `active`.
+
+
+        ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o Wiremock
+
+
+        > No sandbox este endpoint requer a utilização de Sandbox Headers
+
+
+        | Header | Descrição | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      operationId: reactivateEmployee
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: employeeTaxId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: object
+                properties:
+                  employeeId:
+                    type:
+                    - string
+                    - 'null'
+                  status:
+                    type:
+                    - string
+                    - 'null'
+                  reactivatedAt:
+                    type: string
+                    format: date-time
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: object
+                        properties:
+                          href:
+                            type:
+                            - string
+                            - 'null'
+                          method:
+                            type:
+                            - string
+                            - 'null'
+                          rel:
+                            type:
+                            - string
+                            - 'null'
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                      deactivate:
+                        type: object
+                        properties:
+                          href:
+                            type:
+                            - string
+                            - 'null'
+                          method:
+                            type:
+                            - string
+                            - 'null'
+                          rel:
+                            type:
+                            - string
+                            - 'null'
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                    additionalProperties: false
+                    title: ReactivateResponseLinksDto
+                additionalProperties: false
+                title: ReactivateResponseDto
+            application/json:
+              schema:
+                type: object
+                properties:
+                  employeeId:
+                    type:
+                    - string
+                    - 'null'
+                  status:
+                    type:
+                    - string
+                    - 'null'
+                  reactivatedAt:
+                    type: string
+                    format: date-time
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: object
+                        properties:
+                          href:
+                            type:
+                            - string
+                            - 'null'
+                          method:
+                            type:
+                            - string
+                            - 'null'
+                          rel:
+                            type:
+                            - string
+                            - 'null'
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                      deactivate:
+                        type: object
+                        properties:
+                          href:
+                            type:
+                            - string
+                            - 'null'
+                          method:
+                            type:
+                            - string
+                            - 'null'
+                          rel:
+                            type:
+                            - string
+                            - 'null'
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                    additionalProperties: false
+                    title: ReactivateResponseLinksDto
+                additionalProperties: false
+                title: ReactivateResponseDto
+            text/json:
+              schema:
+                type: object
+                properties:
+                  employeeId:
+                    type:
+                    - string
+                    - 'null'
+                  status:
+                    type:
+                    - string
+                    - 'null'
+                  reactivatedAt:
+                    type: string
+                    format: date-time
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: object
+                        properties:
+                          href:
+                            type:
+                            - string
+                            - 'null'
+                          method:
+                            type:
+                            - string
+                            - 'null'
+                          rel:
+                            type:
+                            - string
+                            - 'null'
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                      deactivate:
+                        type: object
+                        properties:
+                          href:
+                            type:
+                            - string
+                            - 'null'
+                          method:
+                            type:
+                            - string
+                            - 'null'
+                          rel:
+                            type:
+                            - string
+                            - 'null'
+                        additionalProperties: false
+                        title: PayrollEmployeeLinkDto
+                    additionalProperties: false
+                    title: ReactivateResponseLinksDto
+                additionalProperties: false
+                title: ReactivateResponseDto
+      security:
+      - write:
+        - brn:btg:empresas:banking:payroll
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Payroll/reactivate-employee
+      summary: Reactivate employee
+      x-summary-source: derived
+components:
+  securitySchemes:
+    write:
+      type: oauth2
+      flows:
+        authorizationCode:
+          tokenUrl: https://id.btgpactual.com/oauth2/token
+          authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+          scopes:
+            brn:btg:empresas:banking:payroll: Emitir, consultar e alterar cobranças
+    read:
+      type: oauth2
+      flows:
+        authorizationCode:
+          tokenUrl: https://id.btgpactual.com/oauth2/token
+          authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+          scopes:
+            brn:btg:empresas:banking:payroll: Emitir, consultar e alterar cobranças
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/38973012.25b9cd62.js
+  - https://developers.empresas.btgpactual.com/assets/js/598e9e63.fdb89eb4.js
+  - https://developers.empresas.btgpactual.com/assets/js/e5ef9134.b4bf3d3f.js
+  - https://developers.empresas.btgpactual.com/assets/js/ea18104e.f75d22d9.js
+  - https://developers.empresas.btgpactual.com/assets/js/bf74b837.41bd2ccb.js
+  - https://developers.empresas.btgpactual.com/assets/js/745fa7a1.f45788f8.js
+  - https://developers.empresas.btgpactual.com/assets/js/30b2326e.452872ce.js
+  - https://developers.empresas.btgpactual.com/assets/js/b01372b5.ce38ba89.js
+  - https://developers.empresas.btgpactual.com/assets/js/6941d395.dbdd8453.js
+  - https://developers.empresas.btgpactual.com/assets/js/0162b3af.a9ab753d.js
+  - https://developers.empresas.btgpactual.com/assets/js/8e23139e.8abcd350.js

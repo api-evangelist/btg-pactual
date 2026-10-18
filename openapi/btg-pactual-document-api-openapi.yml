@@ -1,0 +1,124 @@
+openapi: 3.2.0
+info:
+  title: FIDC Document API
+  version: 1.0.0
+  description: Esta API tem a finalidade de contratar e simular empréstimos, realizar cessão de direitos creditórios e consulta de carteira.
+  termsOfService: https://www.btgpactual.com/empresas/termos-e-politicas/
+  contact:
+    name: Time BTG Empresas
+    email: ol-it-btgempresas@btgpactual.com
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com
+  description: Sandbox
+- url: https://api.empresas.btgpactual.com
+  description: Produção
+tags:
+- name: Document
+paths:
+  /fidc-loan/v1/document:
+    post:
+      tags:
+      - Document
+      description: Envio de documentos auxiliares da operação de crédito.
+      operationId: createDocument
+      requestBody:
+        description: Informações dos arquivos
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fund:
+                  description: Identificador do fundo
+                  type: string
+                  example: MT_FGTS
+                files:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      externalId:
+                        description: Identificador do contrato
+                        type: string
+                        example: 612746716/FTS
+                      taxIdentification:
+                        type: string
+                        example: '15996430000182'
+                        description: CNPJ/CPF
+                        title: TaxIdSchema
+                      fileName:
+                        description: Nome do arquivo
+                        type: string
+                        example: exemplo_nome
+                      fileIdentification:
+                        description: Tipo do arquivo referente a operação
+                        type: string
+                        example: TERMO_CESSAO
+                        enum:
+                        - TERMO_CESSAO
+                        - REGISTRO_C3
+                        - COMPROVANTE_DESEMBOLSO
+                        - TERMO_ENDOSSO
+                        - NF
+                        - COMPROVANTE_AVERBACAO
+                        - TERMO_ADESAO
+                        - CONTRATO_MUTUO
+                        - COMPLEMENTO_AUXILIAR
+                      fileExtension:
+                        description: Extensão do arquivo
+                        type: string
+                        example: PDF
+                      fileS3Url:
+                        description: Link do s3 onde o arquivo esta armazenado
+                        type: string
+                        example: https://
+                    title: FileSchema
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    description: Mesagem de sucesso
+                    example: Request received
+                title: SucessSchema
+        '401':
+          description: Não autorizado
+        '500':
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - errorCode
+                - message
+                properties:
+                  errorCode:
+                    type: integer
+                  message:
+                    type: string
+                title: ErrorResponseSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/documents
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/FIDC%20-%20Document/create-document
+      summary: Create document
+      x-summary-source: derived
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+          scopes:
+            empresas.btgpactual.com/documents: Scope to documents
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/4a260823.2a5ad1b7.js

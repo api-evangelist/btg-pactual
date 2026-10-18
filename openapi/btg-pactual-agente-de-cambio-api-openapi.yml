@@ -1,0 +1,2114 @@
+openapi: 3.2.0
+info:
+  title: HUBFX - Cambio Agente de cambio API
+  description: Esta API tem a finalidade de operar câmbio
+  version: '1.0'
+  contact:
+    name: Time BTG Empresas Câmbio
+    email: ol-it-btgempresas-tradefinance@btgpactual.com
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com
+  description: Sandbox
+- url: https://api.empresas.btgpactual.com
+  description: Prod
+tags:
+- name: Agente de cambio
+paths:
+  /{companyTaxId}/cambio/agent/v3/quote/accept:
+    post:
+      tags:
+      - Agente de cambio
+      description: Aceitar cotação.
+      parameters:
+      - name: companyTaxId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                counterpartyIdentificationType:
+                  type:
+                  - string
+                  - 'null'
+                counterpartyIdentification:
+                  type:
+                  - string
+                  - 'null'
+                quoteExternalId:
+                  type:
+                  - string
+                  - 'null'
+              additionalProperties: false
+              title: V3ChannelAcceptQuoteCommand
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  errorMessage:
+                    type:
+                    - string
+                    - 'null'
+                  response:
+                    type: object
+                    properties:
+                      quoteExternalId:
+                        type:
+                        - string
+                        - 'null'
+                      priceId:
+                        type:
+                        - string
+                        - 'null'
+                      amount:
+                        type: number
+                        format: double
+                      orderPayer:
+                        type:
+                        - string
+                        - 'null'
+                      beneficiaryExternalId:
+                        type:
+                        - string
+                        - 'null'
+                      beneficiaryName:
+                        type:
+                        - string
+                        - 'null'
+                      buyCurrencyType:
+                        type:
+                        - string
+                        - 'null'
+                      sellCurrencyType:
+                        type:
+                        - string
+                        - 'null'
+                      nationalCurrencyTotal:
+                        type: number
+                        format: double
+                      exchangeRatio:
+                        type: number
+                        format: double
+                      usdExchangeRatio:
+                        type:
+                        - number
+                        - 'null'
+                        format: double
+                      simulatedTaxes:
+                        type: object
+                        properties:
+                          iofRate:
+                            type: number
+                            format: double
+                          iofAmount:
+                            type: number
+                            format: double
+                          irrfRate:
+                            type: number
+                            format: double
+                          irrfAmount:
+                            type: number
+                            format: double
+                          cideRate:
+                            type: number
+                            format: double
+                          cideAmount:
+                            type: number
+                            format: double
+                          issAmount:
+                            type: number
+                            format: double
+                          issRate:
+                            type: number
+                            format: double
+                          pisAmount:
+                            type: number
+                            format: double
+                          pisRate:
+                            type: number
+                            format: double
+                          cofinsAmount:
+                            type: number
+                            format: double
+                          cofinsRate:
+                            type: number
+                            format: double
+                        additionalProperties: false
+                        title: V3TaxResponse
+                      maximumTaxes:
+                        type: object
+                        properties:
+                          iofRate:
+                            type: number
+                            format: double
+                          iofAmount:
+                            type: number
+                            format: double
+                          irrfRate:
+                            type: number
+                            format: double
+                          irrfAmount:
+                            type: number
+                            format: double
+                          cideRate:
+                            type: number
+                            format: double
+                          cideAmount:
+                            type: number
+                            format: double
+                          issAmount:
+                            type: number
+                            format: double
+                          issRate:
+                            type: number
+                            format: double
+                          pisAmount:
+                            type: number
+                            format: double
+                          pisRate:
+                            type: number
+                            format: double
+                          cofinsAmount:
+                            type: number
+                            format: double
+                          cofinsRate:
+                            type: number
+                            format: double
+                        additionalProperties: false
+                        title: V3TaxResponse
+                      simulatedVet:
+                        type:
+                        - number
+                        - 'null'
+                        format: double
+                      maximumVet:
+                        type:
+                        - number
+                        - 'null'
+                        format: double
+                      simulatedTotalAmount:
+                        type:
+                        - number
+                        - 'null'
+                        format: double
+                      maximumTotalAmount:
+                        type:
+                        - number
+                        - 'null'
+                        format: double
+                      nationalDisbursementDate:
+                        type:
+                        - string
+                        - 'null'
+                        format: date-time
+                      foreignDisbursementDate:
+                        type:
+                        - string
+                        - 'null'
+                        format: date-time
+                      flowType:
+                        type:
+                        - string
+                        - 'null'
+                      currencyType:
+                        type:
+                        - string
+                        - 'null'
+                      payerType:
+                        type:
+                        - string
+                        - 'null'
+                      bankCode:
+                        type:
+                        - string
+                        - 'null'
+                      branch:
+                        type:
+                        - string
+                        - 'null'
+                      accountNumber:
+                        type:
+                        - string
+                        - 'null'
+                      natureCode:
+                        type:
+                        - string
+                        - 'null'
+                      natureDescription:
+                        type:
+                        - string
+                        - 'null'
+                      contractNeedsSignature:
+                        type:
+                        - boolean
+                        - 'null'
+                      preTicketId:
+                        type:
+                        - integer
+                        - 'null'
+                        format: int64
+                      preTicketApprovalDeadline:
+                        type:
+                        - string
+                        - 'null'
+                        format: date-time
+                    additionalProperties: false
+                    title: V3AcceptQuoteResponse
+                additionalProperties: false
+                title: V3AcceptQuoteResponseApiBaseResponse
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  errorMessage:
+                    type:
+                    - string
+                    - 'null'
+                additionalProperties: false
+                title: ApiBaseResponse
+        '401':
+          description: Unauthorized
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/HUBFX%20-%20Cambio/aceitar-cotacao
+      summary: Create by company tax id cambio agent quote accept
+      x-summary-source: derived
+      operationId: postByCompanyTaxIdCambioAgentV3QuoteAccept
+      x-operation-id-source: derived
+  /{companyTaxId}/cambio/agent/v3/odata/pretickets-available:
+    get:
+      tags:
+      - Agente de cambio
+      description: Listar pré-tickets disponíveis.
+      operationId: api/v3/odata/V3PreTicketsAvailableOData
+      parameters:
+      - name: companyTaxId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      format: int64
+                    amount:
+                      type: number
+                      format: double
+                    buyCurrencyType:
+                      type:
+                      - string
+                      - 'null'
+                    sellCurrencyType:
+                      type:
+                      - string
+                      - 'null'
+                    counterpartyId:
+                      type: integer
+                      format: int64
+                    counterpartyName:
+                      type:
+                      - string
+                      - 'null'
+                    counterpartyIdentification:
+                      type:
+                      - string
+                      - 'null'
+                    counterpartyIdentificationType:
+                      type:
+                      - string
+                      - 'null'
+                    countryDescription:
+                      type:
+                      - string
+                      - 'null'
+                    flowType:
+                      enum:
+                      - REMESSA
+                      - INTERNACAO
+                      type: string
+                      title: FlowType
+                    currencyType:
+                      enum:
+                      - FOREIGN
+                      - LOCAL
+                      type: string
+                      title: CurrencyType
+                    payerType:
+                      type:
+                      - string
+                      - 'null'
+                    requestedNatureId:
+                      type:
+                      - integer
+                      - 'null'
+                      format: int64
+                    requestedNatureDescription:
+                      type:
+                      - string
+                      - 'null'
+                    effectiveNatureId:
+                      type:
+                      - integer
+                      - 'null'
+                      format: int64
+                    effectiveNatureDescription:
+                      type:
+                      - string
+                      - 'null'
+                    status:
+                      type:
+                      - string
+                      - 'null'
+                    pendenciesCount:
+                      type: integer
+                      format: int32
+                    beneficiaryId:
+                      type:
+                      - integer
+                      - 'null'
+                      format: int64
+                    beneficiaryExternalId:
+                      type:
+                      - string
+                      - 'null'
+                    beneficiaryName:
+                      type:
+                      - string
+                      - 'null'
+                    orderId:
+                      type:
+                      - integer
+                      - 'null'
+                      format: int64
+                    orderPayer:
+                      type:
+                      - string
+                      - 'null'
+                    orderBalanceAmount:
+                      type:
+                      - number
+                      - 'null'
+                      format: double
+                    orderInTrasintAmount:
+                      type:
+                      - number
+                      - 'null'
+                      format: double
+                    limitCurrency:
+                      type:
+                      - string
+                      - 'null'
+                    limitAvailableAmount:
+                      type:
+                      - number
+                      - 'null'
+                      format: double
+                    limitTotalAmount:
+                      type:
+                      - number
+                      - 'null'
+                      format: double
+                    createdDate:
+                      type:
+                      - string
+                      - 'null'
+                      format: date-time
+                    updatedDate:
+                      type:
+                      - string
+                      - 'null'
+                      format: date-time
+                    approvalDeadline:
+                      type:
+                      - string
+                      - 'null'
+                      format: date-time
+                    natureId:
+                      type:
+                      - string
+                      - 'null'
+                      deprecated: true
+                    natureDescription:
+                      type:
+                      - string
+                      - 'null'
+                      deprecated: true
+                  additionalProperties: false
+                  title: V3PreTicketsAvailableODataResponse
+        '401':
+          description: Unauthorized
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/HUBFX%20-%20Cambio/api-v-3-odata-v-3-pre-tickets-available-o-data
+      summary: Api/v3/odata/V3Pre tickets available OData
+      x-summary-source: derived
+  /{companyTaxId}/cambio/agent/v3/currency/product:
+    get:
+      tags:
+      - Agente de cambio
+      description: Listar as moedas disponíveis por produto.
+      parameters:
+      - name: companyTaxId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: product
+        in: query
+        schema:
+          type: string
+      - name: onlyApproved
+        in: query
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  errorMessage:
+                    type:
+                    - string
+                    - 'null'
+                  response:
+                    type:
+                    - array
+                    - 'null'
+                    items:
+                      type: object
+                      properties:
+                        productName:
+                          type:
+                          - string
+                          - 'null'
+                        disbursementInstructions:
+                          type:
+                          - string
+                          - 'null'
+                        currencies:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                format: int64
+                              code:
+                                type:
+                                - string
+                                - 'null'
+                              description:
+                                type:
+                                - string
+                                - 'null'
+                              isApproved:
+                                type:
+                                - boolean
+                                - 'null'
+                              decimals:
+                                type:
+                                - integer
+                                - 'null'
+                                format: int32
+                              isIncomingMarketOpen:
+                                type:
+                                - boolean
+                                - 'null'
+                              isOutgoingMarketOpen:
+                                type:
+                                - boolean
+                                - 'null'
+                              standardQuoteLimitAmount:
+                                type:
+                                - number
+                                - 'null'
+                                format: double
+                              preTicketQuoteLimitAmount:
+                                type:
+                                - number
+                                - 'null'
+                                format: double
+                              allowsNonStopTrading:
+                                type:
+                                - boolean
+                                - 'null'
+                              incomingStartTime:
+                                type:
+                                - string
+                                - 'null'
+                              incomingEndTime:
+                                type:
+                                - string
+                                - 'null'
+                              outgoingStartTime:
+                                type:
+                                - string
+                                - 'null'
+                              outgoingEndTime:
+                                type:
+                                - string
+                                - 'null'
+                              allowsSameDayDisbursement:
+                                type:
+                                - boolean
+                                - 'null'
+                              sameDayIncomingLimitTime:
+                                type:
+                                - string
+                                - 'null'
+                              sameDayOutgoingLimitTime:
+                                type:
+                                - string
+                                - 'null'
+                              appIconUrl:
+                                type:
+                                - string
+                                - 'null'
+                              symbol:
+                                type:
+                                - string
+                                - 'null'
+                              locale:
+                                type:
+                                - string
+                                - 'null'
+                              openingHours:
+                                type:
+                                - string
+                                - 'null'
+                              incomingDisbursementHours:
+                                type:
+                                - string
+                                - 'null'
+                              outgoingDisbursementHours:
+                                type:
+                                - string
+                                - 'null'
+                              disbursementInstructions:
+                                type:
+                                - string
+                                - 'null'
+                            additionalProperties: false
+                            title: CurrencyResponse
+                      additionalProperties: false
+                      title: V3CurrencyProductResponse
+                additionalProperties: false
+                title: V3CurrencyProductResponseIEnumerableApiBaseResponse
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  errorMessage:
+                    type:
+                    - string
+                    - 'null'
+                additionalProperties: false
+                title: ApiBaseResponse
+        '401':
+          description: Unauthorized
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/HUBFX%20-%20Cambio/listar-as-moedas-disponiveis-por-produto
+      summary: Get by company tax id cambio agent currency product
+      x-summary-source: derived
+      operationId: getByCompanyTaxIdCambioAgentV3CurrencyProduct
+      x-operation-id-source: derived
+  /{companyTaxId}/cambio/agent/v3/quote-indicative/{currencyCode}:
+    get:
+      tags:
+      - Agente de cambio
+      description: Listar cotações indicativas pela moeda.
+      parameters:
+      - name: companyTaxId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: currencyCode
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  errorMessage:
+                    type:
+                    - string
+                    - 'null'
+                  response:
+                    type:
+                    - array
+                    - 'null'
+                    items:
+                      type: object
+                      properties:
+                        baseCurrency:
+                          type:
+                          - string
+                          - 'null'
+                        quoteCurrency:
+                          type:
+                          - string
+                          - 'null'
+                        flowType:
+                          type:
+                          - string
+                          - 'null'
+                        price:
+                          type: number
+                          format: double
+                      additionalProperties: false
+                      title: V3QuoteIndicativeResponse
+                additionalProperties: false
+                title: V3QuoteIndicativeResponseListApiBaseResponse
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  errorMessage:
+                    type:
+                    - string
+                    - 'null'
+                additionalProperties: false
+                title: ApiBaseResponse
+        '401':
+          description: Unauthorized
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/HUBFX%20-%20Cambio/listar-cotacoes-indicativas-pela-moeda
+      summary: Get by company tax id cambio agent quote indicative by currency code
+      x-summary-source: derived
+      operationId: getByCompanyTaxIdCambioAgentV3QuoteIndicativeByCurrencyCode
+      x-operation-id-source: derived
+  /{companyTaxId}/cambio/agent/v3/currency/product-disbursement-days:
+    get:
+      tags:
+      - Agente de cambio
+      description: Listar os dias disponíveis para desembolso por produto.
+      parameters:
+      - name: companyTaxId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: currencyCode
+        in: query
+        schema:
+          type: string
+      - name: product
+        in: query
+        schema:
+          type: string
+      - name: flowType
+        in: query
+        schema:
+          type: string
+      - name: quantity
+        in: query
+        schema:
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  errorMessage:
+                    type:
+                    - string
+                    - 'null'
+                  response:
+                    type:
+                    - array
+                    - 'null'
+                    items:
+                      type: object
+                      properties:
+                        currencyCode:
+                          type:
+                          - string
+                          - 'null'
+                        flowType:
+                          type:
+                          - string
+                          - 'null'
+                        quoteIndicatives:
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type: object
+                            properties:
+                              nationalDisbursementDate:
+                                type: string
+                                format: date-time
+                              foreignDisbursementDate:
+                                type: string
+                                format: date-time
+                              price:
+                                type: number
+                                format: double
+                            additionalProperties: false
+                            title: ProductDisbursementDaysQuoteIndicative
+                      additionalProperties: false
+                      title: V3ProductDisbursementDaysResponse
+                additionalProperties: false
+                title: V3ProductDisbursementDaysResponseListApiBaseResponse
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  errorMessage:
+                    type:
+                    - string
+                    - 'null'
+                additionalProperties: false
+                title: ApiBaseResponse
+        '401':
+          description: Unauthorized
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/HUBFX%20-%20Cambio/listar-os-dias-disponiveis-para-desembolso-por-produto
+      summary: Get by company tax id cambio agent currency product disbursement days
+      x-summary-source: derived
+      operationId: getByCompanyTaxIdCambioAgentV3CurrencyProductDisbursementDays
+      x-operation-id-source: derived
+  /{companyTaxId}/cambio/agent/v3/preticket:
+    get:
+      tags:
+      - Agente de cambio
+      description: Obter detalhes do pré-ticket.
+      parameters:
+      - name: companyTaxId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: query
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  errorMessage:
+                    type:
+                    - string
+                    - 'null'
+                  response:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        format: int64
+                      accountNumber:
+                        type:
+                        - string
+                        - 'null'
+                      branch:
+                        type:
+                        - string
+                        - 'null'
+                      amount:
+                        type: number
+                        format: double
+                      buyCurrencyType:
+                        type:
+                        - string
+                        - 'null'
+                      sellCurrencyType:
+                        type:
+                        - string
+                        - 'null'
+                      countryCode:
+                        type:
+                        - string
+                        - 'null'
+                      countryDescription:
+                        type:
+                        - string
+                        - 'null'
+                      type:
+                        type:
+                        - string
+                        - 'null'
+                      flowType:
+                        type:
+                        - string
+                        - 'null'
+                      currencyType:
+                        type:
+                        - string
+                        - 'null'
+                      isPayerTypeBlocked:
+                        type: boolean
+                      payerTypeDescription:
+                        type:
+                        - string
+                        - 'null'
+                      currencySymbol:
+                        type:
+                        - string
+                        - 'null'
+                      counterpartyName:
+                        type:
+                        - string
+                        - 'null'
+                      counterpartyIdentification:
+                        type:
+                        - string
+                        - 'null'
+                      orderId:
+                        type:
+                        - integer
+                        - 'null'
+                        format: int64
+                      orderPayer:
+                        type:
+                        - string
+                        - 'null'
+                      status:
+                        type:
+                        - string
+                        - 'null'
+                      isValid:
+                        type: boolean
+                      orderHasCountry:
+                        type: boolean
+                      limit:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            format: int64
+                          currency:
+                            type:
+                            - string
+                            - 'null'
+                          availableAmount:
+                            type: number
+                            format: double
+                          totalAmount:
+                            type: number
+                            format: double
+                          status:
+                            type:
+                            - string
+                            - 'null'
+                          flowType:
+                            type:
+                            - string
+                            - 'null'
+                          createdDate:
+                            type:
+                            - string
+                            - 'null'
+                            format: date-time
+                          updatedDate:
+                            type:
+                            - string
+                            - 'null'
+                            format: date-time
+                        additionalProperties: false
+                        title: LimitResponse
+                      approvedDate:
+                        type:
+                        - string
+                        - 'null'
+                        format: date-time
+                      createdDate:
+                        type:
+                        - string
+                        - 'null'
+                        format: date-time
+                      updatedDate:
+                        type:
+                        - string
+                        - 'null'
+                        format: date-time
+                      approvalDeadline:
+                        type:
+                        - string
+                        - 'null'
+                        format: date-time
+                      requestedNatureId:
+                        type:
+                        - integer
+                        - 'null'
+                        format: int64
+                      requestedNatureCode:
+                        type:
+                        - integer
+                        - 'null'
+                        format: int64
+                      requestedNatureGroupCode:
+                        type:
+                        - integer
+                        - 'null'
+                        format: int64
+                      requestedNatureDescription:
+                        type:
+                        - string
+                        - 'null'
+                      requestedNatureDisclaimer:
+                        type:
+                        - string
+                        - 'null'
+                      requestedNatureHasRadarSearch:
+                        type:
+                        - boolean
+                        - 'null'
+                      effectiveNatureId:
+                        type:
+                        - integer
+                        - 'null'
+                        format: int64
+                      effectiveNatureCode:
+                        type:
+                        - integer
+                        - 'null'
+                        format: int64
+                      effectiveNatureGroupCode:
+                        type:
+                        - integer
+                        - 'null'
+                        format: int64
+                      effectiveNatureDescription:
+                        type:
+                        - string
+                        - 'null'
+                      effectiveNatureDisclaimer:
+                        type:
+                        - string
+                        - 'null'
+                      effectiveNatureHasRadarSearch:
+                        type:
+                        - boolean
+                        - 'null'
+                      requestedPayerType:
+                        type:
+                        - string
+                        - 'null'
+                      effectivePayerType:
+                        type:
+                        - string
+                        - 'null'
+                      requestedBeneficiaryExternalId:
+                        type:
+                        - string
+                        - 'null'
+                      effectiveBeneficiaryExternalId:
+                        type:
+                        - string
+                        - 'null'
+                      requestedBeneficiaryName:
+                        type:
+                        - string
+                        - 'null'
+                      effectiveBeneficiaryName:
+                        type:
+                        - string
+                        - 'null'
+                      requestedBeneficiary:
+                        type: object
+                        properties:
+                          id:
+                            type:
+                            - integer
+                            - 'null'
+                            format: int64
+                          externalId:
+                            type:
+                            - string
+                            - 'null'
+                          name:
+                            type:
+                            - string
+                            - 'null'
+                          currency:
+                            type:
+                            - string
+                            - 'null'
+                          country:
+                            type:
+                            - string
+                            - 'null'
+                          countryDescription:
+                            type:
+                            - string
+                            - 'null'
+                          mainBankName:
+                            type:
+                            - string
+                            - 'null'
+                          mainBankAccountNumber:
+                            type:
+                            - string
+                            - 'null'
+                          intermediateBankName:
+                            type:
+                            - string
+                            - 'null'
+                          intermediateBankAccountNumber:
+                            type:
+                            - string
+                            - 'null'
+                          field70:
+                            type:
+                            - string
+                            - 'null'
+                          clientLink:
+                            type:
+                            - string
+                            - 'null'
+                          payerType:
+                            type:
+                            - string
+                            - 'null'
+                          createdDate:
+                            type:
+                            - string
+                            - 'null'
+                            format: date-time
+                          updatedDate:
+                            type:
+                            - string
+                            - 'null'
+                            format: date-time
+                        additionalProperties: false
+                        title: BeneficiaryResponse
+                      effectiveBeneficiary:
+                        type: object
+                        properties:
+                          id:
+                            type:
+                            - integer
+                            - 'null'
+                            format: int64
+                          externalId:
+                            type:
+                            - string
+                            - 'null'
+                          name:
+                            type:
+                            - string
+                            - 'null'
+                          currency:
+                            type:
+                            - string
+                            - 'null'
+                          country:
+                            type:
+                            - string
+                            - 'null'
+                          countryDescription:
+                            type:
+                            - string
+                            - 'null'
+                          mainBankName:
+                            type:
+                            - string
+                            - 'null'
+                          mainBankAccountNumber:
+                            type:
+                            - string
+                            - 'null'
+                          intermediateBankName:
+                            type:
+                            - string
+                            - 'null'
+                          intermediateBankAccountNumber:
+                            type:
+                            - string
+                            - 'null'
+                          field70:
+                            type:
+                            - string
+                            - 'null'
+                          clientLink:
+                            type:
+                            - string
+                            - 'null'
+                          payerType:
+                            type:
+                            - string
+                            - 'null'
+                          createdDate:
+                            type:
+                            - string
+                            - 'null'
+                            format: date-time
+                          updatedDate:
+                            type:
+                            - string
+                            - 'null'
+                            format: date-time
+                        additionalProperties: false
+                        title: BeneficiaryResponse
+                      documents:
+                        type:
+                        - array
+                        - 'null'
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              format: int64
+                            isRequired:
+                              type: boolean
+                            hasAnyReusedDocument:
+                              type: boolean
+                            abscenceReason:
+                              type:
+                              - string
+                              - 'null'
+                            type:
+                              type:
+                              - string
+                              - 'null'
+                            typeId:
+                              type:
+                              - integer
+                              - 'null'
+                              format: int64
+                            typeName:
+                              type:
+                              - string
+                              - 'null'
+                            typeDescription:
+                              type:
+                              - string
+                              - 'null'
+                            typeTitle:
+                              type:
+                              - string
+                              - 'null'
+                            attachments:
+                              type:
+                              - array
+                              - 'null'
+                              items:
+                                type: object
+                                properties:
+                                  abscenceReason:
+                                    type:
+                                    - string
+                                    - 'null'
+                                  id:
+                                    type: integer
+                                    format: int64
+                                  isReused:
+                                    type: boolean
+                                  fileName:
+                                    type:
+                                    - string
+                                    - 'null'
+                                  fileContentType:
+                                    type:
+                                    - string
+                                    - 'null'
+                                  fileKey:
+                                    type:
+                                    - string
+                                    - 'null'
+                                  fxId:
+                                    type:
+                                    - string
+                                    - 'null'
+                                  pendingAttachment:
+                                    type:
+                                    - boolean
+                                    - 'null'
+                                  pendingReanalysis:
+                                    type:
+                                    - boolean
+                                    - 'null'
+                                  pendencyId:
+                                    type:
+                                    - integer
+                                    - 'null'
+                                    format: int64
+                                  pendencyDescription:
+                                    type:
+                                    - string
+                                    - 'null'
+                                  pendencyMessage:
+                                    type:
+                                    - string
+                                    - 'null'
+                                  pendencyLimitDate:
+                                    type:
+                                    - string
+                                    - 'null'
+                                    format: date-time
+                                  genericFields:
+                                    type:
+                                    - array
+                                    - 'null'
+                                    items:
+                                      type: object
+                                      properties:
+                                        id:
+                                          type: integer
+                                          format: int64
+                                        typeName:
+                                          type:
+                                          - string
+                                          - 'null'
+                                        typeDescription:
+                                          type:
+                                          - string
+                                          - 'null'
+                                        typeTitle:
+                                          type:
+                                          - string
+                                          - 'null'
+                                        typeMask:
+                                          type:
+                                          - string
+                                          - 'null'
+                                        typeId:
+                                          type:
+                                          - integer
+                                          - 'null'
+                                          format: int64
+                                        typeCanBeAddedOnDemand:
+                                          type: boolean
+                                        typeTooltip:
+                                          type:
+                                          - string
+                                          - 'null'
+                                        typeRegex:
+                                          type:
+                                          - string
+                                          - 'null'
+                                        value:
+                                          type:
+                                          - string
+                                          - 'null'
+                                        isRequired:
+                                          type: boolean
+                                        sentToFx:
+                                          type: boolean
+                                      additionalProperties: false
+                                      title: V3PreTicketResponseGenericField
+                                additionalProperties: false
+                                title: V3PreTicketResponseDocumentAttachment
+                          additionalProperties: false
+                          title: V3PreTicketResponseDocument
+                      pendingDocuments:
+                        type:
+                        - array
+                        - 'null'
+                        items:
+                          type: object
+                          properties:
+                            type:
+                              type:
+                              - string
+                              - 'null'
+                            typeId:
+                              type:
+                              - integer
+                              - 'null'
+                              format: int64
+                            typeName:
+                              type:
+                              - string
+                              - 'null'
+                            typeTitle:
+                              type:
+                              - string
+                              - 'null'
+                            typeDescription:
+                              type:
+                              - string
+                              - 'null'
+                            id:
+                              type: integer
+                              format: int64
+                            isRequired:
+                              type: boolean
+                            abscenceReason:
+                              type:
+                              - string
+                              - 'null'
+                            attachments:
+                              type:
+                              - array
+                              - 'null'
+                              items:
+                                type: object
+                                properties:
+                                  abscenceReason:
+                                    type:
+                                    - string
+                                    - 'null'
+                                  id:
+                                    type: integer
+                                    format: int64
+                                  isReused:
+                                    type: boolean
+                                  fileName:
+                                    type:
+                                    - string
+                                    - 'null'
+                                  fileContentType:
+                                    type:
+                                    - string
+                                    - 'null'
+                                  fileKey:
+                                    type:
+                                    - string
+                                    - 'null'
+                                  fxId:
+                                    type:
+                                    - string
+                                    - 'null'
+                                  pendingAttachment:
+                                    type:
+                                    - boolean
+                                    - 'null'
+                                  pendingReanalysis:
+                                    type:
+                                    - boolean
+                                    - 'null'
+                                  pendencyId:
+                                    type:
+                                    - integer
+                                    - 'null'
+                                    format: int64
+                                  pendencyDescription:
+                                    type:
+                                    - string
+                                    - 'null'
+                                  pendencyMessage:
+                                    type:
+                                    - string
+                                    - 'null'
+                                  pendencyLimitDate:
+                                    type:
+                                    - string
+                                    - 'null'
+                                    format: date-time
+                                  genericFields:
+                                    type:
+                                    - array
+                                    - 'null'
+                                    items:
+                                      type: object
+                                      properties:
+                                        id:
+                                          type: integer
+                                          format: int64
+                                        typeName:
+                                          type:
+                                          - string
+                                          - 'null'
+                                        typeDescription:
+                                          type:
+                                          - string
+                                          - 'null'
+                                        typeTitle:
+                                          type:
+                                          - string
+                                          - 'null'
+                                        typeMask:
+                                          type:
+                                          - string
+                                          - 'null'
+                                        typeId:
+                                          type:
+                                          - integer
+                                          - 'null'
+                                          format: int64
+                                        typeCanBeAddedOnDemand:
+                                          type: boolean
+                                        typeTooltip:
+                                          type:
+                                          - string
+                                          - 'null'
+                                        typeRegex:
+                                          type:
+                                          - string
+                                          - 'null'
+                                        value:
+                                          type:
+                                          - string
+                                          - 'null'
+                                        isRequired:
+                                          type: boolean
+                                        sentToFx:
+                                          type: boolean
+                                      additionalProperties: false
+                                      title: V3PreTicketResponseGenericField
+                                additionalProperties: false
+                                title: V3PreTicketResponseDocumentAttachment
+                          additionalProperties: false
+                          title: V3PreTicketDocumentPendencyResponse
+                      fields:
+                        type:
+                        - array
+                        - 'null'
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              format: int64
+                            typeName:
+                              type:
+                              - string
+                              - 'null'
+                            typeDescription:
+                              type:
+                              - string
+                              - 'null'
+                            typeTitle:
+                              type:
+                              - string
+                              - 'null'
+                            typeMask:
+                              type:
+                              - string
+                              - 'null'
+                            typeId:
+                              type:
+                              - integer
+                              - 'null'
+                              format: int64
+                            typeCanBeAddedOnDemand:
+                              type: boolean
+                            typeTooltip:
+                              type:
+                              - string
+                              - 'null'
+                            typeRegex:
+                              type:
+                              - string
+                              - 'null'
+                            value:
+                              type:
+                              - string
+                              - 'null'
+                            isRequired:
+                              type: boolean
+                            sentToFx:
+                              type: boolean
+                          additionalProperties: false
+                          title: V3PreTicketResponseGenericField
+                      taxRates:
+                        type: object
+                        properties:
+                          iofRate:
+                            type:
+                            - number
+                            - 'null'
+                            format: double
+                          irrfRate:
+                            type:
+                            - number
+                            - 'null'
+                            format: double
+                          cideRate:
+                            type:
+                            - number
+                            - 'null'
+                            format: double
+                          issRate:
+                            type:
+                            - number
+                            - 'null'
+                            format: double
+                          pisRate:
+                            type:
+                            - number
+                            - 'null'
+                            format: double
+                          cofinsRate:
+                            type:
+                            - number
+                            - 'null'
+                            format: double
+                        additionalProperties: false
+                        title: V3PreTicketResponseTaxRates
+                      natureId:
+                        type: integer
+                        format: int64
+                        deprecated: true
+                      natureCode:
+                        type: integer
+                        format: int64
+                        deprecated: true
+                      natureGroupCode:
+                        type: integer
+                        format: int64
+                        deprecated: true
+                      natureDescription:
+                        type:
+                        - string
+                        - 'null'
+                        deprecated: true
+                      natureDisclaimer:
+                        type:
+                        - string
+                        - 'null'
+                        deprecated: true
+                      natureHasRadarSearch:
+                        type: boolean
+                        deprecated: true
+                      payerType:
+                        type:
+                        - string
+                        - 'null'
+                        deprecated: true
+                      beneficiaryExternalId:
+                        type:
+                        - string
+                        - 'null'
+                        deprecated: true
+                      beneficiaryName:
+                        type:
+                        - string
+                        - 'null'
+                        deprecated: true
+                      beneficiary:
+                        type: object
+                        properties:
+                          id:
+                            type:
+                            - integer
+                            - 'null'
+                            format: int64
+                          externalId:
+                            type:
+                            - string
+                            - 'null'
+                          name:
+                            type:
+                            - string
+                            - 'null'
+                          currency:
+                            type:
+                            - string
+                            - 'null'
+                          country:
+                            type:
+                            - string
+                            - 'null'
+                          countryDescription:
+                            type:
+                            - string
+                            - 'null'
+                          mainBankName:
+                            type:
+                            - string
+                            - 'null'
+                          mainBankAccountNumber:
+                            type:
+                            - string
+                            - 'null'
+                          intermediateBankName:
+                            type:
+                            - string
+                            - 'null'
+                          intermediateBankAccountNumber:
+                            type:
+                            - string
+                            - 'null'
+                          field70:
+                            type:
+                            - string
+                            - 'null'
+                          clientLink:
+                            type:
+                            - string
+                            - 'null'
+                          payerType:
+                            type:
+                            - string
+                            - 'null'
+                          createdDate:
+                            type:
+                            - string
+                            - 'null'
+                            format: date-time
+                          updatedDate:
+                            type:
+                            - string
+                            - 'null'
+                            format: date-time
+                        additionalProperties: false
+                        title: BeneficiaryResponse
+                    additionalProperties: false
+                    title: V3PreTicketDetailsResponse
+                additionalProperties: false
+                title: V3PreTicketDetailsResponseApiBaseResponse
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  errorMessage:
+                    type:
+                    - string
+                    - 'null'
+                additionalProperties: false
+                title: ApiBaseResponse
+        '401':
+          description: Unauthorized
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/HUBFX%20-%20Cambio/obter-detalhes-do-pre-ticket
+      summary: Get by company tax id cambio agent preticket
+      x-summary-source: derived
+      operationId: getByCompanyTaxIdCambioAgentV3Preticket
+      x-operation-id-source: derived
+  /{companyTaxId}/cambio/agent/v3/quote/simulate:
+    post:
+      tags:
+      - Agente de cambio
+      description: Simular cotação.
+      parameters:
+      - name: companyTaxId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                counterpartyIdentificationType:
+                  type:
+                  - string
+                  - 'null'
+                counterpartyIdentification:
+                  type:
+                  - string
+                  - 'null'
+                flowType:
+                  type:
+                  - string
+                  - 'null'
+                currencyType:
+                  type:
+                  - string
+                  - 'null'
+                accountNumber:
+                  type:
+                  - string
+                  - 'null'
+                amount:
+                  type:
+                  - number
+                  - 'null'
+                  format: double
+                natureId:
+                  type:
+                  - integer
+                  - 'null'
+                  format: int64
+                orderId:
+                  type:
+                  - integer
+                  - 'null'
+                  format: int64
+                beneficiaryExternalId:
+                  type:
+                  - string
+                  - 'null'
+                payerType:
+                  type:
+                  - string
+                  - 'null'
+                nationalDisbursementDate:
+                  type:
+                  - string
+                  - 'null'
+                foreignDisbursementDate:
+                  type:
+                  - string
+                  - 'null'
+                preTicketId:
+                  type:
+                  - integer
+                  - 'null'
+                  format: int64
+              additionalProperties: false
+              title: V3ChannelSimulateQuoteCommand
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  errorMessage:
+                    type:
+                    - string
+                    - 'null'
+                  response:
+                    type: object
+                    properties:
+                      quoteExternalId:
+                        type:
+                        - string
+                        - 'null'
+                      buyCurrencyType:
+                        type:
+                        - string
+                        - 'null'
+                      amount:
+                        type: number
+                        format: double
+                      sellCurrencyType:
+                        type:
+                        - string
+                        - 'null'
+                      nationalCurrencyTotal:
+                        type: number
+                        format: double
+                      exchangeRatio:
+                        type: number
+                        format: double
+                      simulatedTaxes:
+                        type: object
+                        properties:
+                          iofRate:
+                            type: number
+                            format: double
+                          iofAmount:
+                            type: number
+                            format: double
+                          irrfRate:
+                            type: number
+                            format: double
+                          irrfAmount:
+                            type: number
+                            format: double
+                          cideRate:
+                            type: number
+                            format: double
+                          cideAmount:
+                            type: number
+                            format: double
+                          issAmount:
+                            type: number
+                            format: double
+                          issRate:
+                            type: number
+                            format: double
+                          pisAmount:
+                            type: number
+                            format: double
+                          pisRate:
+                            type: number
+                            format: double
+                          cofinsAmount:
+                            type: number
+                            format: double
+                          cofinsRate:
+                            type: number
+                            format: double
+                        additionalProperties: false
+                        title: V3TaxResponse
+                      maximumTaxes:
+                        type: object
+                        properties:
+                          iofRate:
+                            type: number
+                            format: double
+                          iofAmount:
+                            type: number
+                            format: double
+                          irrfRate:
+                            type: number
+                            format: double
+                          irrfAmount:
+                            type: number
+                            format: double
+                          cideRate:
+                            type: number
+                            format: double
+                          cideAmount:
+                            type: number
+                            format: double
+                          issAmount:
+                            type: number
+                            format: double
+                          issRate:
+                            type: number
+                            format: double
+                          pisAmount:
+                            type: number
+                            format: double
+                          pisRate:
+                            type: number
+                            format: double
+                          cofinsAmount:
+                            type: number
+                            format: double
+                          cofinsRate:
+                            type: number
+                            format: double
+                        additionalProperties: false
+                        title: V3TaxResponse
+                      vet:
+                        type:
+                        - number
+                        - 'null'
+                        format: double
+                      totalAmount:
+                        type:
+                        - number
+                        - 'null'
+                        format: double
+                      nationalDisbursementDate:
+                        type:
+                        - string
+                        - 'null'
+                        format: date-time
+                      foreignDisbursementDate:
+                        type:
+                        - string
+                        - 'null'
+                        format: date-time
+                      flowType:
+                        enum:
+                        - REMESSA
+                        - INTERNACAO
+                        type: string
+                        title: FlowType
+                      currencyType:
+                        enum:
+                        - FOREIGN
+                        - LOCAL
+                        type: string
+                        title: CurrencyType
+                      payerType:
+                        type:
+                        - string
+                        - 'null'
+                      bankCode:
+                        type:
+                        - string
+                        - 'null'
+                      branch:
+                        type:
+                        - string
+                        - 'null'
+                      accountNumber:
+                        type:
+                        - string
+                        - 'null'
+                      beneficiaryId:
+                        type:
+                        - integer
+                        - 'null'
+                        format: int64
+                      beneficiaryName:
+                        type:
+                        - string
+                        - 'null'
+                      orderId:
+                        type:
+                        - integer
+                        - 'null'
+                        format: int64
+                      natureId:
+                        type:
+                        - integer
+                        - 'null'
+                        format: int64
+                      natureDescription:
+                        type:
+                        - string
+                        - 'null'
+                      preTicketId:
+                        type:
+                        - integer
+                        - 'null'
+                        format: int64
+                      usdExchangeRatio:
+                        type:
+                        - number
+                        - 'null'
+                        format: double
+                      contractNeedsSignature:
+                        type:
+                        - boolean
+                        - 'null'
+                      userCanAcceptQuote:
+                        type: boolean
+                      requiresPreTicket:
+                        type: boolean
+                      isCountryApproved:
+                        type: boolean
+                    additionalProperties: false
+                    title: V3QuoteSimulationResponse
+                additionalProperties: false
+                title: V3QuoteSimulationResponseApiBaseResponse
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  errorMessage:
+                    type:
+                    - string
+                    - 'null'
+                additionalProperties: false
+                title: ApiBaseResponse
+        '401':
+          description: Unauthorized
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/HUBFX%20-%20Cambio/simular-cotacao
+      summary: Create by company tax id cambio agent quote simulate
+      x-summary-source: derived
+      operationId: postByCompanyTaxIdCambioAgentV3QuoteSimulate
+      x-operation-id-source: derived
+  /{companyTaxId}/cambio/agent/v3/counterparty/block-status:
+    get:
+      tags:
+      - Agente de cambio
+      description: Verifica se a contraparte está bloqueada.
+      parameters:
+      - name: companyTaxId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  errorMessage:
+                    type:
+                    - string
+                    - 'null'
+                  response:
+                    type: object
+                    properties:
+                      isBlocked:
+                        type: boolean
+                      blocks:
+                        type:
+                        - array
+                        - 'null'
+                        items:
+                          type: object
+                          properties:
+                            type:
+                              type:
+                              - string
+                              - 'null'
+                            reason:
+                              type:
+                              - string
+                              - 'null'
+                            expiresAt:
+                              type:
+                              - string
+                              - 'null'
+                              format: date-time
+                          additionalProperties: false
+                          title: V3CounterpartyBlockReason
+                    additionalProperties: false
+                    title: V3CounterpartyBlockStatusResponse
+                additionalProperties: false
+                title: V3CounterpartyBlockStatusResponseApiBaseResponse
+        '401':
+          description: Unauthorized
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/HUBFX%20-%20Cambio/verifica-se-a-contraparte-esta-bloqueada
+      summary: Get by company tax id cambio agent counterparty block status
+      x-summary-source: derived
+      operationId: getByCompanyTaxIdCambioAgentV3CounterpartyBlockStatus
+      x-operation-id-source: derived
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/ceec802a.f19752b1.js
+  - https://developers.empresas.btgpactual.com/assets/js/a92826e8.329c0771.js
+  - https://developers.empresas.btgpactual.com/assets/js/ac9f22e5.1792029c.js
+  - https://developers.empresas.btgpactual.com/assets/js/8c27e9a0.cb0a9bd6.js
+  - https://developers.empresas.btgpactual.com/assets/js/f64e50b9.0f45a2c7.js
+  - https://developers.empresas.btgpactual.com/assets/js/12bac839.9e48f580.js
+  - https://developers.empresas.btgpactual.com/assets/js/7c834da7.42e70835.js
+  - https://developers.empresas.btgpactual.com/assets/js/be0c05bf.7fa65ea5.js
+  - https://developers.empresas.btgpactual.com/assets/js/aca62b8a.82cf769d.js

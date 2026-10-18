@@ -1,0 +1,383 @@
+openapi: 3.2.0
+info:
+  title: Acquirers - Salesprovider Vendas API
+  version: 1.0.0
+  description: 'Endpoints do Dashboard Transacional para parceiros (providers). Naming: camelCase, monetary values as { currency, value } objects, enums in snake_case.'
+servers:
+- url: https://api.abs.btgpactual.com
+  description: Production
+tags:
+- name: Vendas
+paths:
+  /{companyId}/acquirer/sales:
+    get:
+      tags:
+      - Vendas
+      description: Retorna o histórico de vendas para exibição no dashboard do parceiro.
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        description: CNPJ da empresa
+        schema:
+          type: string
+        example: 30306294000145
+      - name: startDate
+        in: query
+        description: 'Data de início para filtragem por intervalo de data. Formato: yyyy-MM-dd'
+        schema:
+          type: string
+          format: date
+      - name: endDate
+        in: query
+        description: 'Data final para filtragem por intervalo de data. Formato: yyyy-MM-dd'
+        schema:
+          type: string
+          format: date
+      - name: cursor
+        in: query
+        description: Cursor para paginação. Utilizado para buscar a próxima página de resultados. O valor do cursor é retornado na resposta da API e deve ser fornecido para obter a próxima página de resultados.
+        schema:
+          type: string
+      - name: pageSize
+        in: query
+        description: Tamanho da página a ser retornada.
+        schema:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+          - integer
+          - string
+          format: int32
+      - name: cardBrand
+        in: query
+        description: 'Marca do cartão para filtragem. Exemplo: Visa, Mastercard, etc.'
+        schema:
+          type: string
+          enum:
+          - visa
+          - mastercard
+          - elo
+          - hipercard
+          - amex
+          - other
+          description: Card brand (proper names are acceptable in original case)
+          title: CardBrand
+      - name: saleType
+        in: query
+        description: 'Modalidade da venda para filtragem. Exemplo: crédito, débito, etc.'
+        schema:
+          type: string
+          enum:
+          - credit_card
+          - debit_card
+          - pix
+          title: PaymentMethodType
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                required:
+                - _links
+                type: object
+                properties:
+                  _links:
+                    description: Token para a próxima página de resultados. O formato é opaco e deve ser tratado como um identificador único para a posição do último item visto na página atual.
+                    type: object
+                    properties:
+                      prev:
+                        oneOf:
+                        - type: 'null'
+                        - type: object
+                          properties:
+                            href:
+                              type: string
+                            method:
+                              type: string
+                          title: NextCursorResponseDto
+                      next:
+                        oneOf:
+                        - type: 'null'
+                        - type: object
+                          properties:
+                            href:
+                              type: string
+                            method:
+                              type: string
+                          title: NextCursorResponseDto
+                    title: LinksPaginationResponseDto
+                  data:
+                    type: array
+                    items:
+                      required:
+                      - id
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: Identificador da venda.
+                        type:
+                          type: string
+                          enum:
+                          - credit_card
+                          - debit_card
+                          - pix
+                          title: PaymentMethodType
+                        channel:
+                          description: Canal onde a venda foi realizada.
+                          type: string
+                          enum:
+                          - web
+                          - pos
+                          - tef
+                          title: SaleChannel
+                        grossAmount:
+                          type: object
+                          properties:
+                            currency:
+                              type: string
+                              example: BRL
+                            value:
+                              type: string
+                              example: '123.45'
+                              description: Decimal value as string (2 decimal places)
+                          required:
+                          - currency
+                          - value
+                          title: MoneyDto
+                        netAmount:
+                          type: object
+                          properties:
+                            currency:
+                              type: string
+                              example: BRL
+                            value:
+                              type: string
+                              example: '123.45'
+                              description: Decimal value as string (2 decimal places)
+                          required:
+                          - currency
+                          - value
+                          title: MoneyDto
+                        paymentMethod:
+                          oneOf:
+                          - type: 'null'
+                          - description: Dados do método de pagamento utilizado.
+                            type: object
+                            properties:
+                              cardBrand:
+                                oneOf:
+                                - type: 'null'
+                                - type: string
+                                  enum:
+                                  - visa
+                                  - mastercard
+                                  - elo
+                                  - hipercard
+                                  - amex
+                                  - other
+                                  description: Card brand (proper names are acceptable in original case)
+                                  title: CardBrand
+                              cardNumber:
+                                type:
+                                - 'null'
+                                - string
+                                description: Número do cartão mascarado, se aplicável.
+                              installments:
+                                pattern: ^-?(?:0|[1-9]\d*)$
+                                type:
+                                - integer
+                                - string
+                                description: Número de parcelas.
+                                format: int32
+                            title: PaymentMethodDto
+                        saleDate:
+                          type: string
+                          description: Data e hora que a venda foi registrada.
+                          format: date-time
+                        capturedAt:
+                          type:
+                          - 'null'
+                          - string
+                          description: Data e hora que a venda foi capturada.
+                          format: date-time
+                        authorizedAt:
+                          type:
+                          - 'null'
+                          - string
+                          description: Data e hora que a venda foi autorizada.
+                          format: date-time
+                      description: Detalhes da venda para exibição no histórico de vendas.
+                      title: SaleHistoryDto
+                    description: Lista de itens
+                title: CursorPaginatedResponseDtoOfSaleHistoryDto
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: string
+      security:
+      - bearerAuth: []
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Acquirers%20-%20Salesprovider/busca-a-lista-de-vendas
+      summary: Get by company id acquirer sales
+      x-summary-source: derived
+      operationId: getByCompanyIdAcquirerSales
+      x-operation-id-source: derived
+  /{companyId}/acquirer/sales/{saleId}:
+    get:
+      tags:
+      - Vendas
+      description: Retorna os detalhes de uma venda específica para exibição no dashboard do parceiro.
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        description: CNPJ da empresa
+        schema:
+          type: string
+        example: 30306294000145
+      - name: saleId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                required:
+                - id
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: Identificador da venda.
+                  type:
+                    type: string
+                    enum:
+                    - credit_card
+                    - debit_card
+                    - pix
+                    title: PaymentMethodType
+                  channel:
+                    description: Canal onde a venda foi realizada.
+                    type: string
+                    enum:
+                    - web
+                    - pos
+                    - tef
+                    title: SaleChannel
+                  grossAmount:
+                    type: object
+                    properties:
+                      currency:
+                        type: string
+                        example: BRL
+                      value:
+                        type: string
+                        example: '123.45'
+                        description: Decimal value as string (2 decimal places)
+                    required:
+                    - currency
+                    - value
+                    title: MoneyDto
+                  netAmount:
+                    type: object
+                    properties:
+                      currency:
+                        type: string
+                        example: BRL
+                      value:
+                        type: string
+                        example: '123.45'
+                        description: Decimal value as string (2 decimal places)
+                    required:
+                    - currency
+                    - value
+                    title: MoneyDto
+                  paymentMethod:
+                    oneOf:
+                    - type: 'null'
+                    - description: Dados do método de pagamento utilizado.
+                      type: object
+                      properties:
+                        cardBrand:
+                          oneOf:
+                          - type: 'null'
+                          - type: string
+                            enum:
+                            - visa
+                            - mastercard
+                            - elo
+                            - hipercard
+                            - amex
+                            - other
+                            description: Card brand (proper names are acceptable in original case)
+                            title: CardBrand
+                        cardNumber:
+                          type:
+                          - 'null'
+                          - string
+                          description: Número do cartão mascarado, se aplicável.
+                        installments:
+                          pattern: ^-?(?:0|[1-9]\d*)$
+                          type:
+                          - integer
+                          - string
+                          description: Número de parcelas.
+                          format: int32
+                      title: PaymentMethodDto
+                  saleDate:
+                    type: string
+                    description: Data e hora que a venda foi registrada.
+                    format: date-time
+                  capturedAt:
+                    type:
+                    - 'null'
+                    - string
+                    description: Data e hora que a venda foi capturada.
+                    format: date-time
+                  authorizedAt:
+                    type:
+                    - 'null'
+                    - string
+                    description: Data e hora que a venda foi autorizada.
+                    format: date-time
+                description: DTO de resposta para detalhes de uma venda
+                title: SaleDetailsDto
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: string
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: string
+      security:
+      - bearerAuth: []
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Acquirers%20-%20Salesprovider/busca-os-detalhes-de-uma-venda
+      summary: Get by company id acquirer sales by sale id
+      x-summary-source: derived
+      operationId: getByCompanyIdAcquirerSalesBySaleId
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/cc6a9e6a.026577e9.js
+  - https://developers.empresas.btgpactual.com/assets/js/cc7b6837.d8ee4956.js
+  - https://developers.empresas.btgpactual.com/assets/js/38a7ed0c.0d73f6b9.js

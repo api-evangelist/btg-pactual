@@ -1,0 +1,379 @@
+generated: '2026-10-18'
+method: derived
+generator: derive-vocabulary.py
+source:
+- openapi/btg-pactual-acquirers-paymentlink-openapi.yml
+- openapi/btg-pactual-acquirers-salesprovider-openapi.yml
+- openapi/btg-pactual-antecred-subcredenciadores-openapi.yml
+- openapi/btg-pactual-banking-accounts-openapi.yml
+- openapi/btg-pactual-banking-cards-openapi.yml
+vocabulary:
+  name: BTG Pactual Domain Vocabulary
+  description: 'Terms declared by BTG Pactual''s own API contract: its resource groups, objects and enumerations, with the contract''s definitions.
+    Derived, not authored.'
+  version: '2026-10-18'
+  terms:
+  - term: Link de pagamento
+    definition: 'Resource group in the contract; its operation PUT /{companyId}/banking/payment-link/{paymentLinkId}: API responsável por editar
+      um link de pagamento'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-acquirers-paymentlink-openapi.yml
+  - term: Recebíveis
+    definition: 'Resource group in the contract; its operation GET /{companyId}/acquirer/receivable-units: Retorna a lista de unidades recebíveis
+      para um dia específico, incluindo status, valor e data de pagamento, para exibição no dashboard do parceiro.'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-acquirers-salesprovider-openapi.yml
+  - term: Vendas
+    definition: 'Resource group in the contract; its operation GET /{companyId}/acquirer/sales: Retorna o histórico de vendas para exibição no
+      dashboard do parceiro.'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-acquirers-salesprovider-openapi.yml
+  - term: Subcredenciadoras
+    definition: 'Resource group in the contract; its operation POST /credenciadoras/antecipacao: Realiza a antecipação de recebíveis de subcredenciadoras'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-antecred-subcredenciadores-openapi.yml
+  - term: Conta PJ
+    definition: 'Resource group in the contract; its operation GET /{companyId}/banking/accounts: Consultar dados da conta'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-banking-accounts-openapi.yml
+  - term: Cartões
+    definition: 'Resource group in the contract; its operation GET /{companyId}/banking/cards: ## 📘 Ambiente de sandbox > Esta API utiliza o [Wiremock](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-com-wiremock-v2)
+      > No sandbox este endpoint requer a utilização de [Sandbox Headers](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-headers)
+      | Header | Descrição | Valores Aceitos | | :--------- | :----------'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-banking-cards-openapi.yml
+  - term: Faturas
+    definition: 'Resource group in the contract; its operation GET /{companyId}/banking/cards/invoices: ## 📘 Ambiente de sandbox > Esta API utiliza
+      o [Wiremock](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-com-wiremock-v2) > No sandbox este
+      endpoint requer a utilização de [Sandbox Headers](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-headers)
+      | Header | Descrição | Valores Aceitos | | :--------- | :----------'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-banking-cards-openapi.yml
+  - term: Recebíveis de Cartão de Crédito
+    definition: 'Resource group in the contract; its operation GET /{companyId}/credit/credit-card-receivables/allowed-actions: Obtém as ações
+      permitidas para a empresa (por exemplo, antecipar ou ativar a antecipação automática) junto com um resumo das condições de operação, como
+      limite disponível, valores mínimo e máximo, prazo e taxa médios, bandeiras e credenciadoras disponíveis.'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-banking-ccreceivables-openapi.yml
+  - term: Collection
+    definition: 'Resource group in the contract; its operation PUT /{companyId}/banking/collections/{collectionId}: ## 📘 Ambiente de sandbox >
+      Esta API utiliza o [Wiremock](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-com-wiremock-v2)
+      > No sandbox este endpoint requer a utilização de [Sandbox Headers](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-headers)
+      | Header | Descrição | Valores Aceitos | | :--------- | :----------'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-banking-collections-openapi.yml
+  - term: Débito Direto Autorizado
+    definition: 'Resource group in the contract; its operation POST /{companyId}/banking/direct-debit: ## 📘 Ambiente de sandbox > Esta API utiliza
+      o [Wiremock](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-com-wiremock-v2) > No sandbox este
+      endpoint requer a utilização de [Sandbox Headers](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-headers)
+      | Header | Descrição | Valores Aceitos | | :--------- | :----------'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-banking-dda-openapi.yml
+  - term: Link de Pagamento Recorrente
+    definition: 'Resource group in the contract; its operation PUT /{companyId}/banking/payment-link/recurrence/{id}: API responsável por atualizar
+      as configurações de um link de pagamento recorrente.'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-banking-paymentlinkrec-openapi.yml
+  - term: Lote de Pagamentos
+    definition: 'Resource group in the contract; its operation DELETE /{companyId}/banking/batch-payments/{batchId}: Abandonar Lote'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-banking-payments-openapi.yml
+  - term: Pagamentos Recorrentes
+    definition: 'Resource group in the contract; its operation PATCH /{companyId}/banking/payments-recurrences/{recurrenceId}: ## 📘 Ambiente de
+      sandbox > Esta API utiliza o [Wiremock](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-com-wiremock-v2)
+      > No sandbox este endpoint requer a utilização de [Sandbox Headers](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-headers)
+      | Header | Descrição | Valores Aceitos | | :--------- | :----------'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-banking-payments-openapi.yml
+  - term: Pagamentos
+    definition: 'Resource group in the contract; its operation DELETE /{companyId}/banking/payments/approvals/{paymentId}: Cancelar pagamento
+      ou transferência pendente de aprovação'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-banking-payments-openapi.yml
+  - term: Colaboradores
+    definition: 'Resource group in the contract; its operation POST /{companyId}/banking/payroll/employees/{employeeTaxId}/deactivate: Desliga
+      (inativa) um colaborador ativo.'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-banking-payroll-openapi.yml
+  - term: Onboarding
+    definition: 'Resource group in the contract; its operation GET /{companyId}/banking/payroll/onboarding/issuers: Retorna a lista de emissores
+      de documento de identidade disponíveis para onboarding.'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-banking-payroll-openapi.yml
+  - term: Autorização
+    definition: 'Resource group in the contract; its operation DELETE /{companyId}/banking/collections/automatic-pix/authorization/{authorizationId}:
+      ## 📘 Ambiente de sandbox > Esta API utiliza o [Wiremock](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-com-wiremock-v2)
+      > No sandbox este endpoint requer a utilização de [Sandbox Headers](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-headers)
+      | Header | Descrição | Valores Aceitos | | :--------- | :----------'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-banking-pix-automatico-openapi.yml
+  - term: Agendamento
+    definition: 'Resource group in the contract; its operation DELETE /{companyId}/banking/collections/automatic-pix/scheduling-instruction/{schedulingInstructionId}:
+      ## 📘 Ambiente de sandbox > Esta API utiliza o [Wiremock](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-com-wiremock-v2)
+      > No sandbox este endpoint requer a utilização de [Sandbox Headers](../../starting-doc/Recursos%20para%20Developers%20BTG%20Empresas%20/APIs/sandbox-1/sandbox-headers)
+      | Header | Descrição | Valores Aceitos | | :--------- | :----------'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-banking-pix-automatico-openapi.yml
+  - term: Pix Cobrança
+    definition: 'Resource group in the contract; its operation POST /companies/{companyId}/pix-cash-in/instant-collections: Cria uma nova cobrança
+      instantânea'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-banking-pixcashin-openapi.yml
+  - term: Protest
+    definition: 'Resource group in the contract; its operation DELETE /{companyId}/banking/protest/{id}: Cancela um protesto individualmente.'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-banking-protest-openapi.yml
+  - term: Splitter
+    definition: 'Resource group in the contract; its operation POST /{companyId}/banking/splitter: Cria um splitter para o beneficiário.'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-banking-split-openapi.yml
+  - term: Split
+    definition: 'Resource group in the contract; its operation GET /{companyId}/banking/split/{splitId}: Retorna a divisão global (`Split`) persistida
+      de uma cobrança pelo seu UUID.'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-banking-split-openapi.yml
+  - term: Accounts
+    definition: 'Resource group in the contract; its operation GET /{taxId}/banking/accounts/{accountId}/balances/refresh: Disparar refresh on-demand
+      do saldo Open Finance'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-bankinghub-open-finance-balance-refresh-openapi.yml
+  - term: Assets
+    definition: 'Resource group in the contract; its operation PUT /fidc/v1/assets/{asset_id}: Corrige os dados de um ativo reprovado na admissão
+      e reprocessa a admissão automaticamente.'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-crediflow-ativos-e-cessoes-openapi.yml
+  - term: Cessions
+    definition: 'Resource group in the contract; its operation GET /fidc/v1/cessions: Consulta a situação de uma cessão, retornando os identificadores
+      (externo e interno) e o status atual.'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-crediflow-ativos-e-cessoes-openapi.yml
+  - term: DisbursementGroups
+    definition: 'Resource group in the contract; its operation GET /fidc/v1/disbursement-groups: Consulta um grupo de desembolso, incluindo o
+      status do grupo e os ativos (membros) que o compõem.'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-crediflow-ativos-e-cessoes-openapi.yml
+  - term: Averbação
+    definition: 'Resource group in the contract; its operation POST /v1/fidc/credit/averbation/{FundTaxId}: Envio do Arquivo de Averbação'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-fidc-consignado-privado-openapi.yml
+  - term: Desligamento
+    definition: 'Resource group in the contract; its operation POST /v1/fidc/credit/offboarding/{fundTaxId}: Envio do arquivo de Desligamento
+      dos Funcionários'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-fidc-consignado-privado-openapi.yml
+  - term: Escrituração
+    definition: 'Resource group in the contract; its operation POST /v1/fidc/credit/bookkeeping/{fundTaxId}: Envio do Arquivo de Escrituração'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-fidc-consignado-privado-openapi.yml
+  - term: Credit Conciliation
+    definition: 'Resource group in the contract; its operation GET /v1/credit-conciliation/{agreementId}/{creditConciliationOrderId}: O objetivo
+      dessa rota é a consulta do status de pedido de repasse de pagamentos em lote.'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-fidc-credit-conciliation-openapi.yml
+  - term: Document
+    definition: 'Resource group in the contract; its operation POST /fidc-loan/v1/document: Envio de documentos auxiliares da operação de crédito.'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-fidc-document-openapi.yml
+  - term: Eligibility
+    definition: 'Resource group in the contract; its operation POST /fidc-loan/v1/eligibility: Esta rota serve para realizar a pré elegibilidade
+      de um credito.'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-fidc-eligibility-openapi.yml
+  - term: Motor de Crédito
+    definition: 'Resource group in the contract; its operation POST /v1/fidc/credit/creditengine/{fundTaxId}/customer/evaluation: Análise detalhada
+      por cliente específico.'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-fidc-motor-de-credito-openapi.yml
+  - term: Operation
+    definition: 'Resource group in the contract; its operation POST /fidc-loan/v1/operation: Essa rota serve para realizar a cessão de crédito
+      ou emprestimo.'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-fidc-operation-openapi.yml
+  - term: Payment
+    definition: 'Resource group in the contract; its operation GET /fidc-loan/v1/settlement/{settlementId}: O objetivo dessa rota é pesquisar
+      um pedido de pagamento previamente cadastrado.'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-fidc-payment-openapi.yml
+  - term: Portability
+    definition: 'Resource group in the contract; its operation POST /fidc-loan/v1/portabilities/{portabilityId}/cancel: Cancelamento de uma portabilidade
+      out a partir de um pedido existente'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-fidc-portability-openapi.yml
+  - term: Prepayment
+    definition: 'Resource group in the contract; its operation POST /fidc-loan/v1/prepayment/{contract_number}/confirm: Essa rota é responsável
+      pela confirmação de uma simulação de pré-pagamento retornando o código de barras do boleto'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-fidc-prepayment-openapi.yml
+  - term: Renegotiation
+    definition: 'Resource group in the contract; its operation DELETE /renegotiation/{customer_tax_id}/agreement/{agreement_id}: O objetivo dessa
+      rota é cancelar um acordo de renegociação antes do pagamento da parcela de boa fé'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-fidc-renegotiation-openapi.yml
+  - term: Simulation
+    definition: 'Resource group in the contract; its operation POST /fidc-loan/v1/simulation: Criação de uma simulação usando o simulador com
+      configurações pré estabelecidas via identificador do convênio'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-fidc-simulation-openapi.yml
+  - term: Wallet
+    definition: 'Resource group in the contract; its operation GET /fidc-loan/v1/wallet: O objetivo dessa rota é pesquisar uma carteira de operações
+      por fundo especifico.'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-fidc-wallet-openapi.yml
+  - term: Warranty
+    definition: 'Resource group in the contract; its operation POST /fidc-loan/v1/warranty: O objetivo dessa rota é criar uma garantia'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-fidc-warranty-openapi.yml
+  - term: Arquivos
+    definition: 'Resource group in the contract; its operation POST /files: O objetivo dessa rota é fornecer um link pré-assinado temporário do
+      S3 (AWS) para fazer o upload de qualquer arquivo para a plataforma do BTG Empresas.'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-files-openapi.yml
+  - term: Agente de cambio
+    definition: 'Resource group in the contract; its operation POST /{companyTaxId}/cambio/agent/v3/quote/accept: Aceitar cotação.'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-hubfx-cambio-openapi.yml
+  - term: Cotação
+    definition: 'Resource group in the contract; its operation POST /cambio/public/institutional/indicative: Lista cotações indicativas das principais
+      moedas.'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-hubfx-cambio-openapi.yml
+  - term: Leads
+    definition: 'Resource group in the contract; its operation POST /form/kgiro/start: Envio das informações para solicitação de crédito'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-kgiro-leads-de-credito-openapi.yml
+  - term: Utilidades
+    definition: 'Resource group in the contract; its operation GET /onboarding/types/address: Obter a lista de estados e cidades'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-onboarding-openapi.yml
+  - term: Enriquecimento
+    definition: 'Resource group in the contract; its operation GET /apps/{clientId}/.well-known/customers/{taxId}: Obter informações básicas da
+      empresa cliente no parceiro'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-onboarding-openapi.yml
+  - term: Operaciones
+    definition: 'Resource group in the contract; its operation POST /borderos/{trackingId}/receivables/cancel: Cancelar facturas de una operación'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-scf-colombia-openapi.yml
+  - term: Consultar límite del pagador
+    definition: 'Resource group in the contract; its operation GET /companies/limit/{payerTaxId}: Devuelve el límite total y el límite disponible
+      del pagador informado.'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-scf-colombia-openapi.yml
+  - term: Onboarding Simple-Party
+    definition: 'Resource group in the contract; its operation POST /simple-party/natural-person: Criação de um processo de registro, validação,
+      fraudes e compliance de entidade nos sistemas internos do BTG.'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-scf-financiers-supplier-openapi.yml
+  - term: Onboarding Complex-Party
+    definition: 'Resource group in the contract; its operation POST /complex-party/natural-person: Criação de um processo de registro, validação,
+      fraudes e compliance de entidade nos sistemas internos do BTG.'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-scf-financiers-supplier-openapi.yml
+  - term: Company
+    definition: 'Resource group in the contract; its operation POST /companies/commercial-strategies: Associação de lote de empresas a uma estratégia
+      comercial.'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-scf-risco-sacado-openapi.yml
+  - term: Commercial strategy
+    definition: 'Resource group in the contract; its operation POST /companies/commercial-strategies: Associação de lote de empresas a uma estratégia
+      comercial.'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-scf-risco-sacado-openapi.yml
+  - term: Bordero
+    definition: 'Resource group in the contract; its operation POST /borderos/{trackingId}/receivables-cancellation: Esta rota serve para cancelar
+      recebíveis de um bordero.'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-scf-risco-sacado-openapi.yml
+  - term: Settlement
+    definition: 'Resource group in the contract; its operation GET /settlements/{settlementId}: O objetivo dessa rota é pesquisar um pedido de
+      liquidação previamente cadastrado.'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-scf-risco-sacado-openapi.yml
+  - term: Sacado-Simples
+    definition: 'Resource group in the contract; its operation POST /financiers-payer: Cadastro simplificado de pagador'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-scf-risco-sacado-openapi.yml
+  - term: Trade
+    definition: 'Resource group in the contract; its operation GET /trades/{tradeId}: O objetivo dessa rota é pesquisar a posição de uma operação
+      especifica realizada anteriormente.'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-scf-risco-sacado-openapi.yml
+  - term: Receivables
+    definition: 'Resource group in the contract; its operation PUT /receivables/files: Esta rota tem como objetivo anexar novos arquivos aos recebíveis
+      indicados.'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-scf-risco-sacado-openapi.yml
+  - term: Análise de Crédito Solar
+    definition: 'Resource group in the contract; its operation POST /credit-analysis: Gerar uma análise de crédito'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-solar-creditanalysis-openapi.yml
+  - term: Workflow de crédito solar
+    definition: 'Resource group in the contract; its operation POST /form/solar/proposals/accept: Aceite da proposta'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-solar-workflow-openapi.yml
+  - term: Webhook
+    definition: 'Resource group in the contract; its operation POST /{companyId}/apps/{appId}/webhooks/{webhookId}/secret: Alterar a secret de
+      um webhook'
+    tags:
+    - Resource Group
+    source: openapi/btg-pactual-webhooks-openapi.yml

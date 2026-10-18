@@ -1,0 +1,87 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist overlay for Banking - Payments
+  version: 1.0.0
+extends: ../openapi/_original/btg-pactual-banking-payments-openapi.yml
+x-generated: '2026-10-18'
+x-method: generated
+x-source: openapi/btg-pactual-banking-payments-openapi.yml
+x-rationale: Adds provenance metadata and, where the BTG Pactual contract omits them, derived operationIds (method + path) so MCP candidate tools can bind to stable names. The original OpenAPI is not mutated.
+actions:
+- target: $.info
+  description: Record API Evangelist provenance for this BTG Pactual Empresas contract.
+  update:
+    x-apievangelist-provider: btg-pactual
+    x-apievangelist-source: openapi/btg-pactual-banking-payments-openapi.yml
+- target: $.paths['/{companyId}/banking/batch-payments/{batchId}'].delete
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: deleteBatchPaymentsByBatchId
+- target: $.paths['/{companyId}/banking/batch-payments/{batchId}'].patch
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: patchBatchPaymentsByBatchId
+- target: $.paths['/{companyId}/banking/batch-payments'].post
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: postBatchPaymentsByCompanyId
+- target: $.paths['/{companyId}/banking/payments-recurrences/{recurrenceId}'].patch
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: patchPaymentsRecurrencesByRecurrenceId
+- target: $.paths['/{companyId}/banking/payments-recurrences/{recurrenceId}'].delete
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: deletePaymentsRecurrencesByRecurrenceId
+- target: $.paths['/{companyId}/banking/payments-recurrences/{recurrenceId}'].get
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: getPaymentsRecurrencesByRecurrenceId
+- target: $.paths['/{companyId}/banking/payments/approvals/{paymentId}'].delete
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: deletePaymentsApprovalsByPaymentId
+- target: $.paths['/{companyId}/banking/payments/{paymentId}'].delete
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: deletePaymentsByPaymentId
+- target: $.paths['/{companyId}/banking/payments/{paymentId}'].get
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: getPaymentsByPaymentId
+- target: $.paths['/{companyId}/banking/payments/barcodes'].get
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: getPaymentsBarcodesByCompanyId
+- target: $.paths['/{companyId}/banking/payments-recurrences/periodicities'].post
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: postPaymentsRecurrencesPeriodicitiesByCompanyId
+- target: $.paths['/{companyId}/banking/payments'].post
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: postPaymentsByCompanyId
+- target: $.paths['/{companyId}/banking/payments'].get
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: getPaymentsByCompanyId
+- target: $.paths['/{companyId}/banking/payments-recurrences'].post
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: postPaymentsRecurrencesByCompanyId
+- target: $.paths['/{companyId}/banking/payments-recurrences'].get
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: getPaymentsRecurrencesByCompanyId
+- target: $.paths['/{companyId}/banking/payments-recurrences/{recurrenceId}/payments'].get
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: getPaymentsRecurrencesPaymentsByRecurrenceId
+- target: $.paths['/{companyId}/banking/payments/{paymentId}/receipt'].get
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: getPaymentsReceiptByPaymentId
+- target: $.paths['/{companyId}/banking/payments-recurrences/summary'].get
+  description: Add a derived operationId (the original operation has none) so tools and skills can bind to it.
+  update:
+    operationId: getPaymentsRecurrencesSummaryByCompanyId

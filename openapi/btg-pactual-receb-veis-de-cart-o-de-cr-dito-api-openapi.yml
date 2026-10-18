@@ -1,0 +1,1021 @@
+openapi: 3.2.0
+info:
+  title: Banking - CCReceivables Recebíveis de Cartão de Crédito API
+  version: '1'
+  description: Endpoints da API de Recebíveis de Cartão de Crédito do BTG PACTUAL Empresas
+  termsOfService: https://www.btgpactual.com/empresas/termos-e-politicas/
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com
+  description: Sandbox
+- url: https://api.empresas.btgpactual.com
+  description: Produção
+tags:
+- name: Recebíveis de Cartão de Crédito
+paths:
+  /{companyId}/credit/credit-card-receivables/allowed-actions:
+    get:
+      tags:
+      - Recebíveis de Cartão de Crédito
+      description: 'Obtém as ações permitidas para a empresa (por exemplo, antecipar ou ativar a antecipação automática) junto com um resumo das condições de operação, como limite disponível, valores mínimo e máximo, prazo e taxa médios, bandeiras e credenciadoras disponíveis.
+
+
+        Comportamento matriz/filial: se o `companyId` for de uma matriz, os valores máximos, as bandeiras, as credenciadoras e o prazo e a taxa médios consideram os recebíveis da matriz e de todas as filiais. Se for de uma filial, esses valores consideram apenas os recebíveis daquela filial.'
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Ações permitidas e detalhes de operação da empresa
+                properties:
+                  actions:
+                    type: array
+                    description: Lista de ações permitidas para a empresa
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          description: Nome da ação
+                          example: Anticipate
+                        canExecute:
+                          type: boolean
+                          description: Indica se a ação pode ser executada
+                          example: true
+                        validationErrors:
+                          type: array
+                          description: Lista de erros de validação que impedem a execução da ação
+                          items:
+                            type: object
+                            properties:
+                              code:
+                                type: string
+                                description: Código do erro de validação
+                                example: OPRCC005
+                              message:
+                                type: string
+                                description: Mensagem do erro de validação
+                                example: Valor solicitado menor que o valor mínimo possível
+                  companyOperationDetails:
+                    type: object
+                    description: Detalhes das condições de operação da empresa
+                    properties:
+                      operationTimeLimit:
+                        type: string
+                        format: time
+                        description: Horário limite para realizar a operação de antecipação
+                        example: '18:30:00'
+                      minimumMaturityAmount:
+                        type: string
+                        format: double
+                        description: Valor mínimo de vencimento necessário para operar
+                        example: '55.55'
+                      maximumMaturityAmount:
+                        type: string
+                        format: double
+                        description: Valor máximo de vencimento disponível para antecipar
+                        example: '50000.55'
+                      maximumDisbursementAmount:
+                        type: string
+                        format: double
+                        description: Valor máximo de desembolso disponível para antecipar
+                        example: '40000.44'
+                      statusRfb:
+                        type: string
+                        description: Situação cadastral da empresa na Receita Federal
+                        example: ATIVA
+                      limitData:
+                        type: object
+                        description: Dados do limite de crédito disponível da empresa
+                        properties:
+                          id:
+                            type: string
+                            description: Identificador do limite
+                            example: 63f28b3b-5cad-466e-9860-c77659338879
+                          totalAmount:
+                            type: string
+                            format: double
+                            description: Valor total do limite
+                            example: '10000.55'
+                          availableAmount:
+                            type: string
+                            format: double
+                            description: Valor disponível do limite
+                            example: '8000.55'
+                          consumedAmount:
+                            type: string
+                            format: double
+                            description: Valor já consumido do limite
+                            example: '2000.00'
+                      hasDisbursementAccount:
+                        type: boolean
+                        description: Indica se a empresa possui conta de desembolso cadastrada
+                        example: true
+                      brands:
+                        type: array
+                        description: Lista de bandeiras de cartão de crédito disponíveis
+                        items:
+                          type: string
+                        example:
+                        - Visa
+                        - MasterCard
+                        - Elo
+                      payers:
+                        type: array
+                        description: Lista de CNPJs das credenciadoras disponíveis
+                        items:
+                          type: string
+                        example:
+                        - 01425787000104
+                        - 01027058000191
+                      averageTerm:
+                        type: number
+                        description: Prazo médio da operação
+                        example: 5
+                      averageRate:
+                        type: number
+                        description: Taxa média ponderada
+                        example: 0.02
+                title: AllowedActions
+          description: Success
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Erros de validação da operação de antecipação de recebíveis > * `OPRCC000` - Erro inesperado * `OPRCC001` - Conta não cadastrada * `OPRCC002` - Conta cadastrada inativa * `OPRCC003` - Recebíveis solicitados não encontrados * `OPRCC004` - Recebíveis solicitados não estão mais disponíveis e não podem mais ser antecipados * `OPRCC005` - Valor solicitado menor que o valor mínimo possível * `OPRCC006` - Valor solicitado maior que o valor disponível para antecipar
+                type: array
+                items:
+                  type: string
+                  enum:
+                  - OPRCC001
+                  - OPRCC001
+                  - OPRCC001
+                  - OPRCC001
+                  - OPRCC001
+                title: OperationValidationErrors
+          description: Validation Error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - read:
+        - brn:btg:empresas:credit:receivables-credit-card.readonly
+        - brn:btg:empresas:credit:receivables-credit-card
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20CCReceivables/acoes-permitidas
+      summary: Get by company id credit credit card receivables allowed actions
+      x-summary-source: derived
+      operationId: getByCompanyIdCreditCreditCardReceivablesAllowedActions
+      x-operation-id-source: derived
+  /{companyId}/credit/credit-card-receivables/operation:
+    post:
+      tags:
+      - Recebíveis de Cartão de Crédito
+      description: Antecipa os recebíveis escolhidos
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+              - receivables
+              - disbursementBankAccount
+              type: object
+              properties:
+                disbursementBankAccount:
+                  required:
+                  - accountDigit
+                  - accountNumber
+                  - bankCode
+                  - branchCode
+                  type: object
+                  properties:
+                    bankCode:
+                      description: O código do banco da conta do estabelecimento comercial
+                      type: string
+                      example: '208'
+                    branchCode:
+                      description: Agência da conta do estabelecimento comercial
+                      type: string
+                      example: '50'
+                    accountNumber:
+                      description: Número da conta do estabelecimento comercial
+                      type: string
+                      example: 002679300
+                    accountDigit:
+                      description: Dígito da conta do estabelecimento comercial
+                      type: string
+                      example: '07'
+                  title: BankAccount
+                receivables:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        format: integer
+                        description: Identificador do recebível
+                        type: number
+                        example: 20
+                      suggestedMaturityAmount:
+                        format: double
+                        description: Valor sugerido de vencimento do recebível
+                        type: string
+                        example: '40533.33'
+              title: OperationRequest
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                      example: 100
+                      description: Id da operação a ser executada
+                title: operationIdObj
+          description: Success
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Erros de validação da operação de antecipação de recebíveis > * `OPRCC000` - Erro inesperado * `OPRCC001` - Conta não cadastrada * `OPRCC002` - Conta cadastrada inativa * `OPRCC003` - Recebíveis solicitados não encontrados * `OPRCC004` - Recebíveis solicitados não estão mais disponíveis e não podem mais ser antecipados * `OPRCC005` - Valor solicitado menor que o valor mínimo possível * `OPRCC006` - Valor solicitado maior que o valor disponível para antecipar
+                type: array
+                items:
+                  type: string
+                  enum:
+                  - OPRCC001
+                  - OPRCC001
+                  - OPRCC001
+                  - OPRCC001
+                  - OPRCC001
+                title: OperationValidationErrors
+          description: Validation Error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - write:
+        - brn:btg:empresas:credit:receivables-credit-card
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20CCReceivables/antecipacao-de-recebiveis
+      summary: Create by company id credit credit card receivables operation
+      x-summary-source: derived
+      operationId: postByCompanyIdCreditCreditCardReceivablesOperation
+      x-operation-id-source: derived
+  /{companyId}/credit/credit-card-receivables:
+    post:
+      tags:
+      - Recebíveis de Cartão de Crédito
+      description: 'Obtém os recebíveis disponíveis para antecipação de acordo com os parâmetros informados e visualiza informações de taxa média e prazo médio.
+
+
+        Comportamento matriz/filial: se o `companyId` for de uma matriz, são considerados os recebíveis da matriz e de todas as filiais. Se for de uma filial, são considerados apenas os recebíveis daquela filial.'
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                valorDesejado:
+                  type: string
+                  description: Valor desejado para a operação
+                  example: '700000'
+                bandeiras:
+                  type: array
+                  items:
+                    type: string
+                  description: Lista de bandeiras de cartão de crédito. Pode ser preenchido ou vazio (nesse caso, busca por todos).
+                  example:
+                  - Visa
+                  - MasterCard
+                  - Elo
+                  - AmericanExpress
+                  - HiperCard
+                  minItems: 0
+                sacados:
+                  type: array
+                  items:
+                    type: string
+                  description: Lista de CNPJs das credenciadoras. Pode ser preenchido ou vazio (nesse caso, busca por todos).
+                  example:
+                  - 01425787000104
+                  - '10440482000154'
+                  - 01027058000191
+                  minItems: 0
+                tipoConsulta:
+                  type: string
+                  description: Tipo de consulta
+                  enum:
+                  - PorValorDesembolso
+                  - PorValorBruto
+                  example: PorValorDesembolso
+                tipoAproximacaoValorDesejado:
+                  type: string
+                  description: Tipo de aproximação do valor desejado
+                  enum:
+                  - Exata
+                  - PorCima
+                  - PorBaixo
+                  example: Exata
+        required: true
+      responses:
+        '200':
+          description: Sugestão de recebíveis realizada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  averageTerm:
+                    type: number
+                    description: Prazo médio da operação
+                    example: 5
+                  averageRate:
+                    type: number
+                    description: Taxa média ponderada
+                    example: 0.02
+                  automaticAnticipationTerm:
+                    type: number
+                    description: Prazo médio da operação considerando antecipação automática
+                    example: 4
+                  automaticAnticipationRate:
+                    type: number
+                    description: Taxa média ponderada considerando antecipação automática
+                    example: 0.018
+                  recebiveis:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: string
+                          description: Status do recebível
+                          example: Available
+                        maximumDisbursementAmount:
+                          type: string
+                          description: Valor máximo de desembolso
+                          example: '66.19'
+                        id:
+                          type: number
+                          description: Identificador do recebível
+                          example: 104317068
+                        payeeId:
+                          type: string
+                          description: CNPJ do estabelecimento comercial
+                          example: '37297902000141'
+                        payerId:
+                          type: string
+                          description: CNPJ da credenciadora
+                          example: 01027058000191
+                        maturityDate:
+                          type: string
+                          format: date
+                          description: Data de vencimento do recebível
+                          example: '2025-06-01'
+                        scheme:
+                          type: string
+                          description: Bandeira do cartão de crédito
+                          example: MasterCard
+                        maturityAmount:
+                          type: string
+                          description: Valor de vencimento do recebível
+                          example: '66.41'
+                        suggestedDisbursementAmount:
+                          type: string
+                          description: Valor de desembolso sugerido do recebível
+                          example: '66.19'
+                        suggestedMaturityAmount:
+                          type: string
+                          description: Valor de vencimento sugerido do recebível
+                          example: '66.41'
+        '400':
+          description: Validation Error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - write:
+        - brn:btg:empresas:credit:receivables-credit-card
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20CCReceivables/busca-recebiveis-por-parametros-de-busca
+      summary: Create by company id credit credit card receivables
+      x-summary-source: derived
+      operationId: postByCompanyIdCreditCreditCardReceivables
+      x-operation-id-source: derived
+    get:
+      tags:
+      - Recebíveis de Cartão de Crédito
+      description: 'Obtém lista de recebíveis ainda disponíveis para antecipar hoje.
+
+
+        Comportamento matriz/filial: se o `companyId` for de uma matriz, são considerados os recebíveis da matriz e de todas as filiais. Se for de uma filial, são considerados apenas os recebíveis daquela filial.'
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      - examples:
+          numberExample:
+            value: 10
+        name: pageSize
+        description: Número de itens a serem incluidos na página
+        schema:
+          type: number
+        in: query
+        required: false
+      - examples:
+          numberExample:
+            value: 1
+        name: pageNumber
+        description: Número da página onde começará a query
+        schema:
+          type: number
+        in: query
+        required: false
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      format: integer
+                      description: Identificador do recebível
+                      type: number
+                      example: 20
+                    payerId:
+                      description: Cnpj da credenciadora
+                      type: string
+                      example: 01027058000191
+                    payeeId:
+                      description: Cnpj do estabelecimento comercial
+                      type: string
+                      example: '37297902000141'
+                    maturityDate:
+                      format: date
+                      description: Data de vencimento do recebível seguindo a norma ISO-8601
+                      type: string
+                      example: '2024-02-15'
+                    scheme:
+                      description: Bandeira do cartão de crédito
+                      enum:
+                      - Visa
+                      - MasterCard
+                      - Elo
+                      - AmericanExpress
+                      - HiperCard
+                      type: string
+                    maturityAmount:
+                      format: double
+                      description: Valor do recebível disponível para antecipar, ou seja, o valor máximo que poderá ser registrado na Registradora
+                      type: string
+                      example: '50000.55'
+                    maximumDisbursementAmount:
+                      format: double
+                      description: maturityAmount descontado da taxa de operação acordada, ou seja, o valor máximo que o estabelecimento comercial poderá receber ao antecipar o recebível
+                      type: string
+                      example: '40000.44'
+                    status:
+                      description: Estado do recebível
+                      enum:
+                      - Available
+                      - WaitingSignatures
+                      - WaitingRegistration
+                      - InDisbursement
+                      - Disbursed
+                      - Settled
+                      - Overdue
+                      - Cancelled
+                      type: string
+                  title: Receivable
+                title: Receivables
+          description: Success
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Erros de validação da operação de antecipação de recebíveis > * `OPRCC000` - Erro inesperado * `OPRCC001` - Conta não cadastrada * `OPRCC002` - Conta cadastrada inativa * `OPRCC003` - Recebíveis solicitados não encontrados * `OPRCC004` - Recebíveis solicitados não estão mais disponíveis e não podem mais ser antecipados * `OPRCC005` - Valor solicitado menor que o valor mínimo possível * `OPRCC006` - Valor solicitado maior que o valor disponível para antecipar
+                type: array
+                items:
+                  type: string
+                  enum:
+                  - OPRCC001
+                  - OPRCC001
+                  - OPRCC001
+                  - OPRCC001
+                  - OPRCC001
+                title: OperationValidationErrors
+          description: Validation Error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - read:
+        - brn:btg:empresas:credit:receivables-credit-card.readonly
+        - brn:btg:empresas:credit:receivables-credit-card
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20CCReceivables/listagem-de-recebiveis
+      summary: Get by company id credit credit card receivables
+      x-summary-source: derived
+      operationId: getByCompanyIdCreditCreditCardReceivables
+      x-operation-id-source: derived
+  /{companyId}/credit/credit-card-receivables/operation/{id}:
+    get:
+      tags:
+      - Recebíveis de Cartão de Crédito
+      description: 'Obtém os recebíveis antecipados e a conta de desembolso da operação.
+
+
+        Comportamento matriz/filial: se o `companyId` for de uma matriz, é possível visualizar as operações de qualquer filial ou da própria matriz. Se for de uma filial, é possível visualizar apenas as operações daquela filial.'
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      - name: id
+        schema:
+          format: integer
+          description: Identificador dos recebíveis e operações
+          type: number
+          example: 10
+          title: id
+        in: path
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  disbursementAccount:
+                    required:
+                    - accountDigit
+                    - accountNumber
+                    - bankCode
+                    - branchCode
+                    type: object
+                    properties:
+                      bankCode:
+                        description: O código do banco da conta do estabelecimento comercial
+                        type: string
+                        example: '208'
+                      branchCode:
+                        description: Agência da conta do estabelecimento comercial
+                        type: string
+                        example: '50'
+                      accountNumber:
+                        description: Número da conta do estabelecimento comercial
+                        type: string
+                        example: 002679300
+                      accountDigit:
+                        description: Dígito da conta do estabelecimento comercial
+                        type: string
+                        example: '07'
+                    title: BankAccount
+                  operatedReceivables:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        receivable:
+                          type: object
+                          properties:
+                            id:
+                              format: integer
+                              description: Identificador do recebível
+                              type: number
+                              example: 20
+                            payerId:
+                              description: Cnpj da credenciadora
+                              type: string
+                              example: 01027058000191
+                            payeeId:
+                              description: CNPJ do estabelecimento comercial
+                              type: string
+                              example: '37297902000141'
+                            maturityDate:
+                              format: date
+                              description: Data de vencimento do recebível seguindo a norma ISO-8601
+                              type: string
+                              example: '2024-02-15'
+                            scheme:
+                              description: Bandeira do cartão de crédito
+                              enum:
+                              - Visa
+                              - MasterCard
+                              - Elo
+                              - AmericanExpress
+                              - HiperCard
+                              type: string
+                            maturityAmount:
+                              format: double
+                              description: Valor do recebível disponível para antecipar, ou seja, o valor máximo que poderá ser registrado na Registradora
+                              type: string
+                              example: '50000.55'
+                            status:
+                              description: Estado do recebível
+                              enum:
+                              - Available
+                              - WaitingSignatures
+                              - WaitingRegistration
+                              - InDisbursement
+                              - Disbursed
+                              - Settled
+                              - Overdue
+                              - Cancelled
+                              type: string
+                          title: Receivable_get
+                        registeredAmount:
+                          format: double
+                          description: Parte do maturityAmount que foi possível ser registrado na Registradora
+                          type: string
+                          example: '30500.35'
+                        disbursementAmount:
+                          format: double
+                          description: registeredAmount discontado da taxa de operação acordada, ou seja, o valor real a ser recebido pelo estabelecimento comercial
+                          type: string
+                          example: '30000.33'
+                      title: OperatedReceivable_get
+                    title: OperatedReceivables_get
+                  status:
+                    description: Estado da operação
+                    enum:
+                    - Pending
+                    - WaitingContractSignatures
+                    - WaitingRegistration
+                    - InDisbursement
+                    - Disbursed
+                    - DisbursedWithSomeCancels
+                    - Settled
+                    - Overdue
+                    - Cancelled
+                    type: string
+                title: Operation_get
+          description: Success
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Erros de validação da operação de antecipação de recebíveis > * `OPRCC000` - Erro inesperado * `OPRCC001` - Conta não cadastrada * `OPRCC002` - Conta cadastrada inativa * `OPRCC003` - Recebíveis solicitados não encontrados * `OPRCC004` - Recebíveis solicitados não estão mais disponíveis e não podem mais ser antecipados * `OPRCC005` - Valor solicitado menor que o valor mínimo possível * `OPRCC006` - Valor solicitado maior que o valor disponível para antecipar
+                type: array
+                items:
+                  type: string
+                  enum:
+                  - OPRCC001
+                  - OPRCC001
+                  - OPRCC001
+                  - OPRCC001
+                  - OPRCC001
+                title: OperationValidationErrors
+          description: Validation Error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - read:
+        - brn:btg:empresas:credit:receivables-credit-card.readonly
+        - brn:btg:empresas:credit:receivables-credit-card
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20CCReceivables/consulta-de-operacoes
+      summary: Get by company id credit credit card receivables operation by id
+      x-summary-source: derived
+      operationId: getByCompanyIdCreditCreditCardReceivablesOperationById
+      x-operation-id-source: derived
+  /{companyId}/credit/credit-card-receivables/operation-pool:
+    get:
+      tags:
+      - Recebíveis de Cartão de Crédito
+      description: Obtém os valores máximo, disponível e mínimo para antecipar recebíveis de cartão de crédito
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      - examples:
+          numberExample:
+            value: 10
+        name: pageSize
+        description: Número de itens a serem incluidos na página
+        schema:
+          type: number
+        in: query
+        required: false
+      - examples:
+          numberExample:
+            value: 1
+        name: pageNumber
+        description: Número da página onde começará a query
+        schema:
+          type: number
+        in: query
+        required: false
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  availableAmountToOperate:
+                    format: double
+                    description: Valor disponível para o cliente antecipar nesse momento, ou seja, o valor máximo que a soma dos maturityAmount dos recebíveis selecionados em uma operação pode chegar. Se uma antecipação for enviada com um valor maior que o availableAmountToOperate ela será rejeitada e cancelada
+                    type: string
+                    example: '100.55'
+                  operationPoolMaximumAmount:
+                    format: double
+                    description: Valor máximo que o cliente pode antecipar de recebíveis de cartão de crédito com o BTG Pactual, ou seja, o valor máximo que a soma de todos os registeredAmount dos recebíveis antecipados que ainda não foram quitados pode chegar
+                    type: string
+                    example: '10000.55'
+                  minimumAmountToOperate:
+                    format: double
+                    description: Valor mínimo que a soma dos maturityAmount de todos os recebíveis selecionados em uma operação precisa ter para ser aceita
+                    type: string
+                    example: '55.55'
+                  activeAcquirers:
+                    type: array
+                    description: Lista de CNPJs das credenciadoras ativas
+                    items:
+                      type: string
+                    example:
+                    - 01425787000104
+                    - 01027058000191
+                    - '10440482000154'
+                    - '58160789000128'
+                  operationClosingTime:
+                    type: string
+                    format: time
+                    description: Horário de fechamento da grade de negociação
+                    example: '18:30:00'
+                title: OperationPool
+          description: Success
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Erros de validação da operação de antecipação de recebíveis > * `OPRCC000` - Erro inesperado * `OPRCC001` - Conta não cadastrada * `OPRCC002` - Conta cadastrada inativa * `OPRCC003` - Recebíveis solicitados não encontrados * `OPRCC004` - Recebíveis solicitados não estão mais disponíveis e não podem mais ser antecipados * `OPRCC005` - Valor solicitado menor que o valor mínimo possível * `OPRCC006` - Valor solicitado maior que o valor disponível para antecipar
+                type: array
+                items:
+                  type: string
+                  enum:
+                  - OPRCC001
+                  - OPRCC001
+                  - OPRCC001
+                  - OPRCC001
+                  - OPRCC001
+                title: OperationValidationErrors
+          description: Validation Error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - read:
+        - brn:btg:empresas:credit:receivables-credit-card.readonly
+        - brn:btg:empresas:credit:receivables-credit-card
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20CCReceivables/consulta-de-valores-para-antecipar
+      summary: Get by company id credit credit card receivables operation pool
+      x-summary-source: derived
+      operationId: getByCompanyIdCreditCreditCardReceivablesOperationPool
+      x-operation-id-source: derived
+  /{companyId}/credit/credit-card-receivables/balance-summary:
+    get:
+      tags:
+      - Recebíveis de Cartão de Crédito
+      description: Obtém um resumo dos valores não quitados ou ainda não recebidos pelas credenciadoras dos recebíveis antecipados
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  companyId:
+                    description: CNPJ da empresa
+                    type: string
+                    example: '30306294000145'
+                  overdueReceivablesUnpaidAmount:
+                    format: double
+                    description: Soma dos valores não quitados de recebíveis vencidos
+                    type: string
+                    example: '200.12'
+                  dueTodayReceivablesUnpaidAmount:
+                    format: double
+                    description: Soma dos valores não quitados de recebíveis vencendo hoje
+                    type: string
+                    example: '2000.12'
+                  receivablesOverdue:
+                    type: array
+                    description: Lista de recebíveis não liquidados
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: string
+                          description: Status do recebível
+                          enum:
+                          - Available
+                          - WaitingRegistration
+                          - InDisbursement
+                          - Settled
+                          - Overdue
+                          - Cancelled
+                          example: InDisbursement
+                        balance:
+                          type: string
+                          description: Saldo do recebível
+                          example: '2000.12'
+                        interestArrears:
+                          type: string
+                          description: Juros de mora
+                          example: '0'
+                        latePaymentFee:
+                          type: string
+                          description: Taxa de atraso
+                          example: '0'
+                        penaltyFee:
+                          type: string
+                          description: Multa
+                          example: '0'
+                        maturityDate:
+                          type: string
+                          format: date
+                          description: Data de vencimento da transação
+                          example: '2025-01-29'
+                title: BalanceSummary
+          description: Success
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Erros de validação da operação de antecipação de recebíveis > * `OPRCC000` - Erro inesperado * `OPRCC001` - Conta não cadastrada * `OPRCC002` - Conta cadastrada inativa * `OPRCC003` - Recebíveis solicitados não encontrados * `OPRCC004` - Recebíveis solicitados não estão mais disponíveis e não podem mais ser antecipados * `OPRCC005` - Valor solicitado menor que o valor mínimo possível * `OPRCC006` - Valor solicitado maior que o valor disponível para antecipar
+                type: array
+                items:
+                  type: string
+                  enum:
+                  - OPRCC001
+                  - OPRCC001
+                  - OPRCC001
+                  - OPRCC001
+                  - OPRCC001
+                title: OperationValidationErrors
+          description: Validation Error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - read:
+        - brn:btg:empresas:credit:receivables-credit-card.readonly
+        - brn:btg:empresas:credit:receivables-credit-card
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20CCReceivables/resumo-do-saldo-devedor
+      summary: Get by company id credit credit card receivables balance summary
+      x-summary-source: derived
+      operationId: getByCompanyIdCreditCreditCardReceivablesBalanceSummary
+      x-operation-id-source: derived
+  /{companyId}/credit/credit-card-receivables/disbursement-accounts:
+    get:
+      tags:
+      - Recebíveis de Cartão de Crédito
+      description: Obtém as contas de desembolso do cliente
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      responses:
+        '200':
+          description: Contas de desembolso obtidas com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    holderTaxId:
+                      type: string
+                      description: CNPJ do titular da conta
+                      example: '37297902000141'
+                    accountId:
+                      type: string
+                      description: Identificador da conta
+                      example: 63f28b3b-5cad-466e-9860-c77659338879
+                    bankCode:
+                      type: string
+                      description: Código do banco
+                      example: '208'
+                    agencyNumber:
+                      type: string
+                      description: Número da agência
+                      example: '50'
+                    accountNumber:
+                      type: string
+                      description: Número da conta
+                      example: 00388685
+                    accountDigit:
+                      type: string
+                      description: Dígito da conta
+                      example: '0'
+                    accountType:
+                      type: string
+                      description: Tipo da conta
+                      example: CC
+        '400':
+          description: Validation Error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - read:
+        - brn:btg:empresas:credit:receivables-credit-card.readonly
+        - brn:btg:empresas:credit:receivables-credit-card
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20CCReceivables/visualiza-contas-de-desembolso
+      summary: Get by company id credit credit card receivables disbursement accounts
+      x-summary-source: derived
+      operationId: getByCompanyIdCreditCreditCardReceivablesDisbursementAccounts
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    read:
+      type: oauth2
+      flows:
+        authorizationCode:
+          tokenUrl: https://id.btgpactual.com/oauth2/token
+          authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+          scopes:
+            brn:btg:empresas:receivables:credit-card: Emitir, consultar e alterar recebíveis de cartão de crédito
+            brn:btg:empresas:receivables:credit-card.readonly: Consultar recebíveis de cartão de crédito
+    write:
+      type: oauth2
+      flows:
+        authorizationCode:
+          tokenUrl: https://id.btgpactual.com/oauth2/token
+          authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+          scopes:
+            brn:btg:empresas:receivables:credit-card: Emitir, consultar e alterar recebíveis de cartão de crédito
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/6c22d489.8bdf8f40.js
+  - https://developers.empresas.btgpactual.com/assets/js/e7edb45e.34c16902.js
+  - https://developers.empresas.btgpactual.com/assets/js/b1a99785.985b5908.js
+  - https://developers.empresas.btgpactual.com/assets/js/19d6ffec.f38dd9aa.js
+  - https://developers.empresas.btgpactual.com/assets/js/34d434e4.54f4bd1f.js
+  - https://developers.empresas.btgpactual.com/assets/js/97b619af.5fddeb08.js
+  - https://developers.empresas.btgpactual.com/assets/js/413bb7fe.dc3a3342.js
+  - https://developers.empresas.btgpactual.com/assets/js/48cc3975.69af625f.js

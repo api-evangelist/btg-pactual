@@ -1,0 +1,514 @@
+openapi: 3.2.0
+info:
+  title: FIDC - Motor de Credito Motor de Crédito API
+  version: 1.0.1
+  description: 'Documentação de integração na jornada de FIDC VR.
+
+
+    Links úteis:
+
+    - Portal Developers
+
+    - API de Arquivos'
+  termsOfService: https://www.btgpactual.com/empresas/termos-e-politicas/
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com
+  description: Sandbox
+- url: https://api.empresas.btgpactual.com
+  description: Produção
+tags:
+- name: Motor de Crédito
+paths:
+  /v1/fidc/credit/creditengine/{fundTaxId}/customer/evaluation:
+    post:
+      tags:
+      - Motor de Crédito
+      description: Análise detalhada por cliente específico.
+      parameters:
+      - name: fundTaxId
+        in: path
+        description: CNPJ do fundo
+        required: true
+        schema:
+          type: string
+          format: text
+          example: '13339532000109'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                proposalId:
+                  type:
+                  - string
+                  - 'null'
+                  format: text
+                  example: PRP-3bd1e5ad73b84f4485aaed19c8aa6f1f
+                  description: id da proposta na dataprev
+                inlet:
+                  type: string
+                  format: text
+                  example: CTPS
+                  enum:
+                  - CTPS
+                  - Partner
+                  description: canal de entrada do pedido da operação
+                requestedAmount:
+                  type: number
+                  format: double
+                  example: 1830.89
+                  description: valor solicitada da operação via CTPS
+                requestedInstallments:
+                  type: number
+                  format: int64
+                  example: 1
+                  description: quantidade de parcelas solicitada da operação via CTPS
+                client:
+                  type: object
+                  properties:
+                    cbo:
+                      type: integer
+                      description: fornecido pela dataprev
+                      format: int64
+                      example: 0
+                    name:
+                      type: string
+                      example: Nome do Cliente
+                    gender:
+                      type: string
+                      example: Male
+                      enum:
+                      - Male
+                      - Female
+                      description: Gênero do cliente
+                    dateOfBirth:
+                      type: string
+                      format: datetime
+                      example: '1988-10-11T14:32:50'
+                    nationality:
+                      type: string
+                      example: Brasileira
+                    alerts:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          alertType:
+                            type: string
+                          refereceDate:
+                            type: string
+                            format: datetime
+                            example: '2023-05-19T00:00:00'
+                          eventId:
+                            type: integer
+                          reason:
+                            type: string
+                          leaveDate:
+                            type: string
+                            format: datetime
+                            example: '2023-05-12T14:32:50'
+                          leaveEndDate:
+                            type: string
+                            format: datetime
+                            example: '2023-05-19T02:54:22'
+                          dimissalDate:
+                            type: string
+                            format: datetime
+                            example: '2023-06-05T11:52:36'
+                          advanceNoticeDate:
+                            type: string
+                            format: datetime
+                            example: '2023-06-09T10:21:51'
+                          advanceNoteceEndDate:
+                            type: string
+                            format: datetime
+                            example: '2023-06-10T15:40:17'
+                    document:
+                      type: string
+                      example: '12345678900'
+                    baseMarginAmount:
+                      type: number
+                      format: double
+                      example: 1830.89
+                    availableMarginAmount:
+                      type: number
+                      format: double
+                      example: 640.81
+                    isEligible:
+                      type: boolean
+                      example: true
+                    registration:
+                      type: string
+                      format: text
+                      example: MERCADO3232
+                      description: código dataprev
+                    workCategory:
+                      type: number
+                      format: int64
+                      example: 101
+                    admissionDate:
+                      type: string
+                      format: datetime
+                      example: '2023-05-19T00:00:00'
+                    dissmissalDate:
+                      type:
+                      - string
+                      - 'null'
+                      format: datetime
+                      example: null
+                    dissmissalReason:
+                      type:
+                      - string
+                      - 'null'
+                      format: text
+                      example: null
+                    isPolitcallyExposedPerson:
+                      type: boolean
+                      example: false
+                employer:
+                  type: object
+                  properties:
+                    cnae:
+                      type: string
+                      format: text
+                      example: '4000000'
+                    name:
+                      type: string
+                      format: text
+                      example: Nome da Empresa
+                    registration:
+                      type: string
+                      format: text
+                      example: '12345678000100'
+                    registrationType:
+                      type: string
+                      format: text
+                      example: CNPJ
+                    activityStartDate:
+                      type: string
+                      format: datetime
+                      example: '2020-12-04T00:00:00'
+              title: PostCustomerEvaluationRequest
+        required: true
+      responses:
+        '200':
+          description: Successo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  proposalId:
+                    type: string
+                    format: text
+                    example: PRP-1060818A
+                    description: id da proposta na dataprev
+                  effectiveness:
+                    type: string
+                    description: status da validação
+                    example: Approved
+                    enum:
+                    - Approved
+                    - Rejected
+                  apparentLimitAmount:
+                    type: number
+                    format: double
+                    example: 28830.8
+                  expirationDate:
+                    type: string
+                    format: datetime
+                    example: '2023-05-19T11:52:46.6402444-03:00'
+                  creationDate:
+                    type: string
+                    format: datetime
+                    example: '2023-05-19T11:52:46.6402444-03:00'
+                  taxes:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        rate:
+                          type: number
+                          format: double
+                          example: 0.0349
+                        taxModality:
+                          type: string
+                          description: modalidade da taxa, com ou sem seguro
+                          example: WithInsurance
+                          enum:
+                          - WithInsurance
+                          - WithoutInsurance
+                        registrationFeeRate:
+                          type: number
+                          format: double
+                          example: 0
+                        minInstallments:
+                          type: integer
+                          example: 2
+                        maxInstallments:
+                          type: integer
+                          example: 24
+                        penaltyFeeRate:
+                          type: number
+                          format: double
+                          example: 0.02
+                        interestArrearsRate:
+                          type: number
+                          format: double
+                          example: 0.01
+                        minInstallmentsAllowed:
+                          type: integer
+                          example: 2
+                        minAmountPerInstallmentsAllowed:
+                          type: number
+                          format: double
+                          example: 50
+                        maxAmountPerInstallmentsAllowed:
+                          type: number
+                          format: double
+                          example: 3864.47
+                title: PostCustomerEvaluationResponse
+        '400':
+          description: Invalid input
+        '422':
+          description: Validation exception
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                  message:
+                    type: string
+                required:
+                - code
+                - message
+                title: Error
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/loans
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/FIDC%20-%20Motor%20de%20Credito/analise-detalhada-por-cliente-especifico
+      summary: Create fidc credit creditengine by fund tax id customer evaluation
+      x-summary-source: derived
+      operationId: postV1FidcCreditCreditengineByFundTaxIdCustomerEvaluation
+      x-operation-id-source: derived
+  /v1/fidc/credit/creditengine/{fundTaxId}/customers/evaluation:
+    post:
+      tags:
+      - Motor de Crédito
+      description: Envio da base de clientes para análise de pré-aprovação
+      parameters:
+      - name: fundTaxId
+        in: path
+        description: CNPJ do fundo
+        required: true
+        schema:
+          type: string
+          format: text
+          example: '13339532000109'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+              - s3Url
+              - photoUrls
+              type: object
+              properties:
+                s3Url:
+                  type: string
+                  format: text
+                  example: https://btgpactual.s3.amazonaws.com/hD73Hgts3TsbquS72Ojs24Js0
+              title: PostCustomersEvaluationRequest
+        required: true
+      responses:
+        '200':
+          description: Envio realizado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  correlationId:
+                    type: string
+                    format: uuid
+                    description: ID
+                    example: 568198d6-9852-4c28-b07d-3d138e96456c
+                    title: UUID
+                  status:
+                    type: string
+                    description: status da solicitação
+                    example: Validating
+                    enum:
+                    - Validating
+                    - WaitingCreditEngine
+                    - Completed
+                    title: EvaluationOrderStatus
+                title: PostCustomersEvaluationResponse
+        '400':
+          description: Invalid input
+        '422':
+          description: Validation exception
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                  message:
+                    type: string
+                required:
+                - code
+                - message
+                title: Error
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/loans
+      callbacks:
+        Análise Concluída:
+          /callback:
+            post:
+              summary: Obtenção do retorno da análise de pré-aprovação da base de clientes
+              requestBody:
+                required: true
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      properties:
+                        correlationId:
+                          type: string
+                          format: uuid
+                          description: ID
+                          example: 568198d6-9852-4c28-b07d-3d138e96456c
+                          title: UUID
+                        status:
+                          allOf:
+                          - type: string
+                            description: status da solicitação
+                            example: Validating
+                            enum:
+                            - Validating
+                            - WaitingCreditEngine
+                            - Completed
+                            title: EvaluationOrderStatus
+                          - example: Completed
+                        s3Url:
+                          type: string
+                          format: text
+                          example: https://btgpactual.s3.amazonaws.com/hD73Hgts3TsbquS72Ojs24Js0
+                      title: GetCustomersEvaluationResponse
+              responses:
+                '204':
+                  description: No Content
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/FIDC%20-%20Motor%20de%20Credito/envio-da-base-de-clientes-para-analise-de-pre-aprovacao
+      summary: Create fidc credit creditengine by fund tax id customers evaluation
+      x-summary-source: derived
+      operationId: postV1FidcCreditCreditengineByFundTaxIdCustomersEvaluation
+      x-operation-id-source: derived
+  /v1/fidc/credit/creditengine/{fundTaxId}/customers/evaluation/{correlationId}:
+    get:
+      tags:
+      - Motor de Crédito
+      description: Obtenção do retorno da análise de pré-aprovação da base de clientes
+      parameters:
+      - name: fundTaxId
+        in: path
+        description: CNPJ do fundo
+        required: true
+        schema:
+          type: string
+          format: text
+          example: '13339532000109'
+      - name: correlationId
+        in: path
+        description: ID da análise de pré-avação
+        required: true
+        schema:
+          allOf:
+          - type: string
+            format: uuid
+            description: ID
+            example: 568198d6-9852-4c28-b07d-3d138e96456c
+            title: UUID
+          - example: 6ea59bb0-1789-4374-b627-955737699c2b
+      responses:
+        '200':
+          description: Solicitação realizada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  correlationId:
+                    type: string
+                    format: uuid
+                    description: ID
+                    example: 568198d6-9852-4c28-b07d-3d138e96456c
+                    title: UUID
+                  status:
+                    allOf:
+                    - type: string
+                      description: status da solicitação
+                      example: Validating
+                      enum:
+                      - Validating
+                      - WaitingCreditEngine
+                      - Completed
+                      title: EvaluationOrderStatus
+                    - example: Completed
+                  s3Url:
+                    type: string
+                    format: text
+                    example: https://btgpactual.s3.amazonaws.com/hD73Hgts3TsbquS72Ojs24Js0
+                title: GetCustomersEvaluationResponse
+        '400':
+          description: Invalid status value
+        '422':
+          description: Validation exception
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                  message:
+                    type: string
+                required:
+                - code
+                - message
+                title: Error
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/loans
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/FIDC%20-%20Motor%20de%20Credito/obtencao-do-retorno-da-analise-de-pre-aprovacao-da-base-de-clientes
+      summary: Get fidc credit creditengine by fund tax id customers evaluation by correlation…
+      x-summary-source: derived
+      operationId: getV1FidcCreditCreditengineByFundTaxIdCustomersEvaluationByCorrelationId
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+          scopes:
+            empresas.btgpactual.com/loans: Scope to loans
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/d96ef0cd.5e42f7d8.js
+  - https://developers.empresas.btgpactual.com/assets/js/cf60e713.06659708.js
+  - https://developers.empresas.btgpactual.com/assets/js/f7330996.fddeeaa0.js

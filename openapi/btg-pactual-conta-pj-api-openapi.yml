@@ -1,0 +1,520 @@
+openapi: 3.2.0
+info:
+  title: Banking - Accounts Conta PJ API
+  version: '1'
+  description: Endpoints da API de Recebíveis de Cartão de Crédito do BTG PACTUAL Empresas
+  termsOfService: https://www.btgpactual.com/empresas/termos-e-politicas/
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com
+  description: Sandbox
+- url: https://api.empresas.btgpactual.com
+  description: Produção
+tags:
+- name: Conta PJ
+paths:
+  /{companyId}/banking/accounts:
+    get:
+      tags:
+      - Conta PJ
+      description: Consultar dados da conta
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      - name: accountOrigin
+        in: query
+        required: false
+        description: Origem das contas listadas
+        schema:
+          type: string
+          enum:
+          - OPEN_FINANCE
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        accountId:
+                          type: string
+                          example: 11111111111-208-1-22222222222
+                        taxId:
+                          type: string
+                          example: '11111111111111'
+                        bankCode:
+                          type: integer
+                          example: 208
+                        branchCode:
+                          type: string
+                          example: '1'
+                        number:
+                          type: string
+                          example: '3333333333'
+                      title: account
+                title: accountsResponse
+      security:
+      - read:
+        - brn:btg:empresas:banking:accounts
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Accounts/consultar-dados-da-conta
+      summary: Get by company id banking accounts
+      x-summary-source: derived
+      operationId: getByCompanyIdBankingAccounts
+      x-operation-id-source: derived
+  /{companyId}/banking/accounts/{accountId}/statements:
+    get:
+      tags:
+      - Conta PJ
+      description: Consultar extrato por accountId
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      - name: accountId
+        in: path
+        required: true
+        description: id da conta
+        schema:
+          type: string
+          example: 29964797000111-555-1-777776752
+      - name: startDate
+        in: query
+        required: true
+        description: Data para inicio da Listagem
+        schema:
+          type: string
+          example: '2099-12-15'
+      - name: endDate
+        in: query
+        required: true
+        description: Data para fim da Listagem
+        schema:
+          type: string
+          example: '2099-12-19'
+      - name: type
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - simple
+          - withdraw-applications
+          - yields
+        description: Tipo de listagem. simple = Sem rendimentos. withdraw-applications = Com rendimentos, aplicações e resgates. yields = Com rendimentos
+      - name: pageSize
+        in: query
+        required: false
+        description: Quantidade de registros por página
+        schema:
+          type: string
+          example: '1000'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _links:
+                    type: object
+                    properties:
+                      self:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            example: https://api.empresas.btgpactual.com/29964797000111/banking/accounts/29964797000111-555-1-777776752/statements?startDate=2099-12-15&endDate=2099-12-19&type=simple&pageSize=1000
+                      next:
+                        type: string
+                        example: null
+                    title: Link
+                  data:
+                    type: object
+                    properties:
+                      accountNumber:
+                        type: string
+                        example: 777776752
+                      balance:
+                        type: object
+                        properties:
+                          initial:
+                            type: number
+                            example: 30.03
+                          current:
+                            type: number
+                            example: 15.53
+                          final:
+                            type: number
+                            example: 15.53
+                        title: Balance
+                      dailyMovements:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            date:
+                              type: string
+                              format: date-time
+                              example: '2024-03-07T00:00:00'
+                            balance:
+                              type: number
+                              example: 3
+                            movements:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: integer
+                                    example: 1234
+                                  type:
+                                    type: string
+                                    example: debit
+                                  category:
+                                    type: object
+                                    properties:
+                                      name:
+                                        type: string
+                                        example: PIX
+                                      description:
+                                        type: string
+                                        example: PIX
+                                  description:
+                                    type: string
+                                    example: Pix realizado
+                                  dateHour:
+                                    type: string
+                                    format: date-time
+                                    example: '2024-05-08T10:49:15Z'
+                                  amount:
+                                    type: number
+                                    example: 0.25
+                                  descriptionDetails:
+                                    type: string
+                                    example: Banco 201 | CPF ***.926.338-**
+                                  txId:
+                                    type: string
+                                    description: Identificador da transação.
+                                    example: fd64be97df4546a7ab2ab1
+                                  endToEndId:
+                                    description: Identificador do pix. Presente somente em caso de transações do tipo PIX
+                                    type: string
+                                    example: E2302385204412985
+                                  returnInfo:
+                                    type: string
+                                    example: null
+                                  details:
+                                    type: object
+                                    properties:
+                                      originId:
+                                        type: string
+                                        description: Identificador de origem da transação.
+                                        example: 46a20277-0709-4167-a10a-eb39e468c35a
+                                      barcode:
+                                        type: string
+                                        description: Código de barras. Presente somente em crédito de boleto
+                                        example: 00020101021226860010000000000000000000
+                                      ourNumber:
+                                        type: string
+                                        description: Nosso número do boleto. Presente somente em crédito de boleto
+                                        example: '12345678901234567890'
+                                title: Movement
+                          title: DailyMovement
+                    title: Data
+                title: StatementsResponse
+      security:
+      - read:
+        - brn:btg:empresas:banking:accounts
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Accounts/consultar-extrato-por-account-id
+      summary: Get by company id banking accounts by account id statements
+      x-summary-source: derived
+      operationId: getByCompanyIdBankingAccountsByAccountIdStatements
+      x-operation-id-source: derived
+  /{companyId}/banking/accounts/statements:
+    get:
+      tags:
+      - Conta PJ
+      description: Consultar extratos
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _links:
+                    type: object
+                    properties:
+                      self:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            example: https://api.empresas.btgpactual.com/29964797000111/banking/accounts/29964797000111-555-1-777776752/statements?startDate=2099-12-15&endDate=2099-12-19&type=simple&pageSize=1000
+                      next:
+                        type: string
+                        example: null
+                    title: Link
+                  data:
+                    type: object
+                    properties:
+                      dailyMovements:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            date:
+                              type: string
+                              example: '2024-07-16T00:00:00'
+                            balance:
+                              type: integer
+                              example: 55555
+                            movements:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  account:
+                                    type: object
+                                    properties:
+                                      accountNumber:
+                                        type: string
+                                        example: 005555999
+                                      branch:
+                                        type: string
+                                        example: 50
+                                      bank:
+                                        type: integer
+                                        example: 208
+                                      bankName:
+                                        type: string
+                                        example: BANCO BTG PACTUAL S.A.
+                                  id:
+                                    type: integer
+                                    example: 2392839223
+                                  type:
+                                    type: string
+                                    example: credit
+                                  category:
+                                    type: object
+                                    properties:
+                                      name:
+                                        type: string
+                                        example: OTHERS
+                                      description:
+                                        type: string
+                                        example: Outros
+                                  description:
+                                    type: string
+                                    example: CREDITO CCB
+                                  dateHour:
+                                    type: string
+                                    example: '2024-07-16T22:58:55.85Z'
+                                  amount:
+                                    type: integer
+                                    example: 505050
+                                  descriptionDetails:
+                                    type: string
+                                    example: Descrição
+                                  endToEndId:
+                                    type: string
+                                    example: E2302385204412985
+                                  returnInfo:
+                                    type: string
+                                    example: Return info
+                                  details:
+                                    type: object
+                                    properties:
+                                      originId:
+                                        type: string
+                                        example: 46a20277-0709-4167-a10a-eb39e468c35a
+                                title: NoIDMovements
+                          title: NoIDDailyMovements
+                    title: NoIDData
+                title: StatementsNoIDResponse
+      security:
+      - read:
+        - brn:btg:empresas:banking:accounts
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Accounts/consultar-extratos
+      summary: Get by company id banking accounts statements
+      x-summary-source: derived
+      operationId: getByCompanyIdBankingAccountsStatements
+      x-operation-id-source: derived
+  /{companyId}/banking/accounts/{accountId}/balances:
+    get:
+      tags:
+      - Conta PJ
+      description: Consultar saldo
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      - name: accountId
+        in: path
+        required: true
+        description: ID da conta
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accountId:
+                    type: string
+                    example: 33333333333333-208-50-1111111111
+                  available:
+                    type: object
+                    properties:
+                      amount:
+                        type: number
+                        format: float
+                        example: 5555555.72
+                      currency:
+                        type: string
+                        example: BRL
+                  blocked:
+                    type: object
+                    properties:
+                      amount:
+                        type: number
+                        format: float
+                        example: 10
+                      currency:
+                        type: string
+                        example: BRL
+                      blockedDate:
+                        type: string
+                        format: date-time
+                        example: null
+                title: balancesResponse
+      security:
+      - read:
+        - brn:btg:empresas:banking:accounts
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Accounts/consultar-saldo
+      summary: Get by company id banking accounts by account id balances
+      x-summary-source: derived
+      operationId: getByCompanyIdBankingAccountsByAccountIdBalances
+      x-operation-id-source: derived
+  /{companyId}/banking/accounts/{accountId}/statements/pdf:
+    get:
+      tags:
+      - Conta PJ
+      description: GET pdf base64
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      - in: path
+        name: accountId
+        required: true
+        schema:
+          type: string
+        description: ID da conta
+      - in: query
+        name: startDate
+        required: true
+        schema:
+          type: string
+          format: date
+        description: Data inicial da filtragem de extrato
+      - in: query
+        name: endDate
+        required: true
+        schema:
+          type: string
+          format: date
+        description: Data final da filtragem de extrato
+      - in: query
+        name: order
+        required: true
+        schema:
+          type: string
+          enum:
+          - desc
+          - asc
+        description: Ordem de listagem
+      - in: query
+        name: type
+        required: true
+        schema:
+          type: string
+          enum:
+          - simple
+          - withdraw-applications
+          - yields
+        description: Tipo de listagem. simple = Sem rendimentos. withdraw-applications = Com rendimentos, aplicações e resgates. yields = Com rendimentos
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/pdf:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: string
+                    example: PDF encodado em base64
+                title: pdfResponse
+      security:
+      - read:
+        - brn:btg:empresas:banking:accounts
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Accounts/get-pdf-base-64
+      summary: Get by company id banking accounts by account id statements pdf
+      x-summary-source: derived
+      operationId: getByCompanyIdBankingAccountsByAccountIdStatementsPdf
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    read:
+      type: oauth2
+      flows:
+        authorizationCode:
+          tokenUrl: https://id.btgpactual.com/oauth2/token
+          authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+          scopes:
+            brn:btg:empresas:banking:accounts: Consultar dados de conta, extratos e saldo
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/5a97ba53.1471e4bb.js
+  - https://developers.empresas.btgpactual.com/assets/js/b7d82902.292704e2.js
+  - https://developers.empresas.btgpactual.com/assets/js/0b1a7088.8d8865ed.js
+  - https://developers.empresas.btgpactual.com/assets/js/1e5a1ce1.ffa9b211.js
+  - https://developers.empresas.btgpactual.com/assets/js/53463653.baa46348.js

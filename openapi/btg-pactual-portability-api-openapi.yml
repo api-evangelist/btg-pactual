@@ -1,0 +1,440 @@
+openapi: 3.2.0
+info:
+  title: FIDC Portability API
+  version: 1.0.0
+  description: Esta API tem a finalidade de contratar e simular empréstimos, realizar cessão de direitos creditórios e consulta de carteira.
+  termsOfService: https://www.btgpactual.com/empresas/termos-e-politicas/
+  contact:
+    name: Time BTG Empresas
+    email: ol-it-btgempresas@btgpactual.com
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com
+  description: Sandbox
+- url: https://api.empresas.btgpactual.com
+  description: Produção
+tags:
+- name: Portability
+paths:
+  /fidc-loan/v1/portabilities/{portabilityId}/cancel:
+    post:
+      tags:
+      - Portability
+      description: Cancelamento de uma portabilidade out a partir de um pedido existente
+      operationId: cancelPortability
+      parameters:
+      - in: path
+        name: portabilityId
+        required: true
+        description: Id da portabilidade
+        schema:
+          description: Identificador da portabilidade
+          type: string
+          example: 75dc01b7-6b7d-439d-85bb-7ed0038a9b21
+      requestBody:
+        description: Dados para portabilidade
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - datetime
+              properties:
+                datetime:
+                  type: string
+                  format: date
+                  example: '2023-08-03 00:00:00'
+                  description: Data e hora da requisição
+        required: true
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  portability_id:
+                    type: string
+                    description: Identificador de excecução da portabilidade
+                    example: b2eaa18b-985e-473f-92bf-8cf9a407aee1
+        '400':
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: INVALID_PARAMETERS
+                        description: Codigo de identificaçao do erro
+                      message:
+                        type: string
+                        example: Parâmetros obrigatórios não enviados na requisição.
+                        description: Descrição do erro identificado pelo codigo de erro
+                      details:
+                        type: object
+                        properties:
+                          proposer_tax_id:
+                            type: array
+                            items:
+                              type:
+                              - string
+                              - 'null'
+                              example: 'One of these fields must be present: [:proposer_tax_id, :proposer_ispb]'
+                          registration_identification:
+                            type: array
+                            items:
+                              type:
+                              - string
+                              - 'null'
+                              example: can't be blank
+                title: ErrorResponseSchema
+        '401':
+          description: Não autorizado
+        '404':
+          description: Contrato não encontrado
+        '500':
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: INVALID_PARAMETERS
+                        description: Codigo de identificaçao do erro
+                      message:
+                        type: string
+                        example: Parâmetros obrigatórios não enviados na requisição.
+                        description: Descrição do erro identificado pelo codigo de erro
+                      details:
+                        type: object
+                        properties:
+                          proposer_tax_id:
+                            type: array
+                            items:
+                              type:
+                              - string
+                              - 'null'
+                              example: 'One of these fields must be present: [:proposer_tax_id, :proposer_ispb]'
+                          registration_identification:
+                            type: array
+                            items:
+                              type:
+                              - string
+                              - 'null'
+                              example: can't be blank
+                title: ErrorResponseSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/portabilities
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/FIDC%20-%20Portability/cancel-portability
+      summary: Cancel portability
+      x-summary-source: derived
+  /fidc-loan/v1/portabilities/{portabilityId}/confirm:
+    post:
+      tags:
+      - Portability
+      description: Confirmação de uma portabilidade out a partir de um pedido existente
+      operationId: confirmPortability
+      parameters:
+      - in: path
+        name: portabilityId
+        required: true
+        description: Id da portabilidade
+        schema:
+          description: Identificador da portabilidade
+          type: string
+          example: 75dc01b7-6b7d-439d-85bb-7ed0038a9b21
+      requestBody:
+        description: Dados para portabilidade
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - settlement_method
+              - datetime
+              properties:
+                settlement_method:
+                  description: Forma de liquidação
+                  type: string
+                  example: PIX
+                  enum:
+                  - PIX
+                  - TED
+                datetime:
+                  type: string
+                  format: date
+                  example: '2023-08-03 00:00:00'
+                  description: Data e hora da requisição
+        required: true
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  portability_id:
+                    type: string
+                    description: Identificador de excecução da portabilidade
+                    example: b2eaa18b-985e-473f-92bf-8cf9a407aee1
+                  trade:
+                    type: object
+                    properties:
+                      balance:
+                        type: string
+                        example: '5100.12'
+                        description: Valor de posição do credito
+        '400':
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: INVALID_PARAMETERS
+                        description: Codigo de identificaçao do erro
+                      message:
+                        type: string
+                        example: Parâmetros obrigatórios não enviados na requisição.
+                        description: Descrição do erro identificado pelo codigo de erro
+                      details:
+                        type: object
+                        properties:
+                          proposer_tax_id:
+                            type: array
+                            items:
+                              type:
+                              - string
+                              - 'null'
+                              example: 'One of these fields must be present: [:proposer_tax_id, :proposer_ispb]'
+                          registration_identification:
+                            type: array
+                            items:
+                              type:
+                              - string
+                              - 'null'
+                              example: can't be blank
+                title: ErrorResponseSchema
+        '401':
+          description: Não autorizado
+        '404':
+          description: Contrato não encontrado
+        '500':
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: INVALID_PARAMETERS
+                        description: Codigo de identificaçao do erro
+                      message:
+                        type: string
+                        example: Parâmetros obrigatórios não enviados na requisição.
+                        description: Descrição do erro identificado pelo codigo de erro
+                      details:
+                        type: object
+                        properties:
+                          proposer_tax_id:
+                            type: array
+                            items:
+                              type:
+                              - string
+                              - 'null'
+                              example: 'One of these fields must be present: [:proposer_tax_id, :proposer_ispb]'
+                          registration_identification:
+                            type: array
+                            items:
+                              type:
+                              - string
+                              - 'null'
+                              example: can't be blank
+                title: ErrorResponseSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/portabilities
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/FIDC%20-%20Portability/confirm-portability
+      summary: Confirm portability
+      x-summary-source: derived
+  /fidc-loan/v1/portabilities:
+    post:
+      tags:
+      - Portability
+      description: Criação de um pedido de portabilidade out
+      operationId: createPortability
+      requestBody:
+        description: Dados para portabilidade
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - contract_number
+              - registration_identification
+              - portability_date
+              properties:
+                contract_number:
+                  type: string
+                  example: 670501191v8822
+                  description: Identificador do contrato a ser portado
+                registration_identification:
+                  type: string
+                  example: 670501191v8822
+                  description: Identificador único para a portabilidade
+                proposer_ispb:
+                  type: string
+                  example: '60701190'
+                  description: ISPB do banco propoente da portabilidade
+                proposer_tax_id:
+                  type: string
+                  example: 670501191v8822
+                  description: CNPJ do banco propoente da portabilidade
+                portability_date:
+                  type: string
+                  format: date
+                  example: '2023-08-03 00:00:00'
+                  description: Data e hora da requisição
+        required: true
+      responses:
+        '201':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  portability_id:
+                    type: string
+                    description: Identificador de excecução da portabilidade
+                    example: b2eaa18b-985e-473f-92bf-8cf9a407aee1
+                  trade:
+                    type: object
+                    properties:
+                      contract_number:
+                        type: string
+                        example: PORT182815182381AB
+                        description: Identificador do contrato a ser portado
+                      balance:
+                        type: string
+                        example: '5100.12'
+                        description: Valor de posição do credito
+        '400':
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: INVALID_PARAMETERS
+                        description: Codigo de identificaçao do erro
+                      message:
+                        type: string
+                        example: Parâmetros obrigatórios não enviados na requisição.
+                        description: Descrição do erro identificado pelo codigo de erro
+                      details:
+                        type: object
+                        properties:
+                          proposer_tax_id:
+                            type: array
+                            items:
+                              type:
+                              - string
+                              - 'null'
+                              example: 'One of these fields must be present: [:proposer_tax_id, :proposer_ispb]'
+                          registration_identification:
+                            type: array
+                            items:
+                              type:
+                              - string
+                              - 'null'
+                              example: can't be blank
+                title: ErrorResponseSchema
+        '401':
+          description: Não autorizado
+        '404':
+          description: Contrato não encontrado
+        '500':
+          description: Erro
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: INVALID_PARAMETERS
+                        description: Codigo de identificaçao do erro
+                      message:
+                        type: string
+                        example: Parâmetros obrigatórios não enviados na requisição.
+                        description: Descrição do erro identificado pelo codigo de erro
+                      details:
+                        type: object
+                        properties:
+                          proposer_tax_id:
+                            type: array
+                            items:
+                              type:
+                              - string
+                              - 'null'
+                              example: 'One of these fields must be present: [:proposer_tax_id, :proposer_ispb]'
+                          registration_identification:
+                            type: array
+                            items:
+                              type:
+                              - string
+                              - 'null'
+                              example: can't be blank
+                title: ErrorResponseSchema
+      security:
+      - oauth2:
+        - empresas.btgpactual.com/portabilities
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/FIDC%20-%20Portability/create-portability
+      summary: Create portability
+      x-summary-source: derived
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://id.sandbox.btgpactual.com/oauth2/token
+          scopes:
+            empresas.btgpactual.com/portabilities: Scope to portability out
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/25090fb6.1a21f27b.js
+  - https://developers.empresas.btgpactual.com/assets/js/bf2d3bbb.96147e70.js
+  - https://developers.empresas.btgpactual.com/assets/js/c3e3b641.523d3f01.js

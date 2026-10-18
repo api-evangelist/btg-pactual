@@ -1,0 +1,67 @@
+generated: '2026-10-18'
+method: searched
+generator: extract-docs-artifacts.py (deepseek)
+source: https://developers.empresas.btgpactual.com/docs/starting-doc/Integrando/APIs/Sandbox/sandbox-com-wiremock-v2
+sources:
+- https://developers.empresas.btgpactual.com/docs/starting-doc/Integrando/APIs/Sandbox/sandbox-com-wiremock-v2
+- https://developers.empresas.btgpactual.com/docs/starting-doc/Integrando/Ambientes/Sandbox
+- https://developers.empresas.btgpactual.com/docs/starting-doc/Integrando/APIs/Sandbox/sandbox-headers
+- https://developers.empresas.btgpactual.com/docs/api-specs-target/FIDC%20-%20Simulation/create-simulation
+description: BTG Pactual's sandbox environment for testing APIs with static responses and dedicated authentication server
+modes:
+- name: sandbox
+  base_url: https://api.sandbox.empresas.btgpactual.com
+  portal: https://developers.empresas.btgpactual.com
+  how_to_get_access: Access via 'Acessar Sandbox' link on developer portal
+triggers:
+- x-response header with values 'success' or 'error'
+test_values:
+- kind: company_id
+  value: '30306294000145'
+  meaning: Fixed company ID for sandbox environment that replaces actual CNPJ
+- kind: agreement_id
+  value: e83fb70e-b7d6-40c1-9c44-9c63c0a3150d
+  meaning: Example agreement ID for simulation
+- kind: amount
+  value: '125.32'
+  meaning: Example amount for simulation
+- kind: interest_rate
+  value: '0.12'
+  meaning: Example interest rate for simulation
+- kind: minimum_installment_amount
+  value: '100'
+  meaning: Example minimum installment amount
+- kind: maximum_installment_amount
+  value: '200.5'
+  meaning: Example maximum installment amount
+- kind: minimum_installments
+  value: '1'
+  meaning: Example minimum installments
+- kind: maximum_installments
+  value: '12'
+  meaning: Example maximum installments
+- kind: payment_day
+  value: '12'
+  meaning: Example payment day
+- kind: fee_percentage
+  value: '10.01'
+  meaning: Example fee percentage
+- kind: execution_id
+  value: b2eaa18b-985e-473f-92bf-8cf9a407aee1
+  meaning: Example execution ID for simulation response
+- kind: day_count_code
+  value: '303601'
+  meaning: Example day count code
+- kind: monthly_interest_rate
+  value: '0.0099'
+  meaning: Example monthly interest rate
+- kind: annual_interest_rate
+  value: '0.1254'
+  meaning: Example annual interest rate
+note: The sandbox uses Wiremock for newer APIs with stubs for mocking requests/responses. Authentication uses dedicated BTG Id server at https://id.sandbox.btgpactual.com.
+  Tokens are limited to sandbox company 30306294000145. The x-response header allows forcing success (200/201) or error (400) responses.
+docs:
+- https://developers.empresas.btgpactual.com/docs/starting-doc/Integrando/APIs/Sandbox/sandbox-com-wiremock-v2
+- https://developers.empresas.btgpactual.com/docs/starting-doc/Integrando/Ambientes/Sandbox
+- https://developers.empresas.btgpactual.com/docs/starting-doc/Integrando/APIs/Sandbox/sandbox-headers
+- https://developers.empresas.btgpactual.com/docs/api-specs-target/FIDC%20-%20Simulation/create-simulation

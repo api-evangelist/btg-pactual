@@ -1,0 +1,389 @@
+openapi: 3.2.0
+info:
+  description: API responsável por gestão de splitters e consulta de splits de cobranças
+  version: 1.1.0
+  title: Banking Split API
+  contact:
+    name: Contas a Receber
+    email: OL-IT-BtgEmpresas-ContasAReceber@btgpactual.com
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com
+  description: Sandbox
+- url: https://api.empresas.btgpactual.com
+  description: Produção
+tags:
+- name: Split
+paths:
+  /{companyId}/banking/split/{splitId}:
+    get:
+      tags:
+      - Split
+      description: 'Retorna a divisão global (`Split`) persistida de uma cobrança pelo seu UUID. Diferente da resposta da criação de cobrança, esta consulta retorna **todas** as partes da divisão, incluindo a parte residual do próprio beneficiário (marcada com `isBeneficiary: true`).
+
+
+        ## 📘 Ambiente de sandbox
+
+        > Esta API utiliza o Wiremock
+
+
+        > No sandbox este endpoint requer a utilização de Sandbox Headers
+
+
+        | Header | Descrição | Valores Aceitos |
+
+        | :--------- | :----------------------------------- | :-------------- |
+
+        | x-response | Controlar o tipo de resposta da API. | success ou error |'
+      operationId: findSplitById
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      - name: splitId
+        in: path
+        required: true
+        description: Identificador UUID do split
+        schema:
+          type: string
+          format: uuid
+          example: 8a90c6bb-9aaf-4f02-ae53-2314286cea0d
+      responses:
+        '200':
+          description: Split encontrado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                description: 'Divisão global persistida de uma cobrança. Campos nulos/ausentes são omitidos
+
+                  da resposta (não retornados como `null`).
+
+                  '
+                required:
+                - id
+                - collectionId
+                - type
+                - status
+                - splitParts
+                - createdAt
+                - updatedAt
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    description: Identificador único do split
+                    example: 8a90c6bb-9aaf-4f02-ae53-2314286cea0d
+                  collectionId:
+                    type: string
+                    format: uuid
+                    description: Identificador da cobrança associada
+                    example: 1e5d83c8-92b5-4f39-827c-9d0a3847c181
+                  type:
+                    type: string
+                    enum:
+                    - PERCENT
+                    - VALUE
+                    description: Tipo de divisão
+                    example: PERCENT
+                  status:
+                    type: string
+                    enum:
+                    - PENDING
+                    - PROCESSING
+                    - SUCCESS
+                    - FAILED
+                    - CANCELED
+                    description: Status global do split
+                    example: PENDING
+                  splitParts:
+                    type: array
+                    description: 'Partes individuais da divisão, incluindo a parte residual do payee
+
+                      (marcada com `isBeneficiary: true`).
+
+                      '
+                    items:
+                      type: object
+                      required:
+                      - id
+                      - splitterInfo
+                      - divisionAmount
+                      - status
+                      - createdAt
+                      - updatedAt
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                          description: Identificador único da parte
+                          example: c4ece9fa-3f1c-48f6-9d5d-5052ae2c5d26
+                        splitterInfo:
+                          type: object
+                          description: Snapshot do splitter embutido na parte do split
+                          required:
+                          - splitterId
+                          - taxId
+                          - personType
+                          - name
+                          - status
+                          - account
+                          properties:
+                            splitterId:
+                              type: string
+                              format: uuid
+                              description: Identificador do splitter
+                              example: d06774bc-2984-48ab-9e3e-e6e468e006f5
+                            taxId:
+                              type: string
+                              description: CNPJ do splitter
+                              example: '37297902000141'
+                            personType:
+                              type: string
+                              enum:
+                              - F
+                              - J
+                              description: Tipo de pessoa
+                              example: J
+                            name:
+                              type: string
+                              description: Nome/razão social do splitter
+                              example: Empresa Exemplo LTDA
+                            status:
+                              type: string
+                              enum:
+                              - ACTIVE
+                              - DELETED
+                              description: Status do splitter
+                              example: ACTIVE
+                            account:
+                              type: object
+                              description: Conta do splitter conforme registrada na parte do split
+                              required:
+                              - number
+                              properties:
+                                number:
+                                  type: string
+                                  description: Número da conta
+                                  example: '1234561'
+                                branch:
+                                  type: string
+                                  description: Agência bancária
+                                  example: '50'
+                                bankCode:
+                                  type: string
+                                  description: Código do banco
+                                  example: '208'
+                              title: SplitAccountResponse
+                            isBeneficiary:
+                              type: boolean
+                              description: Indica se esta parte é a residual do próprio beneficiário (payee)
+                              example: false
+                            nickname:
+                              type: string
+                              description: Apelido do splitter (ausente quando não definido)
+                              example: Empresa Exemplo
+                          title: SplitterInfoResponse
+                        divisionAmount:
+                          type: number
+                          description: 'Valor da divisão desta parte.
+
+                            Para PERCENT: fração (ex: 0.30 = 30%). Para VALUE: valor absoluto em reais.
+
+                            '
+                          example: 0.3
+                        status:
+                          type: string
+                          enum:
+                          - PENDING
+                          - PROCESSING
+                          - SETTLED
+                          - FAILED
+                          - CANCELED
+                          description: Status da parte
+                          example: PENDING
+                        createdAt:
+                          type: string
+                          format: date-time
+                          description: Data de criação
+                          example: '2025-02-24T00:00:00.000Z'
+                        updatedAt:
+                          type: string
+                          format: date-time
+                          description: Data de última atualização
+                          example: '2025-02-24T00:00:00.000Z'
+                        settledAt:
+                          type: string
+                          format: date-time
+                          description: Data de liquidação (presente quando status = SETTLED)
+                          example: '2025-02-25T00:00:00.000Z'
+                        amountPaid:
+                          type: number
+                          description: Valor efetivamente liquidado (presente quando status = SETTLED)
+                          example: 100
+                        externalSplitPartId:
+                          type: string
+                          description: Identificador externo da parte no provedor de execução
+                          example: fa542b19-114c-46dd-a619-d87e9ce516b5
+                      title: SplitPartResponse
+                  createdAt:
+                    type: string
+                    format: date-time
+                    description: Data de criação
+                    example: '2025-02-24T00:00:00.000Z'
+                  updatedAt:
+                    type: string
+                    format: date-time
+                    description: Data de última atualização
+                    example: '2025-02-24T00:00:00.000Z'
+                  externalSplitId:
+                    type: string
+                    description: 'Identificador externo do split no provedor de execução.
+
+                      Ausente até o primeiro evento externo.
+
+                      '
+                    example: 5640dbda-888a-4c53-a33a-62fc09d2dcd0
+                  principalKey:
+                    type: string
+                    description: 'Chave principal (barcode do boleto) usada para correlacionar eventos externos.
+
+                      Ausente até o primeiro evento externo.
+
+                      '
+                    example: '20892962100000010000050010000039858903886850'
+                title: SplitResponse
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  required:
+                  - brn
+                  - name
+                  - reason
+                  properties:
+                    brn:
+                      type: string
+                      description: Business Resource Name do erro
+                      example: brn:empresas:banking:errors:not-found-error
+                    name:
+                      type: string
+                      description: Nome do tipo de erro
+                      example: NotFoundError
+                    reason:
+                      type: string
+                      description: Mensagem descritiva do erro
+                      example: Splitter not found
+                  title: ErrorResponse
+                - type: object
+                  properties:
+                    invalidParams:
+                      type: array
+                      description: Lista de parâmetros inválidos
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            description: Nome do campo inválido
+                            example: taxId
+                          value:
+                            type: string
+                            description: Valor recebido
+                            example: ''
+                          reason:
+                            type: string
+                            description: Motivo da invalidação
+                            example: '"taxId" is required'
+                title: ValidationErrorResponse
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                - reason
+                properties:
+                  brn:
+                    type: string
+                    description: Business Resource Name do erro
+                    example: brn:empresas:banking:errors:not-found-error
+                  name:
+                    type: string
+                    description: Nome do tipo de erro
+                    example: NotFoundError
+                  reason:
+                    type: string
+                    description: Mensagem descritiva do erro
+                    example: Splitter not found
+                title: ErrorResponse
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                - reason
+                properties:
+                  brn:
+                    type: string
+                    description: Business Resource Name do erro
+                    example: brn:empresas:banking:errors:not-found-error
+                  name:
+                    type: string
+                    description: Nome do tipo de erro
+                    example: NotFoundError
+                  reason:
+                    type: string
+                    description: Mensagem descritiva do erro
+                    example: Splitter not found
+                title: ErrorResponse
+      security:
+      - read:
+        - brn:btg:empresas:banking:collections
+        - brn:btg:empresas:banking:collections.read-only
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20Split/find-split-by-id
+      summary: Find split by id
+      x-summary-source: derived
+components:
+  securitySchemes:
+    write:
+      type: oauth2
+      flows:
+        authorizationCode:
+          tokenUrl: https://id.btgpactual.com/oauth2/token
+          authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+          scopes:
+            brn:btg:empresas:banking:collections: Emitir, consultar e alterar cobranças
+    read:
+      type: oauth2
+      flows:
+        authorizationCode:
+          tokenUrl: https://id.btgpactual.com/oauth2/token
+          authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+          scopes:
+            brn:btg:empresas:banking:collections: Emitir, consultar e alterar cobranças
+            brn:btg:empresas:banking:collections.read-only: Consultar cobranças
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/f6737176.762483d7.js
+  - https://developers.empresas.btgpactual.com/assets/js/492dec70.3c8c9ef6.js
+  - https://developers.empresas.btgpactual.com/assets/js/cc040b89.9e194504.js
+  - https://developers.empresas.btgpactual.com/assets/js/5a1707d9.b4231246.js
+  - https://developers.empresas.btgpactual.com/assets/js/51ade508.4acc3ff1.js
+  - https://developers.empresas.btgpactual.com/assets/js/0547d520.beaf6688.js
+  - https://developers.empresas.btgpactual.com/assets/js/3d193fae.1236f18c.js

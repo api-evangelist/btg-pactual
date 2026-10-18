@@ -1,0 +1,2023 @@
+# x-archived-from: btg-pactual-banking-paymentlink-openapi.yml
+# x-archived-on: 2026-10-18
+openapi: 3.0.3
+info:
+  description: API responsável por gerenciar links de pagamento na área logada.
+  version: 1.0.0
+  title: Banking - PaymentLink
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com
+  description: Sandbox
+- url: https://api.empresas.btgpactual.com
+  description: Produção
+paths:
+  /{companyId}/banking/payment-link/{paymentLinkId}:
+    put:
+      tags:
+      - Link de pagamento
+      description: API responsável por editar um link de pagamento
+      parameters:
+      - in: path
+        name: paymentLinkId
+        schema:
+          type: string
+          example: 97c8ac0a-89cb-4bbe-842b-d4e79a685c39
+          description: Identificador do Link de Pagamento
+          title: PaymentLinkId
+        required: true
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Nome do link de pagamento
+                  description: Nome do link de pagamento
+                  title: PaymentLinkName
+                amount:
+                  type: number
+                  example: 100
+                  description: Valor do Link de Pagamento ou cobrança
+                  title: Amount
+                description:
+                  type: string
+                  example: Descrição do link de pagamento
+                  description: Descrição do link de pagamento
+                  title: Description
+                paymentMethods:
+                  type: array
+                  items:
+                    type: string
+                    enum:
+                    - BANKSLIP
+                    - IMMEDIATE_QRCODE
+                    - CREDIT_CARD
+                  example:
+                  - BANKSLIP
+                  - IMMEDIATE_QRCODE
+                  - CREDIT_CARD
+                  description: Métodos de pagamento permitidos
+                  title: PaymentMethods
+                notifications:
+                  type: object
+                  properties:
+                    deliveryMediums:
+                      type: array
+                      items:
+                        type: string
+                        enum:
+                        - Email
+                        - Sms
+                        - Push
+                      example:
+                      - Email
+                      - Push
+                      title: DeliveryMediums
+                    email:
+                      type: string
+                      example: exemplo@btgpactual.com
+                      description: Email do beneficiário
+                      title: Email
+                    phone:
+                      type: string
+                      example: '55112312312321'
+                      description: Telefone do beneficiário
+                      title: Sms
+                  title: Notifications
+                schedule:
+                  type: object
+                  properties:
+                    startAt:
+                      type: string
+                      format: date-time
+                      example: '2024-01-01T12:00:00Z'
+                      description: Data e hora de ativação do link de pagamento
+                    endAt:
+                      type: string
+                      format: date-time
+                      example: '2024-12-31T17:00:00Z'
+                      description: Data e hora de desativação do link de pagamento
+                  title: Schedule
+                payer:
+                  type: object
+                  required:
+                  - name
+                  - taxId
+                  properties:
+                    name:
+                      type: string
+                      example: John Due
+                    email:
+                      type: string
+                      format: email
+                      example: user@gmail.com
+                    personType:
+                      type: string
+                      enum:
+                      - F
+                      - J
+                      example: J
+                    phoneNumber:
+                      type: string
+                      example: '123123121231'
+                    taxId:
+                      type: string
+                      example: '37297902000141'
+                    address:
+                      type: object
+                      required:
+                      - city
+                      - state
+                      - street
+                      - zipCode
+                      - number
+                      - neighborhood
+                      properties:
+                        city:
+                          type: string
+                          example: São Paulo
+                        state:
+                          type: string
+                          example: SP
+                        street:
+                          type: string
+                          example: Faria Lima
+                        zipCode:
+                          type: string
+                          example: '06312412'
+                        number:
+                          type: string
+                          example: '123'
+                        neighborhood:
+                          type: string
+                          example: Itaim Bibi
+                      description: Endereço
+                      title: Address
+                    deliveryMediums:
+                      type: array
+                      items:
+                        type: string
+                        enum:
+                        - Email
+                        - Sms
+                        - Push
+                      example:
+                      - Email
+                      - Push
+                      title: DeliveryMediums
+                  description: Pagador
+                  title: Payer
+                details:
+                  type: object
+                  description: Detalhes do pagamento com cartão de crédito. É obrigatório quando paymentMethods inclui CREDIT_CARD e não deve ser enviado quando não inclui
+                  required:
+                  - limits
+                  properties:
+                    limits:
+                      type: object
+                      required:
+                      - maxInstallments
+                      properties:
+                        maxInstallments:
+                          type: integer
+                          minimum: 1
+                          maximum: 24
+                          example: 3
+                          description: Número máximo de parcelas permitidas para pagamento com cartão de crédito, de 1 a 24. Cada parcela deve ter no mínimo R$ 5,00.
+                          title: MaxInstallments
+                        maxPayments:
+                          type: integer
+                          example: 100
+                          description: Quantidade máxima de pagamentos aceitos pelo link. Quando não informado, não há limite
+                          title: MaxPayments
+                    card:
+                      type: object
+                      default:
+                        transferCardFeesToPayer: false
+                      properties:
+                        transferCardFeesToPayer:
+                          type: boolean
+                          default: false
+                          example: true
+                          description: Indica se o custo da transação por cartão de crédito deve ser repassado ao pagador. Quando não informado, assume false
+                          title: TransferCardFeesToPayer
+                  title: PaymentLinkDetails
+              title: EditPaymentLinkRequest
+      responses:
+        '200':
+          description: Link de pagamento editado com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  paymentLinkId:
+                    type: string
+                    example: 97c8ac0a-89cb-4bbe-842b-d4e79a685c39
+                    description: Identificador do Link de Pagamento
+                    title: PaymentLinkId
+                  name:
+                    type: string
+                    example: Nome do link de pagamento
+                    description: Nome do link de pagamento
+                    title: PaymentLinkName
+                  amount:
+                    type: number
+                    example: 100
+                    description: Valor do Link de Pagamento ou cobrança
+                    title: Amount
+                  notifications:
+                    type: object
+                    properties:
+                      deliveryMediums:
+                        type: array
+                        items:
+                          type: string
+                          enum:
+                          - Email
+                          - Sms
+                          - Push
+                        example:
+                        - Email
+                        - Push
+                        title: DeliveryMediums
+                      email:
+                        type: string
+                        example: exemplo@btgpactual.com
+                        description: Email do beneficiário
+                        title: Email
+                      phone:
+                        type: string
+                        example: '55112312312321'
+                        description: Telefone do beneficiário
+                        title: Sms
+                    title: Notifications
+                  paymentMethods:
+                    type: array
+                    items:
+                      type: string
+                      enum:
+                      - BANKSLIP
+                      - IMMEDIATE_QRCODE
+                      - CREDIT_CARD
+                    example:
+                    - BANKSLIP
+                    - IMMEDIATE_QRCODE
+                    - CREDIT_CARD
+                    description: Métodos de pagamento permitidos
+                    title: PaymentMethods
+                  status:
+                    type: string
+                    enum:
+                    - ACTIVE
+                    - INACTIVE
+                    - EXPIRED
+                    - CANCELED
+                    - PAID
+                    example: ACTIVE
+                    description: Status do link de pagamento
+                    title: PaymentLinkStatus
+                  createdAt:
+                    type: string
+                    format: date-time
+                    example: '2024-07-18T19:05:57Z'
+                    title: Date
+                  updatedAt:
+                    type: string
+                    format: date-time
+                    example: '2024-07-18T19:05:57Z'
+                    title: Date
+                  schedule:
+                    type: object
+                    properties:
+                      startAt:
+                        type: string
+                        format: date-time
+                        example: '2024-01-01T12:00:00Z'
+                        description: Data e hora de ativação do link de pagamento
+                      endAt:
+                        type: string
+                        format: date-time
+                        example: '2024-12-31T17:00:00Z'
+                        description: Data e hora de desativação do link de pagamento
+                    title: Schedule
+                  linkUrl:
+                    type: string
+                    example: link-uat.btgpactual.com/JK9GbsH49HEi69S
+                    description: URL do link de pagamento
+                    title: LinkUrl
+                  description:
+                    type: string
+                    example: Descrição do link de pagamento
+                    description: Descrição do link de pagamento
+                    title: Description
+                  payer:
+                    type: object
+                    required:
+                    - name
+                    - taxId
+                    properties:
+                      name:
+                        type: string
+                        example: John Due
+                      email:
+                        type: string
+                        format: email
+                        example: user@gmail.com
+                      personType:
+                        type: string
+                        enum:
+                        - F
+                        - J
+                        example: J
+                      phoneNumber:
+                        type: string
+                        example: '123123121231'
+                      taxId:
+                        type: string
+                        example: '37297902000141'
+                      address:
+                        type: object
+                        required:
+                        - city
+                        - state
+                        - street
+                        - zipCode
+                        - number
+                        - neighborhood
+                        properties:
+                          city:
+                            type: string
+                            example: São Paulo
+                          state:
+                            type: string
+                            example: SP
+                          street:
+                            type: string
+                            example: Faria Lima
+                          zipCode:
+                            type: string
+                            example: '06312412'
+                          number:
+                            type: string
+                            example: '123'
+                          neighborhood:
+                            type: string
+                            example: Itaim Bibi
+                        description: Endereço
+                        title: Address
+                      deliveryMediums:
+                        type: array
+                        items:
+                          type: string
+                          enum:
+                          - Email
+                          - Sms
+                          - Push
+                        example:
+                        - Email
+                        - Push
+                        title: DeliveryMediums
+                    description: Pagador
+                    title: Payer
+                  payee:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: VECHI CONSULTORIA E PROJETOS LTDA
+                        description: Nome do beneficiário
+                        title: PayeeName
+                      email:
+                        type: string
+                        example: exemplo@btgpactual.com
+                        description: Email do beneficiário
+                        title: Email
+                      personType:
+                        type: string
+                        example: J
+                        title: PersonTypeJ
+                      phoneNumber:
+                        type: string
+                        example: '11912345678'
+                        description: Telefone do beneficiário
+                        title: PhoneNumber
+                      taxId:
+                        type: string
+                        example: '37297902000141'
+                        description: Documento do beneficiário
+                        title: TaxId
+                  type:
+                    type: string
+                    enum:
+                    - SINGLE
+                    - MULTIPLE
+                    example: SINGLE
+                    description: Tipo do link de pagamento
+                    title: PaymentLinkType
+                  details:
+                    type: object
+                    description: Detalhes do pagamento com cartão de crédito. É obrigatório quando paymentMethods inclui CREDIT_CARD e não deve ser enviado quando não inclui
+                    required:
+                    - limits
+                    properties:
+                      limits:
+                        type: object
+                        required:
+                        - maxInstallments
+                        properties:
+                          maxInstallments:
+                            type: integer
+                            minimum: 1
+                            maximum: 24
+                            example: 3
+                            description: Número máximo de parcelas permitidas para pagamento com cartão de crédito, de 1 a 24. Cada parcela deve ter no mínimo R$ 5,00.
+                            title: MaxInstallments
+                          maxPayments:
+                            type: integer
+                            example: 100
+                            description: Quantidade máxima de pagamentos aceitos pelo link. Quando não informado, não há limite
+                            title: MaxPayments
+                      card:
+                        type: object
+                        default:
+                          transferCardFeesToPayer: false
+                        properties:
+                          transferCardFeesToPayer:
+                            type: boolean
+                            default: false
+                            example: true
+                            description: Indica se o custo da transação por cartão de crédito deve ser repassado ao pagador. Quando não informado, assume false
+                            title: TransferCardFeesToPayer
+                    title: PaymentLinkDetails
+                title: PaymentLinkResponse
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: InvalidInputError
+                    description: Nome do erro.
+                title: BadRequestErrorResponse
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: ForbiddenError
+                    description: Nome do erro.
+                title: ForbiddenErrorResponse
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:not-found-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: NotFoundError
+                    description: Nome do erro.
+                title: NotFoundErrorResponse
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: ConflictError
+                    description: Nome do erro.
+                title: ConflictErrorResponse
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: UnprocessableEntityError
+                    description: Nome do erro.
+                title: UnprocessableEntityErrorResponse
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:internal-server-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: InternalServerError
+                    description: Nome do erro.
+                title: InternalServerErrorResponse
+      security:
+      - write:
+        - brn:btg:empresas:banking:payment-link
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20PaymentLink/atualizar-link-de-pagamento
+    delete:
+      tags:
+      - Link de pagamento
+      description: API responsável por cancelar um link de pagamento
+      parameters:
+      - in: path
+        name: paymentLinkId
+        schema:
+          type: string
+          example: 97c8ac0a-89cb-4bbe-842b-d4e79a685c39
+          description: Identificador do Link de Pagamento
+          title: PaymentLinkId
+        required: true
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: InvalidInputError
+                    description: Nome do erro.
+                title: BadRequestErrorResponse
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: ForbiddenError
+                    description: Nome do erro.
+                title: ForbiddenErrorResponse
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:not-found-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: NotFoundError
+                    description: Nome do erro.
+                title: NotFoundErrorResponse
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: UnprocessableEntityError
+                    description: Nome do erro.
+                title: UnprocessableEntityErrorResponse
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:internal-server-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: InternalServerError
+                    description: Nome do erro.
+                title: InternalServerErrorResponse
+      security:
+      - write:
+        - brn:btg:empresas:banking:payment-link
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20PaymentLink/cancelar-link-de-pagamento
+  /{companyId}/banking/payment-link:
+    post:
+      tags:
+      - Link de pagamento
+      description: API responsável por criar um link de pagamento
+      parameters:
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - name
+              - amount
+              - paymentMethods
+              - notifications
+              - type
+              - account
+              properties:
+                name:
+                  type: string
+                  example: Nome do link de pagamento
+                  description: Nome do link de pagamento
+                  title: PaymentLinkName
+                amount:
+                  type: number
+                  example: 100
+                  description: Valor do Link de Pagamento ou cobrança
+                  title: Amount
+                description:
+                  type: string
+                  example: Descrição do link de pagamento
+                  description: Descrição do link de pagamento
+                  title: Description
+                account:
+                  type: object
+                  properties:
+                    number:
+                      type: string
+                      example: 003886850
+                      description: Número da conta com dígito
+                      title: AccountNumber
+                    branch:
+                      type: string
+                      example: '50'
+                      description: Agência bancária
+                      title: AccountBranch
+                  title: Account
+                paymentMethods:
+                  type: array
+                  items:
+                    type: string
+                    enum:
+                    - BANKSLIP
+                    - IMMEDIATE_QRCODE
+                    - CREDIT_CARD
+                  example:
+                  - BANKSLIP
+                  - IMMEDIATE_QRCODE
+                  - CREDIT_CARD
+                  description: Métodos de pagamento permitidos
+                  title: PaymentMethods
+                notifications:
+                  type: object
+                  properties:
+                    deliveryMediums:
+                      type: array
+                      items:
+                        type: string
+                        enum:
+                        - Email
+                        - Sms
+                        - Push
+                      example:
+                      - Email
+                      - Push
+                      title: DeliveryMediums
+                    email:
+                      type: string
+                      example: exemplo@btgpactual.com
+                      description: Email do beneficiário
+                      title: Email
+                    phone:
+                      type: string
+                      example: '55112312312321'
+                      description: Telefone do beneficiário
+                      title: Sms
+                  title: Notifications
+                schedule:
+                  type: object
+                  properties:
+                    startAt:
+                      type: string
+                      format: date-time
+                      example: '2024-01-01T12:00:00Z'
+                      description: Data e hora de ativação do link de pagamento
+                    endAt:
+                      type: string
+                      format: date-time
+                      example: '2024-12-31T17:00:00Z'
+                      description: Data e hora de desativação do link de pagamento
+                  title: Schedule
+                type:
+                  type: string
+                  enum:
+                  - SINGLE
+                  - MULTIPLE
+                  example: SINGLE
+                  description: Tipo do link de pagamento
+                  title: PaymentLinkType
+                payer:
+                  type: object
+                  required:
+                  - name
+                  - taxId
+                  properties:
+                    name:
+                      type: string
+                      example: John Due
+                    email:
+                      type: string
+                      format: email
+                      example: user@gmail.com
+                    personType:
+                      type: string
+                      enum:
+                      - F
+                      - J
+                      example: J
+                    phoneNumber:
+                      type: string
+                      example: '123123121231'
+                    taxId:
+                      type: string
+                      example: '37297902000141'
+                    address:
+                      type: object
+                      required:
+                      - city
+                      - state
+                      - street
+                      - zipCode
+                      - number
+                      - neighborhood
+                      properties:
+                        city:
+                          type: string
+                          example: São Paulo
+                        state:
+                          type: string
+                          example: SP
+                        street:
+                          type: string
+                          example: Faria Lima
+                        zipCode:
+                          type: string
+                          example: '06312412'
+                        number:
+                          type: string
+                          example: '123'
+                        neighborhood:
+                          type: string
+                          example: Itaim Bibi
+                      description: Endereço
+                      title: Address
+                    deliveryMediums:
+                      type: array
+                      items:
+                        type: string
+                        enum:
+                        - Email
+                        - Sms
+                        - Push
+                      example:
+                      - Email
+                      - Push
+                      title: DeliveryMediums
+                  description: Pagador
+                  title: Payer
+                details:
+                  type: object
+                  description: Detalhes do pagamento com cartão de crédito. É obrigatório quando paymentMethods inclui CREDIT_CARD e não deve ser enviado quando não inclui
+                  required:
+                  - limits
+                  properties:
+                    limits:
+                      type: object
+                      required:
+                      - maxInstallments
+                      properties:
+                        maxInstallments:
+                          type: integer
+                          minimum: 1
+                          maximum: 24
+                          example: 3
+                          description: Número máximo de parcelas permitidas para pagamento com cartão de crédito, de 1 a 24. Cada parcela deve ter no mínimo R$ 5,00.
+                          title: MaxInstallments
+                        maxPayments:
+                          type: integer
+                          example: 100
+                          description: Quantidade máxima de pagamentos aceitos pelo link. Quando não informado, não há limite
+                          title: MaxPayments
+                    card:
+                      type: object
+                      default:
+                        transferCardFeesToPayer: false
+                      properties:
+                        transferCardFeesToPayer:
+                          type: boolean
+                          default: false
+                          example: true
+                          description: Indica se o custo da transação por cartão de crédito deve ser repassado ao pagador. Quando não informado, assume false
+                          title: TransferCardFeesToPayer
+                  title: PaymentLinkDetails
+              title: CreatePaymentLinkRequest
+      responses:
+        '201':
+          description: Link de pagamento criado com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  paymentLinkId:
+                    type: string
+                    example: 97c8ac0a-89cb-4bbe-842b-d4e79a685c39
+                    description: Identificador do Link de Pagamento
+                    title: PaymentLinkId
+                  name:
+                    type: string
+                    example: Nome do link de pagamento
+                    description: Nome do link de pagamento
+                    title: PaymentLinkName
+                  amount:
+                    type: number
+                    example: 100
+                    description: Valor do Link de Pagamento ou cobrança
+                    title: Amount
+                  notifications:
+                    type: object
+                    properties:
+                      deliveryMediums:
+                        type: array
+                        items:
+                          type: string
+                          enum:
+                          - Email
+                          - Sms
+                          - Push
+                        example:
+                        - Email
+                        - Push
+                        title: DeliveryMediums
+                      email:
+                        type: string
+                        example: exemplo@btgpactual.com
+                        description: Email do beneficiário
+                        title: Email
+                      phone:
+                        type: string
+                        example: '55112312312321'
+                        description: Telefone do beneficiário
+                        title: Sms
+                    title: Notifications
+                  paymentMethods:
+                    type: array
+                    items:
+                      type: string
+                      enum:
+                      - BANKSLIP
+                      - IMMEDIATE_QRCODE
+                      - CREDIT_CARD
+                    example:
+                    - BANKSLIP
+                    - IMMEDIATE_QRCODE
+                    - CREDIT_CARD
+                    description: Métodos de pagamento permitidos
+                    title: PaymentMethods
+                  status:
+                    type: string
+                    enum:
+                    - ACTIVE
+                    - INACTIVE
+                    - EXPIRED
+                    - CANCELED
+                    - PAID
+                    example: ACTIVE
+                    description: Status do link de pagamento
+                    title: PaymentLinkStatus
+                  createdAt:
+                    type: string
+                    format: date-time
+                    example: '2024-07-18T19:05:57Z'
+                    title: Date
+                  updatedAt:
+                    type: string
+                    format: date-time
+                    example: '2024-07-18T19:05:57Z'
+                    title: Date
+                  schedule:
+                    type: object
+                    properties:
+                      startAt:
+                        type: string
+                        format: date-time
+                        example: '2024-01-01T12:00:00Z'
+                        description: Data e hora de ativação do link de pagamento
+                      endAt:
+                        type: string
+                        format: date-time
+                        example: '2024-12-31T17:00:00Z'
+                        description: Data e hora de desativação do link de pagamento
+                    title: Schedule
+                  linkUrl:
+                    type: string
+                    example: link-uat.btgpactual.com/JK9GbsH49HEi69S
+                    description: URL do link de pagamento
+                    title: LinkUrl
+                  description:
+                    type: string
+                    example: Descrição do link de pagamento
+                    description: Descrição do link de pagamento
+                    title: Description
+                  payer:
+                    type: object
+                    required:
+                    - name
+                    - taxId
+                    properties:
+                      name:
+                        type: string
+                        example: John Due
+                      email:
+                        type: string
+                        format: email
+                        example: user@gmail.com
+                      personType:
+                        type: string
+                        enum:
+                        - F
+                        - J
+                        example: J
+                      phoneNumber:
+                        type: string
+                        example: '123123121231'
+                      taxId:
+                        type: string
+                        example: '37297902000141'
+                      address:
+                        type: object
+                        required:
+                        - city
+                        - state
+                        - street
+                        - zipCode
+                        - number
+                        - neighborhood
+                        properties:
+                          city:
+                            type: string
+                            example: São Paulo
+                          state:
+                            type: string
+                            example: SP
+                          street:
+                            type: string
+                            example: Faria Lima
+                          zipCode:
+                            type: string
+                            example: '06312412'
+                          number:
+                            type: string
+                            example: '123'
+                          neighborhood:
+                            type: string
+                            example: Itaim Bibi
+                        description: Endereço
+                        title: Address
+                      deliveryMediums:
+                        type: array
+                        items:
+                          type: string
+                          enum:
+                          - Email
+                          - Sms
+                          - Push
+                        example:
+                        - Email
+                        - Push
+                        title: DeliveryMediums
+                    description: Pagador
+                    title: Payer
+                  payee:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: VECHI CONSULTORIA E PROJETOS LTDA
+                        description: Nome do beneficiário
+                        title: PayeeName
+                      email:
+                        type: string
+                        example: exemplo@btgpactual.com
+                        description: Email do beneficiário
+                        title: Email
+                      personType:
+                        type: string
+                        example: J
+                        title: PersonTypeJ
+                      phoneNumber:
+                        type: string
+                        example: '11912345678'
+                        description: Telefone do beneficiário
+                        title: PhoneNumber
+                      taxId:
+                        type: string
+                        example: '37297902000141'
+                        description: Documento do beneficiário
+                        title: TaxId
+                  type:
+                    type: string
+                    enum:
+                    - SINGLE
+                    - MULTIPLE
+                    example: SINGLE
+                    description: Tipo do link de pagamento
+                    title: PaymentLinkType
+                  details:
+                    type: object
+                    description: Detalhes do pagamento com cartão de crédito. É obrigatório quando paymentMethods inclui CREDIT_CARD e não deve ser enviado quando não inclui
+                    required:
+                    - limits
+                    properties:
+                      limits:
+                        type: object
+                        required:
+                        - maxInstallments
+                        properties:
+                          maxInstallments:
+                            type: integer
+                            minimum: 1
+                            maximum: 24
+                            example: 3
+                            description: Número máximo de parcelas permitidas para pagamento com cartão de crédito, de 1 a 24. Cada parcela deve ter no mínimo R$ 5,00.
+                            title: MaxInstallments
+                          maxPayments:
+                            type: integer
+                            example: 100
+                            description: Quantidade máxima de pagamentos aceitos pelo link. Quando não informado, não há limite
+                            title: MaxPayments
+                      card:
+                        type: object
+                        default:
+                          transferCardFeesToPayer: false
+                        properties:
+                          transferCardFeesToPayer:
+                            type: boolean
+                            default: false
+                            example: true
+                            description: Indica se o custo da transação por cartão de crédito deve ser repassado ao pagador. Quando não informado, assume false
+                            title: TransferCardFeesToPayer
+                    title: PaymentLinkDetails
+                title: PaymentLinkResponse
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: InvalidInputError
+                    description: Nome do erro.
+                title: BadRequestErrorResponse
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: UnprocessableEntityError
+                    description: Nome do erro.
+                title: UnprocessableEntityErrorResponse
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:internal-server-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: InternalServerError
+                    description: Nome do erro.
+                title: InternalServerErrorResponse
+      security:
+      - write:
+        - brn:btg:empresas:banking:payment-link
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20PaymentLink/criar-link-de-pagamento
+    get:
+      tags:
+      - Link de pagamento
+      description: API responsável por listar os links de pagamento de uma empresa
+      parameters:
+      - in: query
+        name: pageSize
+        schema:
+          type: integer
+          example: 10
+          description: Quantidade de cobranças por página
+          title: PageSize
+        required: true
+      - in: query
+        name: pageNumber
+        schema:
+          type: integer
+          example: 1
+          description: Número da página
+          title: PageNumber
+        required: true
+      - in: query
+        name: minCreatedAt
+        schema:
+          type: string
+          format: date-time
+          example: '2024-07-18T19:05:57Z'
+          title: Date
+        required: false
+      - in: query
+        name: maxCreatedAt
+        schema:
+          type: string
+          format: date-time
+          example: '2024-07-18T19:05:57Z'
+          title: Date
+        required: false
+      - in: query
+        name: minStartAt
+        schema:
+          type: string
+          format: date-time
+          example: '2024-07-18T19:05:57Z'
+          title: Date
+        required: false
+      - in: query
+        name: maxStartAt
+        schema:
+          type: string
+          format: date-time
+          example: '2024-07-18T19:05:57Z'
+          title: Date
+        required: false
+      - in: query
+        name: minEndAt
+        schema:
+          type: string
+          format: date-time
+          example: '2024-07-18T19:05:57Z'
+          title: Date
+        required: false
+      - in: query
+        name: maxEndAt
+        schema:
+          type: string
+          format: date-time
+          example: '2024-07-18T19:05:57Z'
+          title: Date
+        required: false
+      - in: query
+        name: minAmount
+        schema:
+          type: number
+          example: 100
+          description: Valor do Link de Pagamento ou cobrança
+          title: Amount
+        required: false
+      - in: query
+        name: maxAmount
+        schema:
+          type: number
+          example: 100
+          description: Valor do Link de Pagamento ou cobrança
+          title: Amount
+        required: false
+      - in: query
+        name: status
+        schema:
+          type: string
+          enum:
+          - ACTIVE
+          - INACTIVE
+          - EXPIRED
+          - CANCELED
+          - PAID
+          example: ACTIVE
+          description: Status do link de pagamento
+          title: PaymentLinkStatus
+        required: false
+      - in: query
+        name: type
+        schema:
+          type: string
+          enum:
+          - SINGLE
+          - MULTIPLE
+          example: SINGLE
+          description: Tipo do link de pagamento
+          title: PaymentLinkType
+        required: false
+      - in: query
+        name: name
+        schema:
+          type: string
+          example: Nome do link de pagamento
+          description: Nome do link de pagamento
+          title: PaymentLinkName
+        required: false
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        paymentLinkId:
+                          type: string
+                          example: 97c8ac0a-89cb-4bbe-842b-d4e79a685c39
+                          description: Identificador do Link de Pagamento
+                          title: PaymentLinkId
+                        name:
+                          type: string
+                          example: Nome do link de pagamento
+                          description: Nome do link de pagamento
+                          title: PaymentLinkName
+                        amount:
+                          type: number
+                          example: 100
+                          description: Valor do Link de Pagamento ou cobrança
+                          title: Amount
+                        notifications:
+                          type: object
+                          properties:
+                            deliveryMediums:
+                              type: array
+                              items:
+                                type: string
+                                enum:
+                                - Email
+                                - Sms
+                                - Push
+                              example:
+                              - Email
+                              - Push
+                              title: DeliveryMediums
+                            email:
+                              type: string
+                              example: exemplo@btgpactual.com
+                              description: Email do beneficiário
+                              title: Email
+                            phone:
+                              type: string
+                              example: '55112312312321'
+                              description: Telefone do beneficiário
+                              title: Sms
+                          title: Notifications
+                        paymentMethods:
+                          type: array
+                          items:
+                            type: string
+                            enum:
+                            - BANKSLIP
+                            - IMMEDIATE_QRCODE
+                            - CREDIT_CARD
+                          example:
+                          - BANKSLIP
+                          - IMMEDIATE_QRCODE
+                          - CREDIT_CARD
+                          description: Métodos de pagamento permitidos
+                          title: PaymentMethods
+                        status:
+                          type: string
+                          enum:
+                          - ACTIVE
+                          - INACTIVE
+                          - EXPIRED
+                          - CANCELED
+                          - PAID
+                          example: ACTIVE
+                          description: Status do link de pagamento
+                          title: PaymentLinkStatus
+                        createdAt:
+                          type: string
+                          format: date-time
+                          example: '2024-07-18T19:05:57Z'
+                          title: Date
+                        updatedAt:
+                          type: string
+                          format: date-time
+                          example: '2024-07-18T19:05:57Z'
+                          title: Date
+                        schedule:
+                          type: object
+                          properties:
+                            startAt:
+                              type: string
+                              format: date-time
+                              example: '2024-01-01T12:00:00Z'
+                              description: Data e hora de ativação do link de pagamento
+                            endAt:
+                              type: string
+                              format: date-time
+                              example: '2024-12-31T17:00:00Z'
+                              description: Data e hora de desativação do link de pagamento
+                          title: Schedule
+                        linkUrl:
+                          type: string
+                          example: link-uat.btgpactual.com/JK9GbsH49HEi69S
+                          description: URL do link de pagamento
+                          title: LinkUrl
+                        description:
+                          type: string
+                          example: Descrição do link de pagamento
+                          description: Descrição do link de pagamento
+                          title: Description
+                        payer:
+                          type: object
+                          required:
+                          - name
+                          - taxId
+                          properties:
+                            name:
+                              type: string
+                              example: John Due
+                            email:
+                              type: string
+                              format: email
+                              example: user@gmail.com
+                            personType:
+                              type: string
+                              enum:
+                              - F
+                              - J
+                              example: J
+                            phoneNumber:
+                              type: string
+                              example: '123123121231'
+                            taxId:
+                              type: string
+                              example: '37297902000141'
+                            address:
+                              type: object
+                              required:
+                              - city
+                              - state
+                              - street
+                              - zipCode
+                              - number
+                              - neighborhood
+                              properties:
+                                city:
+                                  type: string
+                                  example: São Paulo
+                                state:
+                                  type: string
+                                  example: SP
+                                street:
+                                  type: string
+                                  example: Faria Lima
+                                zipCode:
+                                  type: string
+                                  example: '06312412'
+                                number:
+                                  type: string
+                                  example: '123'
+                                neighborhood:
+                                  type: string
+                                  example: Itaim Bibi
+                              description: Endereço
+                              title: Address
+                            deliveryMediums:
+                              type: array
+                              items:
+                                type: string
+                                enum:
+                                - Email
+                                - Sms
+                                - Push
+                              example:
+                              - Email
+                              - Push
+                              title: DeliveryMediums
+                          description: Pagador
+                          title: Payer
+                        payee:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              example: VECHI CONSULTORIA E PROJETOS LTDA
+                              description: Nome do beneficiário
+                              title: PayeeName
+                            email:
+                              type: string
+                              example: exemplo@btgpactual.com
+                              description: Email do beneficiário
+                              title: Email
+                            personType:
+                              type: string
+                              example: J
+                              title: PersonTypeJ
+                            phoneNumber:
+                              type: string
+                              example: '11912345678'
+                              description: Telefone do beneficiário
+                              title: PhoneNumber
+                            taxId:
+                              type: string
+                              example: '37297902000141'
+                              description: Documento do beneficiário
+                              title: TaxId
+                        type:
+                          type: string
+                          enum:
+                          - SINGLE
+                          - MULTIPLE
+                          example: SINGLE
+                          description: Tipo do link de pagamento
+                          title: PaymentLinkType
+                        details:
+                          type: object
+                          description: Detalhes do pagamento com cartão de crédito. É obrigatório quando paymentMethods inclui CREDIT_CARD e não deve ser enviado quando não inclui
+                          required:
+                          - limits
+                          properties:
+                            limits:
+                              type: object
+                              required:
+                              - maxInstallments
+                              properties:
+                                maxInstallments:
+                                  type: integer
+                                  minimum: 1
+                                  maximum: 24
+                                  example: 3
+                                  description: Número máximo de parcelas permitidas para pagamento com cartão de crédito, de 1 a 24. Cada parcela deve ter no mínimo R$ 5,00.
+                                  title: MaxInstallments
+                                maxPayments:
+                                  type: integer
+                                  example: 100
+                                  description: Quantidade máxima de pagamentos aceitos pelo link. Quando não informado, não há limite
+                                  title: MaxPayments
+                            card:
+                              type: object
+                              default:
+                                transferCardFeesToPayer: false
+                              properties:
+                                transferCardFeesToPayer:
+                                  type: boolean
+                                  default: false
+                                  example: true
+                                  description: Indica se o custo da transação por cartão de crédito deve ser repassado ao pagador. Quando não informado, assume false
+                                  title: TransferCardFeesToPayer
+                          title: PaymentLinkDetails
+                      title: PaymentLinkResponse
+                    title: ListPaymentLinksResponseData
+                  cursor:
+                    type: object
+                    properties:
+                      previous:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            example: /payment-link/7c17f662-3149-4d4a-b292-c7e00a641d61/collection?cursor=eyJtaW5DcmVhdGVkQXQiOiIyMDI0LTAxLTAxIiwibWF4Q3JlYXRlZEF0IjoiMjAyNS0wMS0wMSIsInBhZ2VOdW1iZXIiOiIyIiwicGFnZVNpemUiOiIxMCIsInR5cGUiOiJCQU5LU0xJUCIsInN0YXR1cyI6IkNSRUFURUQiLCJwYXllci5uYW1lIjoiTHVjYXMiLCJpZCI6IjdjMTdmNjYyLTMxNDktNGQ0YS1iMjkyLWM3ZTAwYTY0MWQ2MSJ9
+                          method:
+                            type: string
+                            example: GET
+                          type:
+                            type: string
+                            example: application/json
+                      next:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            example: /payment-link/7c17f662-3149-4d4a-b292-c7e00a641d61/collection?cursor=eyJtaW5DcmVhdGVkQXQiOiIyMDI0LTAxLTAxIiwibWF4Q3JlYXRlZEF0IjoiMjAyNS0wMS0wMSIsInBhZ2VOdW1iZXIiOiIyIiwicGFnZVNpemUiOiIxMCIsInR5cGUiOiJCQU5LU0xJUCIsInN0YXR1cyI6IkNSRUFURUQiLCJwYXllci5uYW1lIjoiTHVjYXMiLCJpZCI6IjdjMTdmNjYyLTMxNDktNGQ0YS1iMjkyLWM3ZTAwYTY0MWQ2MSJ9
+                          method:
+                            type: string
+                            example: GET
+                          type:
+                            type: string
+                            example: application/json
+                    title: Cursor
+                title: ListPaymentLinksResponse
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: InvalidInputError
+                    description: Nome do erro.
+                title: BadRequestErrorResponse
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:internal-server-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: InternalServerError
+                    description: Nome do erro.
+                title: InternalServerErrorResponse
+      security:
+      - read:
+        - brn:btg:empresas:banking:payment-link
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20PaymentLink/listar-links-de-pagamentos
+  /{companyId}/banking/payment-link/{paymentLinkId}/collection:
+    get:
+      tags:
+      - Link de pagamento
+      description: API responsável por listar as cobranças um link de pagamento
+      parameters:
+      - in: path
+        name: paymentLinkId
+        schema:
+          type: string
+          example: 97c8ac0a-89cb-4bbe-842b-d4e79a685c39
+          description: Identificador do Link de Pagamento
+          title: PaymentLinkId
+        required: true
+      - in: query
+        name: pageSize
+        schema:
+          type: integer
+          example: 10
+          description: Quantidade de cobranças por página
+          title: PageSize
+        required: true
+      - in: query
+        name: pageNumber
+        schema:
+          type: integer
+          example: 1
+          description: Número da página
+          title: PageNumber
+        required: true
+      - in: query
+        name: status
+        schema:
+          type: string
+          enum:
+          - CANCELED
+          - CANCELING
+          - CREATED
+          - EXPIRED
+          - FAILED
+          - UPDATING
+          - PAID
+          - PROCESSING
+          - UPDATED
+          example: PAID
+          description: Status da cobrança
+          title: CollectionStatus
+        required: false
+      - in: query
+        name: type
+        schema:
+          type: string
+          enum:
+          - IMMEDIATE_QRCODE
+          - BANKSLIP
+          - CREDIT_CARD
+          example: IMMEDIATE_QRCODE
+          description: Tipo da cobrança
+          title: CollectionType
+        required: false
+      - in: query
+        name: minCreatedAt
+        schema:
+          type: string
+          format: date-time
+          example: '2024-07-18T19:05:57Z'
+          title: Date
+        required: false
+      - in: query
+        name: maxCreatedAt
+        schema:
+          type: string
+          format: date-time
+          example: '2024-07-18T19:05:57Z'
+          title: Date
+        required: false
+      - in: query
+        name: payer.name
+        schema:
+          type: string
+          example: João da Silva
+          description: Nome do pagador
+          title: PayerName
+        required: false
+      - in: query
+        name: payer.taxId
+        schema:
+          type: string
+          example: '99261911005'
+          description: Documento do pagador
+          title: PayerTaxId
+        required: false
+      - name: companyId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: CNPJ da empresa
+        example: '30306294000145'
+      responses:
+        '200':
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        amount:
+                          type: number
+                          example: 100
+                          description: Valor do Link de Pagamento ou cobrança
+                          title: Amount
+                        collectionId:
+                          type: string
+                          example: 0300e0fe-2ea4-4b01-bddf-7b23604e00c0
+                          description: Id da cobrança
+                          title: CollectionId
+                        createdAt:
+                          type: string
+                          format: date-time
+                          example: '2024-07-18T19:05:57Z'
+                          title: Date
+                        description:
+                          type: string
+                          example: 'ATENÇÃO: Esta cobrança está sendo paga para Vechi Consultoria.'
+                          title: DescriptionCollection
+                        dueDate:
+                          type: string
+                          format: date-time
+                          example: '2024-07-18T19:05:57Z'
+                          title: Date
+                        paidAt:
+                          type: string
+                          format: date-time
+                          example: '2024-07-18T19:05:57Z'
+                          title: Date
+                        payee:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              example: VECHI CONSULTORIA E PROJETOS LTDA
+                              description: Nome do beneficiário
+                              title: PayeeName
+                            email:
+                              type: string
+                              example: exemplo@btgpactual.com
+                              description: Email do beneficiário
+                              title: Email
+                            personType:
+                              type: string
+                              example: J
+                              title: PersonTypeJ
+                            phoneNumber:
+                              type: string
+                              example: '11912345678'
+                              description: Telefone do beneficiário
+                              title: PhoneNumber
+                            taxId:
+                              type: string
+                              example: '37297902000141'
+                              description: Documento do beneficiário
+                              title: TaxId
+                        payer:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              example: João da Silva
+                              description: Nome do pagador
+                              title: PayerName
+                            email:
+                              type: string
+                              example: exemplo@btgpactual.com
+                              description: Email do beneficiário
+                              title: Email
+                            personType:
+                              type: string
+                              example: F
+                              title: PersonTypeF
+                            phoneNumber:
+                              type: string
+                              example: '11912345678'
+                              description: Telefone do beneficiário
+                              title: PhoneNumber
+                            taxId:
+                              type: string
+                              example: '37297902000141'
+                              description: Documento do beneficiário
+                              title: TaxId
+                        status:
+                          type: string
+                          enum:
+                          - CANCELED
+                          - CANCELING
+                          - CREATED
+                          - EXPIRED
+                          - FAILED
+                          - UPDATING
+                          - PAID
+                          - PROCESSING
+                          - UPDATED
+                          example: PAID
+                          description: Status da cobrança
+                          title: CollectionStatus
+                        type:
+                          type: string
+                          enum:
+                          - IMMEDIATE_QRCODE
+                          - BANKSLIP
+                          - CREDIT_CARD
+                          example: IMMEDIATE_QRCODE
+                          description: Tipo da cobrança
+                          title: CollectionType
+                        updatedAt:
+                          type: string
+                          format: date-time
+                          example: '2024-07-18T19:05:57Z'
+                          title: Date
+                        detail:
+                          type: object
+                          properties:
+                            emv:
+                              type: string
+                              example: copiaecola
+                              title: Emv
+                            pixKey:
+                              type: string
+                              example: teste@hotmail.com
+                              title: PixKey
+                            txId:
+                              type: string
+                              example: '3214'
+                              title: TxId
+                    title: ListPaymentLinkCollectionsResponseData
+                  cursor:
+                    type: object
+                    properties:
+                      previous:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            example: /payment-link/7c17f662-3149-4d4a-b292-c7e00a641d61/collection?cursor=eyJtaW5DcmVhdGVkQXQiOiIyMDI0LTAxLTAxIiwibWF4Q3JlYXRlZEF0IjoiMjAyNS0wMS0wMSIsInBhZ2VOdW1iZXIiOiIyIiwicGFnZVNpemUiOiIxMCIsInR5cGUiOiJCQU5LU0xJUCIsInN0YXR1cyI6IkNSRUFURUQiLCJwYXllci5uYW1lIjoiTHVjYXMiLCJpZCI6IjdjMTdmNjYyLTMxNDktNGQ0YS1iMjkyLWM3ZTAwYTY0MWQ2MSJ9
+                          method:
+                            type: string
+                            example: GET
+                          type:
+                            type: string
+                            example: application/json
+                      next:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            example: /payment-link/7c17f662-3149-4d4a-b292-c7e00a641d61/collection?cursor=eyJtaW5DcmVhdGVkQXQiOiIyMDI0LTAxLTAxIiwibWF4Q3JlYXRlZEF0IjoiMjAyNS0wMS0wMSIsInBhZ2VOdW1iZXIiOiIyIiwicGFnZVNpemUiOiIxMCIsInR5cGUiOiJCQU5LU0xJUCIsInN0YXR1cyI6IkNSRUFURUQiLCJwYXllci5uYW1lIjoiTHVjYXMiLCJpZCI6IjdjMTdmNjYyLTMxNDktNGQ0YS1iMjkyLWM3ZTAwYTY0MWQ2MSJ9
+                          method:
+                            type: string
+                            example: GET
+                          type:
+                            type: string
+                            example: application/json
+                    title: Cursor
+                title: ListPaymentLinkCollectionsResponse
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:invalid-input-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: InvalidInputError
+                    description: Nome do erro.
+                title: BadRequestErrorResponse
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - brn
+                - name
+                properties:
+                  brn:
+                    type: string
+                    example: brn:empresas:banking:errors:internal-server-error
+                    description: Brn referente ao erro.
+                  name:
+                    type: string
+                    example: InternalServerError
+                    description: Nome do erro.
+                title: InternalServerErrorResponse
+      security:
+      - read:
+        - brn:btg:empresas:banking:payment-link
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Banking%20-%20PaymentLink/listar-cobrancas-de-um-link-de-pagamento
+components:
+  securitySchemes:
+    write:
+      type: oauth2
+      flows:
+        authorizationCode:
+          tokenUrl: https://id.btgpactual.com/oauth2/token
+          authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+          scopes:
+            brn:btg:empresas:banking:payment-link: Criar, atualizar e cancelar links de pagamento
+    read:
+      type: oauth2
+      flows:
+        authorizationCode:
+          tokenUrl: https://id.btgpactual.com/oauth2/token
+          authorizationUrl: https://id.btgpactual.com/oauth2/authorize
+          scopes:
+            brn:btg:empresas:banking:payment-link: Consultar links de pagamento
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/377203de.a29e0aac.js
+  - https://developers.empresas.btgpactual.com/assets/js/28b0abc4.eecfac9f.js
+  - https://developers.empresas.btgpactual.com/assets/js/10e8eed3.9a496ed1.js
+  - https://developers.empresas.btgpactual.com/assets/js/dc3f5b26.eeebd985.js
+  - https://developers.empresas.btgpactual.com/assets/js/1d812e03.dffc53d7.js

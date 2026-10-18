@@ -1,0 +1,98 @@
+openapi: 3.2.0
+info:
+  description: API implementada pelo parceiro que utilizaremos para buscar informações de nossos clientes em comum dentro da jornada de Onboarding.
+  version: 1.0.0
+  title: Onboarding Utilidades API
+servers:
+- url: https://api.sandbox.empresas.btgpactual.com
+  description: Sandbox
+- url: https://api.uat.empresas.btgpactual.com
+  description: UAT
+- url: https://api.empresas.btgpactual.com
+  description: Production
+tags:
+- name: Utilidades
+paths:
+  /onboarding/types/address:
+    get:
+      tags:
+      - Utilidades
+      description: Obter a lista de estados e cidades
+      responses:
+        '200':
+          description: Lista de estados e cidades
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        stateCode:
+                          type: string
+                          example: AL
+                        cityCode:
+                          type: string
+                          example: ALAAA
+                        stateName:
+                          type: string
+                          example: ALAGOAS
+                        cityName:
+                          type: string
+                          example: AGUA BRANCA
+                title: AddressResponse
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Onboarding/obter-a-lista-de-estados-e-cidades
+      summary: Get onboarding types address
+      x-summary-source: derived
+      operationId: getOnboardingTypesAddress
+      x-operation-id-source: derived
+  /onboarding/types/profession:
+    get:
+      tags:
+      - Utilidades
+      description: Obter lista de profissões
+      responses:
+        '200':
+          description: Lista de profissões
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 125
+                        name:
+                          type: string
+                          example: Administrador (a)
+                title: ProfessionsResponse
+      x-docs-url: https://developers.empresas.btgpactual.com/docs/api-specs-target/Onboarding/obter-lista-de-profissoes
+      summary: Get onboarding types profession
+      x-summary-source: derived
+      operationId: getOnboardingTypesProfession
+      x-operation-id-source: derived
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+x-reassembled-from:
+  source: https://developers.empresas.btgpactual.com/docs/api-specs-target/
+  method: Operation objects decoded verbatim from the "api" payload that the provider's Docusaurus OpenAPI docs embed in each reference page chunk (/assets/js/*.js); grouped by info.title; jsonRequestBodyExample and postman keys dropped.
+  chunks:
+  - https://developers.empresas.btgpactual.com/assets/js/d3628115.8ba34f46.js
+  - https://developers.empresas.btgpactual.com/assets/js/10912880.f85f5bcf.js
+  - https://developers.empresas.btgpactual.com/assets/js/f5ab7c6f.cc7b961e.js
+  - https://developers.empresas.btgpactual.com/assets/js/d5d2dc68.74d9be5e.js
+  - https://developers.empresas.btgpactual.com/assets/js/3d452c9d.65073d6b.js
+  - https://developers.empresas.btgpactual.com/assets/js/e54615f3.580ec14b.js
+  - https://developers.empresas.btgpactual.com/assets/js/6b059a19.95d5357c.js

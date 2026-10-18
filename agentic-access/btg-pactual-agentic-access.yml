@@ -1,0 +1,3155 @@
+generated: '2026-10-18'
+method: generated
+source: openapi/btg-pactual-acquirers-paymentlink-openapi.yml, openapi/btg-pactual-acquirers-salesprovider-openapi.yml,
+  openapi/btg-pactual-antecred-subcredenciadores-openapi.yml, openapi/btg-pactual-banking-accounts-openapi.yml,
+  openapi/btg-pactual-banking-cards-openapi.yml, openapi/btg-pactual-banking-ccreceivables-openapi.yml,
+  openapi/btg-pactual-banking-collections-openapi.yml, openapi/btg-pactual-banking-dda-openapi.yml,
+  openapi/btg-pactual-banking-paymentlink-openapi.yml, openapi/btg-pactual-banking-paymentlinkrec-openapi.yml,
+  openapi/btg-pactual-banking-payments-openapi.yml, openapi/btg-pactual-banking-payroll-openapi.yml,
+  openapi/btg-pactual-banking-pix-automatico-openapi.yml, openapi/btg-pactual-banking-pixcashin-openapi.yml,
+  openapi/btg-pactual-banking-protest-openapi.yml, openapi/btg-pactual-banking-split-openapi.yml,
+  openapi/btg-pactual-bankinghub-open-finance-balance-refresh-openapi.yml, openapi/btg-pactual-crediflow-ativos-e-cessoes-openapi.yml,
+  openapi/btg-pactual-fidc-consignado-privado-openapi.yml, openapi/btg-pactual-fidc-credit-conciliation-openapi.yml,
+  openapi/btg-pactual-fidc-document-openapi.yml, openapi/btg-pactual-fidc-eligibility-openapi.yml,
+  openapi/btg-pactual-fidc-motor-de-credito-openapi.yml, openapi/btg-pactual-fidc-operation-openapi.yml,
+  openapi/btg-pactual-fidc-payment-openapi.yml, openapi/btg-pactual-fidc-portability-openapi.yml,
+  openapi/btg-pactual-fidc-prepayment-openapi.yml, openapi/btg-pactual-fidc-renegotiation-openapi.yml,
+  openapi/btg-pactual-fidc-simulation-openapi.yml, openapi/btg-pactual-fidc-wallet-openapi.yml,
+  openapi/btg-pactual-fidc-warranty-openapi.yml, openapi/btg-pactual-files-openapi.yml, openapi/btg-pactual-hubfx-cambio-openapi.yml,
+  openapi/btg-pactual-kgiro-leads-de-credito-openapi.yml, openapi/btg-pactual-onboarding-openapi.yml,
+  openapi/btg-pactual-scf-colombia-openapi.yml, openapi/btg-pactual-scf-financiers-supplier-openapi.yml,
+  openapi/btg-pactual-scf-risco-sacado-openapi.yml, openapi/btg-pactual-solar-creditanalysis-openapi.yml,
+  openapi/btg-pactual-solar-workflow-openapi.yml, openapi/btg-pactual-webhooks-openapi.yml
+description: Recommended x-agentic-access execution contracts, classified heuristically from
+  the OpenAPI. A governance starting point for exposing this API to AI agents — review and bind
+  audience per deployment. See research/curity/agentic-governance/.
+summary:
+  operations: 210
+  by_action_class:
+    acting: 115
+    connected: 95
+  by_consequence:
+    physical: 33
+    read: 95
+    write: 82
+  human_in_the_loop_required: 0
+operations:
+- path: /{companyId}/banking/payment-link/{paymentLinkId}
+  method: put
+  x-agentic-access:
+    action-class: acting
+    consequence: physical
+    subject: required
+    scope:
+    - brn:btg:empresas:banking:payment-link
+    audience: null
+    token:
+      max-ttl: 300
+      exchange: true
+      purpose-required: true
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/payment-link/{paymentLinkId}
+  method: delete
+  x-agentic-access:
+    action-class: acting
+    consequence: physical
+    subject: required
+    scope:
+    - brn:btg:empresas:banking:payment-link
+    audience: null
+    token:
+      max-ttl: 300
+      exchange: true
+      purpose-required: true
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/payment-link
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: physical
+    subject: required
+    scope:
+    - brn:btg:empresas:banking:payment-link
+    audience: null
+    token:
+      max-ttl: 300
+      exchange: true
+      purpose-required: true
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/payment-link
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - brn:btg:empresas:banking:payment-link
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/banking/payment-link/{paymentLinkId}/collection
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - brn:btg:empresas:banking:payment-link
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/acquirer/receivable-units
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/acquirer/sales
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/acquirer/sales/{saleId}
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /credenciadoras/antecipacao
+  method: post
+  operationId: createReceivablesAnticipation
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - brn:btg:empresas:scf:sub-acquirers
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /credenciadoras/recebiveis
+  method: get
+  operationId: getCreditCardReceivablesCedente
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - qf:Receivables.Get
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /credenciadoras/cotacao
+  method: post
+  operationId: getReceivablesQuote
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - brn:btg:empresas:scf:sub-acquirers
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/banking/accounts
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - brn:btg:empresas:banking:accounts
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/banking/accounts/{accountId}/statements
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - brn:btg:empresas:banking:accounts
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/banking/accounts/statements
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - brn:btg:empresas:banking:accounts
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/banking/accounts/{accountId}/balances
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - brn:btg:empresas:banking:accounts
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/banking/accounts/{accountId}/statements/pdf
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - brn:btg:empresas:banking:accounts
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/banking/cards
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - brn:btg:empresas:credit-cards:invoices
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/banking/cards/invoices
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - brn:btg:empresas:credit-cards:invoices
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/banking/cards/invoices/{invoiceId}
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - brn:btg:empresas:credit-cards:invoices
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/banking/cards/invoices/{invoiceId}/transactions
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - brn:btg:empresas:credit-cards:invoices
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/credit/credit-card-receivables/allowed-actions
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - brn:btg:empresas:credit:receivables-credit-card
+    - brn:btg:empresas:credit:receivables-credit-card.readonly
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/credit/credit-card-receivables/operation
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - brn:btg:empresas:credit:receivables-credit-card
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/credit/credit-card-receivables
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - brn:btg:empresas:credit:receivables-credit-card
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/credit/credit-card-receivables
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - brn:btg:empresas:credit:receivables-credit-card
+    - brn:btg:empresas:credit:receivables-credit-card.readonly
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/credit/credit-card-receivables/operation/{id}
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - brn:btg:empresas:credit:receivables-credit-card
+    - brn:btg:empresas:credit:receivables-credit-card.readonly
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/credit/credit-card-receivables/operation-pool
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - brn:btg:empresas:credit:receivables-credit-card
+    - brn:btg:empresas:credit:receivables-credit-card.readonly
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/credit/credit-card-receivables/balance-summary
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - brn:btg:empresas:credit:receivables-credit-card
+    - brn:btg:empresas:credit:receivables-credit-card.readonly
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/credit/credit-card-receivables/disbursement-accounts
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - brn:btg:empresas:credit:receivables-credit-card
+    - brn:btg:empresas:credit:receivables-credit-card.readonly
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/banking/collections/{collectionId}
+  method: put
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - brn:btg:empresas:banking:collections
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/collections/{collectionId}
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - brn:btg:empresas:banking:collections
+    - brn:btg:empresas:banking:collections.read-only
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/banking/collections/{collectionId}
+  method: delete
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - brn:btg:empresas:banking:collections
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/collections
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - brn:btg:empresas:banking:collections
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/collections
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - brn:btg:empresas:banking:collections
+    - brn:btg:empresas:banking:collections.read-only
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/banking/collections/batch
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - brn:btg:empresas:banking:collections
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/collections/bad-credit/batch
+  method: delete
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - brn:btg:empresas:banking:collections
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/collections/bad-credit/batch
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - brn:btg:empresas:banking:collections
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/direct-debit
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - brn:btg:empresas:banking:direct-debit
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/direct-debit
+  method: delete
+  operationId: deleteDirectDebit
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - brn:btg:empresas:banking:direct-debit
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/direct-debit/configs
+  method: delete
+  operationId: deleteConfig
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - brn:btg:empresas:banking:direct-debit
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/direct-debit/configs
+  method: post
+  operationId: postConfig
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - brn:btg:empresas:banking:direct-debit
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/direct-debit/debits
+  method: get
+  operationId: getDebits
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - brn:btg:empresas:banking:direct-debit.readonly
+    - empresas.btgpactual.com/authorized-direct-debits.readonly
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/banking/direct-debit/debits
+  method: patch
+  operationId: patchDebit
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - brn:btg:empresas:banking:direct-debit
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/direct-debit/debits/summary
+  method: get
+  operationId: getDebitsSummary
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - brn:btg:empresas:banking:direct-debit.readonly
+    - empresas.btgpactual.com/authorized-direct-debits.readonly
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/banking/payment-link/{paymentLinkId}
+  method: put
+  x-agentic-access:
+    action-class: acting
+    consequence: physical
+    subject: required
+    scope:
+    - brn:btg:empresas:banking:payment-link
+    audience: null
+    token:
+      max-ttl: 300
+      exchange: true
+      purpose-required: true
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/payment-link/{paymentLinkId}
+  method: delete
+  x-agentic-access:
+    action-class: acting
+    consequence: physical
+    subject: required
+    scope:
+    - brn:btg:empresas:banking:payment-link
+    audience: null
+    token:
+      max-ttl: 300
+      exchange: true
+      purpose-required: true
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/payment-link
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: physical
+    subject: required
+    scope:
+    - brn:btg:empresas:banking:payment-link
+    audience: null
+    token:
+      max-ttl: 300
+      exchange: true
+      purpose-required: true
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/payment-link
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - brn:btg:empresas:banking:payment-link
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/banking/payment-link/{paymentLinkId}/collection
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - brn:btg:empresas:banking:payment-link
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/banking/payment-link/recurrence/{id}
+  method: put
+  x-agentic-access:
+    action-class: acting
+    consequence: physical
+    subject: required
+    audience: null
+    token:
+      max-ttl: 300
+      exchange: true
+      purpose-required: true
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/payment-link/recurrence/{id}
+  method: delete
+  x-agentic-access:
+    action-class: acting
+    consequence: physical
+    subject: required
+    audience: null
+    token:
+      max-ttl: 300
+      exchange: true
+      purpose-required: true
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/payment-link/recurrence/{id}
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/banking/payment-link/recurrence
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: physical
+    subject: required
+    audience: null
+    token:
+      max-ttl: 300
+      exchange: true
+      purpose-required: true
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/payment-link/recurrence
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/banking/payment-link/recurrence/{id}/cycle
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/banking/payment-link/recurrence/{id}/pause
+  method: patch
+  x-agentic-access:
+    action-class: acting
+    consequence: physical
+    subject: required
+    audience: null
+    token:
+      max-ttl: 300
+      exchange: true
+      purpose-required: true
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/payment-link/recurrence/cycle/{cycleId}/reactivate
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: physical
+    subject: required
+    audience: null
+    token:
+      max-ttl: 300
+      exchange: true
+      purpose-required: true
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/payment-link/recurrence/{id}/resume
+  method: patch
+  x-agentic-access:
+    action-class: acting
+    consequence: physical
+    subject: required
+    audience: null
+    token:
+      max-ttl: 300
+      exchange: true
+      purpose-required: true
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/batch-payments/{batchId}
+  method: delete
+  x-agentic-access:
+    action-class: acting
+    consequence: physical
+    subject: required
+    scope:
+    - openid empresas.btgpactual.com/payments
+    audience: null
+    token:
+      max-ttl: 300
+      exchange: true
+      purpose-required: true
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/batch-payments/{batchId}
+  method: patch
+  x-agentic-access:
+    action-class: acting
+    consequence: physical
+    subject: required
+    scope:
+    - openid empresas.btgpactual.com/payments
+    audience: null
+    token:
+      max-ttl: 300
+      exchange: true
+      purpose-required: true
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/batch-payments
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: physical
+    subject: required
+    scope:
+    - openid empresas.btgpactual.com/payments
+    audience: null
+    token:
+      max-ttl: 300
+      exchange: true
+      purpose-required: true
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/payments-recurrences/{recurrenceId}
+  method: patch
+  x-agentic-access:
+    action-class: acting
+    consequence: physical
+    subject: required
+    scope:
+    - openid empresas.btgpactual.com/payments
+    audience: null
+    token:
+      max-ttl: 300
+      exchange: true
+      purpose-required: true
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/payments-recurrences/{recurrenceId}
+  method: delete
+  x-agentic-access:
+    action-class: acting
+    consequence: physical
+    subject: required
+    scope:
+    - openid empresas.btgpactual.com/payments
+    audience: null
+    token:
+      max-ttl: 300
+      exchange: true
+      purpose-required: true
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/payments-recurrences/{recurrenceId}
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - openid empresas.btgpactual.com/payments
+    - openid empresas.btgpactual.com/payments.readonly
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/banking/payments/approvals/{paymentId}
+  method: delete
+  x-agentic-access:
+    action-class: acting
+    consequence: physical
+    subject: required
+    scope:
+    - empresas.btgpactual.com/accounts.readonly
+    - empresas.btgpactual.com/authorized-direct-debits.readonly
+    - empresas.btgpactual.com/bank-slips
+    - empresas.btgpactual.com/bank-slips.readonly
+    - empresas.btgpactual.com/pix-cash-in.readonly
+    - openid
+    - openid empresas.btgpactual.com/payments
+    - openid empresas.btgpactual.com/payments.readonly
+    audience: null
+    token:
+      max-ttl: 300
+      exchange: true
+      purpose-required: true
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/payments/{paymentId}
+  method: delete
+  x-agentic-access:
+    action-class: acting
+    consequence: physical
+    subject: required
+    scope:
+    - openid empresas.btgpactual.com/payments
+    audience: null
+    token:
+      max-ttl: 300
+      exchange: true
+      purpose-required: true
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/payments/{paymentId}
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - openid empresas.btgpactual.com/payments
+    - openid empresas.btgpactual.com/payments.readonly
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/banking/payments/barcodes
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - empresas.btgpactual.com/accounts.readonly
+    - empresas.btgpactual.com/authorized-direct-debits.readonly
+    - empresas.btgpactual.com/bank-slips
+    - empresas.btgpactual.com/bank-slips.readonly
+    - empresas.btgpactual.com/pix-cash-in.readonly
+    - openid
+    - openid empresas.btgpactual.com/payments
+    - openid empresas.btgpactual.com/payments.readonly
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/banking/payments-recurrences/periodicities
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: physical
+    subject: required
+    scope:
+    - openid empresas.btgpactual.com/payments
+    audience: null
+    token:
+      max-ttl: 300
+      exchange: true
+      purpose-required: true
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/payments
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: physical
+    subject: required
+    scope:
+    - openid empresas.btgpactual.com/payments
+    audience: null
+    token:
+      max-ttl: 300
+      exchange: true
+      purpose-required: true
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/payments
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - openid empresas.btgpactual.com/payments
+    - openid empresas.btgpactual.com/payments.readonly
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/banking/payments-recurrences
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: physical
+    subject: required
+    scope:
+    - openid empresas.btgpactual.com/payments
+    audience: null
+    token:
+      max-ttl: 300
+      exchange: true
+      purpose-required: true
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/payments-recurrences
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - openid empresas.btgpactual.com/payments
+    - openid empresas.btgpactual.com/payments.readonly
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/banking/payments-recurrences/{recurrenceId}/payments
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - openid empresas.btgpactual.com/payments
+    - openid empresas.btgpactual.com/payments.readonly
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/banking/payments/{paymentId}/receipt
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - empresas.btgpactual.com/accounts.readonly
+    - empresas.btgpactual.com/authorized-direct-debits.readonly
+    - empresas.btgpactual.com/bank-slips
+    - empresas.btgpactual.com/bank-slips.readonly
+    - empresas.btgpactual.com/pix-cash-in.readonly
+    - openid
+    - openid empresas.btgpactual.com/payments
+    - openid empresas.btgpactual.com/payments.readonly
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/banking/payments-recurrences/summary
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - openid empresas.btgpactual.com/payments
+    - openid empresas.btgpactual.com/payments.readonly
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/banking/payroll/payments/{requestId}/cancel
+  method: post
+  operationId: cancelPaymentBatch
+  x-agentic-access:
+    action-class: acting
+    consequence: physical
+    subject: required
+    scope:
+    - brn:btg:empresas:banking:payroll
+    audience: null
+    token:
+      max-ttl: 300
+      exchange: true
+      purpose-required: true
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/payroll/employees/{employeeTaxId}/deactivate
+  method: post
+  operationId: deactivateEmployee
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - brn:btg:empresas:banking:payroll
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/payroll/employees/{employeeTaxId}
+  method: get
+  operationId: getEmployee
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - brn:btg:empresas:banking:payroll
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/banking/payroll/employees/{employeeTaxId}/account
+  method: get
+  operationId: getEmployeeAccount
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - brn:btg:empresas:banking:payroll
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/banking/payroll/payments/{paymentId}
+  method: get
+  operationId: getPaymentBatch
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - brn:btg:empresas:banking:payroll
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/banking/payroll/employees
+  method: get
+  operationId: listEmployees
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - brn:btg:empresas:banking:payroll
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/banking/payroll/onboarding/issuers
+  method: get
+  operationId: listIssuers
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - brn:btg:empresas:banking:payroll
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/banking/payroll/payments
+  method: get
+  operationId: listPayments
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - brn:btg:empresas:banking:payroll
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/banking/payroll/payments
+  method: post
+  operationId: submitPaymentBatch
+  x-agentic-access:
+    action-class: acting
+    consequence: physical
+    subject: required
+    scope:
+    - brn:btg:empresas:banking:payroll
+    audience: null
+    token:
+      max-ttl: 300
+      exchange: true
+      purpose-required: true
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/payroll/employees/{employeeTaxId}/reactivate
+  method: post
+  operationId: reactivateEmployee
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - brn:btg:empresas:banking:payroll
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/payroll/onboarding/employees
+  method: post
+  operationId: submitOnboardingEmployees
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - brn:btg:empresas:banking:payroll
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/collections/automatic-pix/authorization/{authorizationId}
+  method: delete
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - brn:btg:empresas:banking:automatic-pix
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/collections/automatic-pix/authorization/{authorizationId}
+  method: patch
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - brn:btg:empresas:banking:automatic-pix
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/collections/automatic-pix/scheduling-instruction/{schedulingInstructionId}
+  method: delete
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - brn:btg:empresas:banking:automatic-pix
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/collections/automatic-pix/authorization/{authorizationId}/scheduling-instruction
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - brn:btg:empresas:banking:automatic-pix
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/collections/automatic-pix/authorization/{authorizationId}/scheduling-instruction
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - brn:btg:empresas:banking:automatic-pix
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/banking/collections/automatic-pix/authorization/flow
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - brn:btg:empresas:banking:automatic-pix
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/collections/automatic-pix/authorization
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - brn:btg:empresas:banking:automatic-pix
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /companies/{companyId}/pix-cash-in/instant-collections
+  method: post
+  operationId: CreateInstantCollection
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - openid empresas.btgpactual.com/pix-cash-in
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /companies/{companyId}/pix-cash-in/instant-collections
+  method: get
+  operationId: GetInstantCollections
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - openid empresas.btgpactual.com/pix-cash-in
+    - openid empresas.btgpactual.com/pix-cash-in.readonly
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /companies/{companyId}/pix-cash-in/locations
+  method: post
+  operationId: CreateLocation
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - openid empresas.btgpactual.com/pix-cash-in
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /companies/{companyId}/pix-cash-in/locations
+  method: get
+  operationId: GetLocations
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - openid empresas.btgpactual.com/pix-cash-in
+    - openid empresas.btgpactual.com/pix-cash-in.readonly
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /companies/{companyId}/pix-cash-in/locations/{locationId}
+  method: delete
+  operationId: UnlinkLocation
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - openid empresas.btgpactual.com/pix-cash-in
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/protest/{id}
+  method: delete
+  operationId: cancelProtest
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - brn:btg:empresas:banking:collections
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/protest/{id}
+  method: get
+  operationId: findProtest
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - brn:btg:empresas:banking:collections
+    - brn:btg:empresas:banking:collections.read-only
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/banking/protest/batch
+  method: delete
+  operationId: cancelProtestBatch
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - brn:btg:empresas:banking:collections
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/protest/batch
+  method: post
+  operationId: createProtestScheduleBatch
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - brn:btg:empresas:banking:collections
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/protest
+  method: post
+  operationId: createProtestSchedule
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - brn:btg:empresas:banking:collections
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/protest/{id}/document
+  method: get
+  operationId: getProtestDocument
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - brn:btg:empresas:banking:collections
+    - brn:btg:empresas:banking:collections.read-only
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/banking/splitter
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - brn:btg:empresas:banking:collections
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/splitter
+  method: get
+  operationId: listSplitters
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - brn:btg:empresas:banking:collections
+    - brn:btg:empresas:banking:collections.read-only
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/banking/splitter/{splitterId}
+  method: delete
+  operationId: deleteSplitter
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - brn:btg:empresas:banking:collections
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/splitter/{splitterId}
+  method: get
+  operationId: findSplitterById
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - brn:btg:empresas:banking:collections
+    - brn:btg:empresas:banking:collections.read-only
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/banking/splitter/{splitterId}
+  method: patch
+  operationId: updateSplitter
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - brn:btg:empresas:banking:collections
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/banking/split/{splitId}
+  method: get
+  operationId: findSplitById
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - brn:btg:empresas:banking:collections
+    - brn:btg:empresas:banking:collections.read-only
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/banking/splitter/tax-id/{taxId}
+  method: get
+  operationId: findSplitterByTaxId
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - brn:btg:empresas:banking:collections
+    - brn:btg:empresas:banking:collections.read-only
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{taxId}/banking/accounts/{accountId}/balances/refresh
+  method: get
+  operationId: refreshOpenFinanceBalance
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - brn:btg:empresas:openfinance:accounts:balances.readonly
+    - brn:btg:empresas:openfinance:accounts:info.readonly
+    - empresas.btgpactual.com/accounts
+    - empresas.btgpactual.com/accounts.readonly
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{taxId}/banking/accounts/{accountId}/statements/refresh
+  method: get
+  operationId: refreshOpenFinanceStatement
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - brn:btg:empresas:openfinance:accounts:balances.readonly
+    - brn:btg:empresas:openfinance:accounts:info.readonly
+    - empresas.btgpactual.com/accounts
+    - empresas.btgpactual.com/accounts.readonly
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /fidc/v1/assets/{asset_id}
+  method: put
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - empresas.btgpactual.com/crediflow
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /fidc/v1/cessions
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - empresas.btgpactual.com/crediflow
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /fidc/v1/cessions
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - empresas.btgpactual.com/crediflow
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /fidc/v1/disbursement-groups
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - empresas.btgpactual.com/crediflow
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /fidc/v1/disbursement-groups
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - empresas.btgpactual.com/crediflow
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /fidc/v1/assets
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - empresas.btgpactual.com/crediflow
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /fidc/v1/assets
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - empresas.btgpactual.com/crediflow
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/fidc/credit/averbation/{FundTaxId}
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - empresas.btgpactual.com/loans
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/fidc/credit/offboarding/{fundTaxId}
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - empresas.btgpactual.com/loans
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/fidc/credit/bookkeeping/{fundTaxId}
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - empresas.btgpactual.com/loans
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/credit-conciliation/{agreementId}/{creditConciliationOrderId}
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - empresas.btgpactual.com/payment
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/credit-conciliation/{agreementId}
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - empresas.btgpactual.com/payment
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /fidc-loan/v1/document
+  method: post
+  operationId: createDocument
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - empresas.btgpactual.com/documents
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /fidc-loan/v1/eligibility
+  method: post
+  operationId: createEligibility
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - empresas.btgpactual.com/loans
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/fidc/credit/creditengine/{fundTaxId}/customer/evaluation
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - empresas.btgpactual.com/loans
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/fidc/credit/creditengine/{fundTaxId}/customers/evaluation
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - empresas.btgpactual.com/loans
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/fidc/credit/creditengine/{fundTaxId}/customers/evaluation/{correlationId}
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - empresas.btgpactual.com/loans
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /fidc-loan/v1/operation
+  method: post
+  operationId: createOperation
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - empresas.btgpactual.com/loans
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /fidc-loan/v1/settlement/{settlementId}
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - empresas.btgpactual.com/loans
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /fidc-loan/v1/settlement
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: physical
+    subject: required
+    scope:
+    - empresas.btgpactual.com/loans
+    audience: null
+    token:
+      max-ttl: 300
+      exchange: true
+      purpose-required: true
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /fidc-loan/v1/portabilities/{portabilityId}/cancel
+  method: post
+  operationId: cancelPortability
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - empresas.btgpactual.com/portabilities
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /fidc-loan/v1/portabilities/{portabilityId}/confirm
+  method: post
+  operationId: confirmPortability
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - empresas.btgpactual.com/portabilities
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /fidc-loan/v1/portabilities
+  method: post
+  operationId: createPortability
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - empresas.btgpactual.com/portabilities
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /fidc-loan/v1/prepayment/{contract_number}/confirm
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: physical
+    subject: required
+    scope:
+    - empresas.btgpactual.com/prepayments
+    audience: null
+    token:
+      max-ttl: 300
+      exchange: true
+      purpose-required: true
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /fidc-loan/v1/prepayment/{simulation_identification}/bankslip
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - empresas.btgpactual.com/prepayments
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /fidc-loan/v1/prepayment/{contract_number}/balance
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - empresas.btgpactual.com/prepayments
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /fidc-loan/v1/prepayment/{contract_number}/simulate
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: physical
+    subject: required
+    scope:
+    - empresas.btgpactual.com/prepayments
+    audience: null
+    token:
+      max-ttl: 300
+      exchange: true
+      purpose-required: true
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /renegotiation/{customer_tax_id}/agreement/{agreement_id}
+  method: delete
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - empresas.btgpactual.com/renegotiations
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /renegotiation/{customer_tax_id}
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - empresas.btgpactual.com/renegotiations
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /renegotiation/{customer_tax_id}/campaigns
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - empresas.btgpactual.com/renegotiations
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /renegotiation/{customer_tax_id}/agreement/{agreement_id}/installment/{installment_number}/bankslip
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - empresas.btgpactual.com/renegotiations
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /renegotiation/{customer_tax_id}/contracts
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - empresas.btgpactual.com/renegotiations
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /renegotiation/{customer_tax_id}/simulate
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - empresas.btgpactual.com/renegotiations
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /fidc-loan/v1/simulation
+  method: post
+  operationId: createSimulation
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - empresas.btgpactual.com/loans
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /fidc-loan/v1/wallet
+  method: get
+  operationId: getWallet
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - empresas.btgpactual.com/wallet.readonly
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /fidc-loan/v1/contract-wallet
+  method: get
+  operationId: getWalletContract
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - empresas.btgpactual.com/wallet.readonly
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /fidc-loan/v1/warranty
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - empresas.btgpactual.com/loans
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /files
+  method: post
+  operationId: Criar link s3 para upload de arquivo
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - empresas.btgpactual.com/files
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyTaxId}/cambio/agent/v3/quote/accept
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyTaxId}/cambio/agent/v3/odata/pretickets-available
+  method: get
+  operationId: api/v3/odata/V3PreTicketsAvailableOData
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /cambio/public/institutional/indicative
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyTaxId}/cambio/agent/v3/currency/product
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyTaxId}/cambio/agent/v3/quote-indicative/{currencyCode}
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyTaxId}/cambio/agent/v3/currency/product-disbursement-days
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyTaxId}/cambio/agent/v3/preticket
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyTaxId}/cambio/agent/v3/quote/simulate
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyTaxId}/cambio/agent/v3/counterparty/block-status
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /form/kgiro/start
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - brn:btg:empresas:kgiro:workflow
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /onboarding/types/address
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /apps/{clientId}/.well-known/customers/{taxId}
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /onboarding/types/profession
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /apps/{clientId}/.well-known/customers/{taxId}/addresses
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /apps/{clientId}/.well-known/customers/{taxId}/documents/{pathSuffix}
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /apps/{clientId}/.well-known/customers/{taxId}/legal-representatives
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /apps/{clientId}/.well-known/customers/{taxId}/documents
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /borderos/{trackingId}/receivables/cancel
+  method: post
+  operationId: cancelColombiaBorderoReceivables
+  x-agentic-access:
+    action-class: acting
+    consequence: physical
+    subject: required
+    scope:
+    - empresas.btgpactual.com/scf/borderos
+    audience: null
+    token:
+      max-ttl: 300
+      exchange: true
+      purpose-required: true
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /borderos
+  method: post
+  operationId: createColombiaBordero
+  x-agentic-access:
+    action-class: acting
+    consequence: physical
+    subject: required
+    scope:
+    - empresas.btgpactual.com/scf/borderos
+    audience: null
+    token:
+      max-ttl: 300
+      exchange: true
+      purpose-required: true
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /borderos/{trackingId}/receivables
+  method: get
+  operationId: getColombiaBorderoReceivables
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - empresas.btgpactual.com/scf/borderos
+    - empresas.btgpactual.com/scf/borderos.readonly
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /companies/limit/{payerTaxId}
+  method: get
+  operationId: getColombiaPayerLimit
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - empresas.btgpactual.com/scf/companies.readonly
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /simple-party/natural-person
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - empresas.btgpactual.com/payer-register
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /simple-party/company
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - empresas.btgpactual.com/payer-register
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /complex-party/natural-person
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - empresas.btgpactual.com/payer-register
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /complex-party/company
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - empresas.btgpactual.com/payer-register
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /companies/commercial-strategies
+  method: post
+  operationId: addCompaniesToCommercialStrategyRequest
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - empresas.btgpactual.com/scf/companies
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /borderos/{trackingId}/receivables-cancellation
+  method: post
+  operationId: cancelReceivablesFromBordero
+  x-agentic-access:
+    action-class: acting
+    consequence: physical
+    subject: required
+    scope:
+    - empresas.btgpactual.com/scf/borderos
+    audience: null
+    token:
+      max-ttl: 300
+      exchange: true
+      purpose-required: true
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /settlements/{settlementId}
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - empresas.btgpactual.com/scf/settlements
+    - empresas.btgpactual.com/scf/settlements.readonly
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /borderos
+  method: post
+  operationId: createBordero
+  x-agentic-access:
+    action-class: acting
+    consequence: physical
+    subject: required
+    scope:
+    - empresas.btgpactual.com/scf/borderos
+    audience: null
+    token:
+      max-ttl: 300
+      exchange: true
+      purpose-required: true
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /companies/{payerTaxId}/payees
+  method: post
+  operationId: createCompany
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - empresas.btgpactual.com/scf/companies
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /financiers-payer
+  method: post
+  operationId: createFinancierPayer
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - empresas.btgpactual.com/payer-onboardings
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /operations
+  method: post
+  operationId: createOperation
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - empresas.btgpactual.com/scf/operations
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /settlements
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - empresas.btgpactual.com/scf/settlements
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /companies/{payerTaxId}/payees/{payeeTaxId}
+  method: get
+  operationId: getCompanyById
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - empresas.btgpactual.com/scf/companies
+    - empresas.btgpactual.com/scf/companies.readonly
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /operations/{operationId}
+  method: get
+  operationId: getOperationById
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - empresas.btgpactual.com/scf/operations
+    - empresas.btgpactual.com/scf/operations.readonly
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /borderos/{trackingId}/receivables
+  method: get
+  operationId: getReceivablesFromBordero
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - empresas.btgpactual.com/scf/borderos
+    - empresas.btgpactual.com/scf/borderos.readonly
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /trades/{tradeId}
+  method: get
+  operationId: getTradeById
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - empresas.btgpactual.com/scf/trades
+    - empresas.btgpactual.com/scf/trades.readonly
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /trades
+  method: get
+  operationId: getTrades
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - empresas.btgpactual.com/scf/trades
+    - empresas.btgpactual.com/scf/trades.readonly
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /receivables/files
+  method: put
+  operationId: receivableFiles
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - empresas.btgpactual.com/scf/receivables
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /credit-analysis
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - empresas.btgpactual.com/solar-credit
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /originators
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    scope:
+    - empresas.btgpactual.com/solar-credit
+    - empresas.btgpactual.com/solar-credit.readonly
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /form/solar/proposals/accept
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - brn:btg:empresas:solar:workflow
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /customers/{customerIdentification}/operators/{operatorIdentification}/documents/{externalIdentification}
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /form/solar/income-auth-cards
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - brn:btg:empresas:solar:workflow
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /form/solar/render-proposals
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - brn:btg:empresas:solar:workflow
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /form/solar/disbursement-receipts
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - brn:btg:empresas:solar:workflow
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /form/solar/notify-email-proposals
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - brn:btg:empresas:solar:workflow
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /form/solar/invoices
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: physical
+    subject: required
+    scope:
+    - brn:btg:empresas:solar:workflow
+    audience: null
+    token:
+      max-ttl: 300
+      exchange: true
+      purpose-required: true
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /form/solar/invoices/pendencies
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: physical
+    subject: required
+    scope:
+    - brn:btg:empresas:solar:workflow
+    audience: null
+    token:
+      max-ttl: 300
+      exchange: true
+      purpose-required: true
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /form/solar/receipts/installation
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /form/solar/start
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - brn:btg:empresas:solar:workflow
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /form/solar/documents
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - brn:btg:empresas:solar:workflow
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /form/solar/documents/pendencies
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    scope:
+    - brn:btg:empresas:solar:workflow
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/apps/{appId}/webhooks/{webhookId}/secret
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/apps/{appId}/webhooks/{webhookId}
+  method: patch
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/apps/{appId}/webhooks/{webhookId}
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /{companyId}/apps/{appId}/webhooks/{webhookId}
+  method: delete
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/apps/{appId}/webhooks
+  method: post
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /{companyId}/apps/{appId}/webhooks
+  method: get
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none

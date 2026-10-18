@@ -1,0 +1,14 @@
+generated: '2026-10-18'
+method: searched
+source: https://developers.empresas.btgpactual.com
+name: BTG Pactual packages
+packages:
+- name: Postman Collection
+  registry: postman
+  url: https://www.postman.com/interstellar-flare-793012/workspace/public-btg-empresas/collection/28222185-f852de9b-a3f5-4d7b-954a-4bd8cc03f342
+  language: HTTP
+  official: true
+  version: null
+  published: null
+  note: Official Postman collection for BTG Pactual Empresas APIs, available for forking and testing
+note: No first-party SDKs found in public registries (npm, PyPI, Maven, etc.). The GitHub organization BTGPactual has 0 public repositories. The primary developer resource is the Postman collection.

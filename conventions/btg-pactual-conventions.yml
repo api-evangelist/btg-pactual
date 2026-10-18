@@ -1,0 +1,47 @@
+generated: '2026-10-18'
+method: searched
+source: https://developers.empresas.btgpactual.com/docs/starting-doc/Integrando/APIs/definicoes-gerais
+name: BTG Pactual conventions
+auth_style: oauth2
+idempotency:
+  coverage: partial
+  note: No idempotency mechanism documented in the API documentation
+  scope:
+  - DELETE /{companyId}/banking/payments/approvals/{paymentId}
+  - DELETE /{companyId}/banking/payments/{paymentId}
+  - POST /{companyId}/banking/payments
+  - submitOnboardingEmployees
+  - submitPaymentBatch
+  header: x-idempotency-key
+  mechanism: request header / body token declared in the OpenAPI
+  evidence: x-idempotency-key on 5 of 116 mutating operations
+  verified: derived
+pagination:
+  style: cursor-based
+  params: page, limit
+  response_fields: items, total, page, limit
+  note: Pagination conventions observed in OpenAPI specifications
+field_expansion: undocumented
+metadata: undocumented
+request_id:
+  header: x-request-id
+  tracing: true
+versioning:
+  style: url-path
+  header: undocumented
+error_envelope:
+  shape: http-status-codes
+  format: application/json
+  note: Standard HTTP status codes with JSON error responses
+rate_limit_signaling:
+  headers:
+  - X-RateLimit-Limit
+  - X-RateLimit-Remaining
+  - X-RateLimit-Reset
+  status_code: 429
+reversibility:
+  coverage: none
+  note: No reversal operations documented in the API specifications
+dry_run_mode: none
+note: Authentication uses OAuth2 with BTG Id authorization server. Pagination uses cursor-based approach with page and limit parameters. Rate
+  limiting signaled via X-RateLimit headers.
