@@ -1,5 +1,5 @@
 generated: '2026-10-18'
-method: none
+method: searched
 source:
 - https://zapier.com/apps/btg-pactual/integrations
 - https://n8n.io/integrations/btg-pactual/
@@ -7,18 +7,351 @@ source:
 - https://monid.ai/tools/btg-pactual
 checked:
 - https://composio.dev/toolkits/btg-pactual
+- https://data.directory.openbankingbrasil.org.br/participants
 - https://developers.empresas.btgpactual.com
 - https://developers.empresas.btgpactual.com/docs/starting-doc/Iniciando sua integração/Softwares Homologados
 - https://make.com/en/integrations/btg-pactual
 - https://monid.ai/tools/btg-pactual
 - https://n8n.io/integrations/btg-pactual
 - https://n8n.io/integrations/btg-pactual/
+- https://openid.net/developers/certified-openid-connect-implementations/
+- https://reports.adviserinfo.sec.gov/reports/CompilationReports/IA_FIRM_SEC_Feed_10_19_2026.xml.gz
 - https://workato.com/integrations/btg-pactual
+- https://www.bcb.gov.br/estabilidadefinanceira/participantespix
+- https://www.wealthbox.com/wp-json/wp/v2/integrations?per_page=100&page=1
 - https://zapier.com/apps/btg-pactual
 - https://zapier.com/apps/btg-pactual/integrations
 summary: null
 marketplace_apps: []
-edges: []
+edges:
+- partner_name: SEC (investment adviser registration)
+  partner: null
+  partner_match: register
+  type: contract
+  channel: regulator-register
+  relationship: standard-participant
+  direction: partner-built
+  evidence: https://adviserinfo.sec.gov/firm/summary/152538
+  category: Investment adviser
+  contract_reference:
+    register: SEC Investment Adviser Public Disclosure (IAPD compilation feed, Form ADV Part 1A)
+    spec_file: null
+    standard: Investment Advisers Act of 1940 (SEC Form ADV)
+    role: sec-registered-investment-adviser
+    registered_name: BTG PACTUAL ASSET MANAGEMENT US , LLC
+    business_name: null
+    register_id: CRD 152538
+    sec_file_number: 801-71004
+    registration_status: APPROVED
+    registered_since: '2010-01-19'
+    main_office: NEW YORK, NY, United States
+    matched_domain: btgpactual.com
+    matched_by: domain
+    identity_source: registrant's own Form ADV Item 1.I website address (no lookup)
+    custody_of_client_assets: true
+    signal_note: 'participation only: SEC registration is not a certification; firm type, custody and office are
+      context, never counted; regulatory AUM is not recorded (breadth is not credit)'
+    detected_by: sweep-asset-management.py
+    detected: '2026-10-19'
+    other_registrations:
+    - BTG PACTUAL (UK) LIMITED (CRD 159871)
+    - BTG PACTUAL ASSET MANAGEMENT S.A. DTVM (CRD 159875)
+    - BTG PACTUAL GESTORA DE RECURSOS LTDA (CRD 160110)
+  detected_by: sweep-asset-management.py
+  first_seen: '2026-10-19'
+- partner_name: Open Finance Brasil
+  partner: null
+  partner_match: register
+  type: register
+  channel: regulator-register
+  relationship: standard-participant
+  direction: partner-built
+  evidence: https://data.directory.openbankingbrasil.org.br/participants
+  category: open finance (Brazil)
+  contract_reference:
+    register: Open Finance Brasil directory (Banco Central do Brasil)
+    spec_file: null
+    standard: Open Finance Brasil
+    role: participant
+    regulator_roles:
+    - CONTA
+    - DADOS
+    - PAGTO
+    registrations: &id001
+    - registered_name: BANCO BTG PACTUAL S.A.
+      register_id: 0bd0b05e-ce18-5105-bbe9-ddf16a79eff9
+      cnpj: '30306294000145'
+      matched_domain: btgpactual.com
+      matched_by: domain
+    declared_families:
+    - accounts
+    - bank-fixed-incomes
+    - channels_branches
+    - channels_electronic-channels
+    - channels_phone-channels
+    - consents
+    - credit-cards-accounts
+    - credit-fixed-incomes
+    - credit-portability
+    - customers-business
+    - customers-personal
+    - enrollments
+    - exchanges
+    - financings
+    - funds
+    - invoice-financings
+    - loans
+    - opendata-accounts_business-accounts
+    - opendata-accounts_personal-accounts
+    - opendata-creditcards_personal-credit-cards
+    - opendata-exchange_online-rates
+    - opendata-exchange_vet-values
+    - opendata-investments_bank-fixed-incomes
+    - opendata-investments_credit-fixed-incomes
+    - opendata-investments_funds
+    - opendata-investments_treasure-titles
+    - opendata-investments_variable-incomes
+    - opendata-invoicefinancings_business-invoice-financings
+    - opendata-invoicefinancings_personal-invoice-financings
+    - opendata-loans_business-loans
+    - opendata-loans_personal-loans
+    - opendata-pension_survival-coverages
+    - payments-consents
+    - payments-pix
+    - payments-pix-recurring-payments
+    - payments-pix-recurring-payments-automatic
+    - payments-recurring-consents
+    - payments-recurring-consents-automatic
+    - resources
+    - treasure-titles
+    - variable-incomes
+    signal_note: 'participation only: declared families are context; the certification edge carries depth'
+    detected_by: sweep-latam-open-finance.py
+    detected: '2026-10-19'
+  detected_by: sweep-latam-open-finance.py
+  first_seen: '2026-10-19'
+- partner_name: Open Finance Brasil functional certification
+  partner: null
+  partner_match: register
+  type: register
+  channel: regulator-register
+  relationship: standard-participant
+  direction: partner-built
+  evidence: https://data.directory.openbankingbrasil.org.br/participants
+  category: open finance conformance (Brazil)
+  contract_reference:
+    register: Open Finance Brasil directory, per-family CertificationStatus (submissions in github.com/OpenBanking-Brasil/conformance)
+    spec_file: null
+    standard: Open Finance Brasil
+    role: certified-participant
+    registrations: *id001
+    certified_products:
+    - product: accounts
+      families:
+      - accounts
+      - credit-cards-accounts
+      status: Self-Certified
+      expires: '2027-07-27'
+      certification_uri: https://github.com/OpenBanking-Brasil/conformance/blob/main/submissions/functional/accounts/2.5.1/30306294_BTG-Empresas_accounts_v2.5.1_25-07-2026.json
+    - product: credit
+      families:
+      - credit-portability
+      - financings
+      - invoice-financings
+      - loans
+      status: Self-Certified
+      expires: '2027-05-26'
+      certification_uri: https://github.com/OpenBanking-Brasil/conformance/raw/main/submissions/functional/loans/2.0.1/30306294_Banco%20BTG%20Pactual%20Open%20Banking%20v2.0%20-%20MAIS-BUSINESS_loans_v2-OL_05-10-2022.zip
+    - product: customer-data
+      families:
+      - consents
+      - customers-business
+      - customers-personal
+      - resources
+      status: Self-Certified
+      expires: '2027-04-30'
+      certification_uri: https://github.com/OpenBanking-Brasil/conformance/raw/main/submissions/functional/business/2.0.1/30306294_Banco%20BTG%20Pactual%20Open%20Banking%20v2.0%20-%20MAIS-BUSINESS_business_v2-OL_11-10-2022.zip
+    - product: exchange
+      families:
+      - exchanges
+      status: Self-Certified
+      expires: '2027-04-30'
+      certification_uri: https://github.com/OpenBanking-Brasil/conformance/blob/main/submissions/functional/exchanges/1.0.0/30306294_BTG-Empresas-2024_exchanges_v1.0_13-04-2024.json
+    - product: investments
+      families:
+      - bank-fixed-incomes
+      - credit-fixed-incomes
+      - funds
+      - treasure-titles
+      - variable-incomes
+      status: Self-Certified
+      expires: '2027-03-17'
+      certification_uri: https://github.com/OpenBanking-Brasil/conformance/blob/main/submissions/functional/credit-fixed-incomes/1.0.0/30306294_BTG-Empresas-Fase-4B_credit-fixed-incomes_v1_22-09-2023.json
+    - product: open-data
+      families:
+      - channels_branches
+      - channels_electronic-channels
+      - channels_phone-channels
+      - opendata-accounts_business-accounts
+      - opendata-accounts_personal-accounts
+      - opendata-creditcards_personal-credit-cards
+      - opendata-exchange_online-rates
+      - opendata-exchange_vet-values
+      - opendata-investments_bank-fixed-incomes
+      - opendata-investments_credit-fixed-incomes
+      - opendata-investments_funds
+      - opendata-investments_treasure-titles
+      - opendata-investments_variable-incomes
+      - opendata-invoicefinancings_business-invoice-financings
+      - opendata-invoicefinancings_personal-invoice-financings
+      - opendata-loans_business-loans
+      - opendata-loans_personal-loans
+      - opendata-pension_survival-coverages
+      status: Self-Certified
+      expires: '2027-10-14'
+      certification_uri: https://web.conformance.directory.openbankingbrasil.org.br/plan-detail.html?plan=SvdEHtyxLjm7G&public=true
+    - product: payments
+      families:
+      - enrollments
+      - payments-consents
+      - payments-pix
+      status: Self-Certified
+      expires: '2027-10-01'
+      certification_uri: https://github.com/OpenBanking-Brasil/conformance/blob/main/submissions/functional/payments/5.0.0/30306294_BTG-Business-Payments-v5-2026_payments_v5.0_19-05-2026.json
+    - product: recurring-payments
+      families:
+      - payments-pix-recurring-payments
+      - payments-pix-recurring-payments-automatic
+      - payments-recurring-consents
+      - payments-recurring-consents-automatic
+      status: Self-Certified
+      expires: '2026-11-03'
+      certification_uri: https://github.com/OpenBanking-Brasil/conformance/blob/main/submissions/functional/automatic-payments/2.0.0/30306294_BTG-Empresas_automatic-payments_v2.0.0_23-04-2025.json
+    signal_note: one entry per PRODUCT TYPE, lapsed flagged; family counts are context, never read
+    detected_by: sweep-latam-open-finance.py
+    detected: '2026-10-19'
+  detected_by: sweep-latam-open-finance.py
+  first_seen: '2026-10-19'
+- partner_name: Pix (Banco Central do Brasil)
+  partner: null
+  partner_match: register
+  type: register
+  channel: regulator-register
+  relationship: standard-participant
+  direction: partner-built
+  evidence: https://www.bcb.gov.br/estabilidadefinanceira/participantespix
+  category: instant payments (Brazil)
+  contract_reference:
+    register: Pix participants (Banco Central do Brasil, https://www.bcb.gov.br/content/estabilidadefinanceira/participantes_pix/lista-participantes-instituicoes-em-adesao-pix-20261019.csv)
+    spec_file: null
+    standard: Pix
+    role: pix-participant
+    registrations:
+    - registered_name: BANCO BTG PACTUAL S.A.
+      ispb: '30306294'
+      cnpj: 30.306.294/0001-45
+      institution_type: Banco Múltiplo
+      spi_participation: Direta
+      pix_participation: Facultativa
+      pix_modality: Provedor de Conta Transacional
+      payment_initiation: true
+      matched_domain: btgpactual.com
+      matched_by: domain
+      identity: Open Finance Brasil directory, same CNPJ 30306294000145 ('BANCO BTG PACTUAL S.A.')
+    signal_note: 'participation only: the domain comes from a labelled lookup (registrations[].identity)'
+    detected_by: sweep-latam-open-finance.py
+    detected: '2026-10-19'
+  detected_by: sweep-latam-open-finance.py
+  first_seen: '2026-10-19'
+- partner_name: OpenID Foundation certification
+  partner: null
+  partner_match: domain
+  type: contract
+  channel: network-directory
+  relationship: standard-participant
+  direction: partner-built
+  evidence: https://openid.net/developers/certified-openid-connect-implementations/
+  contract_reference:
+    register: OpenID Foundation certified implementations
+    spec_file: null
+    role: certified-op
+    registered_name: Banco BTG Pactual S.A
+    products:
+    - BTG Pactual WM Open Banking 1.0.0
+    matched_domain: btgpactual.com
+    api_families:
+    - BR-OB Adv. OP DCR
+    - BR-OB Adv. OP w/ Private Key
+    - PAR
+    - fapi1-op-brazil-open-banking
+    - fapi1-op-brazil-open-finance-fapi-br-v2
+    - fapi1-rp-brazil-open-banking
+    - fapi1-rp-brazil-open-finance-fapi-br-v2
+    api_families_basis: conformance profiles / certification levels passed
+    detected_by: sweep-identity.py
+    detected: '2026-10-19'
+  detected_by: sweep-identity.py
+  detected: '2026-10-19'
+- partner_name: Open Finance Brasil
+  partner: null
+  type: contract
+  channel: regulator-register
+  relationship: standard-participant
+  direction: partner-built
+  evidence: https://data.directory.openbankingbrasil.org.br/participants
+  contract_reference:
+    register: Open Finance Brasil directory (Banco Central do Brasil)
+    spec_file: null
+    role: participant
+    registered_name: BANCO BTG PACTUAL S.A.
+    register_id: 0bd0b05e-ce18-5105-bbe9-ddf16a79eff9
+    matched_domain: btgpactual.com
+    api_families:
+    - accounts
+    - bank-fixed-incomes
+    - channels_branches
+    - channels_electronic-channels
+    - channels_phone-channels
+    - consents
+    - credit-cards-accounts
+    - credit-fixed-incomes
+    - credit-portability
+    - customers-business
+    - customers-personal
+    - discovery_outages
+    - discovery_status
+    - enrollments
+    - exchanges
+    - financings
+    - funds
+    - invoice-financings
+    - loans
+    - opendata-accounts_business-accounts
+    - opendata-accounts_personal-accounts
+    - opendata-creditcards_personal-credit-cards
+    - opendata-exchange_online-rates
+    - opendata-exchange_vet-values
+    - opendata-investments_bank-fixed-incomes
+    - opendata-investments_credit-fixed-incomes
+    - opendata-investments_funds
+    - opendata-investments_treasure-titles
+    - opendata-investments_variable-incomes
+    - opendata-invoicefinancings_business-invoice-financings
+    - opendata-invoicefinancings_personal-invoice-financings
+    - opendata-loans_business-loans
+    - opendata-loans_personal-loans
+    - opendata-pension_survival-coverages
+    - payments-consents
+    - payments-pix
+    - payments-pix-recurring-payments
+    - payments-pix-recurring-payments-automatic
+    - payments-recurring-consents
+    - payments-recurring-consents-automatic
+    - resources
+    - treasure-titles
+    - variable-incomes
+    detected_by: sweep-standard-registers.py
+    detected: '2026-10-20'
 templates: []
 note: No integration marketplace listings found for BTG Pactual. The provider has a "Softwares Homologados" (certified
   software) page but it lists software that integrates WITH BTG Pactual rather than partnerships BTG Pactual has
