@@ -59,31 +59,50 @@ edges:
     - BTG PACTUAL GESTORA DE RECURSOS LTDA (CRD 160110)
   detected_by: sweep-asset-management.py
   first_seen: '2026-10-19'
+- partner_name: OpenID Foundation certification
+  partner: null
+  partner_match: domain
+  type: contract
+  channel: network-directory
+  relationship: standard-participant
+  direction: partner-built
+  evidence: https://openid.net/developers/certified-openid-connect-implementations/
+  contract_reference:
+    register: OpenID Foundation certified implementations
+    spec_file: null
+    role: certified-op
+    registered_name: Banco BTG Pactual S.A
+    products:
+    - BTG Pactual WM Open Banking 1.0.0
+    matched_domain: btgpactual.com
+    api_families:
+    - BR-OB Adv. OP DCR
+    - BR-OB Adv. OP w/ Private Key
+    - PAR
+    - fapi1-op-brazil-open-banking
+    - fapi1-op-brazil-open-finance-fapi-br-v2
+    - fapi1-rp-brazil-open-banking
+    - fapi1-rp-brazil-open-finance-fapi-br-v2
+    api_families_basis: conformance profiles / certification levels passed
+    detected_by: sweep-identity.py
+    detected: '2026-10-19'
+  detected_by: sweep-identity.py
+  detected: '2026-10-19'
 - partner_name: Open Finance Brasil
   partner: null
-  partner_match: register
-  type: register
+  type: contract
   channel: regulator-register
   relationship: standard-participant
   direction: partner-built
   evidence: https://data.directory.openbankingbrasil.org.br/participants
-  category: open finance (Brazil)
   contract_reference:
     register: Open Finance Brasil directory (Banco Central do Brasil)
     spec_file: null
-    standard: Open Finance Brasil
     role: participant
-    regulator_roles:
-    - CONTA
-    - DADOS
-    - PAGTO
-    registrations: &id001
-    - registered_name: BANCO BTG PACTUAL S.A.
-      register_id: 0bd0b05e-ce18-5105-bbe9-ddf16a79eff9
-      cnpj: '30306294000145'
-      matched_domain: btgpactual.com
-      matched_by: domain
-    declared_families:
+    registered_name: BANCO BTG PACTUAL S.A.
+    register_id: 0bd0b05e-ce18-5105-bbe9-ddf16a79eff9
+    matched_domain: btgpactual.com
+    api_families:
     - accounts
     - bank-fixed-incomes
     - channels_branches
@@ -95,6 +114,8 @@ edges:
     - credit-portability
     - customers-business
     - customers-personal
+    - discovery_outages
+    - discovery_status
     - enrollments
     - exchanges
     - financings
@@ -125,11 +146,8 @@ edges:
     - resources
     - treasure-titles
     - variable-incomes
-    signal_note: 'participation only: declared families are context; the certification edge carries depth'
-    detected_by: sweep-latam-open-finance.py
-    detected: '2026-10-19'
-  detected_by: sweep-latam-open-finance.py
-  first_seen: '2026-10-19'
+    detected_by: sweep-standard-registers.py
+    detected: '2026-10-20'
 - partner_name: Open Finance Brasil functional certification
   partner: null
   partner_match: register
@@ -144,7 +162,12 @@ edges:
     spec_file: null
     standard: Open Finance Brasil
     role: certified-participant
-    registrations: *id001
+    registrations:
+    - registered_name: BANCO BTG PACTUAL S.A.
+      register_id: 0bd0b05e-ce18-5105-bbe9-ddf16a79eff9
+      cnpj: '30306294000145'
+      matched_domain: btgpactual.com
+      matched_by: domain
     certified_products:
     - product: accounts
       families:
@@ -242,7 +265,7 @@ edges:
   evidence: https://www.bcb.gov.br/estabilidadefinanceira/participantespix
   category: instant payments (Brazil)
   contract_reference:
-    register: Pix participants (Banco Central do Brasil, https://www.bcb.gov.br/content/estabilidadefinanceira/participantes_pix/lista-participantes-instituicoes-em-adesao-pix-20261019.csv)
+    register: Pix participants (Banco Central do Brasil, https://www.bcb.gov.br/content/estabilidadefinanceira/participantes_pix/lista-participantes-instituicoes-em-adesao-pix-20261020.csv)
     spec_file: null
     standard: Pix
     role: pix-participant
@@ -263,95 +286,6 @@ edges:
     detected: '2026-10-19'
   detected_by: sweep-latam-open-finance.py
   first_seen: '2026-10-19'
-- partner_name: OpenID Foundation certification
-  partner: null
-  partner_match: domain
-  type: contract
-  channel: network-directory
-  relationship: standard-participant
-  direction: partner-built
-  evidence: https://openid.net/developers/certified-openid-connect-implementations/
-  contract_reference:
-    register: OpenID Foundation certified implementations
-    spec_file: null
-    role: certified-op
-    registered_name: Banco BTG Pactual S.A
-    products:
-    - BTG Pactual WM Open Banking 1.0.0
-    matched_domain: btgpactual.com
-    api_families:
-    - BR-OB Adv. OP DCR
-    - BR-OB Adv. OP w/ Private Key
-    - PAR
-    - fapi1-op-brazil-open-banking
-    - fapi1-op-brazil-open-finance-fapi-br-v2
-    - fapi1-rp-brazil-open-banking
-    - fapi1-rp-brazil-open-finance-fapi-br-v2
-    api_families_basis: conformance profiles / certification levels passed
-    detected_by: sweep-identity.py
-    detected: '2026-10-19'
-  detected_by: sweep-identity.py
-  detected: '2026-10-19'
-- partner_name: Open Finance Brasil
-  partner: null
-  type: contract
-  channel: regulator-register
-  relationship: standard-participant
-  direction: partner-built
-  evidence: https://data.directory.openbankingbrasil.org.br/participants
-  contract_reference:
-    register: Open Finance Brasil directory (Banco Central do Brasil)
-    spec_file: null
-    role: participant
-    registered_name: BANCO BTG PACTUAL S.A.
-    register_id: 0bd0b05e-ce18-5105-bbe9-ddf16a79eff9
-    matched_domain: btgpactual.com
-    api_families:
-    - accounts
-    - bank-fixed-incomes
-    - channels_branches
-    - channels_electronic-channels
-    - channels_phone-channels
-    - consents
-    - credit-cards-accounts
-    - credit-fixed-incomes
-    - credit-portability
-    - customers-business
-    - customers-personal
-    - discovery_outages
-    - discovery_status
-    - enrollments
-    - exchanges
-    - financings
-    - funds
-    - invoice-financings
-    - loans
-    - opendata-accounts_business-accounts
-    - opendata-accounts_personal-accounts
-    - opendata-creditcards_personal-credit-cards
-    - opendata-exchange_online-rates
-    - opendata-exchange_vet-values
-    - opendata-investments_bank-fixed-incomes
-    - opendata-investments_credit-fixed-incomes
-    - opendata-investments_funds
-    - opendata-investments_treasure-titles
-    - opendata-investments_variable-incomes
-    - opendata-invoicefinancings_business-invoice-financings
-    - opendata-invoicefinancings_personal-invoice-financings
-    - opendata-loans_business-loans
-    - opendata-loans_personal-loans
-    - opendata-pension_survival-coverages
-    - payments-consents
-    - payments-pix
-    - payments-pix-recurring-payments
-    - payments-pix-recurring-payments-automatic
-    - payments-recurring-consents
-    - payments-recurring-consents-automatic
-    - resources
-    - treasure-titles
-    - variable-incomes
-    detected_by: sweep-standard-registers.py
-    detected: '2026-10-20'
 templates: []
 note: No integration marketplace listings found for BTG Pactual. The provider has a "Softwares Homologados" (certified
   software) page but it lists software that integrates WITH BTG Pactual rather than partnerships BTG Pactual has

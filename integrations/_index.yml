@@ -38,11 +38,39 @@
     - BTG PACTUAL GESTORA DE RECURSOS LTDA (CRD 160110)
   status: not-a-workflow
   arazzo: null
+- slug: btg-pactual-openid-foundation-certification
+  label: OpenID Foundation certification
+  partner_name: OpenID Foundation certification
+  type: contract
+  channel: network-directory
+  evidence: https://openid.net/developers/certified-openid-connect-implementations/
+  source: edge
+  relationship: standard-participant
+  contract_reference:
+    register: OpenID Foundation certified implementations
+    spec_file: null
+    role: certified-op
+    registered_name: Banco BTG Pactual S.A
+    products:
+    - BTG Pactual WM Open Banking 1.0.0
+    matched_domain: btgpactual.com
+    api_families:
+    - BR-OB Adv. OP DCR
+    - BR-OB Adv. OP w/ Private Key
+    - PAR
+    - fapi1-op-brazil-open-banking
+    - fapi1-op-brazil-open-finance-fapi-br-v2
+    - fapi1-rp-brazil-open-banking
+    - fapi1-rp-brazil-open-finance-fapi-br-v2
+    api_families_basis: conformance profiles / certification levels passed
+    detected_by: sweep-identity.py
+    detected: '2026-10-19'
+  status: not-a-workflow
+  arazzo: null
 - slug: btg-pactual-open-finance-brasil
   label: Open Finance Brasil
   partner_name: Open Finance Brasil
-  category: open finance (Brazil)
-  type: register
+  type: contract
   channel: regulator-register
   evidence: https://data.directory.openbankingbrasil.org.br/participants
   source: edge
@@ -50,19 +78,11 @@
   contract_reference:
     register: Open Finance Brasil directory (Banco Central do Brasil)
     spec_file: null
-    standard: Open Finance Brasil
     role: participant
-    regulator_roles:
-    - CONTA
-    - DADOS
-    - PAGTO
-    registrations: &id001
-    - registered_name: BANCO BTG PACTUAL S.A.
-      register_id: 0bd0b05e-ce18-5105-bbe9-ddf16a79eff9
-      cnpj: '30306294000145'
-      matched_domain: btgpactual.com
-      matched_by: domain
-    declared_families:
+    registered_name: BANCO BTG PACTUAL S.A.
+    register_id: 0bd0b05e-ce18-5105-bbe9-ddf16a79eff9
+    matched_domain: btgpactual.com
+    api_families:
     - accounts
     - bank-fixed-incomes
     - channels_branches
@@ -74,6 +94,8 @@
     - credit-portability
     - customers-business
     - customers-personal
+    - discovery_outages
+    - discovery_status
     - enrollments
     - exchanges
     - financings
@@ -104,9 +126,8 @@
     - resources
     - treasure-titles
     - variable-incomes
-    signal_note: 'participation only: declared families are context; the certification edge carries depth'
-    detected_by: sweep-latam-open-finance.py
-    detected: '2026-10-19'
+    detected_by: sweep-standard-registers.py
+    detected: '2026-10-20'
   status: not-a-workflow
   arazzo: null
 - slug: btg-pactual-open-finance-brasil-functional-certification
@@ -123,7 +144,12 @@
     spec_file: null
     standard: Open Finance Brasil
     role: certified-participant
-    registrations: *id001
+    registrations:
+    - registered_name: BANCO BTG PACTUAL S.A.
+      register_id: 0bd0b05e-ce18-5105-bbe9-ddf16a79eff9
+      cnpj: '30306294000145'
+      matched_domain: btgpactual.com
+      matched_by: domain
     certified_products:
     - product: accounts
       families:
@@ -221,7 +247,7 @@
   source: edge
   relationship: standard-participant
   contract_reference:
-    register: Pix participants (Banco Central do Brasil, https://www.bcb.gov.br/content/estabilidadefinanceira/participantes_pix/lista-participantes-instituicoes-em-adesao-pix-20261019.csv)
+    register: Pix participants (Banco Central do Brasil, https://www.bcb.gov.br/content/estabilidadefinanceira/participantes_pix/lista-participantes-instituicoes-em-adesao-pix-20261020.csv)
     spec_file: null
     standard: Pix
     role: pix-participant
@@ -239,35 +265,6 @@
       identity: Open Finance Brasil directory, same CNPJ 30306294000145 ('BANCO BTG PACTUAL S.A.')
     signal_note: 'participation only: the domain comes from a labelled lookup (registrations[].identity)'
     detected_by: sweep-latam-open-finance.py
-    detected: '2026-10-19'
-  status: not-a-workflow
-  arazzo: null
-- slug: btg-pactual-openid-foundation-certification
-  label: OpenID Foundation certification
-  partner_name: OpenID Foundation certification
-  type: contract
-  channel: network-directory
-  evidence: https://openid.net/developers/certified-openid-connect-implementations/
-  source: edge
-  relationship: standard-participant
-  contract_reference:
-    register: OpenID Foundation certified implementations
-    spec_file: null
-    role: certified-op
-    registered_name: Banco BTG Pactual S.A
-    products:
-    - BTG Pactual WM Open Banking 1.0.0
-    matched_domain: btgpactual.com
-    api_families:
-    - BR-OB Adv. OP DCR
-    - BR-OB Adv. OP w/ Private Key
-    - PAR
-    - fapi1-op-brazil-open-banking
-    - fapi1-op-brazil-open-finance-fapi-br-v2
-    - fapi1-rp-brazil-open-banking
-    - fapi1-rp-brazil-open-finance-fapi-br-v2
-    api_families_basis: conformance profiles / certification levels passed
-    detected_by: sweep-identity.py
     detected: '2026-10-19'
   status: not-a-workflow
   arazzo: null
