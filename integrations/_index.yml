@@ -268,3 +268,99 @@
     detected: '2026-10-19'
   status: not-a-workflow
   arazzo: null
+- slug: btg-pactual-banco-central-do-brasil-authorized-banks
+  label: Banco Central do Brasil authorized banks
+  partner_name: Banco Central do Brasil authorized banks
+  category: Brazil BCB-authorized bank
+  type: register
+  channel: regulator-register
+  evidence: https://www.bcb.gov.br/estabilidadefinanceira/relacao_instituicoes_funcionamento
+  source: edge
+  relationship: standard-participant
+  contract_reference:
+    register: Banco Central do Brasil authorized banks
+    spec_file: null
+    standard: null
+    role: authorized-bank
+    institution_class: incumbent
+    registrations:
+    - registered_name: BANCO BTG PACTUAL S.A.
+      register_status: authorized-active
+      register_country: BR
+      register_id: CNPJ 30306294
+      segment: Banco Múltiplo
+      matched_domain: btgpactual.com
+      matched_by: domain
+      evidence_url: https://www.bcb.gov.br/estabilidadefinanceira/relacao_instituicoes_funcionamento
+      licences:
+      - Banco Múltiplo
+      situation: Autorizada em Atividade
+      tariff_list_confirmed: true
+      domain_source: filed-website
+    signal_note: 'participation only: a Banco Central do Brasil authorisation to operate; no API conformance is
+      published by this register'
+    detected_by: sweep-brazil-bcb-authorized-institutions.py
+    detected: '2026-10-22'
+  status: not-a-workflow
+  arazzo: null
+- slug: btg-pactual-banco-central-do-brasil-authorized-financial-companies-sociedades
+  label: Banco Central do Brasil authorized financial companies (sociedades)
+  partner_name: Banco Central do Brasil authorized financial companies (sociedades)
+  category: Brazil BCB-authorized financial company (CFI / DTVM / CTVM / FX broker / other)
+  type: register
+  channel: regulator-register
+  evidence: https://www.bcb.gov.br/estabilidadefinanceira/relacao_instituicoes_funcionamento
+  source: edge
+  relationship: standard-participant
+  contract_reference:
+    register: Banco Central do Brasil authorized financial companies (sociedades)
+    spec_file: null
+    standard: null
+    role: authorized-financial-company
+    institution_class: incumbent
+    registrations:
+    - registered_name: BTG PACTUAL SERVIÇOS FINANCEIROS S.A. DISTRIBUIDORA DE TÍTULOS E VALORES MOBILIÁRIOS
+      register_status: authorized-active
+      register_country: BR
+      register_id: CNPJ 59281253
+      segment: Sociedade Distribuidora de TVM
+      matched_domain: btgpactual.com
+      matched_by: domain
+      evidence_url: https://www.bcb.gov.br/estabilidadefinanceira/relacao_instituicoes_funcionamento
+      licences:
+      - Sociedade Distribuidora de TVM
+      situation: Autorizada em Atividade
+      tariff_list_confirmed: true
+      domain_source: filed-website
+    - registered_name: BTG PACTUAL ASSET MANAGEMENT S.A. DISTRIBUIDORA DE TÍTULOS E VALORES MOBILIÁRIOS
+      register_status: authorized-active
+      register_country: BR
+      register_id: CNPJ 29650082
+      segment: Sociedade Distribuidora de TVM
+      matched_domain: btgpactual.com
+      matched_by: domain
+      evidence_url: https://www.bcb.gov.br/estabilidadefinanceira/relacao_instituicoes_funcionamento
+      licences:
+      - Sociedade Distribuidora de TVM
+      situation: Autorizada em Atividade
+      tariff_list_confirmed: true
+      domain_source: filed-website
+    - registered_name: BTG PACTUAL CORRETORA DE TÍTULOS E VALORES MOBILIÁRIOS S.A.
+      register_status: authorized-active
+      register_country: BR
+      register_id: CNPJ 43815158
+      segment: Sociedade Corretora de TVM
+      matched_domain: btgpactual.com
+      matched_by: domain
+      evidence_url: https://www.bcb.gov.br/estabilidadefinanceira/relacao_instituicoes_funcionamento
+      licences:
+      - Sociedade Corretora de TVM
+      situation: Autorizada em Atividade
+      tariff_list_confirmed: true
+      domain_source: filed-website
+    signal_note: 'participation only: a Banco Central do Brasil authorisation to operate; no API conformance is
+      published by this register'
+    detected_by: sweep-brazil-bcb-authorized-institutions.py
+    detected: '2026-10-22'
+  status: not-a-workflow
+  arazzo: null

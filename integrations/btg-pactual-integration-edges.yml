@@ -21,6 +21,10 @@ checked:
 - https://www.wealthbox.com/wp-json/wp/v2/integrations?per_page=100&page=1
 - https://zapier.com/apps/btg-pactual
 - https://zapier.com/apps/btg-pactual/integrations
+- https://dadosabertos.bcb.gov.br/api/3/action/package_show?id=relacao-de-instituicoes-em-funcionamento-no-pais
+- https://olinda.bcb.gov.br/olinda/servico/BcBase/versao/v2/odata/
+- https://olinda.bcb.gov.br/olinda/servico/Informes_ListaTarifasPorInstituicaoFinanceira/versao/v1/odata/
+- https://olinda.bcb.gov.br/olinda/servico/Instituicoes_em_funcionamento/versao/v1/odata/
 summary: null
 marketplace_apps: []
 edges:
@@ -286,6 +290,102 @@ edges:
     detected: '2026-10-19'
   detected_by: sweep-latam-open-finance.py
   first_seen: '2026-10-19'
+- partner_name: Banco Central do Brasil authorized banks
+  partner: null
+  partner_match: register
+  type: register
+  channel: regulator-register
+  relationship: standard-participant
+  direction: partner-built
+  evidence: https://www.bcb.gov.br/estabilidadefinanceira/relacao_instituicoes_funcionamento
+  category: Brazil BCB-authorized bank
+  contract_reference:
+    register: Banco Central do Brasil authorized banks
+    spec_file: null
+    standard: null
+    role: authorized-bank
+    institution_class: incumbent
+    registrations:
+    - registered_name: BANCO BTG PACTUAL S.A.
+      register_status: authorized-active
+      register_country: BR
+      register_id: CNPJ 30306294
+      segment: Banco Múltiplo
+      matched_domain: btgpactual.com
+      matched_by: domain
+      evidence_url: https://www.bcb.gov.br/estabilidadefinanceira/relacao_instituicoes_funcionamento
+      licences:
+      - Banco Múltiplo
+      situation: Autorizada em Atividade
+      tariff_list_confirmed: true
+      domain_source: filed-website
+    signal_note: 'participation only: a Banco Central do Brasil authorisation to operate; no API conformance is
+      published by this register'
+    detected_by: sweep-brazil-bcb-authorized-institutions.py
+    detected: '2026-10-22'
+  detected_by: sweep-brazil-bcb-authorized-institutions.py
+  first_seen: '2026-10-22'
+- partner_name: Banco Central do Brasil authorized financial companies (sociedades)
+  partner: null
+  partner_match: register
+  type: register
+  channel: regulator-register
+  relationship: standard-participant
+  direction: partner-built
+  evidence: https://www.bcb.gov.br/estabilidadefinanceira/relacao_instituicoes_funcionamento
+  category: Brazil BCB-authorized financial company (CFI / DTVM / CTVM / FX broker / other)
+  contract_reference:
+    register: Banco Central do Brasil authorized financial companies (sociedades)
+    spec_file: null
+    standard: null
+    role: authorized-financial-company
+    institution_class: incumbent
+    registrations:
+    - registered_name: BTG PACTUAL SERVIÇOS FINANCEIROS S.A. DISTRIBUIDORA DE TÍTULOS E VALORES MOBILIÁRIOS
+      register_status: authorized-active
+      register_country: BR
+      register_id: CNPJ 59281253
+      segment: Sociedade Distribuidora de TVM
+      matched_domain: btgpactual.com
+      matched_by: domain
+      evidence_url: https://www.bcb.gov.br/estabilidadefinanceira/relacao_instituicoes_funcionamento
+      licences:
+      - Sociedade Distribuidora de TVM
+      situation: Autorizada em Atividade
+      tariff_list_confirmed: true
+      domain_source: filed-website
+    - registered_name: BTG PACTUAL ASSET MANAGEMENT S.A. DISTRIBUIDORA DE TÍTULOS E VALORES MOBILIÁRIOS
+      register_status: authorized-active
+      register_country: BR
+      register_id: CNPJ 29650082
+      segment: Sociedade Distribuidora de TVM
+      matched_domain: btgpactual.com
+      matched_by: domain
+      evidence_url: https://www.bcb.gov.br/estabilidadefinanceira/relacao_instituicoes_funcionamento
+      licences:
+      - Sociedade Distribuidora de TVM
+      situation: Autorizada em Atividade
+      tariff_list_confirmed: true
+      domain_source: filed-website
+    - registered_name: BTG PACTUAL CORRETORA DE TÍTULOS E VALORES MOBILIÁRIOS S.A.
+      register_status: authorized-active
+      register_country: BR
+      register_id: CNPJ 43815158
+      segment: Sociedade Corretora de TVM
+      matched_domain: btgpactual.com
+      matched_by: domain
+      evidence_url: https://www.bcb.gov.br/estabilidadefinanceira/relacao_instituicoes_funcionamento
+      licences:
+      - Sociedade Corretora de TVM
+      situation: Autorizada em Atividade
+      tariff_list_confirmed: true
+      domain_source: filed-website
+    signal_note: 'participation only: a Banco Central do Brasil authorisation to operate; no API conformance is
+      published by this register'
+    detected_by: sweep-brazil-bcb-authorized-institutions.py
+    detected: '2026-10-22'
+  detected_by: sweep-brazil-bcb-authorized-institutions.py
+  first_seen: '2026-10-22'
 templates: []
 note: No integration marketplace listings found for BTG Pactual. The provider has a "Softwares Homologados" (certified
   software) page but it lists software that integrates WITH BTG Pactual rather than partnerships BTG Pactual has
